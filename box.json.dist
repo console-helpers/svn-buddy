@@ -1,0 +1,26 @@
+{
+    "alias": "svn-buddy.phar",
+    "chmod": "0755",
+    "directories": ["src", "bin"],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": [
+                "tests",
+                "mockery",
+				"hamcrest",
+                "*Test.php",
+                "test",
+                "Tests",
+                "Test",
+                "*.lock"
+            ],
+            "in": "vendor"
+        }
+    ],
+	"blacklist": ["vendor/aik099/coding-standard"],
+    "main": "bin/svn-buddy",
+    "git-commit": "git-commit",
+    "output": "build/svn-buddy.phar",
+    "stub": true
+}
