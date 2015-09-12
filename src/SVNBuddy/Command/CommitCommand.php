@@ -91,7 +91,7 @@ TEXT;
 			throw new CommandException('Conflicts detected. Please resolve them before committing.');
 		}
 
-		$commit_message = $this->buildCommitMessage();
+		$commit_message = $this->buildCommitMessage($wc_path);
 
 		$working_copy_status = $this->repositoryConnector->getCompactWorkingCopyStatus($wc_path);
 		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $working_copy_status;
@@ -129,9 +129,11 @@ TEXT;
 	/**
 	 * Builds a commit message.
 	 *
+	 * @param string $wc_path Working copy path.
+	 *
 	 * @return string
 	 */
-	protected function buildCommitMessage()
+	protected function buildCommitMessage($wc_path)
 	{
 		/*
 		 * 3. if it's In-Portal project, then:
@@ -145,7 +147,6 @@ TEXT;
 		 * 4. open interactive editor with auto-generated message
 		 */
 
-		$wc_path = $this->getWorkingCopyPath();
 		$merged_revisions = $this->getFreshMergedRevisions($wc_path);
 
 		if ( !$merged_revisions ) {
