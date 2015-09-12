@@ -26,8 +26,9 @@ class RevisionListParser
 	 */
 	public function expandRanges(array $revisions, $range_separator = '-')
 	{
+		// Since SVN 1.7+ there can be "*" at the end of merged revision or revision range.
 		$ret = array();
-		$range_regexp = '/^([\d]+)' . preg_quote($range_separator, '/') . '([\d]+)$/';
+		$range_regexp = '/^([\d]+)' . preg_quote($range_separator, '/') . '([\d]+)\*?$/';
 
 		foreach ( $revisions as $raw_revision ) {
 			if ( preg_match($range_regexp, $raw_revision, $regs) ) {
@@ -44,8 +45,8 @@ class RevisionListParser
 					$ret[$i] = true;
 				}
 			}
-			elseif ( preg_match('/^[\d]+$/', $raw_revision) ) {
-				$ret[(int)$raw_revision] = true;
+			elseif ( preg_match('/^([\d]+)\*?$/', $raw_revision, $regs) ) {
+				$ret[(int)$regs[1]] = true;
 			}
 			else {
 				throw new \InvalidArgumentException('The "' . $raw_revision . '" revision is invalid.');
