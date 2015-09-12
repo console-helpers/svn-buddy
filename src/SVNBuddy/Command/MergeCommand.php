@@ -162,7 +162,7 @@ TEXT;
 
 		$wc_path = $this->getWorkingCopyPath();
 
-		if ( $this->repositoryConnector->isWorkingCopy(dirname($wc_path)) ) {
+		if ( $this->repositoryConnector->isWorkingCopy(dirname($wc_path), $this->input) ) {
 			throw new \InvalidArgumentException('The "' . $wc_path . '" isn\'t working copy topmost folder.');
 		}
 

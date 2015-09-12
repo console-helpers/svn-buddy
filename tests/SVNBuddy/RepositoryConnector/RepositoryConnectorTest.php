@@ -11,7 +11,7 @@
 namespace Tests\aik099\SVNBuddy\RepositoryConnector;
 
 
-use aik099\SVNBuddy\Exception\RepositoryConnectorException;
+use aik099\SVNBuddy\Exception\RepositoryCommandException;
 use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
 use Mockery as m;
 use Mockery\MockInterface;
@@ -162,7 +162,7 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 			->once()
 			->andReturn($this->_process);
 
-		/** @var RepositoryConnectorException $thrown_exception */
+		/** @var RepositoryCommandException $thrown_exception */
 		$thrown_exception = null;
 
 		try {
@@ -170,7 +170,7 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 		}
 		catch ( \Exception $thrown_exception ) {
 			$this->assertEquals(
-				'aik099\\SVNBuddy\\Exception\\RepositoryConnectorException',
+				'aik099\\SVNBuddy\\Exception\\RepositoryCommandException',
 				get_class($thrown_exception),
 				'Exception of correct class was thrown'
 			);
@@ -199,7 +199,7 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * @expectedException \aik099\SVNBuddy\Exception\RepositoryConnectorException
+	 * @expectedException \aik099\SVNBuddy\Exception\RepositoryCommandException
 	 * @expectedExceptionMessage Execution of repository command "svn --non-interactive propget test-p 'the/path'" failed with output: dummy error text
 	 */
 	public function testGetPropertyNotFound()
@@ -230,7 +230,7 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 				->once();*/
 		}
 		else {
-			$exception = new RepositoryConnectorException($command, $exit_code, $output, 'dummy error text');
+			$exception = new RepositoryCommandException($command, $exit_code, $output, 'dummy error text');
 			$expectation->andThrow($exception);
 		}
 

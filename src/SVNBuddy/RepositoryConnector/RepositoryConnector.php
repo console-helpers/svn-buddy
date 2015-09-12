@@ -13,9 +13,12 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\Config;
-use aik099\SVNBuddy\Exception\RepositoryConnectorException;
+use aik099\SVNBuddy\Exception\RepositoryCommandException;
 use aik099\SVNBuddy\Process\IProcessFactory;
+use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Executes command on the repository.
@@ -264,16 +267,11 @@ class RepositoryConnector
 	 * @param string $path_or_url Path or url.
 	 *
 	 * @return \SimpleXMLElement
-	 * @throws \InvalidArgumentException When given failed to obtain 'svn info'.
+	 * @throws \LogicException When unexpected 'svn info' results retrieved.
 	 */
 	protected function getSvnInfoEntry($path_or_url)
 	{
-		try {
-			$svn_info = $this->getCommand('info', '--xml {' . $path_or_url . '}')->run();
-		}
-		catch ( RepositoryConnectorException $e ) {
-			throw new \InvalidArgumentException($e->getErrorOutput());
-		}
+		$svn_info = $this->getCommand('info', '--xml {' . $path_or_url . '}')->run();
 
 		foreach ( $svn_info->entry as $entry ) {
 			if ( $entry['kind'] != 'dir' ) {
@@ -293,7 +291,7 @@ class RepositoryConnector
 			$error_msg .= PHP_EOL . ' XML:' . PHP_EOL . $xml;
 		}
 
-		throw new \InvalidArgumentException($error_msg);
+		throw new \LogicException($error_msg);
 	}
 
 	/**
@@ -469,22 +467,43 @@ class RepositoryConnector
 	/**
 	 * Determines if there is a working copy on a given path.
 	 *
-	 * @param string $path Path.
+	 * @param string         $path  Path.
+	 * @param InputInterface $input Input.
 	 *
 	 * @return boolean
 	 * @throws \InvalidArgumentException When path isn't found.
+	 * @throws RepositoryCommandException When unknown repository-related error happened.
 	 */
-	public function isWorkingCopy($path)
+	public function isWorkingCopy($path, InputInterface $input)
 	{
-		if ( !file_exists($path) || !is_dir($path) ) {
+		if ( $this->isUrl($path) || !file_exists($path) || !is_dir($path) ) {
 			throw new \InvalidArgumentException('Path not found or isn\'t a directory.');
 		}
 
 		try {
 			$wc_url = $this->getWorkingCopyUrl($path);
 		}
-		catch ( \InvalidArgumentException $e ) {
-			return false;
+		catch ( RepositoryCommandException $e ) {
+			if ( $e->getCode() == RepositoryCommandException::SVN_ERR_WC_NOT_WORKING_COPY ) {
+				return false;
+			}
+
+			if ( $e->getCode() == RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED ) {
+				$message = explode(PHP_EOL, $e->getMessage());
+
+				$this->_output->writeln(array('', '<error>' . end($message) . '</error>', ''));
+
+				$helper = new QuestionHelper();
+				$question = new ConfirmationQuestion('<question>Run "svn upgrade" [n]?</question> ', false);
+
+				if ( $helper->ask($input, $this->_output, $question) ) {
+					$this->getCommand('upgrade', '{' . $path . '}')->runLive();
+
+					return $this->isWorkingCopy($path, $input);
+				}
+			}
+
+			throw $e;
 		}
 
 		return $wc_url != '';

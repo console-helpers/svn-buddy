@@ -245,6 +245,24 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 */
 	protected function getWorkingCopyPath()
 	{
+		$path = $this->getPath();
+
+		if ( !$this->repositoryConnector->isUrl($path)
+			&& !$this->repositoryConnector->isWorkingCopy($path, $this->input)
+		) {
+			throw new \RuntimeException('The "' . $path . '" isn\'t a working copy');
+		}
+
+		return $path;
+	}
+
+	/**
+	 * Return working copy path.
+	 *
+	 * @return string
+	 */
+	protected function getPath()
+	{
 		$path = $this->input->getArgument('path');
 
 		if ( !$this->repositoryConnector->isUrl($path) ) {

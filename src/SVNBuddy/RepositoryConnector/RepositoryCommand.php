@@ -12,7 +12,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\Exception\RepositoryConnectorException;
+use aik099\SVNBuddy\Exception\RepositoryCommandException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -165,7 +165,7 @@ class RepositoryCommand
 	 * @param callable|null $callback Callback.
 	 *
 	 * @return string
-	 * @throws RepositoryConnectorException When command execution failed.
+	 * @throws RepositoryCommandException When command execution failed.
 	 */
 	private function _doRun($callback = null)
 	{
@@ -184,10 +184,8 @@ class RepositoryCommand
 		catch ( ProcessFailedException $e ) {
 			$process = $e->getProcess();
 
-			throw new RepositoryConnectorException(
+			throw new RepositoryCommandException(
 				$process->getCommandLine(),
-				$process->getExitCode(),
-				$process->getOutput(),
 				$process->getErrorOutput()
 			);
 		}

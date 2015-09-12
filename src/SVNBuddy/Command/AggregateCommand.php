@@ -96,9 +96,9 @@ TEXT;
 			throw new \RuntimeException('The "' . $sub_command . '" sub-command is unknown.');
 		}
 
-		$path = $this->getWorkingCopyPath();
+		$path = $this->getPath();
 
-		if ( $this->repositoryConnector->isWorkingCopy($path) ) {
+		if ( $this->repositoryConnector->isWorkingCopy($path, $this->input) ) {
 			throw new \RuntimeException('The "' . $path . '" must not be a working copy.');
 		}
 
@@ -167,12 +167,18 @@ TEXT;
 	{
 		$working_copies = array();
 
+		if ( $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE ) {
+			$this->output->writeln(
+				PHP_EOL . '<fg=white;bg=magenta>scanning: ' . $path . '</>'
+			);
+		}
+
 		foreach ( glob($path . '/*', GLOB_ONLYDIR) as $sub_folder ) {
 			if ( file_exists($sub_folder . '/.git') || file_exists($sub_folder . '/CVS') ) {
 				continue;
 			}
 
-			if ( $this->repositoryConnector->isWorkingCopy($sub_folder) ) {
+			if ( $this->repositoryConnector->isWorkingCopy($sub_folder, $this->input) ) {
 				$working_copies[] = $sub_folder;
 			}
 			else {
