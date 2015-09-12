@@ -47,6 +47,10 @@ class Application extends BaseApplication
 		$helper_set->set($this->dic['container_helper']);
 		$helper_set->set($this->dic['date_helper']);
 
+		$container['helper_set'] = function () use ($helper_set) {
+			return $helper_set;
+		};
+
 		set_time_limit(0);
 		ini_set('memory_limit', -1);
 

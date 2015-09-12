@@ -22,6 +22,7 @@ use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
 use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
 use aik099\SVNBuddy\RepositoryConnector\RevisionLogFactory;
 use Pimple\Container;
+use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -55,6 +56,15 @@ class DIContainer extends Container
 			return new ConsoleOutput();
 		};
 
+		$this['io'] = function ($c) {
+			return new InputOutput($c['input'], $c['output'], $c['helper_set']);
+		};
+
+		// Would be replaced with actual HelperSet from extended Application class.
+		$this['helper_set'] = function () {
+			return new HelperSet();
+		};
+
 		$this['process_factory'] = function () {
 			return new ProcessFactory();
 		};
@@ -80,7 +90,7 @@ class DIContainer extends Container
 		};
 
 		$this['repository_connector'] = function ($c) {
-			return new RepositoryConnector($c['config'], $c['process_factory'], $c['output'], $c['cache_manager']);
+			return new RepositoryConnector($c['config'], $c['process_factory'], $c['io'], $c['cache_manager']);
 		};
 
 		$this['container_helper'] = function ($c) {

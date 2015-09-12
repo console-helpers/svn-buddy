@@ -15,13 +15,11 @@ use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class MergeCommand extends AbstractCommand
 {
@@ -162,7 +160,7 @@ TEXT;
 
 		$wc_path = $this->getWorkingCopyPath();
 
-		if ( $this->repositoryConnector->isWorkingCopy(dirname($wc_path), $this->input) ) {
+		if ( $this->repositoryConnector->isWorkingCopy(dirname($wc_path)) ) {
 			throw new \InvalidArgumentException('The "' . $wc_path . '" isn\'t working copy topmost folder.');
 		}
 
@@ -232,7 +230,7 @@ TEXT;
 	 */
 	protected function ensureLatestWorkingCopy($wc_path)
 	{
-		$this->output->write(' * Working Copy Status ... ');
+		$this->io->write(' * Working Copy Status ... ');
 
 		$working_copy_revision = $this->repositoryConnector->getLastRevision($wc_path);
 		$repository_revision = $this->repositoryConnector->getLastRevision(
@@ -240,14 +238,10 @@ TEXT;
 		);
 
 		if ( $repository_revision > $working_copy_revision ) {
-			$this->output->writeln('<error>Out of date</error>');
+			$this->io->writeln('<error>Out of date</error>');
 
-			if ( !$this->input->getOption('force-update') ) {
-				/** @var QuestionHelper $helper */
-				$helper = $this->getHelper('question');
-				$question = new ConfirmationQuestion('<question>Run "svn update" [n]?</question> ', false);
-
-				if ( !$helper->ask($this->input, $this->output, $question) ) {
+			if ( !$this->io->getOption('force-update') ) {
+				if ( !$this->io->askConfirmation('Run "svn update"', false) ) {
 					throw new CommandException('Working copy out of date.');
 				}
 			}
@@ -255,7 +249,7 @@ TEXT;
 			$this->repositoryConnector->getCommand('update', '{' . $wc_path . '}')->runLive();
 		}
 		else {
-			$this->output->writeln('<info>Up to date</info>');
+			$this->io->writeln('<info>Up to date</info>');
 		}
 	}
 
@@ -269,7 +263,7 @@ TEXT;
 	 */
 	protected function getSourceUrl($wc_path)
 	{
-		$source_url = $this->input->getOption('source-url');
+		$source_url = $this->io->getOption('source-url');
 
 		if ( !$source_url ) {
 			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
@@ -300,8 +294,8 @@ TEXT;
 			$this->repositoryConnector->getWorkingCopyUrl($wc_path)
 		);
 
-		$this->output->writeln(' * Merge Source ... <info>' . $relative_source_url . '</info>');
-		$this->output->writeln(' * Merge Target ... <info>' . $relative_target_url . '</info>');
+		$this->io->writeln(' * Merge Source ... <info>' . $relative_source_url . '</info>');
+		$this->io->writeln(' * Merge Target ... <info>' . $relative_target_url . '</info>');
 	}
 
 	/**
@@ -314,14 +308,14 @@ TEXT;
 	 */
 	protected function getUnmergedRevisions($source_url, $wc_path)
 	{
-		$this->output->write(' * Upcoming Merge Status ... ');
+		$this->io->write(' * Upcoming Merge Status ... ');
 		$unmerged_revisions = $this->calculateUnmergedRevisions($source_url, $wc_path);
 
 		if ( $unmerged_revisions ) {
-			$this->output->writeln('<error>' . count($unmerged_revisions) . ' revision(-s) not merged</error>');
+			$this->io->writeln('<error>' . count($unmerged_revisions) . ' revision(-s) not merged</error>');
 		}
 		else {
-			$this->output->writeln('<info>Up to date</info>');
+			$this->io->writeln('<info>Up to date</info>');
 		}
 
 		return $unmerged_revisions;
@@ -379,9 +373,9 @@ TEXT;
 
 		$unmerged_revisions = array_diff($all_revisions, $merged_revisions);
 
-		$this->output->writeln('all_count: ' . count($all_revisions));
-		$this->output->writeln('merged_count: ' . count($merged_revisions));
-		$this->output->writeln('unmerged_count: ' . count($unmerged_revisions));
+		$this->io->writeln('all_count: ' . count($all_revisions));
+		$this->io->writeln('merged_count: ' . count($merged_revisions));
+		$this->io->writeln('unmerged_count: ' . count($unmerged_revisions));
 
 		return $unmerged_revisions;
 	}
@@ -477,19 +471,19 @@ TEXT;
 	 */
 	protected function ensureWorkingCopyWithoutConflicts($source_url, $wc_path, $largest_suggested_revision = null)
 	{
-		$this->output->write(' * Previous Merge Status ... ');
+		$this->io->write(' * Previous Merge Status ... ');
 
 		$conflicts = $this->repositoryConnector->getWorkingCopyConflicts($wc_path);
 
 		if ( !$conflicts ) {
-			$this->output->writeln('<info>Successful</info>');
+			$this->io->writeln('<info>Successful</info>');
 
 			return;
 		}
 
-		$this->output->writeln('<error>' . count($conflicts) . ' conflict(-s)</error>');
+		$this->io->writeln('<error>' . count($conflicts) . ' conflict(-s)</error>');
 
-		$table = new Table($this->output);
+		$table = new Table($this->io->getOutput());
 
 		if ( $largest_suggested_revision ) {
 			$table->setHeaders(array(

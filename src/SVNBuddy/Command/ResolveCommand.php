@@ -12,11 +12,9 @@ namespace aik099\SVNBuddy\Command;
 
 
 use aik099\SVNBuddy\Exception\CommandException;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 
 class ResolveCommand extends AbstractCommand
 {
@@ -88,16 +86,12 @@ TEXT;
 	 */
 	protected function getResolvePath(array $conflicts)
 	{
-		/** @var QuestionHelper $helper */
-		$helper = $this->getHelper('question');
-		$question = new ChoiceQuestion(
+		return $this->io->choose(
 			'Select path for to resolve conflicts for',
 			$conflicts,
-			0
+			0,
+			'Path index %s is invalid.'
 		);
-		$question->setErrorMessage('Path index %s is invalid.');
-
-		return $helper->ask($this->input, $this->output, $question);
 	}
 
 }

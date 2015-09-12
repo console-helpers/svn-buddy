@@ -53,8 +53,17 @@ class RepositoryCommandException extends AbstractException
 
 		foreach ( $lines as $line ) {
 			if ( preg_match('/^svn\: E([\d]+)\: (.*)$/', $line, $regs) ) {
+				// SVN 1.7+.
 				$error_code = $regs[1];
 				$error_message .= PHP_EOL . $regs[2];
+			}
+			elseif ( preg_match('/^svn\: (.*)$/', $line, $regs) ) {
+				// SVN 1.6-.
+				if ( preg_match('/^\'(.*)\' is not a working copy$/', $regs[1]) ) {
+					$error_code = self::SVN_ERR_WC_NOT_WORKING_COPY;
+				}
+
+				$error_message .= PHP_EOL . $regs[1];
 			}
 			else {
 				$error_message .= ' ' . $line;

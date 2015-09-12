@@ -14,11 +14,8 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\Config;
 use aik099\SVNBuddy\Exception\RepositoryCommandException;
+use aik099\SVNBuddy\InputOutput;
 use aik099\SVNBuddy\Process\IProcessFactory;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 /**
  * Executes command on the repository.
@@ -45,11 +42,11 @@ class RepositoryConnector
 	private $_processFactory;
 
 	/**
-	 * Output.
+	 * IO
 	 *
-	 * @var OutputInterface
+	 * @var InputOutput
 	 */
-	private $_output;
+	private $_io;
 
 	/**
 	 * Cache manager.
@@ -77,18 +74,18 @@ class RepositoryConnector
 	 *
 	 * @param Config          $config          Config.
 	 * @param IProcessFactory $process_factory Process factory.
-	 * @param OutputInterface $output          Output.
+	 * @param InputOutput     $io              IO.
 	 * @param CacheManager    $cache_manager   Cache manager.
 	 */
 	public function __construct(
 		Config $config,
 		IProcessFactory $process_factory,
-		OutputInterface $output,
+		InputOutput $io,
 		CacheManager $cache_manager
 	) {
 		$this->_config = $config;
 		$this->_processFactory = $process_factory;
-		$this->_output = $output;
+		$this->_io = $io;
 		$this->_cacheManager = $cache_manager;
 
 		$this->prepareSvnCommand();
@@ -127,7 +124,7 @@ class RepositoryConnector
 
 		$repository_command = new RepositoryCommand(
 			$this->_processFactory->createProcess($final_command, 1200),
-			$this->_output,
+			$this->_io,
 			$this->_cacheManager
 		);
 
@@ -223,10 +220,30 @@ class RepositoryConnector
 	 * @param string $wc_path Working copy path.
 	 *
 	 * @return string
+	 * @throws RepositoryCommandException When repository command failed to execute.
 	 */
 	public function getWorkingCopyUrl($wc_path)
 	{
-		return (string)$this->getSvnInfoEntry($wc_path)->url;
+		try {
+			$wc_url = (string)$this->getSvnInfoEntry($wc_path)->url;
+		}
+		catch ( RepositoryCommandException $e ) {
+			if ( $e->getCode() == RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED ) {
+				$message = explode(PHP_EOL, $e->getMessage());
+
+				$this->_io->writeln(array('', '<error>' . end($message) . '</error>', ''));
+
+				if ( $this->_io->askConfirmation('Run "svn upgrade"', false) ) {
+					$this->getCommand('upgrade', '{' . $wc_path . '}')->runLive();
+
+					return $this->getWorkingCopyUrl($wc_path);
+				}
+			}
+
+			throw $e;
+		}
+
+		return $wc_url;
 	}
 
 	/**
@@ -286,7 +303,7 @@ class RepositoryConnector
 
 		$error_msg = 'The directory "' . $path_or_url . '" not found in "svn info" command results.';
 
-		if ( $this->_output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE ) {
+		if ( $this->_io->isVerbose() ) {
 			$xml = str_replace(array('<info>', '</info>'), array('<root>', '</root>'), $svn_info->asXML());
 			$error_msg .= PHP_EOL . ' XML:' . PHP_EOL . $xml;
 		}
@@ -467,14 +484,13 @@ class RepositoryConnector
 	/**
 	 * Determines if there is a working copy on a given path.
 	 *
-	 * @param string         $path  Path.
-	 * @param InputInterface $input Input.
+	 * @param string $path Path.
 	 *
 	 * @return boolean
 	 * @throws \InvalidArgumentException When path isn't found.
-	 * @throws RepositoryCommandException When unknown repository-related error happened.
+	 * @throws RepositoryCommandException When repository command failed to execute.
 	 */
-	public function isWorkingCopy($path, InputInterface $input)
+	public function isWorkingCopy($path)
 	{
 		if ( $this->isUrl($path) || !file_exists($path) || !is_dir($path) ) {
 			throw new \InvalidArgumentException('Path not found or isn\'t a directory.');
@@ -486,21 +502,6 @@ class RepositoryConnector
 		catch ( RepositoryCommandException $e ) {
 			if ( $e->getCode() == RepositoryCommandException::SVN_ERR_WC_NOT_WORKING_COPY ) {
 				return false;
-			}
-
-			if ( $e->getCode() == RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED ) {
-				$message = explode(PHP_EOL, $e->getMessage());
-
-				$this->_output->writeln(array('', '<error>' . end($message) . '</error>', ''));
-
-				$helper = new QuestionHelper();
-				$question = new ConfirmationQuestion('<question>Run "svn upgrade" [n]?</question> ', false);
-
-				if ( $helper->ask($input, $this->_output, $question) ) {
-					$this->getCommand('upgrade', '{' . $path . '}')->runLive();
-
-					return $this->isWorkingCopy($path, $input);
-				}
 			}
 
 			throw $e;

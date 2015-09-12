@@ -14,11 +14,9 @@ namespace aik099\SVNBuddy\Command;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\InteractiveEditor;
 use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class CommitCommand extends AbstractCommand
 {
@@ -109,11 +107,7 @@ TEXT;
 
 		$output->writeln(array('<fg=white;options=bold>Commit message:</>', $edited_commit_message, ''));
 
-		/** @var QuestionHelper $helper */
-		$helper = $this->getHelper('question');
-		$question = new ConfirmationQuestion('<question>Run "svn commit" [n]?</question> ', false);
-
-		if ( !$helper->ask($this->input, $this->output, $question) ) {
+		if ( !$this->io->askConfirmation('Run "svn commit"', false) ) {
 			throw new CommandException('Commit aborted by user.');
 		}
 

@@ -13,6 +13,7 @@ namespace aik099\SVNBuddy\Command;
 
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\ContainerHelper;
+use aik099\SVNBuddy\InputOutput;
 use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
 use aik099\SVNBuddy\RepositoryConnector\RevisionLog;
 use aik099\SVNBuddy\RepositoryConnector\RevisionLogFactory;
@@ -68,26 +69,21 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	private $_revisionLogFactory;
 
 	/**
-	 * Command input.
+	 * IO
 	 *
-	 * @var InputInterface
+	 * @var InputOutput
 	 */
-	protected $input = null;
-
-	/**
-	 * Command output.
-	 *
-	 * @var OutputInterface
-	 */
-	protected $output = null;
+	protected $io;
 
 	/**
 	 * {@inheritdoc}
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
-		$this->input = $input;
-		$this->output = $output;
+		parent::initialize($input, $output);
+
+		// Don't use IO from container, because it contains outer IO which doesn't reflect sub-command calls.
+		$this->io = new InputOutput($input, $output, $this->getHelperSet());
 
 		$this->prepareDependencies();
 	}
@@ -151,7 +147,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 
 		$input = new ArrayInput($arguments);
 
-		return $cleanup_command->run($input, $this->output);
+		return $cleanup_command->run($input, $this->io->getOutput());
 	}
 
 	/**
@@ -248,7 +244,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		$path = $this->getPath();
 
 		if ( !$this->repositoryConnector->isUrl($path)
-			&& !$this->repositoryConnector->isWorkingCopy($path, $this->input)
+			&& !$this->repositoryConnector->isWorkingCopy($path)
 		) {
 			throw new \RuntimeException('The "' . $path . '" isn\'t a working copy');
 		}
@@ -263,7 +259,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 */
 	protected function getPath()
 	{
-		$path = $this->input->getArgument('path');
+		$path = $this->io->getArgument('path');
 
 		if ( !$this->repositoryConnector->isUrl($path) ) {
 			$path = realpath($path);

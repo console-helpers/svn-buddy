@@ -161,7 +161,7 @@ TEXT;
 	 */
 	protected function printRevisions(array $revisions, $repository_url, $with_details = false)
 	{
-		$table = new Table($this->output);
+		$table = new Table($this->io->getOutput());
 		$table->setHeaders(array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message'));
 
 		/** @var DateHelper $date_helper */

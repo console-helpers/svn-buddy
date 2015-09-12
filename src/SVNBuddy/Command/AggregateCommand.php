@@ -98,7 +98,7 @@ TEXT;
 
 		$path = $this->getPath();
 
-		if ( $this->repositoryConnector->isWorkingCopy($path, $this->input) ) {
+		if ( $this->repositoryConnector->isWorkingCopy($path) ) {
 			throw new \RuntimeException('The "' . $path . '" must not be a working copy.');
 		}
 
@@ -142,16 +142,16 @@ TEXT;
 	 */
 	protected function getWorkingCopyPaths($path)
 	{
-		$this->output->write('Looking for working copies ... ');
+		$this->io->write('Looking for working copies ... ');
 		$working_copies = $this->getWorkingCopiesRecursive($path);
 
 		if ( !$working_copies ) {
-			$this->output->writeln('<error>None found</error>');
+			$this->io->writeln('<error>None found</error>');
 
 			throw new CommandException('No working copies found at "' . $path . '" path');
 		}
 
-		$this->output->writeln('<info>' . count($working_copies) . ' found</info>');
+		$this->io->writeln('<info>' . count($working_copies) . ' found</info>');
 
 		return array_values($working_copies);
 	}
@@ -167,8 +167,8 @@ TEXT;
 	{
 		$working_copies = array();
 
-		if ( $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE ) {
-			$this->output->writeln(
+		if ( $this->io->isVerbose() ) {
+			$this->io->writeln(
 				PHP_EOL . '<fg=white;bg=magenta>scanning: ' . $path . '</>'
 			);
 		}
@@ -178,7 +178,7 @@ TEXT;
 				continue;
 			}
 
-			if ( $this->repositoryConnector->isWorkingCopy($sub_folder, $this->input) ) {
+			if ( $this->repositoryConnector->isWorkingCopy($sub_folder) ) {
 				$working_copies[] = $sub_folder;
 			}
 			else {

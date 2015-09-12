@@ -13,6 +13,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\Exception\RepositoryCommandException;
+use aik099\SVNBuddy\InputOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -28,11 +29,11 @@ class RepositoryCommand
 	private $_process;
 
 	/**
-	 * Output.
+	 * IO.
 	 *
-	 * @var OutputInterface
+	 * @var InputOutput
 	 */
-	private $_output;
+	private $_io;
 
 	/**
 	 * Cache manager.
@@ -65,14 +66,14 @@ class RepositoryCommand
 	/**
 	 * Creates a command instance.
 	 *
-	 * @param Process         $process       Process.
-	 * @param OutputInterface $output        Output.
-	 * @param CacheManager    $cache_manager Cache manager.
+	 * @param Process      $process       Process.
+	 * @param InputOutput  $io            IO.
+	 * @param CacheManager $cache_manager Cache manager.
 	 */
-	public function __construct(Process $process, OutputInterface $output, CacheManager $cache_manager)
+	public function __construct(Process $process, InputOutput $io, CacheManager $cache_manager)
 	{
 		$this->_process = $process;
-		$this->_output = $output;
+		$this->_io = $io;
 		$this->_cacheManager = $cache_manager;
 	}
 
@@ -173,10 +174,10 @@ class RepositoryCommand
 			$start = microtime(true);
 			$this->_process->mustRun($callback);
 
-			if ( $this->_output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE ) {
+			if ( $this->_io->isVerbose() ) {
 				$runtime = sprintf('%01.2f', microtime(true) - $start);
 				$command_line = $this->_process->getCommandLine();
-				$this->_output->writeln(
+				$this->_io->writeln(
 					PHP_EOL . '<fg=white;bg=magenta>[svn, ' . round($runtime, 2) . 's]: ' . $command_line . '</>'
 				);
 			}
@@ -251,19 +252,19 @@ class RepositoryCommand
 	 */
 	private function _createLiveOutputCallback(array $replacements = array())
 	{
-		$output = $this->_output;
+		$io = $this->_io;
 
 		$replace_from = array_keys($replacements);
 		$replace_to = array_values($replacements);
 
-		return function ($type, $buffer) use ($output, $replace_from, $replace_to) {
+		return function ($type, $buffer) use ($io, $replace_from, $replace_to) {
 			$buffer = str_replace($replace_from, $replace_to, $buffer);
 
 			if ( $type === Process::ERR ) {
 				$buffer = '<error>ERR:</error> ' . $buffer;
 			}
 
-			$output->write($buffer);
+			$io->write($buffer);
 		};
 	}
 
