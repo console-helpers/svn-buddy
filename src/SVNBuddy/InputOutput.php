@@ -12,6 +12,7 @@ namespace aik099\SVNBuddy;
 
 
 use Symfony\Component\Console\Helper\HelperSet;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -196,6 +197,18 @@ class InputOutput
 		$choice_question->setErrorMessage($error_message);
 
 		return $helper->ask($this->_input, $this->_output, $choice_question);
+	}
+
+	/**
+	 * Returns progress bar instance.
+	 *
+	 * @param integer $max Maximum steps (0 if unknown).
+	 *
+	 * @return ProgressBar
+	 */
+	public function createProgressBar($max = 0)
+	{
+		return new ProgressBar($this->_output, $max);
 	}
 
 	/**

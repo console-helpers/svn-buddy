@@ -82,7 +82,7 @@ class DIContainer extends Container
 		};
 
 		$this['revision_log_factory'] = function ($c) {
-			return new RevisionLogFactory($c['repository_connector'], $c['cache_manager']);
+			return new RevisionLogFactory($c['repository_connector'], $c['cache_manager'], $c['io']);
 		};
 
 		$this['revision_list_parser'] = function () {

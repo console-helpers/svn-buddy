@@ -12,6 +12,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
+use aik099\SVNBuddy\InputOutput;
 
 class RevisionLog
 {
@@ -45,6 +46,13 @@ class RevisionLog
 	private $_logMessageParser;
 
 	/**
+	 * IO
+	 *
+	 * @var InputOutput
+	 */
+	private $_io;
+
+	/**
 	 * Revisions.
 	 *
 	 * @var array
@@ -72,17 +80,20 @@ class RevisionLog
 	 * @param RepositoryConnector $repository_connector Repository connector.
 	 * @param CacheManager        $cache_manager        Cache.
 	 * @param LogMessageParser    $log_message_parser   Log message parser.
+	 * @param InputOutput         $io                   IO.
 	 */
 	public function __construct(
 		$repository_url,
 		RepositoryConnector $repository_connector,
 		CacheManager $cache_manager,
-		LogMessageParser $log_message_parser
+		LogMessageParser $log_message_parser,
+		InputOutput $io
 	) {
 		$this->_repositoryUrl = $repository_url;
 		$this->_repositoryConnector = $repository_connector;
 		$this->_cacheManager = $cache_manager;
 		$this->_logMessageParser = $log_message_parser;
+		$this->_io = $io;
 
 		$this->_query();
 	}
@@ -162,6 +173,10 @@ class RevisionLog
 		if ( $to_revision > $from_revision ) {
 			$range_start = $from_revision;
 
+			$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 1000));
+			$progress_bar->setFormat(' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%%');
+			$progress_bar->start();
+
 			while ( $range_start < $to_revision ) {
 				$range_end = min($range_start + 1000, $to_revision);
 
@@ -172,7 +187,12 @@ class RevisionLog
 
 				$this->_parseLog($command->run());
 				$range_start = $range_end + 1;
+
+				$progress_bar->advance();
 			}
+
+			$progress_bar->finish();
+			$this->_io->writeln('');
 
 			$this->_cacheManager->setCache($cache_key, array(
 				'revisions' => $this->_revisions,

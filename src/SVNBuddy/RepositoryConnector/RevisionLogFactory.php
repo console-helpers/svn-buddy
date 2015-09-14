@@ -12,6 +12,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
+use aik099\SVNBuddy\InputOutput;
 
 class RevisionLogFactory
 {
@@ -31,15 +32,27 @@ class RevisionLogFactory
 	private $_cacheManager;
 
 	/**
+	 * IO
+	 *
+	 * @var InputOutput
+	 */
+	private $_io;
+
+	/**
 	 * Create revision log.
 	 *
 	 * @param RepositoryConnector $repository_connector Repository connector.
 	 * @param CacheManager        $cache_manager        Cache manager.
+	 * @param InputOutput         $io                   IO.
 	 */
-	public function __construct(RepositoryConnector $repository_connector, CacheManager $cache_manager)
-	{
+	public function __construct(
+		RepositoryConnector $repository_connector,
+		CacheManager $cache_manager,
+		InputOutput $io
+	) {
 		$this->_repositoryConnector = $repository_connector;
 		$this->_cacheManager = $cache_manager;
+		$this->_io = $io;
 	}
 
 	/**
@@ -56,7 +69,8 @@ class RevisionLogFactory
 			$repository_url,
 			$this->_repositoryConnector,
 			$this->_cacheManager,
-			new LogMessageParser($bugtraq_logregex)
+			new LogMessageParser($bugtraq_logregex),
+			$this->_io
 		);
 	}
 

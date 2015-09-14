@@ -101,10 +101,11 @@ class CacheManager
 		}
 
 		$name_hash = substr(hash_hmac('sha1', $parts[1], 'svn-buddy'), 0, 8);
+		$cache_filename = $this->_workingDirectory . DIRECTORY_SEPARATOR . $parts[0] . '_' . $name_hash . '.cache';
 
-		return new FileCacheStorage(
-			$this->_workingDirectory . DIRECTORY_SEPARATOR . $parts[0] . '_' . $name_hash . '.cache'
-		);
+		// echo PHP_EOL . 'Cache File: ' . $cache_filename . PHP_EOL;
+
+		return new FileCacheStorage($cache_filename);
 	}
 
 }
