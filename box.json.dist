@@ -20,7 +20,7 @@
     ],
 	"blacklist": ["vendor/aik099/coding-standard"],
     "main": "bin/svn-buddy",
-    "git-commit": "git-commit",
+    "git-version": "git-version",
     "output": "build/svn-buddy.phar",
     "stub": true
 }

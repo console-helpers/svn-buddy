@@ -19,6 +19,7 @@ use aik099\SVNBuddy\Command\LogCommand;
 use aik099\SVNBuddy\Command\MergeCommand;
 use aik099\SVNBuddy\Command\ResolveCommand;
 use aik099\SVNBuddy\Command\RevertCommand;
+use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
 use Pimple\Container;
 use Symfony\Component\Console\Application as BaseApplication;
 
@@ -41,7 +42,7 @@ class Application extends BaseApplication
 	{
 		$this->dic = $container;
 
-		parent::__construct('SVN-Buddy', '@git-commit@');
+		parent::__construct('SVN-Buddy', '@git-version@');
 
 		$helper_set = $this->getHelperSet();
 		$helper_set->set($this->dic['container_helper']);
