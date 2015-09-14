@@ -58,6 +58,24 @@ class Application extends BaseApplication
 	}
 
 	/**
+	 * Returns the long version of the application.
+	 *
+	 * @return string The long application version
+	 *
+	 * @api
+	 */
+	public function getLongVersion()
+	{
+		$version = parent::getLongVersion();
+
+		/** @var RepositoryConnector $repository_connector */
+		$repository_connector = $this->dic['repository_connector'];
+		$client_version = $repository_connector->getCommand('', '--version --quiet')->run();
+
+		return $version . ' (SVN <comment>v' . trim($client_version) . '</comment>)';
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected function getDefaultCommands()
