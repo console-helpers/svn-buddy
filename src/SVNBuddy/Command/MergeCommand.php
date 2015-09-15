@@ -232,6 +232,13 @@ TEXT;
 	{
 		$this->io->write(' * Working Copy Status ... ');
 
+		if ( $this->repositoryConnector->isMixedRevisionWorkingCopy($wc_path) ) {
+			$this->io->writeln('<error>Mixed revisions</error>');
+			$this->updateWorkingCopy($wc_path);
+
+			return;
+		}
+
 		$working_copy_revision = $this->repositoryConnector->getLastRevision($wc_path);
 		$repository_revision = $this->repositoryConnector->getLastRevision(
 			$this->repositoryConnector->getWorkingCopyUrl($wc_path)
@@ -239,18 +246,33 @@ TEXT;
 
 		if ( $repository_revision > $working_copy_revision ) {
 			$this->io->writeln('<error>Out of date</error>');
+			$this->updateWorkingCopy($wc_path);
 
-			if ( !$this->io->getOption('force-update') ) {
-				if ( !$this->io->askConfirmation('Run "svn update"', false) ) {
-					throw new CommandException('Working copy out of date.');
-				}
+			return;
+		}
+
+		$this->io->writeln('<info>Up to date</info>');
+	}
+
+	/**
+	 * Updates working copy.
+	 *
+	 * @param string $wc_path Working copy path.
+	 *
+	 * @return void
+	 * @throws CommandException When unable to perform an update.
+	 */
+	protected function updateWorkingCopy($wc_path)
+	{
+		if ( !$this->io->getOption('force-update') ) {
+			if ( !$this->io->askConfirmation('Run "svn update"', false) ) {
+				throw new CommandException('Working copy out of date.');
 			}
+		}
 
-			$this->repositoryConnector->getCommand('update', '{' . $wc_path . '}')->runLive();
-		}
-		else {
-			$this->io->writeln('<info>Up to date</info>');
-		}
+		$this->repositoryConnector->getCommand('update', '{' . $wc_path . '}')->runLive(array(
+			$wc_path => '.',
+		));
 	}
 
 	/**

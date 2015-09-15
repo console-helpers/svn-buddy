@@ -482,6 +482,36 @@ class RepositoryConnector
 	}
 
 	/**
+	 * Determines if working copy contains mixed revisions.
+	 *
+	 * @param string $wc_path Working copy path.
+	 *
+	 * @return array
+	 */
+	public function isMixedRevisionWorkingCopy($wc_path)
+	{
+		$revisions = array();
+		$status = $this->getCommand('status', '--xml --verbose {' . $wc_path . '}')->run();
+
+		foreach ( $status->target as $target ) {
+			if ( (string)$target['path'] !== $wc_path ) {
+				continue;
+			}
+
+			foreach ( $target as $entry ) {
+				$item_status = (string)$entry->{'wc-status'}['item'];
+
+				if ( $item_status !== 'unversioned' ) {
+					$revision = (int)$entry->{'wc-status'}['revision'];
+					$revisions[$revision] = true;
+				}
+			}
+		}
+
+		return count($revisions) > 1;
+	}
+
+	/**
 	 * Determines if there is a working copy on a given path.
 	 *
 	 * @param string $path Path.
