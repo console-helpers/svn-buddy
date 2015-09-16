@@ -89,9 +89,13 @@ TEXT;
 			throw new CommandException('Conflicts detected. Please resolve them before committing.');
 		}
 
-		$commit_message = $this->buildCommitMessage($wc_path);
-
 		$working_copy_status = $this->repositoryConnector->getCompactWorkingCopyStatus($wc_path, false);
+
+		if ( !$working_copy_status ) {
+			throw new CommandException('Nothing to commit.');
+		}
+
+		$commit_message = $this->buildCommitMessage($wc_path);
 		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $working_copy_status;
 
 		$edited_commit_message = $this->_editor
