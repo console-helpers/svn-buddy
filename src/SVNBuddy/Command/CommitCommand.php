@@ -91,7 +91,7 @@ TEXT;
 
 		$commit_message = $this->buildCommitMessage($wc_path);
 
-		$working_copy_status = $this->repositoryConnector->getCompactWorkingCopyStatus($wc_path);
+		$working_copy_status = $this->repositoryConnector->getCompactWorkingCopyStatus($wc_path, false);
 		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $working_copy_status;
 
 		$edited_commit_message = $this->_editor

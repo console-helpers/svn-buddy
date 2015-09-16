@@ -27,6 +27,8 @@ class RepositoryConnector
 
 	const LAST_REVISION_CACHE = '25 minutes';
 
+	const STATUS_UNVERSIONED = 'unversioned';
+
 	/**
 	 * Reference to configuration.
 	 *
@@ -368,15 +370,20 @@ class RepositoryConnector
 	/**
 	 * Returns compact working copy status.
 	 *
-	 * @param string $wc_path Working copy path.
+	 * @param string  $wc_path          Working copy path.
+	 * @param boolean $with_unversioned With unversioned.
 	 *
 	 * @return string
 	 */
-	public function getCompactWorkingCopyStatus($wc_path)
+	public function getCompactWorkingCopyStatus($wc_path, $with_unversioned = true)
 	{
 		$ret = array();
 
 		foreach ( $this->getWorkingCopyStatus($wc_path) as $path => $status ) {
+			if ( !$with_unversioned && $status['item'] == self::STATUS_UNVERSIONED ) {
+				continue;
+			}
+
 			$line = $this->getShortItemStatus($status['item']) . $this->getShortPropertiesStatus($status['props']);
 			$line .= '   ' . $path;
 
@@ -501,7 +508,7 @@ class RepositoryConnector
 			foreach ( $target as $entry ) {
 				$item_status = (string)$entry->{'wc-status'}['item'];
 
-				if ( $item_status !== 'unversioned' ) {
+				if ( $item_status !== self::STATUS_UNVERSIONED ) {
 					$revision = (int)$entry->{'wc-status'}['revision'];
 					$revisions[$revision] = true;
 				}
