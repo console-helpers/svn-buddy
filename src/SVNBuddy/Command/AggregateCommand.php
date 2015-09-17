@@ -79,10 +79,12 @@ TEXT;
 		$ret = array();
 
 		foreach ( $this->getApplication()->all() as $command ) {
-			$ret[] = $command->getName();
+			if ( $command instanceof IAggregatorAwareCommand ) {
+				$ret[] = $command->getName();
+			}
 		}
 
-		return array_diff($ret, array($this->getName(), '_completion'));
+		return $ret;
 	}
 
 	/**
@@ -93,7 +95,9 @@ TEXT;
 		$sub_command = $input->getArgument('sub-command');
 
 		if ( !in_array($sub_command, $this->getSubCommands()) ) {
-			throw new \RuntimeException('The "' . $sub_command . '" sub-command is unknown.');
+			throw new \RuntimeException(
+				'The "' . $sub_command . '" sub-command is unknown or doesn\'t support aggregation.'
+			);
 		}
 
 		$path = $this->getPath();

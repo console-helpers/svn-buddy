@@ -22,7 +22,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LogCommand extends AbstractCommand
+class LogCommand extends AbstractCommand implements IAggregatorAwareCommand
 {
 
 	/**

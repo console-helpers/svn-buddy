@@ -21,7 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MergeCommand extends AbstractCommand
+class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand
 {
 
 	const REVISION_ALL = 'all';
