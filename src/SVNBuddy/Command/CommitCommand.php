@@ -52,6 +52,7 @@ TEXT;
 				'Sends changes to repository'
 			)
 			->setHelp($description)
+			->setAliases(array('ci'))
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,
