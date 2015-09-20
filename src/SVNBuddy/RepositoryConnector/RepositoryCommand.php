@@ -13,8 +13,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\Exception\RepositoryCommandException;
-use aik099\SVNBuddy\InputOutput;
-use Symfony\Component\Console\Output\OutputInterface;
+use aik099\SVNBuddy\ConsoleIO;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -29,9 +28,9 @@ class RepositoryCommand
 	private $_process;
 
 	/**
-	 * IO.
+	 * Console IO.
 	 *
-	 * @var InputOutput
+	 * @var ConsoleIO
 	 */
 	private $_io;
 
@@ -67,10 +66,10 @@ class RepositoryCommand
 	 * Creates a command instance.
 	 *
 	 * @param Process      $process       Process.
-	 * @param InputOutput  $io            IO.
+	 * @param ConsoleIO    $io            Console IO.
 	 * @param CacheManager $cache_manager Cache manager.
 	 */
-	public function __construct(Process $process, InputOutput $io, CacheManager $cache_manager)
+	public function __construct(Process $process, ConsoleIO $io, CacheManager $cache_manager)
 	{
 		$this->_process = $process;
 		$this->_io = $io;

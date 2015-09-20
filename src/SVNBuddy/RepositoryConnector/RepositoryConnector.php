@@ -14,7 +14,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\Config;
 use aik099\SVNBuddy\Exception\RepositoryCommandException;
-use aik099\SVNBuddy\InputOutput;
+use aik099\SVNBuddy\ConsoleIO;
 use aik099\SVNBuddy\Process\IProcessFactory;
 
 /**
@@ -44,9 +44,9 @@ class RepositoryConnector
 	private $_processFactory;
 
 	/**
-	 * IO
+	 * Console IO.
 	 *
-	 * @var InputOutput
+	 * @var ConsoleIO
 	 */
 	private $_io;
 
@@ -76,13 +76,13 @@ class RepositoryConnector
 	 *
 	 * @param Config          $config          Config.
 	 * @param IProcessFactory $process_factory Process factory.
-	 * @param InputOutput     $io              IO.
+	 * @param ConsoleIO       $io              Console IO.
 	 * @param CacheManager    $cache_manager   Cache manager.
 	 */
 	public function __construct(
 		Config $config,
 		IProcessFactory $process_factory,
-		InputOutput $io,
+		ConsoleIO $io,
 		CacheManager $cache_manager
 	) {
 		$this->_config = $config;

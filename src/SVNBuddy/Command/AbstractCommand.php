@@ -13,7 +13,7 @@ namespace aik099\SVNBuddy\Command;
 
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\ContainerHelper;
-use aik099\SVNBuddy\InputOutput;
+use aik099\SVNBuddy\ConsoleIO;
 use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
 use aik099\SVNBuddy\RepositoryConnector\RevisionLog;
 use aik099\SVNBuddy\RepositoryConnector\RevisionLogFactory;
@@ -69,9 +69,9 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	private $_revisionLogFactory;
 
 	/**
-	 * IO
+	 * Console IO.
 	 *
-	 * @var InputOutput
+	 * @var ConsoleIO
 	 */
 	protected $io;
 
@@ -83,7 +83,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		parent::initialize($input, $output);
 
 		// Don't use IO from container, because it contains outer IO which doesn't reflect sub-command calls.
-		$this->io = new InputOutput($input, $output, $this->getHelperSet());
+		$this->io = new ConsoleIO($input, $output, $this->getHelperSet());
 
 		$this->prepareDependencies();
 	}

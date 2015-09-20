@@ -57,7 +57,7 @@ class DIContainer extends Container
 		};
 
 		$this['io'] = function ($c) {
-			return new InputOutput($c['input'], $c['output'], $c['helper_set']);
+			return new ConsoleIO($c['input'], $c['output'], $c['helper_set']);
 		};
 
 		// Would be replaced with actual HelperSet from extended Application class.

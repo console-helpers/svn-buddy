@@ -12,7 +12,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\InputOutput;
+use aik099\SVNBuddy\ConsoleIO;
 
 class RevisionLog
 {
@@ -46,9 +46,9 @@ class RevisionLog
 	private $_logMessageParser;
 
 	/**
-	 * IO
+	 * Console IO.
 	 *
-	 * @var InputOutput
+	 * @var ConsoleIO
 	 */
 	private $_io;
 
@@ -80,14 +80,14 @@ class RevisionLog
 	 * @param RepositoryConnector $repository_connector Repository connector.
 	 * @param CacheManager        $cache_manager        Cache.
 	 * @param LogMessageParser    $log_message_parser   Log message parser.
-	 * @param InputOutput         $io                   IO.
+	 * @param ConsoleIO           $io                   Console IO.
 	 */
 	public function __construct(
 		$repository_url,
 		RepositoryConnector $repository_connector,
 		CacheManager $cache_manager,
 		LogMessageParser $log_message_parser,
-		InputOutput $io
+		ConsoleIO $io
 	) {
 		$this->_repositoryUrl = $repository_url;
 		$this->_repositoryConnector = $repository_connector;
