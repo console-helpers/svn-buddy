@@ -185,7 +185,7 @@ class InteractiveEditor
 	{
 		$output = '';
 		$exit_code = 0;
-		exec('which ' . escapeshellarg($file), $output, $exit_code);
+		exec('which ' . escapeshellarg($file) . ' 2>&1', $output, $exit_code);
 
 		return $exit_code == 0;
 	}
