@@ -123,10 +123,6 @@ TEXT;
 				'path' => $wc_path,
 			);
 
-			if ( $sub_command === 'merge' ) {
-				$sub_command_arguments['--force-update'] = true;
-			}
-
 			$this->runOtherCommand($sub_command, $sub_command_arguments);
 
 			$output->writeln(

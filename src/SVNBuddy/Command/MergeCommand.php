@@ -105,12 +105,6 @@ TEXT;
 				InputOption::VALUE_NONE,
 				'Shows path affected in each revision'
 			)
-			->addOption(
-				'force-update',
-				null,
-				InputOption::VALUE_NONE,
-				'Run "svn update" command without confirmation'
-			)
 			/*->addOption(
 				'rollback',
 				null,
@@ -264,15 +258,7 @@ TEXT;
 	 */
 	protected function updateWorkingCopy($wc_path)
 	{
-		if ( !$this->io->getOption('force-update') ) {
-			if ( !$this->io->askConfirmation('Run "svn update"', false) ) {
-				throw new CommandException('Working copy out of date.');
-			}
-		}
-
-		$this->repositoryConnector->getCommand('update', '{' . $wc_path . '}')->runLive(array(
-			$wc_path => '.',
-		));
+		$this->runOtherCommand('update', array('path' => $wc_path));
 	}
 
 	/**
