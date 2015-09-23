@@ -450,6 +450,8 @@ TEXT;
 	 */
 	protected function performMerge($source_url, $wc_path, array $revisions)
 	{
+		sort($revisions, SORT_NUMERIC);
+
 		foreach ( $revisions as $revision ) {
 			$command = $this->repositoryConnector->getCommand(
 				'merge',
