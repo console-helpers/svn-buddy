@@ -19,6 +19,7 @@ use aik099\SVNBuddy\Command\LogCommand;
 use aik099\SVNBuddy\Command\MergeCommand;
 use aik099\SVNBuddy\Command\ResolveCommand;
 use aik099\SVNBuddy\Command\RevertCommand;
+use aik099\SVNBuddy\Command\UpdateCommand;
 use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
 use Pimple\Container;
 use Symfony\Component\Console\Application as BaseApplication;
@@ -88,6 +89,7 @@ class Application extends BaseApplication
 		$default_commands[] = new CleanupCommand();
 		$default_commands[] = new RevertCommand();
 		$default_commands[] = new LogCommand();
+		$default_commands[] = new UpdateCommand();
 		$default_commands[] = new CommitCommand();
 		$default_commands[] = new AggregateCommand();
 		$default_commands[] = new CompletionCommand();
