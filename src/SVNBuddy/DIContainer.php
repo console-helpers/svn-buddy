@@ -45,7 +45,7 @@ class DIContainer extends Container
 		};
 
 		$this['config'] = function ($c) {
-			return Config::createFromFile($c['configFile'], $c['working_directory']);
+			return new Config(str_replace('{base}', $c['working_directory'], $c['configFile']));
 		};
 
 		$this['input'] = function () {

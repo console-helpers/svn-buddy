@@ -17,12 +17,38 @@ use Mockery as m;
 class ConfigTest extends WorkingDirectoryAwareTestCase
 {
 
+	/**
+	 * Config file path.
+	 *
+	 * @var string
+	 */
+	protected $configPath;
+
+	protected function setUp()
+	{
+		parent::setUp();
+
+		$this->configPath = $this->getWorkingDirectory() . '/test_config.json';
+	}
+
 	public function testGet()
 	{
-		$config = new Config(array('setting1' => 'value1'), '');
+		$settings = array(
+			'setting1' => 'top-value1',
+			'group1' => array(
+				'setting1' => 'sub-value1',
+				'sub-group1' => array(
+					'setting1' => 'sub-value2',
+				),
+			),
+		);
 
-		$this->assertEquals('value1', $config->get('setting1'));
-		$this->assertFalse($config->get('non-existing-setting'));
+		$config = $this->createConfig($settings);
+
+		$this->assertEquals('top-value1', $config->get('setting1'));
+		$this->assertEquals('sub-value1', $config->get('group1.setting1'));
+		$this->assertEquals(array('setting1' => 'sub-value2'), $config->get('group1.sub-group1'));
+		$this->assertNull($config->get('non-existing-setting'));
 		$this->assertEquals('user default', $config->get('non-existing-setting', 'user default'));
 	}
 
@@ -31,7 +57,7 @@ class ConfigTest extends WorkingDirectoryAwareTestCase
 	 */
 	public function testConfigDefaults($default_name, $default_value)
 	{
-		$config = new Config(array('setting1' => 'value1'), '');
+		$config = new Config($this->configPath);
 
 		$this->assertSame($default_value, $config->get($default_name));
 	}
@@ -39,22 +65,30 @@ class ConfigTest extends WorkingDirectoryAwareTestCase
 	public function configDefaultsDataProvider()
 	{
 		return array(
-			'setting:svn-username' => array('svn-username', ''),
-			'setting:svn-password' => array('svn-password', ''),
+			'setting:repository-connector.username' => array('repository-connector.username', ''),
+			'setting:repository-connector.password' => array('repository-connector.password', ''),
 		);
 	}
 
 	public function testConfigFileCreation()
 	{
-		$home_folder = $this->getWorkingDirectory();
-		$config_path = $home_folder . '/test_config.json';
-		$this->assertFileNotExists($config_path);
+		$this->assertFileNotExists($this->configPath, 'config file doesn\'t exist initially');
+		new Config($this->configPath);
+		$this->assertFileExists($this->configPath, 'config with defaults is automatically created');
+	}
 
-		Config::createFromFile('{base}/test_config.json', $home_folder);
-		$this->assertFileExists($config_path);
+	/**
+	 * Creates config instance with given settings.
+	 *
+	 * @param array $settings Settings.
+	 *
+	 * @return Config
+	 */
+	protected function createConfig(array $settings)
+	{
+		file_put_contents($this->configPath, json_encode($settings));
 
-		// If config file will be created again with existing config we'll get a warning here.
-		Config::createFromFile('{base}/test_config.json', $home_folder);
+		return new Config($this->configPath);
 	}
 
 }

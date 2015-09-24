@@ -15,13 +15,22 @@ class Config
 {
 
 	/**
+	 * Filename, where config is stored.
+	 *
+	 * @var string
+	 */
+	protected $filename;
+
+	/**
 	 * Default settings.
 	 *
 	 * @var array
 	 */
 	protected static $defaultSettings = array(
-		'svn-username' => '',
-		'svn-password' => '',
+		'repository-connector' => array(
+			'username' => '',
+			'password' => '',
+		),
 	);
 
 	/**
@@ -34,49 +43,67 @@ class Config
 	/**
 	 * Creates config instance.
 	 *
-	 * @param array  $settings          Settings.
-	 * @param string $working_directory Working directory.
+	 * @param string $filename Filename.
 	 */
-	public function __construct(array $settings, $working_directory)
+	public function __construct($filename)
 	{
-		foreach ( array_merge(static::$defaultSettings, $settings) as $name => $value ) {
-			$this->settings[$name] = str_replace('{base}', $working_directory, $value);
-		}
-	}
-
-	/**
-	 * Creates config class from given config file.
-	 *
-	 * @param string $filename          Config file path.
-	 * @param string $working_directory Working directory.
-	 *
-	 * @return static
-	 */
-	public static function createFromFile($filename, $working_directory)
-	{
-		$filename = str_replace('{base}', $working_directory, $filename);
-
-		if ( !file_exists($filename) ) {
-			$options = version_compare(PHP_VERSION, '5.4.0', '>=') ? JSON_PRETTY_PRINT : 0;
-			file_put_contents($filename, json_encode(static::$defaultSettings, $options));
-		}
-
-		$settings = json_decode(file_get_contents($filename), true);
-
-		return new static($settings, $working_directory);
+		$this->filename = $filename;
+		$this->load();
 	}
 
 	/**
 	 * Returns config value.
 	 *
-	 * @param string  $name    Config setting name.
-	 * @param boolean $default Default value.
+	 * @param string $name    Config setting name.
+	 * @param mixed  $default Default value.
 	 *
 	 * @return mixed
 	 */
-	public function get($name, $default = false)
+	public function get($name, $default = null)
 	{
-		return isset($this->settings[$name]) ? $this->settings[$name] : $default;
+		if ( strpos($name, '.') !== false ) {
+			$scope_settings = $this->settings;
+
+			foreach ( explode('.', $name) as $name_part ) {
+				if ( !array_key_exists($name_part, $scope_settings) ) {
+					return $default;
+				}
+
+				$scope_settings = $scope_settings[$name_part];
+			}
+
+			return $scope_settings;
+		}
+
+		return array_key_exists($name, $this->settings) ? $this->settings[$name] : $default;
+	}
+
+	/**
+	 * Loads config contents from disk.
+	 *
+	 * @return void
+	 */
+	protected function load()
+	{
+		if ( file_exists($this->filename) ) {
+			$this->settings = json_decode(file_get_contents($this->filename), true);
+
+			return;
+		}
+
+		$this->settings = self::$defaultSettings;
+		$this->store();
+	}
+
+	/**
+	 * Stores config contents to the disk.
+	 *
+	 * @return void
+	 */
+	protected function store()
+	{
+		$options = defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 0;
+		file_put_contents($this->filename, json_encode($this->settings, $options));
 	}
 
 }
