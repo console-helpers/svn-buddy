@@ -61,21 +61,52 @@ class Config
 	 */
 	public function get($name, $default = null)
 	{
-		if ( strpos($name, '.') !== false ) {
-			$scope_settings = $this->settings;
-
-			foreach ( explode('.', $name) as $name_part ) {
-				if ( !array_key_exists($name_part, $scope_settings) ) {
-					return $default;
-				}
-
-				$scope_settings = $scope_settings[$name_part];
-			}
-
-			return $scope_settings;
+		if ( strpos($name, '.') === false ) {
+			return array_key_exists($name, $this->settings) ? $this->settings[$name] : $default;
 		}
 
-		return array_key_exists($name, $this->settings) ? $this->settings[$name] : $default;
+		$scope_settings = $this->settings;
+
+		foreach ( explode('.', $name) as $name_part ) {
+			if ( !array_key_exists($name_part, $scope_settings) ) {
+				return $default;
+			}
+
+			$scope_settings = $scope_settings[$name_part];
+		}
+
+		return $scope_settings;
+	}
+
+	/**
+	 * Sets config value.
+	 *
+	 * @param string $name  Config setting name.
+	 * @param mixed  $value Config setting value.
+	 *
+	 * @return void
+	 */
+	public function set($name, $value)
+	{
+		if ( strpos($name, '.') === false ) {
+			$this->settings[$name] = $value;
+			$this->store();
+
+			return;
+		}
+
+		$scope_settings =& $this->settings;
+
+		foreach ( explode('.', $name) as $name_part ) {
+			if ( !array_key_exists($name_part, $scope_settings) ) {
+				$scope_settings[$name_part] = array();
+			}
+
+			$scope_settings =& $scope_settings[$name_part];
+		}
+
+		$scope_settings = $value;
+		$this->store();
 	}
 
 	/**

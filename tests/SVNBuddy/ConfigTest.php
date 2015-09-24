@@ -52,6 +52,19 @@ class ConfigTest extends WorkingDirectoryAwareTestCase
 		$this->assertEquals('user default', $config->get('non-existing-setting', 'user default'));
 	}
 
+	public function testSet()
+	{
+		$config = $this->createConfig(array());
+		$config->set('setting1', 'value1');
+		$config->set('top.sub1.sub11', 'one');
+		$config->set('top.sub1.sub12', 'two');
+
+		$this->assertEquals('value1', $config->get('setting1'));
+		$this->assertEquals('one', $config->get('top.sub1.sub11'));
+		$this->assertEquals('two', $config->get('top.sub1.sub12'));
+		$this->assertEquals(array('sub11' => 'one', 'sub12' => 'two'), $config->get('top.sub1'));
+	}
+
 	/**
 	 * @dataProvider configDefaultsDataProvider
 	 */
