@@ -11,14 +11,16 @@
 namespace Tests\aik099\SVNBuddy\RepositoryConnector;
 
 
+use aik099\SVNBuddy\Cache\CacheManager;
+use aik099\SVNBuddy\ConsoleIO;
 use aik099\SVNBuddy\Exception\RepositoryCommandException;
 use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
 use Mockery as m;
 use Mockery\MockInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Tests\aik099\SVNBuddy\WorkingDirectoryTest;
 
-class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
+class RepositoryConnectorTest extends WorkingDirectoryTest
 {
 
 	/**
@@ -43,11 +45,18 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 	private $_process;
 
 	/**
-	 * Logger interface.
+	 * Console IO.
 	 *
-	 * @var OutputInterface
+	 * @var ConsoleIO
 	 */
-	private $_output;
+	private $_io;
+
+	/**
+	 * Cache manager.
+	 *
+	 * @var CacheManager
+	 */
+	private $_cacheManager;
 
 	/**
 	 * Repository connector.
@@ -63,9 +72,12 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 	 */
 	protected function setUp()
 	{
+		parent::setUp();
+
 		$this->_config = m::mock('aik099\\SVNBuddy\\Config');
 		$this->_processFactory = m::mock('aik099\\SVNBuddy\\Process\\IProcessFactory');
-		$this->_output = m::mock('Symfony\\Component\\Console\\Output\\OutputInterface');
+		$this->_io = m::mock('aik099\\SVNBuddy\\ConsoleIO');
+		$this->_cacheManager = new CacheManager($this->getWorkingDirectory());
 		$this->_process = m::mock('Symfony\\Component\\Process\\Process');
 
 		// Called from "__destruct".
@@ -225,7 +237,7 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 		if ( $exit_code === 0 ) {
 			$this->_process->shouldReceive('getOutput')->once()->andReturn($output);
 
-			/*$this->_output->shouldReceive('write')
+			/*$this->_io->shouldReceive('write')
 				->with(hm::matchesPattern('#svn command \([\d.]+ ms\): ' . preg_quote($command) . '#'))
 				->once();*/
 		}
@@ -248,16 +260,14 @@ class RepositoryConnectorTest extends \PHPUnit_Framework_TestCase
 	 */
 	private function _createRepositoryConnector($svn_username, $svn_password, $is_verbose = false)
 	{
-		$this->_config->shouldReceive('get')->with('svn-username')->once()->andReturn($svn_username);
-		$this->_config->shouldReceive('get')->with('svn-password')->once()->andReturn($svn_password);
+		$this->_config->shouldReceive('get')->with('repository-connector.username')->once()->andReturn($svn_username);
+		$this->_config->shouldReceive('get')->with('repository-connector.password')->once()->andReturn($svn_password);
 
 		if ( isset($is_verbose) ) {
-			$this->_output->shouldReceive('getVerbosity')->once()->andReturn(
-				$is_verbose ? OutputInterface::VERBOSITY_VERBOSE : OutputInterface::VERBOSITY_NORMAL
-			);
+			$this->_io->shouldReceive('isVerbose')->once()->andReturn($is_verbose);
 		}
 
-		return new RepositoryConnector($this->_config, $this->_processFactory, $this->_output);
+		return new RepositoryConnector($this->_config, $this->_processFactory, $this->_io, $this->_cacheManager);
 	}
 
 }

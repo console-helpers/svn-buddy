@@ -100,8 +100,8 @@ class RepositoryConnector
 	 */
 	protected function prepareSvnCommand()
 	{
-		$username = $this->_config->get('svn-username');
-		$password = $this->_config->get('svn-password');
+		$username = $this->_config->get('repository-connector.username');
+		$password = $this->_config->get('repository-connector.password');
 
 		if ( $username ) {
 			$this->_svnCommand .= ' --username ' . $username;
