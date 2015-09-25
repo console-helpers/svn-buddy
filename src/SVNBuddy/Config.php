@@ -27,10 +27,8 @@ class Config
 	 * @var array
 	 */
 	protected static $defaultSettings = array(
-		'repository-connector' => array(
-			'username' => '',
-			'password' => '',
-		),
+		'repository-connector.username' => '',
+		'repository-connector.password' => '',
 	);
 
 	/**
@@ -61,21 +59,19 @@ class Config
 	 */
 	public function get($name, $default = null)
 	{
-		if ( strpos($name, '.') === false ) {
-			return array_key_exists($name, $this->settings) ? $this->settings[$name] : $default;
-		}
+		if ( substr($name, -1) == '.' ) {
+			$ret = array();
 
-		$scope_settings = $this->settings;
-
-		foreach ( explode('.', $name) as $name_part ) {
-			if ( !array_key_exists($name_part, $scope_settings) ) {
-				return $default;
+			foreach ( $this->settings as $setting_name => $setting_value ) {
+				if ( preg_match('/^' . preg_quote($name, '/') . '/', $setting_name) ) {
+					$ret[$setting_name] = $setting_value;
+				}
 			}
 
-			$scope_settings = $scope_settings[$name_part];
+			return $ret;
 		}
 
-		return $scope_settings;
+		return array_key_exists($name, $this->settings) ? $this->settings[$name] : $default;
 	}
 
 	/**
@@ -88,28 +84,11 @@ class Config
 	 */
 	public function set($name, $value)
 	{
-		if ( strpos($name, '.') === false ) {
-			$this->settings[$name] = $value;
-			$this->store();
-
-			return;
-		}
-
-		$scope_settings =& $this->settings;
-
-		foreach ( explode('.', $name) as $name_part ) {
-			if ( !array_key_exists($name_part, $scope_settings) ) {
-				$scope_settings[$name_part] = array();
-			}
-
-			$scope_settings =& $scope_settings[$name_part];
-		}
-
 		if ( $value === null ) {
-			eval("unset(\$this->settings['" . str_replace('.', "']['", $name) . "']);");
+			unset($this->settings[$name]);
 		}
 		else {
-			$scope_settings = $value;
+			$this->settings[$name] = $value;
 		}
 
 		$this->store();

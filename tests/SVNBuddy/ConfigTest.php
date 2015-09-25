@@ -35,19 +35,15 @@ class ConfigTest extends WorkingDirectoryAwareTestCase
 	{
 		$settings = array(
 			'setting1' => 'top-value1',
-			'group1' => array(
-				'setting1' => 'sub-value1',
-				'sub-group1' => array(
-					'setting1' => 'sub-value2',
-				),
-			),
+			'group1.setting1' => 'sub-value1',
+			'group1.sub-group1.setting1' => 'sub-value2',
 		);
 
 		$config = $this->createConfig($settings);
 
 		$this->assertEquals('top-value1', $config->get('setting1'));
 		$this->assertEquals('sub-value1', $config->get('group1.setting1'));
-		$this->assertEquals(array('setting1' => 'sub-value2'), $config->get('group1.sub-group1'));
+		$this->assertEquals(array('group1.sub-group1.setting1' => 'sub-value2'), $config->get('group1.sub-group1.'));
 		$this->assertNull($config->get('non-existing-setting'));
 		$this->assertEquals('user default', $config->get('non-existing-setting', 'user default'));
 	}
@@ -62,18 +58,14 @@ class ConfigTest extends WorkingDirectoryAwareTestCase
 		$this->assertEquals('value1', $config->get('setting1'));
 		$this->assertEquals('one', $config->get('top.sub1.sub11'));
 		$this->assertEquals('two', $config->get('top.sub1.sub12'));
-		$this->assertEquals(array('sub11' => 'one', 'sub12' => 'two'), $config->get('top.sub1'));
+		$this->assertEquals(array('top.sub1.sub11' => 'one', 'top.sub1.sub12' => 'two'), $config->get('top.sub1.'));
 	}
 
 	public function testDelete()
 	{
 		$config = $this->createConfig(array(
-			'top' => array(
-				'sub1' => array(
-					'sub11' => 'one',
-					'sub12' => 'two',
-				),
-			),
+			'top.sub1.sub11' => 'one',
+			'top.sub1.sub12' => 'two',
 		));
 
 		$this->assertEquals('one', $config->get('top.sub1.sub11'));
