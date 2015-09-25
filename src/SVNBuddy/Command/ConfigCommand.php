@@ -119,7 +119,7 @@ TEXT;
 		$ret = parent::completeOptionValues($optionName, $context);
 
 		if ( in_array($optionName, array('show', 'edit', 'delete')) ) {
-			return $this->getSettings();
+			return array_keys($this->getSettings());
 		}
 
 		return $ret;
@@ -213,42 +213,46 @@ TEXT;
 	{
 		if ( isset($setting_name) ) {
 			$this->validateSetting($setting_name);
-			$setting_value = $this->_config->get($this->settingPrefix . $setting_name);
+		}
 
-			if ( $setting_value === null ) {
-				$this->io->writeln('Setting <info>' . $setting_name . '</info> is not set.');
+		$extra_title = isset($setting_name) ? ' (filtered)' : '';
 
-				return;
-			}
-			else {
-				$settings = array(
-					$setting_name => $setting_value,
-				);
-			}
+		if ( $this->io->getOption('global') ) {
+			$this->io->writeln('Showing global settings' . $extra_title . ':');
 		}
 		else {
-			$settings = $this->_config->get($this->settingPrefix);
+			$this->io->writeln(
+				'Showing settings' . $extra_title . ' for <info>' . $this->getWorkingCopyPath() . '</info> path:'
+			);
 		}
 
-		if ( !$settings ) {
-			$this->io->writeln('No settings found.');
-
-			return;
-		}
-
+		$settings = $this->_config->get($this->settingPrefix);
 		$table = new Table($this->io->getOutput());
 
 		$table->setHeaders(array(
 			'Setting Name',
 			'Setting Value',
+			'User Override',
 		));
 
-		foreach ( $settings as $name => $value ) {
-			$name = preg_replace('/^' . preg_quote($this->settingPrefix, '/') . '/', '', $name);
+		foreach ( $this->getSettings() as $name => $default ) {
+			if ( isset($setting_name) && $name !== $setting_name ) {
+				continue;
+			}
+
+			if ( array_key_exists($this->settingPrefix . $name, $settings) ) {
+				$user_override = true;
+				$value = $settings[$this->settingPrefix . $name];
+			}
+			else {
+				$user_override = false;
+				$value = $default;
+			}
 
 			$table->addRow(array(
-				$name,
-				$value,
+				preg_replace('/^' . preg_quote($this->settingPrefix, '/') . '/', '', $name),
+				var_export($value, true),
+				$user_override ? 'Yes' : 'No',
 			));
 		}
 
@@ -265,13 +269,13 @@ TEXT;
 	 */
 	protected function validateSetting($name)
 	{
-		if ( !in_array($name, $this->getSettings()) ) {
+		if ( !array_key_exists($name, $this->getSettings()) ) {
 			throw new \InvalidArgumentException('The "' . $name . '" setting is unknown.');
 		}
 	}
 
 	/**
-	 * Returns possible settings.
+	 * Returns possible settings with their defaults.
 	 *
 	 * @return array
 	 */
@@ -281,13 +285,13 @@ TEXT;
 
 		foreach ( $this->getApplication()->all() as $command ) {
 			if ( $command instanceof IConfigAwareCommand ) {
-				foreach ( array_keys($command->getConfigSettings()) as $setting_name ) {
-					$ret[$setting_name] = true;
+				foreach ( $command->getConfigSettings() as $setting_name => $setting_default ) {
+					$ret[$setting_name] = $setting_default;
 				}
 			}
 		}
 
-		return array_keys($ret);
+		return $ret;
 	}
 
 }
