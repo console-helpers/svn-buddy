@@ -91,6 +91,12 @@ TEXT;
 				'Shows path affected in each revision'
 			)
 			->addOption(
+				'merge-oracle',
+				null,
+				InputOption::VALUE_NONE,
+				'Detects commits with possible merge conflicts'
+			)
+			->addOption(
 				'limit',
 				null,
 				InputOption::VALUE_REQUIRED,
