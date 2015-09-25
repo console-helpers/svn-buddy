@@ -105,7 +105,13 @@ class Config
 			$scope_settings =& $scope_settings[$name_part];
 		}
 
-		$scope_settings = $value;
+		if ( $value === null ) {
+			eval("unset(\$this->settings['" . str_replace('.', "']['", $name) . "']);");
+		}
+		else {
+			$scope_settings = $value;
+		}
+
 		$this->store();
 	}
 

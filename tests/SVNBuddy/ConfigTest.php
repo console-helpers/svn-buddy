@@ -65,6 +65,22 @@ class ConfigTest extends WorkingDirectoryAwareTestCase
 		$this->assertEquals(array('sub11' => 'one', 'sub12' => 'two'), $config->get('top.sub1'));
 	}
 
+	public function testDelete()
+	{
+		$config = $this->createConfig(array(
+			'top' => array(
+				'sub1' => array(
+					'sub11' => 'one',
+					'sub12' => 'two',
+				),
+			),
+		));
+
+		$this->assertEquals('one', $config->get('top.sub1.sub11'));
+		$config->set('top.sub1.sub11', null);
+		$this->assertEquals('default-value', $config->get('top.sub1.sub11', 'default-value'));
+	}
+
 	/**
 	 * @dataProvider configDefaultsDataProvider
 	 */
