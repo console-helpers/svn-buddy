@@ -275,6 +275,10 @@ TEXT;
 	{
 		$source_url = $this->io->getOption('source-url');
 
+		if ( $source_url === null ) {
+			$source_url = $this->getSetting(self::SETTING_MERGE_SOURCE_URL);
+		}
+
 		if ( !$source_url ) {
 			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
 			$source_url = $this->_mergeSourceDetector->detect($wc_url);
