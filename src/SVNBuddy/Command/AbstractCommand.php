@@ -12,6 +12,7 @@ namespace aik099\SVNBuddy\Command;
 
 
 use aik099\SVNBuddy\Config\ConfigEditor;
+use aik099\SVNBuddy\Config\ConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\ContainerHelper;
 use aik099\SVNBuddy\ConsoleIO;
@@ -175,19 +176,17 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 */
 	protected function getSetting($name)
 	{
-		$this->_validateSetting($name);
+		$config_setting = $this->_getConfigSetting($name);
 
-		$wc_name = $this->getSettingPrefix(false) . $name;
-		$wc_value = $this->_configEditor->get($wc_name);
+		$config_setting->setScope($this->getConfigScope(false));
 
-		if ( $wc_value !== null ) {
-			return $wc_value;
+		if ( $config_setting->hasValue() ) {
+			return $config_setting->getValue();
 		}
 
-		$global_name = $this->getSettingPrefix(true) . $name;
-		$config_settings = $this->getConfigSettings();
+		$config_setting->setScope($this->getConfigScope(true));
 
-		return $this->_configEditor->get($global_name, $config_settings[$name]);
+		return $config_setting->getValue();
 	}
 
 	/**
@@ -200,10 +199,9 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 */
 	protected function setSetting($name, $value)
 	{
-		$this->_validateSetting($name);
-
-		$wc_name = $this->getSettingPrefix(false) . $name;
-		$this->_configEditor->set($wc_name, $value);
+		$config_setting = $this->_getConfigSetting($name);
+		$config_setting->setScope($this->getConfigScope(false));
+		$config_setting->setValue($value);
 	}
 
 	/**
@@ -211,19 +209,23 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 *
 	 * @param string $name Name.
 	 *
-	 * @return void
+	 * @return ConfigSetting
 	 */
-	private function _validateSetting($name)
+	private function _getConfigSetting($name)
 	{
 		if ( !($this instanceof IConfigAwareCommand) ) {
 			throw new \LogicException('Command does not have any settings.');
 		}
 
-		$config_settings = $this->getConfigSettings();
+		foreach ( $this->getConfigSettings() as $config_setting ) {
+			if ( $config_setting->getName() === $name ) {
+				$config_setting->setEditor($this->_configEditor);
 
-		if ( !array_key_exists($name, $config_settings) ) {
-			throw new \LogicException('Command can only access own settings.');
+				return $config_setting;
+			}
 		}
+
+		throw new \LogicException('Command can only access own settings.');
 	}
 
 	/**
@@ -233,7 +235,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 *
 	 * @return string
 	 */
-	protected function getSettingPrefix($is_global)
+	protected function getConfigScope($is_global)
 	{
 		if ( $is_global ) {
 			return 'global-settings.';

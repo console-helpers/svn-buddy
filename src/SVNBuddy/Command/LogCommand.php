@@ -11,6 +11,7 @@
 namespace aik099\SVNBuddy\Command;
 
 
+use aik099\SVNBuddy\Config\ConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\DateHelper;
 use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
@@ -306,12 +307,12 @@ TEXT;
 	/**
 	 * Returns list of config settings.
 	 *
-	 * @return array
+	 * @return ConfigSetting[]
 	 */
 	public function getConfigSettings()
 	{
 		return array(
-			self::SETTING_LOG_LIMIT => 10,
+			new ConfigSetting(self::SETTING_LOG_LIMIT, ConfigSetting::TYPE_INTEGER, 10),
 		);
 	}
 

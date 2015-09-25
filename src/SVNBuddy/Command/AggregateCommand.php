@@ -11,6 +11,7 @@
 namespace aik099\SVNBuddy\Command;
 
 
+use aik099\SVNBuddy\Config\ConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
@@ -194,12 +195,12 @@ TEXT;
 	/**
 	 * Returns list of config settings.
 	 *
-	 * @return array
+	 * @return ConfigSetting[]
 	 */
 	public function getConfigSettings()
 	{
 		return array(
-			self::SETTING_AGGREGATE_IGNORE => '',
+			new ConfigSetting(self::SETTING_AGGREGATE_IGNORE, ConfigSetting::TYPE_ARRAY, ''),
 		);
 	}
 

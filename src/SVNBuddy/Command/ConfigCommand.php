@@ -12,6 +12,7 @@ namespace aik099\SVNBuddy\Command;
 
 
 use aik099\SVNBuddy\Config\ConfigEditor;
+use aik099\SVNBuddy\Config\ConfigSetting;
 use aik099\SVNBuddy\InteractiveEditor;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
@@ -38,11 +39,11 @@ class ConfigCommand extends AbstractCommand implements IAggregatorAwareCommand
 	private $_configEditor;
 
 	/**
-	 * Prefix to prepend before all setting names.
+	 * Config settings.
 	 *
-	 * @var string
+	 * @var ConfigSetting[]
 	 */
-	protected $settingPrefix;
+	protected $configSettings = array();
 
 	/**
 	 * {@inheritdoc}
@@ -104,6 +105,15 @@ TEXT;
 
 		$this->_editor = $container['editor'];
 		$this->_configEditor = $container['config_editor'];
+
+		if ( isset($this->io) ) {
+			$scope = $this->getConfigScope($this->io->getOption('global'));
+		}
+		else {
+			$scope = '';
+		}
+
+		$this->configSettings = $this->getConfigSettings($scope);
 	}
 
 	/**
@@ -119,7 +129,7 @@ TEXT;
 		$ret = parent::completeOptionValues($optionName, $context);
 
 		if ( in_array($optionName, array('show', 'edit', 'delete')) ) {
-			return array_keys($this->getSettings());
+			return array_keys($this->configSettings);
 		}
 
 		return $ret;
@@ -130,8 +140,6 @@ TEXT;
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$this->settingPrefix = $this->getSettingPrefix($this->io->getOption('global'));
-
 		if ( $this->processShow() || $this->processEdit() || $this->processDelete() ) {
 			return;
 		}
@@ -170,13 +178,12 @@ TEXT;
 			return false;
 		}
 
-		$this->validateSetting($setting_name);
-		$value = $this->_configEditor->get($this->settingPrefix . $setting_name, '');
+		$config_setting = $this->getConfigSetting($setting_name);
 		$edited_value = $this->_editor
-			->setDocumentName('config_option_value')
-			->setContent($value)
+			->setDocumentName('config_setting_value')
+			->setContent($config_setting->getValue())
 			->launch();
-		$this->_configEditor->set($this->settingPrefix . $setting_name, trim($edited_value));
+		$config_setting->setValue($edited_value);
 		$this->io->writeln('Setting <info>' . $setting_name . '</info> was edited.');
 
 		return true;
@@ -195,8 +202,8 @@ TEXT;
 			return false;
 		}
 
-		$this->validateSetting($setting_name);
-		$this->_configEditor->set($this->settingPrefix . $setting_name, null);
+		$config_setting = $this->getConfigSetting($setting_name);
+		$config_setting->setValue(null);
 		$this->io->writeln('Setting <info>' . $setting_name . '</info> was deleted.');
 
 		return true;
@@ -212,7 +219,7 @@ TEXT;
 	protected function listSettings($setting_name = null)
 	{
 		if ( isset($setting_name) ) {
-			$this->validateSetting($setting_name);
+			$config_setting = $this->getConfigSetting($setting_name);
 		}
 
 		$extra_title = isset($setting_name) ? ' (filtered)' : '';
@@ -226,7 +233,6 @@ TEXT;
 			);
 		}
 
-		$settings = $this->_configEditor->get($this->settingPrefix);
 		$table = new Table($this->io->getOutput());
 
 		$table->setHeaders(array(
@@ -235,24 +241,15 @@ TEXT;
 			'User Override',
 		));
 
-		foreach ( $this->getSettings() as $name => $default ) {
+		foreach ( $this->configSettings as $name => $config_setting ) {
 			if ( isset($setting_name) && $name !== $setting_name ) {
 				continue;
 			}
 
-			if ( array_key_exists($this->settingPrefix . $name, $settings) ) {
-				$user_override = true;
-				$value = $settings[$this->settingPrefix . $name];
-			}
-			else {
-				$user_override = false;
-				$value = $default;
-			}
-
 			$table->addRow(array(
-				preg_replace('/^' . preg_quote($this->settingPrefix, '/') . '/', '', $name),
-				var_export($value, true),
-				$user_override ? 'Yes' : 'No',
+				$name,
+				var_export($config_setting->getValue(), true),
+				$config_setting->hasValue() ? 'Yes' : 'No',
 			));
 		}
 
@@ -264,34 +261,44 @@ TEXT;
 	 *
 	 * @param string $name Setting name.
 	 *
-	 * @return void
+	 * @return ConfigSetting
 	 * @throws \InvalidArgumentException When non-existing setting given.
 	 */
-	protected function validateSetting($name)
+	protected function getConfigSetting($name)
 	{
-		if ( !array_key_exists($name, $this->getSettings()) ) {
+		if ( !array_key_exists($name, $this->configSettings) ) {
 			throw new \InvalidArgumentException('The "' . $name . '" setting is unknown.');
 		}
+
+		return $this->configSettings[$name];
 	}
 
 	/**
 	 * Returns possible settings with their defaults.
 	 *
-	 * @return array
+	 * @param string $scope Scope.
+	 *
+	 * @return ConfigSetting[]
 	 */
-	protected function getSettings()
+	protected function getConfigSettings($scope)
 	{
-		$ret = array();
+		/** @var ConfigSetting[] $config_settings */
+		$config_settings = array();
 
 		foreach ( $this->getApplication()->all() as $command ) {
 			if ( $command instanceof IConfigAwareCommand ) {
-				foreach ( $command->getConfigSettings() as $setting_name => $setting_default ) {
-					$ret[$setting_name] = $setting_default;
+				foreach ( $command->getConfigSettings() as $config_setting ) {
+					$config_settings[$config_setting->getName()] = $config_setting;
 				}
 			}
 		}
 
-		return $ret;
+		foreach ( $config_settings as $config_setting ) {
+			$config_setting->setScope($scope);
+			$config_setting->setEditor($this->_configEditor);
+		}
+
+		return $config_settings;
 	}
 
 }
