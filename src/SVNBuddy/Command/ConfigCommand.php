@@ -178,7 +178,7 @@ TEXT;
 			->setDocumentName('config_option_value')
 			->setContent($value)
 			->launch();
-		$this->_config->set($this->settingPrefix . $setting_name, $edited_value);
+		$this->_config->set($this->settingPrefix . $setting_name, trim($edited_value));
 		$this->io->writeln('Setting <info>' . $setting_name . '</info> was edited.');
 
 		return true;
@@ -229,7 +229,7 @@ TEXT;
 			}
 		}
 		else {
-			$settings = $this->_config->get(rtrim($this->settingPrefix, '.'));
+			$settings = $this->_config->get($this->settingPrefix);
 		}
 
 		if ( !$settings ) {
@@ -246,6 +246,8 @@ TEXT;
 		));
 
 		foreach ( $settings as $name => $value ) {
+			$name = preg_replace('/^' . preg_quote($this->settingPrefix, '/') . '/', '', $name);
+
 			$table->addRow(array(
 				$name,
 				$value,
@@ -268,7 +270,10 @@ TEXT;
 			$this->settingPrefix = 'global-settings.';
 		}
 		else {
-			$this->settingPrefix = 'path-settings.' . $this->repositoryConnector->getWorkingCopyUrl($wc_path) . '.';
+			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+			$wc_hash = substr(hash_hmac('sha1', $wc_url, 'svn-buddy'), 0, 8);
+
+			$this->settingPrefix = 'path-settings.' . $wc_hash . '.';
 		}
 	}
 
