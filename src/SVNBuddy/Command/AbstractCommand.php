@@ -11,7 +11,7 @@
 namespace aik099\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config;
+use aik099\SVNBuddy\Config\ConfigEditor;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\ContainerHelper;
 use aik099\SVNBuddy\ConsoleIO;
@@ -77,11 +77,11 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	private $_revisionLogFactory;
 
 	/**
-	 * Config.
+	 * Config editor.
 	 *
-	 * @var Config
+	 * @var ConfigEditor
 	 */
-	private $_config;
+	private $_configEditor;
 
 	/**
 	 * Console IO.
@@ -145,7 +145,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		$this->repositoryConnector = $container['repository_connector'];
 		$this->_revisionLogFactory = $container['revision_log_factory'];
 		$this->workingDirectory = $container['working_directory'];
-		$this->_config = $container['config'];
+		$this->_configEditor = $container['config_editor'];
 	}
 
 	/**
@@ -178,7 +178,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		$this->_validateSetting($name);
 
 		$wc_name = $this->getSettingPrefix(false) . $name;
-		$wc_value = $this->_config->get($wc_name);
+		$wc_value = $this->_configEditor->get($wc_name);
 
 		if ( $wc_value !== null ) {
 			return $wc_value;
@@ -187,7 +187,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		$global_name = $this->getSettingPrefix(true) . $name;
 		$config_settings = $this->getConfigSettings();
 
-		return $this->_config->get($global_name, $config_settings[$name]);
+		return $this->_configEditor->get($global_name, $config_settings[$name]);
 	}
 
 	/**
@@ -203,7 +203,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		$this->_validateSetting($name);
 
 		$wc_name = $this->getSettingPrefix(false) . $name;
-		$this->_config->set($wc_name, $value);
+		$this->_configEditor->set($wc_name, $value);
 	}
 
 	/**

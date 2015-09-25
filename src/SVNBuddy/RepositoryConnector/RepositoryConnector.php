@@ -12,7 +12,7 @@ namespace aik099\SVNBuddy\RepositoryConnector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\Config;
+use aik099\SVNBuddy\Config\ConfigEditor;
 use aik099\SVNBuddy\Exception\RepositoryCommandException;
 use aik099\SVNBuddy\ConsoleIO;
 use aik099\SVNBuddy\Process\IProcessFactory;
@@ -32,9 +32,9 @@ class RepositoryConnector
 	/**
 	 * Reference to configuration.
 	 *
-	 * @var Config
+	 * @var ConfigEditor
 	 */
-	private $_config;
+	private $_configEditor;
 
 	/**
 	 * Process factory.
@@ -74,18 +74,18 @@ class RepositoryConnector
 	/**
 	 * Creates repository connector.
 	 *
-	 * @param Config          $config          Config.
+	 * @param ConfigEditor    $config_editor   ConfigEditor.
 	 * @param IProcessFactory $process_factory Process factory.
 	 * @param ConsoleIO       $io              Console IO.
 	 * @param CacheManager    $cache_manager   Cache manager.
 	 */
 	public function __construct(
-		Config $config,
+		ConfigEditor $config_editor,
 		IProcessFactory $process_factory,
 		ConsoleIO $io,
 		CacheManager $cache_manager
 	) {
-		$this->_config = $config;
+		$this->_configEditor = $config_editor;
 		$this->_processFactory = $process_factory;
 		$this->_io = $io;
 		$this->_cacheManager = $cache_manager;
@@ -100,8 +100,8 @@ class RepositoryConnector
 	 */
 	protected function prepareSvnCommand()
 	{
-		$username = $this->_config->get('repository-connector.username');
-		$password = $this->_config->get('repository-connector.password');
+		$username = $this->_configEditor->get('repository-connector.username');
+		$password = $this->_configEditor->get('repository-connector.password');
 
 		if ( $username ) {
 			$this->_svnCommand .= ' --username ' . $username;

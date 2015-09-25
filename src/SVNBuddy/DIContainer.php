@@ -12,6 +12,7 @@ namespace aik099\SVNBuddy;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
+use aik099\SVNBuddy\Config\ConfigEditor;
 use aik099\SVNBuddy\Helper\ContainerHelper;
 use aik099\SVNBuddy\Helper\DateHelper;
 use aik099\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
@@ -44,8 +45,8 @@ class DIContainer extends Container
 			return $working_directory->get();
 		};
 
-		$this['config'] = function ($c) {
-			return new Config(str_replace('{base}', $c['working_directory'], $c['configFile']));
+		$this['config_editor'] = function ($c) {
+			return new ConfigEditor(str_replace('{base}', $c['working_directory'], $c['configFile']));
 		};
 
 		$this['input'] = function () {
@@ -90,7 +91,7 @@ class DIContainer extends Container
 		};
 
 		$this['repository_connector'] = function ($c) {
-			return new RepositoryConnector($c['config'], $c['process_factory'], $c['io'], $c['cache_manager']);
+			return new RepositoryConnector($c['config_editor'], $c['process_factory'], $c['io'], $c['cache_manager']);
 		};
 
 		$this['container_helper'] = function ($c) {

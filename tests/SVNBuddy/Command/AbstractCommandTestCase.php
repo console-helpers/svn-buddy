@@ -13,10 +13,8 @@ namespace Tests\aik099\SVNBuddy\Command;
 
 use aik099\SVNBuddy\Application;
 use aik099\SVNBuddy\Command\AbstractCommand;
-use aik099\SVNBuddy\Config;
 use aik099\SVNBuddy\DIContainer;
 use Mockery as m;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Tester\CommandTester;
 use Tests\aik099\SVNBuddy\WorkingDirectoryAwareTestCase;
 

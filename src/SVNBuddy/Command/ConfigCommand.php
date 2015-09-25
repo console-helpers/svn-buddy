@@ -11,7 +11,7 @@
 namespace aik099\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config;
+use aik099\SVNBuddy\Config\ConfigEditor;
 use aik099\SVNBuddy\InteractiveEditor;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
@@ -31,16 +31,16 @@ class ConfigCommand extends AbstractCommand implements IAggregatorAwareCommand
 	private $_editor;
 
 	/**
-	 * Config.
+	 * Config editor.
 	 *
-	 * @var Config
+	 * @var ConfigEditor
 	 */
-	private $_config;
+	private $_configEditor;
 
 	/**
 	 * Prefix to prepend before all setting names.
 	 *
-	 * @var
+	 * @var string
 	 */
 	protected $settingPrefix;
 
@@ -103,7 +103,7 @@ TEXT;
 		$container = $this->getContainer();
 
 		$this->_editor = $container['editor'];
-		$this->_config = $container['config'];
+		$this->_configEditor = $container['config_editor'];
 	}
 
 	/**
@@ -171,12 +171,12 @@ TEXT;
 		}
 
 		$this->validateSetting($setting_name);
-		$value = $this->_config->get($this->settingPrefix . $setting_name, '');
+		$value = $this->_configEditor->get($this->settingPrefix . $setting_name, '');
 		$edited_value = $this->_editor
 			->setDocumentName('config_option_value')
 			->setContent($value)
 			->launch();
-		$this->_config->set($this->settingPrefix . $setting_name, trim($edited_value));
+		$this->_configEditor->set($this->settingPrefix . $setting_name, trim($edited_value));
 		$this->io->writeln('Setting <info>' . $setting_name . '</info> was edited.');
 
 		return true;
@@ -196,7 +196,7 @@ TEXT;
 		}
 
 		$this->validateSetting($setting_name);
-		$this->_config->set($this->settingPrefix . $setting_name, null);
+		$this->_configEditor->set($this->settingPrefix . $setting_name, null);
 		$this->io->writeln('Setting <info>' . $setting_name . '</info> was deleted.');
 
 		return true;
@@ -226,7 +226,7 @@ TEXT;
 			);
 		}
 
-		$settings = $this->_config->get($this->settingPrefix);
+		$settings = $this->_configEditor->get($this->settingPrefix);
 		$table = new Table($this->io->getOutput());
 
 		$table->setHeaders(array(

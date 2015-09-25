@@ -24,11 +24,11 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 {
 
 	/**
-	 * Config.
+	 * Config editor.
 	 *
 	 * @var MockInterface
 	 */
-	private $_config;
+	private $_configEditor;
 
 	/**
 	 * Process factory.
@@ -74,7 +74,7 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	{
 		parent::setUp();
 
-		$this->_config = m::mock('aik099\\SVNBuddy\\Config');
+		$this->_configEditor = m::mock('aik099\\SVNBuddy\\ConfigEditor');
 		$this->_processFactory = m::mock('aik099\\SVNBuddy\\Process\\IProcessFactory');
 		$this->_io = m::mock('aik099\\SVNBuddy\\ConsoleIO');
 		$this->_cacheManager = new CacheManager($this->getWorkingDirectory());
@@ -260,14 +260,20 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	 */
 	private function _createRepositoryConnector($svn_username, $svn_password, $is_verbose = false)
 	{
-		$this->_config->shouldReceive('get')->with('repository-connector.username')->once()->andReturn($svn_username);
-		$this->_config->shouldReceive('get')->with('repository-connector.password')->once()->andReturn($svn_password);
+		$this->_configEditor->shouldReceive('get')
+			->with('repository-connector.username')
+			->once()
+			->andReturn($svn_username);
+		$this->_configEditor->shouldReceive('get')
+			->with('repository-connector.password')
+			->once()
+			->andReturn($svn_password);
 
 		if ( isset($is_verbose) ) {
 			$this->_io->shouldReceive('isVerbose')->once()->andReturn($is_verbose);
 		}
 
-		return new RepositoryConnector($this->_config, $this->_processFactory, $this->_io, $this->_cacheManager);
+		return new RepositoryConnector($this->_configEditor, $this->_processFactory, $this->_io, $this->_cacheManager);
 	}
 
 }

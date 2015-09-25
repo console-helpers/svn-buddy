@@ -8,10 +8,10 @@
  * @link      https://github.com/aik099/svn-buddy
  */
 
-namespace aik099\SVNBuddy;
+namespace aik099\SVNBuddy\Config;
 
 
-class Config
+class ConfigEditor
 {
 
 	/**
