@@ -561,7 +561,7 @@ TEXT;
 	public function getConfigSettings()
 	{
 		return array(
-			self::SETTING_MERGE_SOURCE_URL,
+			self::SETTING_MERGE_SOURCE_URL => '',
 		);
 	}
 

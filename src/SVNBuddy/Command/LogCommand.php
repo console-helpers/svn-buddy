@@ -296,7 +296,7 @@ TEXT;
 	public function getConfigSettings()
 	{
 		return array(
-			self::SETTING_LOG_LIMIT,
+			self::SETTING_LOG_LIMIT => 10,
 		);
 	}
 

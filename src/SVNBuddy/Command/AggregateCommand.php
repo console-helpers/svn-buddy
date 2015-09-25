@@ -199,7 +199,7 @@ TEXT;
 	public function getConfigSettings()
 	{
 		return array(
-			self::SETTING_AGGREGATE_IGNORE,
+			self::SETTING_AGGREGATE_IGNORE => '',
 		);
 	}
 

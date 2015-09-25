@@ -281,11 +281,13 @@ TEXT;
 
 		foreach ( $this->getApplication()->all() as $command ) {
 			if ( $command instanceof IConfigAwareCommand ) {
-				$ret = array_merge($ret, $command->getConfigSettings());
+				foreach ( array_keys($command->getConfigSettings()) as $setting_name ) {
+					$ret[$setting_name] = true;
+				}
 			}
 		}
 
-		return $ret;
+		return array_keys($ret);
 	}
 
 }

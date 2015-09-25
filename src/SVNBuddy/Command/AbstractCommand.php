@@ -169,12 +169,11 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	/**
 	 * Returns command setting value.
 	 *
-	 * @param string $name    Name.
-	 * @param mixed  $default Default value.
+	 * @param string $name Name.
 	 *
 	 * @return mixed
 	 */
-	protected function getSetting($name, $default = null)
+	protected function getSetting($name)
 	{
 		$this->_validateSetting($name);
 
@@ -186,8 +185,9 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		}
 
 		$global_name = $this->getSettingPrefix(true) . $name;
+		$config_settings = $this->getConfigSettings();
 
-		return $this->_config->get($global_name, $default);
+		return $this->_config->get($global_name, $config_settings[$name]);
 	}
 
 	/**
@@ -219,7 +219,9 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 			throw new \LogicException('Command does not have any settings.');
 		}
 
-		if ( !in_array($name, $this->getConfigSettings()) ) {
+		$config_settings = $this->getConfigSettings();
+
+		if ( !array_key_exists($name, $config_settings) ) {
 			throw new \LogicException('Command can only access own settings.');
 		}
 	}
