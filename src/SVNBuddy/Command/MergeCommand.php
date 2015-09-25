@@ -134,7 +134,7 @@ TEXT;
 		$ret = parent::completeOptionValues($optionName, $context);
 
 		if ( $optionName === 'revisions' ) {
-			$ret[] = 'all';
+			return array('all');
 		}
 
 		return $ret;
