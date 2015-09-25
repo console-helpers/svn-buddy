@@ -48,7 +48,7 @@ TEXT;
 	{
 		$wc_path = $this->getWorkingCopyPath();
 
-		$output->writeln('Reverting local changes in working copy ... ');
+		$this->io->writeln('Reverting local changes in working copy ... ');
 		$command = $this->repositoryConnector->getCommand(
 			'revert',
 			'--depth infinity {' . $wc_path . '}'
@@ -56,7 +56,7 @@ TEXT;
 		$command->runLive(array(
 			$wc_path => '.',
 		));
-		$output->writeln('<info>Done</info>');
+		$this->io->writeln('<info>Done</info>');
 	}
 
 }

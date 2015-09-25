@@ -60,7 +60,7 @@ TEXT;
 			throw new CommandException('Interactive tree conflict resolution is not supported');
 		}
 
-		$output->writeln('Resolving conflicts for: ' . $resolve_path);
+		$this->io->writeln('Resolving conflicts for: ' . $resolve_path);
 
 		/*
 		 * 1. copy conflicted file to temp dir

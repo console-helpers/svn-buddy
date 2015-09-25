@@ -145,8 +145,8 @@ TEXT;
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$bugs = $this->getList($input->getOption('bugs'));
-		$revisions = $this->getList($input->getOption('revisions'));
+		$bugs = $this->getList($this->io->getOption('bugs'));
+		$revisions = $this->getList($this->io->getOption('revisions'));
 
 		if ( $bugs && $revisions ) {
 			throw new \RuntimeException('The "--bugs" and "--revisions" options are mutually exclusive.');
@@ -197,7 +197,7 @@ TEXT;
 			$this->runOtherCommand('log', array(
 				'path' => $source_url,
 				'--revisions' => implode(',', $this->_unmergedRevisions),
-				'--details' => $input->getOption('details'),
+				'--details' => $this->io->getOption('details'),
 			));
 		}
 	}

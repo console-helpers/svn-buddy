@@ -103,8 +103,8 @@ TEXT;
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$bugs = $this->getList($input->getOption('bugs'));
-		$revisions = $this->getList($input->getOption('revisions'));
+		$bugs = $this->getList($this->io->getOption('bugs'));
+		$revisions = $this->getList($this->io->getOption('revisions'));
 
 		if ( $bugs && $revisions ) {
 			throw new \RuntimeException('The "--bugs" and "--revisions" options are mutually exclusive.');
@@ -136,17 +136,17 @@ TEXT;
 		}
 		else {
 			// Apply limit only, when no explicit bugs/revisions are set.
-			$revisions_by_path_with_limit = array_slice($revisions_by_path, 0, $input->getOption('limit'));
+			$revisions_by_path_with_limit = array_slice($revisions_by_path, 0, $this->io->getOption('limit'));
 		}
 
-		$this->printRevisions($revisions_by_path_with_limit, $wc_url, (boolean)$input->getOption('details'));
+		$this->printRevisions($revisions_by_path_with_limit, $wc_url, (boolean)$this->io->getOption('details'));
 
 		$revisions_by_path_count = count($revisions_by_path);
 		$revisions_by_path_with_limit_count = count($revisions_by_path_with_limit);
 
 		if ( $revisions_by_path_count > $revisions_by_path_with_limit_count ) {
 			$revisions_left = $revisions_by_path_count - $revisions_by_path_with_limit_count;
-			$output->writeln($revisions_left . ' revision(-s) not shown');
+			$this->io->writeln($revisions_left . ' revision(-s) not shown');
 		}
 	}
 

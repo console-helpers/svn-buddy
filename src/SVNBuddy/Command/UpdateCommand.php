@@ -49,12 +49,12 @@ TEXT;
 	{
 		$wc_path = $this->getWorkingCopyPath();
 
-		$output->writeln('Updating working copy ... ');
+		$this->io->writeln('Updating working copy ... ');
 		$command = $this->repositoryConnector->getCommand('update', '{' . $wc_path . '}');
 		$command->runLive(array(
 			$wc_path => '.',
 		));
-		$output->writeln('<info>Done</info>');
+		$this->io->writeln('<info>Done</info>');
 	}
 
 }

@@ -92,7 +92,7 @@ TEXT;
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$sub_command = $input->getArgument('sub-command');
+		$sub_command = $this->io->getArgument('sub-command');
 
 		if ( !in_array($sub_command, $this->getSubCommands()) ) {
 			throw new \RuntimeException(
@@ -113,7 +113,7 @@ TEXT;
 		$percent_increment = round(100 / count($working_copies), 2);
 
 		foreach ( $working_copies as $index => $wc_path ) {
-			$output->writeln(array(
+			$this->io->writeln(array(
 				'',
 				'Executing <info>' . $sub_command . '</info> command on <info>' . $wc_path . '</info> path',
 				'',
@@ -125,7 +125,7 @@ TEXT;
 
 			$this->runOtherCommand($sub_command, $sub_command_arguments);
 
-			$output->writeln(
+			$this->io->writeln(
 				'<info>' . ($index + 1) . ' of ' . $working_copy_count . ' sub-commands completed.</info>'
 			);
 			$percent_done += $percent_increment;

@@ -110,7 +110,7 @@ TEXT;
 			$edited_commit_message = trim(substr($edited_commit_message, 0, $stop_line_pos));
 		}
 
-		$output->writeln(array('<fg=white;options=bold>Commit message:</>', $edited_commit_message, ''));
+		$this->io->writeln(array('<fg=white;options=bold>Commit message:</>', $edited_commit_message, ''));
 
 		if ( !$this->io->askConfirmation('Run "svn commit"', false) ) {
 			throw new CommandException('Commit aborted by user.');
@@ -122,7 +122,7 @@ TEXT;
 		$this->repositoryConnector->getCommand('commit', '{' . $wc_path . '} -F {' . $tmp_file . '}')->runLive();
 		unlink($tmp_file);
 
-		$output->writeln('<info>Done</info>');
+		$this->io->writeln('<info>Done</info>');
 	}
 
 	/**

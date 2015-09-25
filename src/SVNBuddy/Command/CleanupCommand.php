@@ -50,12 +50,12 @@ TEXT;
 	{
 		$wc_path = $this->getWorkingCopyPath();
 
-		$output->writeln('Cleaning up working copy ... ');
+		$this->io->writeln('Cleaning up working copy ... ');
 		$command = $this->repositoryConnector->getCommand('cleanup', '{' . $wc_path . '}');
 		$command->runLive(array(
 			$wc_path => '.',
 		));
-		$output->writeln('<info>Done</info>');
+		$this->io->writeln('<info>Done</info>');
 	}
 
 }
