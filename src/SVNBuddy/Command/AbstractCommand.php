@@ -11,6 +11,7 @@
 namespace aik099\SVNBuddy\Command;
 
 
+use aik099\SVNBuddy\Config;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\ContainerHelper;
 use aik099\SVNBuddy\ConsoleIO;
@@ -76,6 +77,13 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	private $_revisionLogFactory;
 
 	/**
+	 * Config.
+	 *
+	 * @var Config
+	 */
+	private $_config;
+
+	/**
 	 * Console IO.
 	 *
 	 * @var ConsoleIO
@@ -137,6 +145,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		$this->repositoryConnector = $container['repository_connector'];
 		$this->_revisionLogFactory = $container['revision_log_factory'];
 		$this->workingDirectory = $container['working_directory'];
+		$this->_config = $container['config'];
 	}
 
 	/**
@@ -155,6 +164,84 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		$input = new ArrayInput($arguments);
 
 		return $cleanup_command->run($input, $this->io->getOutput());
+	}
+
+	/**
+	 * Returns command setting value.
+	 *
+	 * @param string $name    Name.
+	 * @param mixed  $default Default value.
+	 *
+	 * @return mixed
+	 */
+	protected function getSetting($name, $default = null)
+	{
+		$this->_validateSetting($name);
+
+		$wc_name = $this->getSettingPrefix(false) . $name;
+		$wc_value = $this->_config->get($wc_name);
+
+		if ( $wc_value !== null ) {
+			return $wc_value;
+		}
+
+		$global_name = $this->getSettingPrefix(true) . $name;
+
+		return $this->_config->get($global_name, $default);
+	}
+
+	/**
+	 * Sets command setting value.
+	 *
+	 * @param string $name  Name.
+	 * @param mixed  $value Value.
+	 *
+	 * @return void
+	 */
+	protected function setSetting($name, $value)
+	{
+		$this->_validateSetting($name);
+
+		$wc_name = $this->getSettingPrefix(false) . $name;
+		$this->_config->set($wc_name, $value);
+	}
+
+	/**
+	 * Validates command setting usage.
+	 *
+	 * @param string $name Name.
+	 *
+	 * @return void
+	 */
+	private function _validateSetting($name)
+	{
+		if ( !($this instanceof IConfigAwareCommand) ) {
+			throw new \LogicException('Command does not have any settings.');
+		}
+
+		if ( !in_array($name, $this->getConfigSettings()) ) {
+			throw new \LogicException('Command can only access own settings.');
+		}
+	}
+
+	/**
+	 * Prepare setting prefix.
+	 *
+	 * @param boolean $is_global Return global setting prefix.
+	 *
+	 * @return string
+	 */
+	protected function getSettingPrefix($is_global)
+	{
+		if ( $is_global ) {
+			return 'global-settings.';
+		}
+
+		$wc_path = $this->getWorkingCopyPath();
+		$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+		$wc_hash = substr(hash_hmac('sha1', $wc_url, 'svn-buddy'), 0, 8);
+
+		return 'path-settings.' . $wc_hash . '.';
 	}
 
 	/**

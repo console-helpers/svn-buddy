@@ -130,15 +130,13 @@ TEXT;
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$wc_path = $this->getWorkingCopyPath();
-		$this->prepareSettingPrefix($wc_path);
+		$this->settingPrefix = $this->getSettingPrefix($this->io->getOption('global'));
 
 		if ( $this->processShow() || $this->processEdit() || $this->processDelete() ) {
 			return;
 		}
-		else {
-			$this->listSettings();
-		}
+
+		$this->listSettings();
 	}
 
 	/**
@@ -255,36 +253,6 @@ TEXT;
 		}
 
 		$table->render();
-	}
-
-	/**
-	 * Prepare setting prefix.
-	 *
-	 * @param string $wc_path Working copy path.
-	 *
-	 * @return void
-	 */
-	protected function prepareSettingPrefix($wc_path)
-	{
-		if ( $this->isGlobal() ) {
-			$this->settingPrefix = 'global-settings.';
-		}
-		else {
-			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
-			$wc_hash = substr(hash_hmac('sha1', $wc_url, 'svn-buddy'), 0, 8);
-
-			$this->settingPrefix = 'path-settings.' . $wc_hash . '.';
-		}
-	}
-
-	/**
-	 * Determines if we're operating on global settings.
-	 *
-	 * @return boolean
-	 */
-	protected function isGlobal()
-	{
-		return $this->io->getOption('global');
 	}
 
 	/**
