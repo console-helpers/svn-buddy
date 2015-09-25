@@ -22,8 +22,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LogCommand extends AbstractCommand implements IAggregatorAwareCommand
+class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, IConfigAwareCommand
 {
+
+	const SETTING_LOG_LIMIT = 'log.limit';
 
 	/**
 	 * Revision list parser.
@@ -284,6 +286,18 @@ TEXT;
 		}
 
 		return $wc_path;
+	}
+
+	/**
+	 * Returns list of config settings.
+	 *
+	 * @return array
+	 */
+	public function getConfigSettings()
+	{
+		return array(
+			self::SETTING_LOG_LIMIT,
+		);
 	}
 
 }

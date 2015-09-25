@@ -15,6 +15,7 @@ use aik099\SVNBuddy\Command\AggregateCommand;
 use aik099\SVNBuddy\Command\CleanupCommand;
 use aik099\SVNBuddy\Command\CommitCommand;
 use aik099\SVNBuddy\Command\CompletionCommand;
+use aik099\SVNBuddy\Command\ConfigCommand;
 use aik099\SVNBuddy\Command\LogCommand;
 use aik099\SVNBuddy\Command\MergeCommand;
 use aik099\SVNBuddy\Command\ResolveCommand;
@@ -93,6 +94,7 @@ class Application extends BaseApplication
 		$default_commands[] = new CommitCommand();
 		$default_commands[] = new AggregateCommand();
 		$default_commands[] = new CompletionCommand();
+		$default_commands[] = new ConfigCommand();
 
 		return $default_commands;
 	}

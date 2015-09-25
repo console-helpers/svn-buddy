@@ -21,8 +21,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand
+class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, IConfigAwareCommand
 {
+
+	const SETTING_MERGE_SOURCE_URL = 'merge.source-url';
 
 	const REVISION_ALL = 'all';
 
@@ -549,6 +551,18 @@ TEXT;
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Returns list of config settings.
+	 *
+	 * @return array
+	 */
+	public function getConfigSettings()
+	{
+		return array(
+			self::SETTING_MERGE_SOURCE_URL,
+		);
 	}
 
 }

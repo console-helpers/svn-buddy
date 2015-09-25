@@ -17,8 +17,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AggregateCommand extends AbstractCommand
+class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 {
+
+	const SETTING_AGGREGATE_IGNORE = 'aggregate.ignore';
 
 	/**
 	 * {@inheritdoc}
@@ -187,6 +189,18 @@ TEXT;
 		}
 
 		return $working_copies;
+	}
+
+	/**
+	 * Returns list of config settings.
+	 *
+	 * @return array
+	 */
+	public function getConfigSettings()
+	{
+		return array(
+			self::SETTING_AGGREGATE_IGNORE,
+		);
 	}
 
 }
