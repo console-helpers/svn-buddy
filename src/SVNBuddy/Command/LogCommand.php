@@ -93,8 +93,7 @@ TEXT;
 				'limit',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Maximum number of log entries',
-				10
+				'Maximum number of log entries'
 			);
 
 		parent::configure();
@@ -138,7 +137,7 @@ TEXT;
 		}
 		else {
 			// Apply limit only, when no explicit bugs/revisions are set.
-			$revisions_by_path_with_limit = array_slice($revisions_by_path, 0, $this->io->getOption('limit'));
+			$revisions_by_path_with_limit = array_slice($revisions_by_path, 0, $this->getLimit());
 		}
 
 		$this->printRevisions($revisions_by_path_with_limit, $wc_url, (boolean)$this->io->getOption('details'));
@@ -150,6 +149,22 @@ TEXT;
 			$revisions_left = $revisions_by_path_count - $revisions_by_path_with_limit_count;
 			$this->io->writeln($revisions_left . ' revision(-s) not shown');
 		}
+	}
+
+	/**
+	 * Returns displayed revision limit.
+	 *
+	 * @return integer
+	 */
+	protected function getLimit()
+	{
+		$option_limit = $this->io->getOption('limit');
+
+		if ( $option_limit !== null ) {
+			return $option_limit;
+		}
+
+		return $this->getSetting(self::SETTING_LOG_LIMIT);
 	}
 
 	/**
