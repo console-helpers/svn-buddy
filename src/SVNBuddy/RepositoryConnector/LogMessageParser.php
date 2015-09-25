@@ -110,11 +110,11 @@ class LogMessageParser
 				}
 			}
 
-			return $ret;
+			return array_unique($ret);
 		}
 
 		if ( preg_match_all($this->_filterRegExp, $log_message, $filter_regs) ) {
-			return $filter_regs[1];
+			return array_unique($filter_regs[1]);
 		}
 
 		return array();
