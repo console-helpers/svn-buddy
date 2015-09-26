@@ -170,7 +170,11 @@ class ConfigSetting
 	 */
 	private function _sanitize($value)
 	{
-		$lines = array_filter(array_map('trim', explode(PHP_EOL, $value)));
+		if ( !is_array($value) ) {
+			$value = explode(PHP_EOL, $value);
+		}
+
+		$lines = array_unique(array_filter(array_map('trim', $value)));
 
 		if ( !count($lines) ) {
 			return null;
