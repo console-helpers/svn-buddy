@@ -226,6 +226,10 @@ class RepositoryConnector
 	 */
 	public function getWorkingCopyUrl($wc_path)
 	{
+		if ( $this->isUrl($wc_path) ) {
+			return $wc_path;
+		}
+
 		try {
 			$wc_url = (string)$this->getSvnInfoEntry($wc_path)->url;
 		}
