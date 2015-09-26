@@ -12,6 +12,7 @@ namespace aik099\SVNBuddy\Command;
 
 
 use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\RegExpsConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\DateHelper;
 use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
@@ -27,6 +28,8 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 {
 
 	const SETTING_LOG_LIMIT = 'log.limit';
+
+	const SETTING_LOG_MERGE_CONFLICT_REGEXPS = 'log.merge-conflict-regexps';
 
 	/**
 	 * Revision list parser.
@@ -185,8 +188,20 @@ TEXT;
 	 */
 	protected function printRevisions(array $revisions, $repository_url, $with_details = false)
 	{
+		$merge_oracle = $this->io->getOption('merge-oracle');
+
+		if ( $merge_oracle ) {
+			$merge_conflict_regexps = $this->getMergeConflictRegExps();
+		}
+
 		$table = new Table($this->io->getOutput());
-		$table->setHeaders(array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message'));
+		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
+
+		if ( $merge_oracle ) {
+			$headers[] = 'M.O.';
+		}
+
+		$table->setHeaders($headers);
 
 		/** @var DateHelper $date_helper */
 		$date_helper = $this->getHelper('date');
@@ -212,13 +227,26 @@ TEXT;
 				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
 			}
 
-			$table->addRow(array(
+			$row = array(
 				$revision,
 				$revision_data['author'],
 				$date_helper->getAgoTime($revision_data['date']),
 				'<fg=' . $last_color . '>' . $new_bugs . '</>',
 				$log_message,
-			));
+			);
+
+			if ( $merge_oracle ) {
+				$merge_conflict_predication = $this->getMergeConflictPrediction(
+					$revision_data['paths'],
+					$merge_conflict_regexps
+				);
+				$row[] = $merge_conflict_predication ? '<error>' . count($merge_conflict_predication) . '</error>' : '';
+			}
+			else {
+				$merge_conflict_predication = array();
+			}
+
+			$table->addRow($row);
 
 			if ( $with_details ) {
 				$details = '<fg=white;options=bold>Changed Paths:</>';
@@ -230,13 +258,13 @@ TEXT;
 					$details .= PHP_EOL . ' * ';
 
 					if ( $path_action == 'A' ) {
-						$color = 'green';
+						$color_format = 'fg=green';
 					}
 					elseif ( $path_action == 'D' ) {
-						$color = 'red';
+						$color_format = 'fg=red';
 					}
 					else {
-						$color = '';
+						$color_format = in_array($path_data['path'], $merge_conflict_predication) ? 'error' : '';
 					}
 
 					$to_colorize = $path_action . '    ' . $relative_path;
@@ -247,8 +275,8 @@ TEXT;
 						$to_colorize .= PHP_EOL . '        (from ' . $copy_from_path . ':' . $copy_from_rev . ')';
 					}
 
-					if ( $color ) {
-						$to_colorize = '<fg=' . $color . '>' . $to_colorize . '</>';
+					if ( $color_format ) {
+						$to_colorize = '<' . $color_format . '>' . $to_colorize . '</>';
 					}
 
 					$details .= $to_colorize;
@@ -266,6 +294,49 @@ TEXT;
 		}
 
 		$table->render();
+	}
+
+	/**
+	 * Returns merge conflict path predictions.
+	 *
+	 * @param array $revision_paths         Revision paths.
+	 * @param array $merge_conflict_regexps Merge conflict paths.
+	 *
+	 * @return array
+	 */
+	protected function getMergeConflictPrediction(array $revision_paths, array $merge_conflict_regexps)
+	{
+		if ( !$merge_conflict_regexps ) {
+			return array();
+		}
+
+		$conflict_paths = array();
+
+		foreach ( $revision_paths as $revision_path ) {
+			foreach ( $merge_conflict_regexps as $merge_conflict_regexp ) {
+				if ( preg_match($merge_conflict_regexp, $revision_path['path']) ) {
+					$conflict_paths[] = $revision_path['path'];
+				}
+			}
+		}
+
+		return $conflict_paths;
+	}
+
+	/**
+	 * Returns merge conflict regexps.
+	 *
+	 * @return array
+	 */
+	protected function getMergeConflictRegExps()
+	{
+		$merge_conflict_regexps = $this->getSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS);
+
+		if ( !$merge_conflict_regexps ) {
+			return array();
+		}
+
+		return explode(PHP_EOL, $merge_conflict_regexps);
 	}
 
 	/**
@@ -319,6 +390,7 @@ TEXT;
 	{
 		return array(
 			new ConfigSetting(self::SETTING_LOG_LIMIT, ConfigSetting::TYPE_INTEGER, 10),
+			new RegExpsConfigSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS, '#/composer\.lock$#'),
 		);
 	}
 
