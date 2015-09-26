@@ -52,6 +52,12 @@ TEXT;
 				'.'
 			)
 			->addOption(
+				'details',
+				'd',
+				InputOption::VALUE_NONE,
+				'Shows path affected in each revision'
+			)
+			->addOption(
 				'ignore-add',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -251,6 +257,8 @@ TEXT;
 		$percent_done = 0;
 		$percent_increment = round(100 / count($working_copies), 2);
 
+		$with_details = $this->io->getOption('details');
+
 		foreach ( $working_copies as $index => $wc_path ) {
 			$this->io->writeln(array(
 				'',
@@ -261,6 +269,10 @@ TEXT;
 			$sub_command_arguments = array(
 				'path' => $wc_path,
 			);
+
+			if ( $with_details && in_array($sub_command, array('log', 'merge')) ) {
+				$sub_command_arguments['--details'] = $with_details;
+			}
 
 			$this->runOtherCommand($sub_command, $sub_command_arguments);
 
