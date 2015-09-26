@@ -171,7 +171,7 @@ TEXT;
 		}
 
 		$config_setting = $this->getConfigSetting($setting_name);
-		$value = $config_setting->getValue($this->getScopeFilter());
+		$value = $config_setting->getValue();
 		$retry = false;
 
 		do {
