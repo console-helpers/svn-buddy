@@ -38,7 +38,7 @@ class RegExpsConfigSetting extends ConfigSetting
 		parent::validate($value);
 
 		foreach ( $value as $regexp ) {
-			if ( preg_match($regexp, 'test') === false ) {
+			if ( @preg_match($regexp, 'test') === false ) {
 				throw new \InvalidArgumentException('The "' . $regexp . '" is not a valid regular expression.');
 			}
 		}
