@@ -64,11 +64,11 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	private $_revisionLogs = array();
 
 	/**
-	 * Working copy path.
+	 * Working copy paths.
 	 *
 	 * @var string
 	 */
-	private $_workingCopyPath;
+	private $_workingCopyPaths = array();
 
 	/**
 	 * Revision log factory.
@@ -343,19 +343,19 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 */
 	protected function getWorkingCopyPath()
 	{
-		if ( !isset($this->_workingCopyPath) ) {
-			$path = $this->getPath();
+		$path = $this->getPath();
 
+		if ( !in_array($path, $this->_workingCopyPaths) ) {
 			if ( !$this->repositoryConnector->isUrl($path)
 				&& !$this->repositoryConnector->isWorkingCopy($path)
 			) {
 				throw new \RuntimeException('The "' . $path . '" isn\'t a working copy');
 			}
 
-			$this->_workingCopyPath = $path;
+			$this->_workingCopyPaths[] = $path;
 		}
 
-		return $this->_workingCopyPath;
+		return $path;
 	}
 
 	/**
