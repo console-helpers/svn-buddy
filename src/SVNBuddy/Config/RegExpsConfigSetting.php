@@ -17,12 +17,13 @@ class RegExpsConfigSetting extends ConfigSetting
 	/**
 	 * Creates config setting instance.
 	 *
-	 * @param string $name    Name.
-	 * @param mixed  $default Default value.
+	 * @param string  $name    Name.
+	 * @param mixed   $default Default value.
+	 * @param integer $scope   Scope.
 	 */
-	public function __construct($name, $default)
+	public function __construct($name, $default, $scope = null)
 	{
-		parent::__construct($name, self::TYPE_ARRAY, $default);
+		parent::__construct($name, self::TYPE_ARRAY, $default, $scope);
 	}
 
 	/**

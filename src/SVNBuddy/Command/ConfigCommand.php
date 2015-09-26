@@ -105,15 +105,7 @@ TEXT;
 
 		$this->_editor = $container['editor'];
 		$this->_configEditor = $container['config_editor'];
-
-		if ( isset($this->io) ) {
-			$scope = $this->getConfigScope($this->io->getOption('global'));
-		}
-		else {
-			$scope = '';
-		}
-
-		$this->configSettings = $this->getConfigSettings($scope);
+		$this->configSettings = $this->getConfigSettings();
 	}
 
 	/**
@@ -179,14 +171,14 @@ TEXT;
 		}
 
 		$config_setting = $this->getConfigSetting($setting_name);
-		$value = $config_setting->getValue();
+		$value = $config_setting->getValue($this->getScopeFilter());
 		$retry = false;
 
 		do {
 			try {
 				$retry = false;
 				$value = $this->openEditor($value);
-				$config_setting->setValue($value);
+				$config_setting->setValue($value, $this->getScopeFilter());
 				$this->io->writeln('Setting <info>' . $setting_name . '</info> was edited.');
 			}
 			catch ( \InvalidArgumentException $e ) {
@@ -230,7 +222,7 @@ TEXT;
 		}
 
 		$config_setting = $this->getConfigSetting($setting_name);
-		$config_setting->setValue(null);
+		$config_setting->setValue(null, $this->getScopeFilter());
 		$this->io->writeln('Setting <info>' . $setting_name . '</info> was deleted.');
 
 		return true;
@@ -246,12 +238,12 @@ TEXT;
 	protected function listSettings($setting_name = null)
 	{
 		if ( isset($setting_name) ) {
-			$config_setting = $this->getConfigSetting($setting_name);
+			$this->getConfigSetting($setting_name);
 		}
 
 		$extra_title = isset($setting_name) ? ' (filtered)' : '';
 
-		if ( $this->io->getOption('global') ) {
+		if ( $this->isGlobal() ) {
 			$this->io->writeln('Showing global settings' . $extra_title . ':');
 		}
 		else {
@@ -265,22 +257,42 @@ TEXT;
 		$table->setHeaders(array(
 			'Setting Name',
 			'Setting Value',
-			'User Override',
 		));
 
-		foreach ( $this->configSettings as $name => $config_setting ) {
+		$value_filter = $this->isGlobal() ? ConfigSetting::SCOPE_GLOBAL : null;
+
+		foreach ( $this->getConfigSettingsByScope($this->getScopeFilter()) as $name => $config_setting ) {
 			if ( isset($setting_name) && $name !== $setting_name ) {
 				continue;
 			}
 
 			$table->addRow(array(
 				$name,
-				var_export($config_setting->getValue(), true),
-				$config_setting->hasValue() ? 'Yes' : 'No',
+				var_export($config_setting->getValue($value_filter), true),
 			));
 		}
 
 		$table->render();
+	}
+
+	/**
+	 * Returns config settings filtered by scope.
+	 *
+	 * @param integer $scope_filter Scope filter.
+	 *
+	 * @return ConfigSetting[]
+	 */
+	protected function getConfigSettingsByScope($scope_filter)
+	{
+		$ret = array();
+
+		foreach ( $this->configSettings as $name => $config_setting ) {
+			if ( $config_setting->isWithinScope($scope_filter) ) {
+				$ret[$name] = $config_setting;
+			}
+		}
+
+		return $ret;
 	}
 
 	/**
@@ -289,7 +301,7 @@ TEXT;
 	 * @param string $name Setting name.
 	 *
 	 * @return ConfigSetting
-	 * @throws \InvalidArgumentException When non-existing setting given.
+	 * @throws \InvalidArgumentException When non-existing/outside of scope setting given.
 	 */
 	protected function getConfigSetting($name)
 	{
@@ -297,17 +309,31 @@ TEXT;
 			throw new \InvalidArgumentException('The "' . $name . '" setting is unknown.');
 		}
 
-		return $this->configSettings[$name];
+		$config_setting = $this->configSettings[$name];
+
+		if ( !$config_setting->isWithinScope($this->getScopeFilter()) ) {
+			throw new \InvalidArgumentException('The "' . $name . '" setting cannot be used in this scope.');
+		}
+
+		return $config_setting;
+	}
+
+	/**
+	 * Returns scope filter for viewing config settings.
+	 *
+	 * @return integer
+	 */
+	protected function getScopeFilter()
+	{
+		return $this->isGlobal() ? ConfigSetting::SCOPE_GLOBAL : ConfigSetting::SCOPE_WORKING_COPY;
 	}
 
 	/**
 	 * Returns possible settings with their defaults.
 	 *
-	 * @param string $scope Scope.
-	 *
 	 * @return ConfigSetting[]
 	 */
-	protected function getConfigSettings($scope)
+	protected function getConfigSettings()
 	{
 		/** @var ConfigSetting[] $config_settings */
 		$config_settings = array();
@@ -320,12 +346,30 @@ TEXT;
 			}
 		}
 
+		// Allow to operate on global settings outside of working copy.
+		$wc_url = $this->isGlobal() ? '' : $this->getWorkingCopyUrl();
+
 		foreach ( $config_settings as $config_setting ) {
-			$config_setting->setScope($scope);
+			$config_setting->setWorkingCopyUrl($wc_url);
 			$config_setting->setEditor($this->_configEditor);
 		}
 
 		return $config_settings;
+	}
+
+	/**
+	 * Determines if global only config settings should be used.
+	 *
+	 * @return boolean
+	 */
+	protected function isGlobal()
+	{
+		// During auto-complete the IO isn't set.
+		if ( !isset($this->io) ) {
+			return true;
+		}
+
+		return $this->io->getOption('global');
 	}
 
 }

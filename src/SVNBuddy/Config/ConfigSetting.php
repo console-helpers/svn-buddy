@@ -20,10 +20,14 @@ class ConfigSetting
 
 	const TYPE_ARRAY = 3;
 
+	const SCOPE_WORKING_COPY = 1;
+
+	const SCOPE_GLOBAL = 2;
+
 	/**
 	 * Scope.
 	 *
-	 * @var string
+	 * @var integer
 	 */
 	private $_scope;
 
@@ -56,13 +60,21 @@ class ConfigSetting
 	private $_editor;
 
 	/**
+	 * Working copy url.
+	 *
+	 * @var string
+	 */
+	private $_workingCopyUrl = '';
+
+	/**
 	 * Creates config setting instance.
 	 *
 	 * @param string  $name      Name.
 	 * @param integer $data_type Data type.
 	 * @param mixed   $default   Default value.
+	 * @param integer $scope     Scope.
 	 */
-	public function __construct($name, $data_type, $default)
+	public function __construct($name, $data_type, $default, $scope = null)
 	{
 		$data_types = array(
 			self::TYPE_STRING,
@@ -77,18 +89,40 @@ class ConfigSetting
 		$this->_name = $name;
 		$this->_dataType = $data_type;
 		$this->_default = $default;
+
+		if ( !isset($scope) ) {
+			$scope = self::SCOPE_WORKING_COPY | self::SCOPE_GLOBAL;
+		}
+
+		$this->_scope = $scope;
+
+		if ( !$this->isWithinScope(self::SCOPE_WORKING_COPY) && !$this->isWithinScope(self::SCOPE_GLOBAL) ) {
+			throw new \InvalidArgumentException('The $scope must be either "working copy" or "global" or both.');
+		}
+	}
+
+	/**
+	 * Detects if config variable is within requested scope.
+	 *
+	 * @param integer $scope_bit Scope bit.
+	 *
+	 * @return boolean
+	 */
+	public function isWithinScope($scope_bit)
+	{
+		return ($this->_scope & $scope_bit) === $scope_bit;
 	}
 
 	/**
 	 * Sets scope.
 	 *
-	 * @param string $scope Scope.
+	 * @param string $wc_url Working copy url.
 	 *
 	 * @return void
 	 */
-	public function setScope($scope)
+	public function setWorkingCopyUrl($wc_url)
 	{
-		$this->_scope = $scope;
+		$this->_workingCopyUrl = $wc_url;
 	}
 
 	/**
@@ -104,47 +138,56 @@ class ConfigSetting
 	/**
 	 * Returns setting value.
 	 *
-	 * @param boolean $no_default No default value fallback on missing value.
+	 * @param integer $scope_bit Scope bit.
 	 *
 	 * @return mixed
 	 */
-	public function getValue($no_default = false)
+	public function getValue($scope_bit = null)
 	{
 		if ( !isset($this->_editor) ) {
 			throw new \LogicException('Please use setEditor() before calling ' . __METHOD__ . '().');
 		}
 
-		$default = $no_default ? null : $this->_default;
+		if ( isset($scope_bit) ) {
+			return $this->_editor->get($this->_getScopedName($scope_bit), $this->getDefault());
+		}
 
-		return $this->_editor->get($this->_scope . $this->_name, $default);
-	}
+		if ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
+			$value = $this->_editor->get($this->_getScopedName(self::SCOPE_WORKING_COPY));
 
-	/**
-	 * Determines if value has been set.
-	 *
-	 * @return boolean
-	 */
-	public function hasValue()
-	{
-		return $this->getValue(true) !== null;
+			if ( $value !== null ) {
+				return $value;
+			}
+		}
+
+		if ( $this->isWithinScope(self::SCOPE_GLOBAL) ) {
+			$value = $this->_editor->get($this->_getScopedName(self::SCOPE_GLOBAL));
+
+			if ( $value !== null ) {
+				return $value;
+			}
+		}
+
+		return $this->getDefault();
 	}
 
 	/**
 	 * Changes setting value.
 	 *
-	 * @param mixed $value Value.
+	 * @param mixed   $value     Value.
+	 * @param integer $scope_bit Scope bit.
 	 *
 	 * @return void
+	 * @throws \LogicException When no matching scope was found.
 	 */
-	public function setValue($value)
+	public function setValue($value, $scope_bit = null)
 	{
 		if ( !isset($this->_editor) ) {
 			throw new \LogicException('Please use setEditor() before calling ' . __METHOD__ . '().');
 		}
 
-		$value = $this->_sanitize($value);
-
 		if ( $value !== null ) {
+			$value = $this->_sanitize($value);
 			$this->validate($value);
 
 			if ( $this->_dataType === self::TYPE_INTEGER ) {
@@ -158,7 +201,48 @@ class ConfigSetting
 			}
 		}
 
-		$this->_editor->set($this->_scope . $this->_name, $value);
+		if ( isset($scope_bit) ) {
+			$this->_editor->set($this->_getScopedName($scope_bit), $value);
+		}
+		elseif ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
+			$this->_editor->set($this->_getScopedName(self::SCOPE_WORKING_COPY), $value);
+		}
+		elseif ( $this->isWithinScope(self::SCOPE_GLOBAL) ) {
+			$this->_editor->set($this->_getScopedName(self::SCOPE_GLOBAL), $value);
+		}
+		else {
+			throw new \LogicException('Unable to set config setting value due scope mismatch.');
+		}
+	}
+
+	/**
+	 * Returns scoped config setting name.
+	 *
+	 * @param integer $scope Scope.
+	 *
+	 * @return string
+	 * @throws \LogicException When working copy scoped name requested without working copy being set.
+	 * @throws \InvalidArgumentException When unknown scope value is given.
+	 */
+	private function _getScopedName($scope)
+	{
+		if ( $scope === self::SCOPE_GLOBAL ) {
+			return 'global-settings.' . $this->_name;
+		}
+
+		if ( $scope === self::SCOPE_WORKING_COPY ) {
+			if ( !$this->_workingCopyUrl ) {
+				throw new \LogicException(
+					'Please call setWorkingCopyUrl() prior to calling ' . __METHOD__ . '() method.'
+				);
+			}
+
+			$wc_hash = substr(hash_hmac('sha1', $this->_workingCopyUrl, 'svn-buddy'), 0, 8);
+
+			return 'path-settings.' . $wc_hash . '.' . $this->_name;
+		}
+
+		throw new \InvalidArgumentException('The "' . $scope . '" is unknown.');
 	}
 
 	/**
@@ -176,15 +260,11 @@ class ConfigSetting
 
 		$lines = array_unique(array_filter(array_map('trim', $value)));
 
-		if ( !count($lines) ) {
-			return null;
-		}
-
 		if ( $this->_dataType === self::TYPE_ARRAY ) {
 			return $lines;
 		}
 
-		return reset($lines);
+		return $lines ? reset($lines) : '';
 	}
 
 	/**

@@ -170,42 +170,26 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	/**
 	 * Returns command setting value.
 	 *
-	 * @param string  $name        Name.
-	 * @param boolean $global_only Use only globally stored value.
+	 * @param string $name Name.
 	 *
 	 * @return mixed
 	 */
-	protected function getSetting($name, $global_only = false)
+	protected function getSetting($name)
 	{
-		$config_setting = $this->_getConfigSetting($name);
-
-		if ( !$global_only ) {
-			$config_setting->setScope($this->getConfigScope(false));
-
-			if ( $config_setting->hasValue() ) {
-				return $config_setting->getValue();
-			}
-		}
-
-		$config_setting->setScope($this->getConfigScope(true));
-
-		return $config_setting->getValue();
+		return $this->_getConfigSetting($name)->getValue();
 	}
 
 	/**
 	 * Sets command setting value.
 	 *
-	 * @param string  $name   Name.
-	 * @param mixed   $value  Value.
-	 * @param boolean $global Setting scope.
+	 * @param string $name  Name.
+	 * @param mixed  $value Value.
 	 *
 	 * @return void
 	 */
-	protected function setSetting($name, $value, $global = false)
+	protected function setSetting($name, $value)
 	{
-		$config_setting = $this->_getConfigSetting($name);
-		$config_setting->setScope($this->getConfigScope($global));
-		$config_setting->setValue($value);
+		$this->_getConfigSetting($name)->setValue($value);
 	}
 
 	/**
@@ -223,6 +207,10 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 
 		foreach ( $this->getConfigSettings() as $config_setting ) {
 			if ( $config_setting->getName() === $name ) {
+				if ( $config_setting->isWithinScope(ConfigSetting::SCOPE_WORKING_COPY) ) {
+					$config_setting->setWorkingCopyUrl($this->getWorkingCopyUrl());
+				}
+
 				$config_setting->setEditor($this->_configEditor);
 
 				return $config_setting;
@@ -334,6 +322,16 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 		}
 
 		return $container;
+	}
+
+	/**
+	 * Returns URL to the working copy.
+	 *
+	 * @return string
+	 */
+	protected function getWorkingCopyUrl()
+	{
+		return $this->repositoryConnector->getWorkingCopyUrl($this->getWorkingCopyPath());
 	}
 
 	/**

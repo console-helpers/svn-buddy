@@ -158,7 +158,7 @@ TEXT;
 		}
 
 		$ignored[] = $ignore_add;
-		$this->setSetting(self::SETTING_AGGREGATE_IGNORE, $ignored, true);
+		$this->setSetting(self::SETTING_AGGREGATE_IGNORE, $ignored);
 
 		return true;
 	}
@@ -185,7 +185,7 @@ TEXT;
 		}
 
 		$ignored = array_diff($ignored, array($ignore_remove));
-		$this->setSetting(self::SETTING_AGGREGATE_IGNORE, $ignored, true);
+		$this->setSetting(self::SETTING_AGGREGATE_IGNORE, $ignored);
 
 		return true;
 	}
@@ -227,7 +227,7 @@ TEXT;
 	 */
 	protected function getIgnored()
 	{
-		$ret = $this->getSetting(self::SETTING_AGGREGATE_IGNORE, true);
+		$ret = $this->getSetting(self::SETTING_AGGREGATE_IGNORE);
 
 		if ( !$ret ) {
 			return array();
@@ -359,7 +359,7 @@ TEXT;
 	public function getConfigSettings()
 	{
 		return array(
-			new PathsConfigSetting(self::SETTING_AGGREGATE_IGNORE, ''),
+			new PathsConfigSetting(self::SETTING_AGGREGATE_IGNORE, '', ConfigSetting::SCOPE_GLOBAL),
 		);
 	}
 
