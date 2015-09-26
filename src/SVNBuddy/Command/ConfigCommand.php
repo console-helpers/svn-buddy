@@ -179,14 +179,41 @@ TEXT;
 		}
 
 		$config_setting = $this->getConfigSetting($setting_name);
-		$edited_value = $this->_editor
-			->setDocumentName('config_setting_value')
-			->setContent($config_setting->getValue())
-			->launch();
-		$config_setting->setValue($edited_value);
-		$this->io->writeln('Setting <info>' . $setting_name . '</info> was edited.');
+		$value = $config_setting->getValue();
+		$retry = false;
+
+		do {
+			try {
+				$retry = false;
+				$value = $this->openEditor($value);
+				$config_setting->setValue($value);
+				$this->io->writeln('Setting <info>' . $setting_name . '</info> was edited.');
+			}
+			catch ( \InvalidArgumentException $e ) {
+				$this->io->writeln(array('<error>' . $e->getMessage() . '</error>', ''));
+
+				if ( $this->io->askConfirmation('Retry editing', false) ) {
+					$retry = true;
+				}
+			}
+		} while ( $retry );
 
 		return true;
+	}
+
+	/**
+	 * Opens value editing.
+	 *
+	 * @param mixed $value Value.
+	 *
+	 * @return mixed
+	 */
+	protected function openEditor($value)
+	{
+		return $this->_editor
+			->setDocumentName('config_setting_value')
+			->setContent($value)
+			->launch();
 	}
 
 	/**

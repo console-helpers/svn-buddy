@@ -145,19 +145,15 @@ class ConfigSetting
 		$value = $this->_sanitize($value);
 
 		if ( $value !== null ) {
-			if ( $this->_dataType === self::TYPE_INTEGER ) {
-				if ( !is_numeric($value) ) {
-					throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be an integer.');
-				}
+			$this->validate($value);
 
+			if ( $this->_dataType === self::TYPE_INTEGER ) {
 				$value = (int)$value;
 			}
 			elseif ( $this->_dataType === self::TYPE_STRING ) {
-				if ( !is_string($value) ) {
-					throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be a string.');
-				}
+				$value = (string)$value;
 			}
-			else {
+			elseif ( $this->_dataType === self::TYPE_ARRAY ) {
 				$value = implode(PHP_EOL, $value);
 			}
 		}
@@ -185,6 +181,28 @@ class ConfigSetting
 		}
 
 		return reset($lines);
+	}
+
+	/**
+	 * Performs value validation.
+	 *
+	 * @param mixed $value Value.
+	 *
+	 * @return void
+	 * @throws \InvalidArgumentException When validation failed.
+	 */
+	protected function validate($value)
+	{
+		if ( $this->_dataType === self::TYPE_INTEGER ) {
+			if ( !is_numeric($value) ) {
+				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be an integer.');
+			}
+		}
+		elseif ( $this->_dataType === self::TYPE_STRING ) {
+			if ( !is_string($value) ) {
+				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be a string.');
+			}
+		}
 	}
 
 	/**
