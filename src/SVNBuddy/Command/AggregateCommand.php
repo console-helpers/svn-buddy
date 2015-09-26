@@ -12,10 +12,12 @@ namespace aik099\SVNBuddy\Command;
 
 
 use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\PathsConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
@@ -48,6 +50,24 @@ TEXT;
 				InputArgument::OPTIONAL,
 				'Path to folder with working copies',
 				'.'
+			)
+			->addOption(
+				'ignore-add',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Adds path to ignored directory list'
+			)
+			->addOption(
+				'ignore-remove',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Removes path to ignored directory list'
+			)
+			->addOption(
+				'ignore-show',
+				null,
+				InputOption::VALUE_NONE,
+				'Show ignored directory list'
 			);
 
 		parent::configure();
@@ -103,6 +123,122 @@ TEXT;
 			);
 		}
 
+		if ( $this->processIgnoreAdd() || $this->processIgnoreRemove() || $this->processIgnoreShow() ) {
+			return;
+		}
+
+		$this->runSubCommand($sub_command);
+	}
+
+	/**
+	 * Adds path to ignored directory list.
+	 *
+	 * @return boolean
+	 * @throws CommandException When directory is already ignored.
+	 */
+	protected function processIgnoreAdd()
+	{
+		$ignore_add = $this->io->getOption('ignore-add');
+
+		if ( $ignore_add === null ) {
+			return false;
+		}
+
+		$ignored = $this->getIgnored();
+		$ignore_add = realpath($this->getPath() . '/' . $ignore_add);
+
+		if ( in_array($ignore_add, $ignored) ) {
+			throw new CommandException('The "' . $ignore_add . '" directory is already ignored.');
+		}
+
+		$ignored[] = $ignore_add;
+		$this->setSetting(self::SETTING_AGGREGATE_IGNORE, $ignored, true);
+
+		return true;
+	}
+
+	/**
+	 * Removes path from ignored directory list.
+	 *
+	 * @return boolean
+	 * @throws CommandException When directory is not ignored.
+	 */
+	protected function processIgnoreRemove()
+	{
+		$ignore_remove = $this->io->getOption('ignore-remove');
+
+		if ( $ignore_remove === null ) {
+			return false;
+		}
+
+		$ignored = $this->getIgnored();
+		$ignore_remove = realpath($this->getPath() . '/' . $ignore_remove);
+
+		if ( !in_array($ignore_remove, $ignored) ) {
+			throw new CommandException('The "' . $ignore_remove . '" directory is not ignored.');
+		}
+
+		$ignored = array_diff($ignored, array($ignore_remove));
+		$this->setSetting(self::SETTING_AGGREGATE_IGNORE, $ignored, true);
+
+		return true;
+	}
+
+	/**
+	 * Shows ignored paths.
+	 *
+	 * @return boolean
+	 */
+	protected function processIgnoreShow()
+	{
+		if ( !$this->io->getOption('ignore-show') ) {
+			return false;
+		}
+
+		$ignored = $this->getIgnored();
+
+		if ( !$ignored ) {
+			$this->io->writeln('No paths found in ignored directory list.');
+
+			return true;
+		}
+
+		$this->io->writeln(array('Paths in ignored directory list:', ''));
+
+		foreach ( $ignored as $ignored_path ) {
+			$this->io->writeln(' * ' . $ignored_path);
+		}
+
+		$this->io->writeln('');
+
+		return true;
+	}
+
+	/**
+	 * Returns ignored paths.
+	 *
+	 * @return array
+	 */
+	protected function getIgnored()
+	{
+		$ret = $this->getSetting(self::SETTING_AGGREGATE_IGNORE, true);
+
+		if ( !$ret ) {
+			return array();
+		}
+
+		return explode(PHP_EOL, $ret);
+	}
+
+	/**
+	 * Runs sub-commands.
+	 *
+	 * @param string $sub_command Sub-command.
+	 *
+	 * @return void
+	 */
+	protected function runSubCommand($sub_command)
+	{
 		$path = $this->getPath();
 
 		if ( $this->repositoryConnector->isWorkingCopy($path) ) {
@@ -146,15 +282,26 @@ TEXT;
 	protected function getWorkingCopyPaths($path)
 	{
 		$this->io->write('Looking for working copies ... ');
-		$working_copies = $this->getWorkingCopiesRecursive($path);
+		$all_working_copies = $this->getWorkingCopiesRecursive($path);
+		$working_copies = array_diff($all_working_copies, $this->getIgnored());
 
-		if ( !$working_copies ) {
-			$this->io->writeln('<error>None found</error>');
+		$all_working_copies_count = count($all_working_copies);
+		$working_copies_count = count($working_copies);
 
-			throw new CommandException('No working copies found at "' . $path . '" path');
+		if ( $all_working_copies_count != $working_copies_count ) {
+			$ignored_suffix = ' (' . ($all_working_copies_count - $working_copies_count) . ' ignored)';
+		}
+		else {
+			$ignored_suffix = '';
 		}
 
-		$this->io->writeln('<info>' . count($working_copies) . ' found</info>');
+		if ( !$working_copies ) {
+			$this->io->writeln('<error>None found' . $ignored_suffix . '</error>');
+
+			throw new CommandException('No working copies found at "' . $path . '" path.');
+		}
+
+		$this->io->writeln('<info>' . $working_copies_count . ' found' . $ignored_suffix . '</info>');
 
 		return array_values($working_copies);
 	}
@@ -200,7 +347,7 @@ TEXT;
 	public function getConfigSettings()
 	{
 		return array(
-			new ConfigSetting(self::SETTING_AGGREGATE_IGNORE, ConfigSetting::TYPE_ARRAY, ''),
+			new PathsConfigSetting(self::SETTING_AGGREGATE_IGNORE, ''),
 		);
 	}
 

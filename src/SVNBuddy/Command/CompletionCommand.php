@@ -34,6 +34,18 @@ class CompletionCommand extends SymfonyCompletionCommand
 		    'path',
 		    Completion::TYPE_ARGUMENT
 		));
+
+		$handler->addHandler(new ShellPathCompletion(
+			'aggregate',
+			'ignore-add',
+			Completion::TYPE_OPTION
+		));
+
+		$handler->addHandler(new ShellPathCompletion(
+			'aggregate',
+			'ignore-remove',
+			Completion::TYPE_OPTION
+		));
 	}
 
 }
