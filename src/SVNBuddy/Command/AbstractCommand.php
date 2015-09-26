@@ -170,18 +170,21 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	/**
 	 * Returns command setting value.
 	 *
-	 * @param string $name Name.
+	 * @param string  $name        Name.
+	 * @param boolean $global_only Use only globally stored value.
 	 *
 	 * @return mixed
 	 */
-	protected function getSetting($name)
+	protected function getSetting($name, $global_only = false)
 	{
 		$config_setting = $this->_getConfigSetting($name);
 
-		$config_setting->setScope($this->getConfigScope(false));
+		if ( !$global_only ) {
+			$config_setting->setScope($this->getConfigScope(false));
 
-		if ( $config_setting->hasValue() ) {
-			return $config_setting->getValue();
+			if ( $config_setting->hasValue() ) {
+				return $config_setting->getValue();
+			}
 		}
 
 		$config_setting->setScope($this->getConfigScope(true));
@@ -192,15 +195,16 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	/**
 	 * Sets command setting value.
 	 *
-	 * @param string $name  Name.
-	 * @param mixed  $value Value.
+	 * @param string  $name   Name.
+	 * @param mixed   $value  Value.
+	 * @param boolean $global Setting scope.
 	 *
 	 * @return void
 	 */
-	protected function setSetting($name, $value)
+	protected function setSetting($name, $value, $global = false)
 	{
 		$config_setting = $this->_getConfigSetting($name);
-		$config_setting->setScope($this->getConfigScope(false));
+		$config_setting->setScope($this->getConfigScope($global));
 		$config_setting->setValue($value);
 	}
 
