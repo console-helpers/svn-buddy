@@ -201,6 +201,7 @@ TEXT;
 				'path' => $source_url,
 				'--revisions' => implode(',', $this->_unmergedRevisions),
 				'--details' => $this->io->getOption('details'),
+				'--merge-oracle' => true,
 			));
 		}
 	}
