@@ -171,7 +171,7 @@ TEXT;
 		}
 
 		$config_setting = $this->getConfigSetting($setting_name);
-		$value = $config_setting->getValue();
+		$value = $config_setting->getValue($this->getValueFilter());
 		$retry = false;
 
 		do {
@@ -259,7 +259,7 @@ TEXT;
 			'Setting Value',
 		));
 
-		$value_filter = $this->isGlobal() ? ConfigSetting::SCOPE_GLOBAL : null;
+		$value_filter = $this->getValueFilter();
 
 		foreach ( $this->getConfigSettingsByScope($this->getScopeFilter()) as $name => $config_setting ) {
 			if ( isset($setting_name) && $name !== $setting_name ) {
@@ -326,6 +326,16 @@ TEXT;
 	protected function getScopeFilter()
 	{
 		return $this->isGlobal() ? ConfigSetting::SCOPE_GLOBAL : ConfigSetting::SCOPE_WORKING_COPY;
+	}
+
+	/**
+	 * Returns value filter for editing config settings.
+	 *
+	 * @return integer
+	 */
+	protected function getValueFilter()
+	{
+		return $this->isGlobal() ? ConfigSetting::SCOPE_GLOBAL : null;
 	}
 
 	/**
