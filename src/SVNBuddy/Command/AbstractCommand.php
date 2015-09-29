@@ -281,7 +281,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 			$bug_revisions = $revision_log->getRevisionsFromBug($bug_id);
 
 			if ( !$bug_revisions ) {
-				throw new CommandException('The "' . $bug_id . '" bug have no associated revisions');
+				throw new CommandException('The "' . $bug_id . '" bug have no associated revisions.');
 			}
 
 			foreach ( $bug_revisions as $bug_revision ) {
@@ -347,7 +347,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 			if ( !$this->repositoryConnector->isUrl($path)
 				&& !$this->repositoryConnector->isWorkingCopy($path)
 			) {
-				throw new \RuntimeException('The "' . $path . '" isn\'t a working copy');
+				throw new \RuntimeException('The "' . $path . '" isn\'t a working copy.');
 			}
 
 			$this->_workingCopyPaths[] = $path;

@@ -108,7 +108,7 @@ class RevisionLog
 	public function getRevisionData($revision)
 	{
 		if ( !isset($this->_revisions[$revision]) ) {
-			throw new \InvalidArgumentException('Revision "' . $revision . '" not found');
+			throw new \InvalidArgumentException('Revision "' . $revision . '" not found.');
 		}
 
 		return $this->_revisions[$revision];

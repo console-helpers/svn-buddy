@@ -83,7 +83,7 @@ class ConfigSetting
 		);
 
 		if ( !in_array($data_type, $data_types) ) {
-			throw new \InvalidArgumentException('The "' . $data_type . '" is invalid');
+			throw new \InvalidArgumentException('The "' . $data_type . '" is invalid.');
 		}
 
 		$this->_name = $name;

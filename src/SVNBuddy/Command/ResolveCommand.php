@@ -57,7 +57,7 @@ TEXT;
 		$resolve_path = $this->getResolvePath($conflicts);
 
 		if ( is_dir($resolve_path) ) {
-			throw new CommandException('Interactive tree conflict resolution is not supported');
+			throw new CommandException('Interactive tree conflict resolution is not supported.');
 		}
 
 		$this->io->writeln('Resolving conflicts for: ' . $resolve_path);

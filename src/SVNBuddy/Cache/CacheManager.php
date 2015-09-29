@@ -97,7 +97,7 @@ class CacheManager
 		$parts = explode(':', $name, 2);
 
 		if ( count($parts) != 2 ) {
-			throw new \InvalidArgumentException('The $name parameter must be in "namespace:name" format');
+			throw new \InvalidArgumentException('The $name parameter must be in "namespace:name" format.');
 		}
 
 		$name_hash = substr(hash_hmac('sha1', $parts[1], 'svn-buddy'), 0, 8);

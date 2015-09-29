@@ -42,14 +42,14 @@ class WorkingDirectory
 	{
 		if ( defined('PHP_WINDOWS_VERSION_MAJOR') ) {
 			if ( !getenv('APPDATA') ) {
-				throw new ApplicationException('The APPDATA environment variable must be set to run correctly');
+				throw new ApplicationException('The APPDATA environment variable must be set to run correctly.');
 			}
 
 			return strtr(getenv('APPDATA'), '\\', '/');
 		}
 
 		if ( !getenv('HOME') ) {
-			throw new ApplicationException('The HOME environment variable must be set to run correctly');
+			throw new ApplicationException('The HOME environment variable must be set to run correctly.');
 		}
 
 		return rtrim(getenv('HOME'), '/');
