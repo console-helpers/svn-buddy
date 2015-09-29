@@ -123,19 +123,27 @@ TEXT;
 
 		$wc_url = $this->getWorkingCopyUrl();
 
+		$missing_revisions = array();
 		$revision_log = $this->getRevisionLog($wc_url);
 		$revisions_by_path = $revision_log->getRevisionsFromPath($this->repositoryConnector->getPathFromUrl($wc_url));
 
 		if ( $revisions ) {
 			$revisions = $this->_revisionListParser->expandRanges($revisions);
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions);
+			$missing_revisions = array_diff($revisions, $revisions_by_path);
 		}
 		elseif ( $bugs ) {
 			$revisions_from_bugs = $this->getBugsRevisions($bugs, $wc_url);
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions_from_bugs);
+			$missing_revisions = array_diff($revisions_from_bugs, $revisions_by_path);
 		}
 
-		if ( !$revisions_by_path ) {
+		if ( $missing_revisions ) {
+			throw new CommandException(
+				'No information about ' . implode(', ', $missing_revisions) . ' revision(-s).'
+			);
+		}
+		elseif ( !$revisions_by_path ) {
 			throw new CommandException('No matching revisions found.');
 		}
 
