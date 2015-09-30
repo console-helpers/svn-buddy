@@ -20,9 +20,9 @@ class ConfigSetting
 
 	const TYPE_ARRAY = 3;
 
-	const SCOPE_WORKING_COPY = 1;
+	const SCOPE_GLOBAL = 1;
 
-	const SCOPE_GLOBAL = 2;
+	const SCOPE_WORKING_COPY = 2;
 
 	/**
 	 * Scope.
@@ -201,18 +201,41 @@ class ConfigSetting
 			}
 		}
 
-		if ( isset($scope_bit) ) {
-			$this->_editor->set($this->_getScopedName($scope_bit), $value);
+		if ( !isset($scope_bit) ) {
+			if ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
+				$scope_bit = self::SCOPE_WORKING_COPY;
+			}
+			elseif ( $this->isWithinScope(self::SCOPE_GLOBAL) ) {
+				$scope_bit = self::SCOPE_GLOBAL;
+			}
 		}
-		elseif ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
-			$this->_editor->set($this->_getScopedName(self::SCOPE_WORKING_COPY), $value);
-		}
-		elseif ( $this->isWithinScope(self::SCOPE_GLOBAL) ) {
-			$this->_editor->set($this->_getScopedName(self::SCOPE_GLOBAL), $value);
-		}
-		else {
+
+		if ( !isset($scope_bit) ) {
 			throw new \LogicException('Unable to set config setting value due scope mismatch.');
 		}
+
+		// Don't store inherited value.
+		if ( $value === $this->getInheritedValue($scope_bit) ) {
+			$value = null;
+		}
+
+		$this->_editor->set($this->_getScopedName($scope_bit), $value);
+	}
+
+	/**
+	 * Determines if value matches inherited one.
+	 *
+	 * @param integer $scope_bit Scope bit.
+	 *
+	 * @return mixed
+	 */
+	protected function getInheritedValue($scope_bit)
+	{
+		if ( $scope_bit === self::SCOPE_WORKING_COPY ) {
+			return $this->getValue(self::SCOPE_GLOBAL);
+		}
+
+		return $this->getDefault();
 	}
 
 	/**
