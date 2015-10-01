@@ -35,7 +35,13 @@ class FileCacheStorageTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->cacheFile = sys_get_temp_dir() . '/repository.cache';
+		if ( $this->getName(false) === 'testCompressedUsage' ) {
+			$this->cacheFile = sys_get_temp_dir() . '/log_test.cache';
+		}
+		else {
+			$this->cacheFile = sys_get_temp_dir() . '/test.cache';
+		}
+
 		$this->cache = new FileCacheStorage($this->cacheFile);
 	}
 
@@ -44,23 +50,49 @@ class FileCacheStorageTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($this->cacheFile);
 	}
 
-	public function testEmptyCacheOnMissingCacheFile()
+	public function testMissingCacheFile()
 	{
-		$this->assertCount(0, $this->cache->get());
+		$this->assertNull($this->cache->get());
 	}
 
-	public function testEmptyCacheFile()
+	public function testRegularUsage()
 	{
-		file_put_contents($this->cacheFile, '');
-		$this->assertCount(0, $this->cache->get());
-	}
-
-	public function testGetCache()
-	{
-		$expected = array('key1' => 'val1', 'key2' => 'val2');
-
+		$expected = array('key' => 'value');
 		$this->cache->set($expected);
-		$this->assertEquals($expected, $this->cache->get());
+
+		$this->assertFileExists($this->cacheFile);
+		$this->assertSame($expected, $this->cache->get());
+		$this->assertEquals(json_encode($expected), file_get_contents($this->cacheFile));
+	}
+
+	public function testCompressedUsage()
+	{
+		$expected = array('key' => 'value');
+		$this->cache->set($expected);
+
+		$this->assertFileExists($this->cacheFile);
+		$this->assertSame($expected, $this->cache->get());
+		$this->assertNotEquals(json_encode($expected), file_get_contents($this->cacheFile));
+	}
+
+	public function testEmptyCache()
+	{
+		$this->cache->set(array());
+
+		$this->assertNull($this->cache->get());
+	}
+
+	public function testNothingToInvalidate()
+	{
+		$this->cache->invalidate();
+		$this->assertFileNotExists($this->cacheFile);
+	}
+
+	public function testSomethingToInvalidate()
+	{
+		$this->cache->set(array('key' => 'value'));
+		$this->cache->invalidate();
+		$this->assertFileNotExists($this->cacheFile);
 	}
 
 	/**
