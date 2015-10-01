@@ -74,7 +74,7 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	{
 		parent::setUp();
 
-		$this->_configEditor = m::mock('aik099\\SVNBuddy\\ConfigEditor');
+		$this->_configEditor = m::mock('aik099\\SVNBuddy\\Config\\ConfigEditor');
 		$this->_processFactory = m::mock('aik099\\SVNBuddy\\Process\\IProcessFactory');
 		$this->_io = m::mock('aik099\\SVNBuddy\\ConsoleIO');
 		$this->_cacheManager = new CacheManager($this->getWorkingDirectory());
@@ -86,6 +86,9 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 		$no_auto_connector = array(
 			'testConfigUsernameUsed',
 			'testConfigPasswordUsed',
+			'testWorkingDirectoryCreation',
+			'testBrokenLinuxEnvironment',
+			'testBrokenWindowsEnvironment',
 		);
 
 		$with_exceptions = array(
@@ -106,79 +109,55 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	{
 		$repository_connector = $this->_createRepositoryConnector('user', '');
 
-		$this->_expectCommand('svn --username user --non-interactive --version', 'OK');
-		$this->assertEquals('OK', $repository_connector->command('--version'));
+		$this->_expectCommand('svn --username user --version', 'OK');
+		$this->assertEquals('OK', $repository_connector->getCommand('--version')->run());
 	}
 
 	public function testConfigPasswordUsed()
 	{
 		$repository_connector = $this->_createRepositoryConnector('', 'pass');
 
-		$this->_expectCommand('svn --password pass --non-interactive --version', 'OK');
-		$this->assertEquals('OK', $repository_connector->command('--version'));
+		$this->_expectCommand('svn --password pass --version', 'OK');
+		$this->assertEquals('OK', $repository_connector->getCommand('--version')->run());
 	}
 
 	public function testSimpleCommand()
 	{
-		$this->_expectCommand('svn --non-interactive --version', 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->command('--version'));
+		$this->_expectCommand('svn --version', 'OK');
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('--version')->run());
 	}
 
 	public function testCommandWithParams()
 	{
-		$this->_expectCommand('svn --non-interactive log -r 12', 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->command('log', '-r 12'));
+		$this->_expectCommand('svn log -r 12', 'OK');
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '-r 12')->run());
 	}
 
 	public function testCommandWithPath()
 	{
-		$this->_expectCommand("svn --non-interactive log 'path/to/folder'", 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->command('log', null, 'path/to/folder'));
+		$this->_expectCommand("svn log 'path/to/folder'", 'OK');
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '{path/to/folder}')->run());
 	}
 
 	public function testCommandWithPathAndLeadingSlash()
 	{
-		$this->_expectCommand("svn --non-interactive log '/path/to/folder'", 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->command('log', null, '/path/to/folder'));
+		$this->_expectCommand("svn log '/path/to/folder'", 'OK');
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '{/path/to/folder}')->run());
 	}
 
 	public function testCommandWithPathAndParams()
 	{
-		$this->_expectCommand("svn --non-interactive log 'path/to/folder' -r 12", 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->command('log', '-r 12', 'path/to/folder'));
+		$this->_expectCommand("svn log -r 12 'path/to/folder'", 'OK');
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '-r 12 {path/to/folder}')->run());
 	}
 
 	public function testCommandThatFails()
 	{
-		$mock_definition = array(
-			'isSuccessful' => false,
-			'getCommandLine' => 'svn --non-interactive any',
-			'getExitCode' => 127,
-			'getExitCodeText' => 'Command not found',
-			'isOutputDisabled' => false,
-			'getOutput' => 'normal output',
-			'getErrorOutput' => 'error output',
-		);
-
-		foreach ( $mock_definition as $method_name => $return_value ) {
-			$this->_process->shouldReceive($method_name)->atLeast()->once()->andReturn($return_value);
-		}
-
-		$this->_process->shouldReceive('mustRun')
-			->atLeast()
-			->once()
-			->andThrow(new ProcessFailedException($this->_process));
-
-		$this->_processFactory->shouldReceive('createProcess')
-			->with('svn --non-interactive any')
-			->once()
-			->andReturn($this->_process);
-
-		/** @var RepositoryCommandException $thrown_exception */
 		$thrown_exception = null;
+		$this->_expectCommand('svn any', '', false);
 
 		try {
-			$this->_repositoryConnector->command('any');
+			$this->_repositoryConnector->getCommand('any')->run();
 		}
 		catch ( \Exception $thrown_exception ) {
 			$this->assertEquals(
@@ -190,19 +169,19 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 
 		$this->assertNotNull($thrown_exception, 'Exception was thrown when command execution failed');
 
-		$this->assertEquals('svn --non-interactive any', $thrown_exception->getCommand());
-		$this->assertEquals(127, $thrown_exception->getExitCode());
-		$this->assertEquals('normal output', $thrown_exception->getOutput());
-		$this->assertEquals('error output', $thrown_exception->getErrorOutput());
-		$this->assertEquals(
-			'Execution of repository command "svn --non-interactive any" failed with output: error output',
-			$thrown_exception->getMessage()
-		);
+		$error_msg = <<<MSG
+Command:
+svn --non-interactive any
+Error #0:
+error output
+MSG;
+
+		$this->assertEquals($error_msg, $thrown_exception->getMessage());
 	}
 
 	public function testGetPropertyFound()
 	{
-		$this->_expectCommand("svn --non-interactive propget test-p 'the/path'", 'OK');
+		$this->_expectCommand("svn propget test-p 'the/path'", 'OK');
 
 		$this->assertEquals(
 			'OK',
@@ -210,13 +189,22 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 		);
 	}
 
-	/**
-	 * @expectedException \aik099\SVNBuddy\Exception\RepositoryCommandException
-	 * @expectedExceptionMessage Execution of repository command "svn --non-interactive propget test-p 'the/path'" failed with output: dummy error text
-	 */
 	public function testGetPropertyNotFound()
 	{
-		$this->_expectCommand("svn --non-interactive propget test-p 'the/path'", '', 5);
+		$exception_msg = <<<MSG
+Command:
+svn --non-interactive propget test-p 'the/path'
+Error #0:
+error output
+MSG;
+
+		$this->setExpectedException(
+			'aik099\\SVNBuddy\\Exception\\RepositoryCommandException',
+			$exception_msg,
+			0
+		);
+
+		$this->_expectCommand("svn propget test-p 'the/path'", '', false);
 
 		$this->_repositoryConnector->getProperty('test-p', 'the/path');
 	}
@@ -224,17 +212,27 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string  $command   Command.
-	 * @param string  $output    Output.
-	 * @param integer $exit_code Exit code.
+	 * @param string  $command        Command.
+	 * @param string  $output         Output.
+	 * @param boolean $is_successful  Should command be successful.
+	 * @param boolean $is_interactive Is interactive.
 	 *
 	 * @return void
 	 */
-	private function _expectCommand($command, $output, $exit_code = 0)
+	private function _expectCommand($command, $output, $is_successful = true, $is_interactive = false)
 	{
+		$patched_command = preg_replace('/^svn /', 'svn --non-interactive ', $command);
+
+		if ( !$is_interactive ) {
+			$this->_process->shouldReceive('setInput')->with('')->once();
+		}
+
+		$this->_process->shouldReceive('getCommandLine')->andReturn($command, $patched_command);
+		$this->_process->shouldReceive('setCommandLine')->andReturn($patched_command);
+
 		$expectation = $this->_process->shouldReceive('mustRun')->once();
 
-		if ( $exit_code === 0 ) {
+		if ( $is_successful ) {
 			$this->_process->shouldReceive('getOutput')->once()->andReturn($output);
 
 			/*$this->_io->shouldReceive('write')
@@ -242,11 +240,29 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 				->once();*/
 		}
 		else {
-			$exception = new RepositoryCommandException($command, $exit_code, $output, 'dummy error text');
-			$expectation->andThrow($exception);
+			$mock_definition = array(
+				'isSuccessful' => false,
+				'getExitCode' => 1,
+				'getExitCodeText' => 'exit code text',
+				'isOutputDisabled' => false,
+				'getOutput' => 'normal output',
+				'getErrorOutput' => 'error output',
+			);
+
+			foreach ( $mock_definition as $method_name => $return_value ) {
+				$this->_process->shouldReceive($method_name)->atLeast()->once()->andReturn($return_value);
+			}
+
+			$process = $this->_process;
+			$expectation->andThrow('Exception')->andReturnUsing(function () use ($process) {
+				return new ProcessFailedException($process);
+			});
 		}
 
-		$this->_processFactory->shouldReceive('createProcess')->with($command)->once()->andReturn($this->_process);
+		$this->_processFactory->shouldReceive('createProcess')
+			->with($command, 1200)
+			->once()
+			->andReturn($this->_process);
 	}
 
 	/**

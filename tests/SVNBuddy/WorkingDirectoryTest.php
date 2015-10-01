@@ -19,7 +19,6 @@ class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 	public function testWorkingDirectoryCreation()
 	{
 		$expected_working_directory = $this->getExpectedWorkingDirectory();
-		$this->assertFileNotExists($expected_working_directory);
 
 		$actual_working_directory = $this->getWorkingDirectory();
 		$this->assertEquals($expected_working_directory, $actual_working_directory);
@@ -40,6 +39,7 @@ class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 	}
 
 	/**
+	 * @runInSeparateProcess
 	 * @expectedException \aik099\SVNBuddy\Exception\ApplicationException
 	 * @expectedExceptionMessage The APPDATA environment variable must be set to run correctly
 	 */
