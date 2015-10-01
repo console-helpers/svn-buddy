@@ -99,6 +99,33 @@ class RevisionLog
 	}
 
 	/**
+	 * Returns revisions, associated with bugs.
+	 *
+	 * @param array $bugs Bugs.
+	 *
+	 * @return array
+	 * @throws \InvalidArgumentException When one of bugs doesn't have associated revisions.
+	 */
+	public function getRevisionsFromBugs(array $bugs)
+	{
+		$revisions = array();
+
+		foreach ( $bugs as $bug_id ) {
+			$bug_revisions = $this->getRevisionsFromBug($bug_id);
+
+			if ( !$bug_revisions ) {
+				throw new \InvalidArgumentException('The "' . $bug_id . '" bug have no associated revisions.');
+			}
+
+			foreach ( $bug_revisions as $bug_revision ) {
+				$revisions[$bug_revision] = true;
+			}
+		}
+
+		return array_keys($revisions);
+	}
+
+	/**
 	 * Returns information about revision.
 	 *
 	 * @param integer $revision Revision.

@@ -133,8 +133,8 @@ TEXT;
 			$missing_revisions = array_diff($revisions, $revisions_by_path);
 		}
 		elseif ( $bugs ) {
-			$revisions_from_bugs = $this->getBugsRevisions($bugs, $wc_url);
 			// Only show bug-related revisions on given path. The $missing_revisions is always empty.
+			$revisions_from_bugs = $this->getRevisionLog($wc_url)->getRevisionsFromBugs($bugs);
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions_from_bugs);
 		}
 

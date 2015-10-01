@@ -181,7 +181,7 @@ TEXT;
 				$revisions = $this->getDirectRevisions($revisions, $source_url);
 			}
 			elseif ( $bugs ) {
-				$revisions = $this->getBugsRevisions($bugs, $source_url);
+				$revisions = $this->getRevisionLog($source_url)->getRevisionsFromBugs($bugs);
 			}
 
 			if ( $revisions ) {

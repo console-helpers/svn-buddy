@@ -264,35 +264,6 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	}
 
 	/**
-	 * Returns revisions, associated with bugs.
-	 *
-	 * @param array  $bugs           Bugs.
-	 * @param string $repository_url Repository url.
-	 *
-	 * @return array
-	 * @throws CommandException When one of bugs doesn't have associated revisions.
-	 */
-	protected function getBugsRevisions(array $bugs, $repository_url)
-	{
-		$revisions = array();
-		$revision_log = $this->getRevisionLog($repository_url);
-
-		foreach ( $bugs as $bug_id ) {
-			$bug_revisions = $revision_log->getRevisionsFromBug($bug_id);
-
-			if ( !$bug_revisions ) {
-				throw new CommandException('The "' . $bug_id . '" bug have no associated revisions.');
-			}
-
-			foreach ( $bug_revisions as $bug_revision ) {
-				$revisions[$bug_revision] = true;
-			}
-		}
-
-		return array_keys($revisions);
-	}
-
-	/**
 	 * Transforms string into list.
 	 *
 	 * @param string $string    String.
