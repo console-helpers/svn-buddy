@@ -126,6 +126,28 @@ class RevisionLog
 	}
 
 	/**
+	 * Returns bugs, from revisions.
+	 *
+	 * @param array $revisions Revisions.
+	 *
+	 * @return array
+	 */
+	public function getBugsFromRevisions(array $revisions)
+	{
+		$bugs = array();
+
+		foreach ( $revisions as $revision ) {
+			$revision_data = $this->getRevisionData($revision);
+
+			foreach ( $revision_data['bugs'] as $bug ) {
+				$bugs[$bug] = true;
+			}
+		}
+
+		return array_keys($bugs);
+	}
+
+	/**
 	 * Returns information about revision.
 	 *
 	 * @param integer $revision Revision.

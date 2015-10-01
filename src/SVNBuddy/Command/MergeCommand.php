@@ -332,7 +332,9 @@ TEXT;
 		$unmerged_revisions = $this->calculateUnmergedRevisions($source_url, $wc_path);
 
 		if ( $unmerged_revisions ) {
-			$this->io->writeln('<error>' . count($unmerged_revisions) . ' revision(-s) not merged</error>');
+			$unmerged_bugs = $this->getRevisionLog($source_url)->getBugsFromRevisions($unmerged_revisions);
+			$error_msg = count($unmerged_revisions) . ' revision(-s) or ' . count($unmerged_bugs) . ' bug(-s) not merged';
+			$this->io->writeln('<error>' . $error_msg . '</error>');
 		}
 		else {
 			$this->io->writeln('<info>Up to date</info>');
