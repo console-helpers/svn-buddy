@@ -4,6 +4,12 @@
 [![Coverage Status](https://coveralls.io/repos/aik099/svn-buddy/badge.svg?branch=master&service=github)](https://coveralls.io/github/aik099/svn-buddy?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/aik099/svn-buddy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/aik099/svn-buddy/?branch=master)
 
+
+[![Latest Stable Version](https://poser.pugx.org/aik099/svn-buddy/v/stable)](https://packagist.org/packages/aik099/svn-buddy)
+[![Total Downloads](https://poser.pugx.org/aik099/svn-buddy/downloads)](https://packagist.org/packages/aik099/svn-buddy)
+[![Latest Unstable Version](https://poser.pugx.org/aik099/svn-buddy/v/unstable)](https://packagist.org/packages/aik099/svn-buddy)
+[![License](https://poser.pugx.org/aik099/svn-buddy/license)](https://packagist.org/packages/aik099/svn-buddy)
+
 SVN-Buddy is the Subversion-related toolkit to make working with Subversion from command-line a bit less painful and more productive.
 
 ## Installation
