@@ -210,10 +210,17 @@ class RepositoryConnector
 	 * @param string $absolute_url URL.
 	 *
 	 * @return string
+	 * @throws \InvalidArgumentException When url is malformed.
 	 */
 	public function getPathFromUrl($absolute_url)
 	{
-		return parse_url($absolute_url, PHP_URL_PATH);
+		$relative_url = parse_url($absolute_url, PHP_URL_PATH);
+
+		if ( $relative_url === false ) {
+			throw new \InvalidArgumentException('The repository URL "' . $absolute_url . '" is malformed.');
+		}
+
+		return $relative_url;
 	}
 
 	/**

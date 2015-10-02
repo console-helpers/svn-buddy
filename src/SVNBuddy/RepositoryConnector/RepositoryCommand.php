@@ -93,7 +93,7 @@ class RepositoryCommand
 	/**
 	 * Set cache duration.
 	 *
-	 * @param integer $invalidator Invalidator.
+	 * @param string $invalidator Invalidator.
 	 *
 	 * @return self
 	 */

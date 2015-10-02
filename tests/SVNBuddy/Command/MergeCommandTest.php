@@ -27,4 +27,5 @@ class MergeCommandTest extends AbstractCommandTestCase
 	{
 		$this->markTestIncomplete('TODO');
 	}
+
 }
