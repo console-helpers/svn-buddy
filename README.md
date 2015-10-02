@@ -1,5 +1,7 @@
 # SVN-Buddy
 
+[![Build Status](https://travis-ci.org/aik099/svn-buddy.svg?branch=master)](https://travis-ci.org/aik099/svn-buddy)
+
 SVN-Buddy is the Subversion-related toolkit to make working with Subversion from command-line a bit less painful and more productive.
 
 ## Installation
