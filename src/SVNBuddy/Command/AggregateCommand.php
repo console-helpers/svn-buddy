@@ -236,13 +236,7 @@ TEXT;
 	 */
 	protected function getIgnored()
 	{
-		$ret = $this->getSetting(self::SETTING_AGGREGATE_IGNORE);
-
-		if ( !$ret ) {
-			return array();
-		}
-
-		return explode(PHP_EOL, $ret);
+		return $this->getSetting(self::SETTING_AGGREGATE_IGNORE);
 	}
 
 	/**

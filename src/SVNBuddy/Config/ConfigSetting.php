@@ -161,26 +161,32 @@ class ConfigSetting
 		$this->assertUsage(__METHOD__, $scope_bit);
 
 		if ( isset($scope_bit) ) {
-			return $this->_editor->get($this->_getScopedName(__METHOD__, $scope_bit), $this->_defaultValue);
+			$value = $this->_editor->get(
+				$this->_getScopedName(__METHOD__, $scope_bit),
+				$this->_defaultValue
+			);
 		}
+		else {
+			$value = null;
 
-		if ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
-			$value = $this->_editor->get($this->_getScopedName(__METHOD__, self::SCOPE_WORKING_COPY));
+			if ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
+				$value = $this->_editor->get(
+					$this->_getScopedName(__METHOD__, self::SCOPE_WORKING_COPY)
+				);
+			}
 
-			if ( $value !== null ) {
-				return $value;
+			if ( $value === null ) {
+				$value = $this->_editor->get(
+					$this->_getScopedName(__METHOD__, self::SCOPE_GLOBAL)
+				);
+			}
+
+			if ( $value === null ) {
+				$value = $this->_defaultValue;
 			}
 		}
 
-		if ( $this->isWithinScope(self::SCOPE_GLOBAL) ) {
-			$value = $this->_editor->get($this->_getScopedName(__METHOD__, self::SCOPE_GLOBAL));
-
-			if ( $value !== null ) {
-				return $value;
-			}
-		}
-
-		return $this->_defaultValue;
+		return $this->_normalizeValue($value);
 	}
 
 	/**
@@ -206,7 +212,7 @@ class ConfigSetting
 			if ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
 				$scope_bit = self::SCOPE_WORKING_COPY;
 			}
-			elseif ( $this->isWithinScope(self::SCOPE_GLOBAL) ) {
+			else {
 				$scope_bit = self::SCOPE_GLOBAL;
 			}
 		}
@@ -290,16 +296,23 @@ class ConfigSetting
 	 * @param mixed $value Value.
 	 *
 	 * @return mixed
+	 * @throws \InvalidArgumentException When attempt to set array to non-array config setting was made.
 	 */
 	private function _normalizeValue($value)
 	{
+		if ( !$this->_isArray() && is_array($value) ) {
+			throw new \InvalidArgumentException(
+				'The value data type is not compatible with "' . $this->getName() . '" config setting.'
+			);
+		}
+
 		if ( !is_array($value) ) {
-			$value = explode(PHP_EOL, $value);
+			$value = strlen($value) ? explode(PHP_EOL, $value) : array();
 		}
 
 		$value = array_map('trim', $value);
 
-		if ( $this->_dataType === self::TYPE_ARRAY ) {
+		if ( $this->_isArray() ) {
 			return array_filter($value);
 		}
 
@@ -345,11 +358,21 @@ class ConfigSetting
 			return (string)$value;
 		}
 
-		if ( $this->_dataType === self::TYPE_ARRAY ) {
+		if ( $this->_isArray() ) {
 			return implode(PHP_EOL, $value);
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Determines if config setting has array data type.
+	 *
+	 * @return boolean
+	 */
+	private function _isArray()
+	{
+		return $this->_dataType === self::TYPE_ARRAY;
 	}
 
 }
