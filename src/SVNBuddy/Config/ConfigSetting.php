@@ -72,9 +72,9 @@ class ConfigSetting
 	 * @param string  $name      Name.
 	 * @param integer $data_type Data type.
 	 * @param mixed   $default   Default value.
-	 * @param integer $scope     Scope.
+	 * @param integer $scope_bit Scope.
 	 */
-	public function __construct($name, $data_type, $default, $scope = null)
+	public function __construct($name, $data_type, $default, $scope_bit = null)
 	{
 		$data_types = array(
 			self::TYPE_STRING,
@@ -86,19 +86,21 @@ class ConfigSetting
 			throw new \InvalidArgumentException('The "' . $data_type . '" is not valid config setting data type.');
 		}
 
-		$this->_name = $name;
 		$this->_dataType = $data_type;
-		$this->_defaultValue = $default;
 
-		if ( !isset($scope) ) {
-			$scope = self::SCOPE_WORKING_COPY | self::SCOPE_GLOBAL;
+		if ( !isset($scope_bit) ) {
+			$scope_bit = self::SCOPE_WORKING_COPY;
 		}
 
-		$this->_scope = $scope;
+		// Always add global scope.
+		$this->_scope = $scope_bit | self::SCOPE_GLOBAL;
 
-		if ( !$this->isWithinScope(self::SCOPE_WORKING_COPY) && !$this->isWithinScope(self::SCOPE_GLOBAL) ) {
+		if ( !in_array($scope_bit, array(self::SCOPE_WORKING_COPY, self::SCOPE_GLOBAL)) ) {
 			throw new \InvalidArgumentException('The $scope must be either "working copy" or "global" or both.');
 		}
+
+		$this->_name = $name;
+		$this->_defaultValue = $default;
 	}
 
 	/**
