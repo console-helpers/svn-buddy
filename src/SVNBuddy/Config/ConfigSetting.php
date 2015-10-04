@@ -297,9 +297,13 @@ class ConfigSetting
 			$value = explode(PHP_EOL, $value);
 		}
 
-		$value = array_unique(array_filter(array_map('trim', $value)));
+		$value = array_map('trim', $value);
 
-		return $this->_dataType === self::TYPE_ARRAY ? $value : implode(PHP_EOL, $value);
+		if ( $this->_dataType === self::TYPE_ARRAY ) {
+			return array_filter($value);
+		}
+
+		return implode(PHP_EOL, $value);
 	}
 
 	/**
