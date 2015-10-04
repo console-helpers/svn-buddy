@@ -141,17 +141,22 @@ TEXT;
 	 *
 	 * @return boolean
 	 * @throws CommandException When directory is already ignored.
+	 * @throws CommandException When directory does not exist.
 	 */
 	protected function processIgnoreAdd()
 	{
-		$ignore_add = $this->io->getOption('ignore-add');
+		$raw_ignore_add = $this->io->getOption('ignore-add');
 
-		if ( $ignore_add === null ) {
+		if ( $raw_ignore_add === null ) {
 			return false;
 		}
 
 		$ignored = $this->getIgnored();
-		$ignore_add = realpath($this->getPath() . '/' . $ignore_add);
+		$ignore_add = realpath($this->getPath() . '/' . $raw_ignore_add);
+
+		if ( $ignore_add === false ) {
+			throw new CommandException('The "' . $raw_ignore_add . '" path does not exist.');
+		}
 
 		if ( in_array($ignore_add, $ignored) ) {
 			throw new CommandException('The "' . $ignore_add . '" directory is already ignored.');
@@ -171,14 +176,18 @@ TEXT;
 	 */
 	protected function processIgnoreRemove()
 	{
-		$ignore_remove = $this->io->getOption('ignore-remove');
+		$raw_ignore_remove = $this->io->getOption('ignore-remove');
 
-		if ( $ignore_remove === null ) {
+		if ( $raw_ignore_remove === null ) {
 			return false;
 		}
 
 		$ignored = $this->getIgnored();
-		$ignore_remove = realpath($this->getPath() . '/' . $ignore_remove);
+		$ignore_remove = realpath($this->getPath() . '/' . $raw_ignore_remove);
+
+		if ( $ignore_remove === false ) {
+			throw new CommandException('The "' . $raw_ignore_remove . '" path does not exist.');
+		}
 
 		if ( !in_array($ignore_remove, $ignored) ) {
 			throw new CommandException('The "' . $ignore_remove . '" directory is not ignored.');
