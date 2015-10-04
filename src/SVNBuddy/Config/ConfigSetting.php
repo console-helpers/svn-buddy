@@ -50,7 +50,7 @@ class ConfigSetting
 	 *
 	 * @var mixed
 	 */
-	private $_default;
+	private $_defaultValue;
 
 	/**
 	 * Config editor.
@@ -88,7 +88,7 @@ class ConfigSetting
 
 		$this->_name = $name;
 		$this->_dataType = $data_type;
-		$this->_default = $default;
+		$this->_defaultValue = $default;
 
 		if ( !isset($scope) ) {
 			$scope = self::SCOPE_WORKING_COPY | self::SCOPE_GLOBAL;
@@ -149,7 +149,7 @@ class ConfigSetting
 		}
 
 		if ( isset($scope_bit) ) {
-			return $this->_editor->get($this->_getScopedName($scope_bit), $this->getDefault());
+			return $this->_editor->get($this->_getScopedName($scope_bit), $this->_defaultValue);
 		}
 
 		if ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
@@ -168,7 +168,7 @@ class ConfigSetting
 			}
 		}
 
-		return $this->getDefault();
+		return $this->_defaultValue;
 	}
 
 	/**
@@ -235,7 +235,7 @@ class ConfigSetting
 			return $this->getValue(self::SCOPE_GLOBAL);
 		}
 
-		return $this->getDefault();
+		return $this->_defaultValue;
 	}
 
 	/**
@@ -310,16 +310,6 @@ class ConfigSetting
 				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be a string.');
 			}
 		}
-	}
-
-	/**
-	 * Returns config setting default value.
-	 *
-	 * @return mixed
-	 */
-	public function getDefault()
-	{
-		return $this->_default;
 	}
 
 	/**
