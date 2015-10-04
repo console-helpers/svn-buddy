@@ -331,12 +331,12 @@ class ConfigSetting
 	{
 		if ( $this->_dataType === self::TYPE_INTEGER ) {
 			if ( !is_numeric($value) ) {
-				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be an integer.');
+				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting value must be an integer.');
 			}
 		}
 		elseif ( $this->_dataType === self::TYPE_STRING ) {
 			if ( !is_string($value) ) {
-				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be a string.');
+				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting value must be a string.');
 			}
 		}
 	}
