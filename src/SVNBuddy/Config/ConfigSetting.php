@@ -83,7 +83,7 @@ class ConfigSetting
 		);
 
 		if ( !in_array($data_type, $data_types) ) {
-			throw new \InvalidArgumentException('The "' . $data_type . '" is invalid.');
+			throw new \InvalidArgumentException('The "' . $data_type . '" is not valid config setting data type.');
 		}
 
 		$this->_name = $name;
@@ -156,9 +156,7 @@ class ConfigSetting
 	 */
 	public function getValue($scope_bit = null)
 	{
-		if ( !isset($this->_editor) ) {
-			throw new \LogicException('Please use setEditor() before calling ' . __METHOD__ . '().');
-		}
+		$this->assertUsage(__METHOD__, $scope_bit);
 
 		if ( isset($scope_bit) ) {
 			return $this->_editor->get($this->_getScopedName($scope_bit), $this->_defaultValue);
@@ -194,9 +192,7 @@ class ConfigSetting
 	 */
 	public function setValue($value, $scope_bit = null)
 	{
-		if ( !isset($this->_editor) ) {
-			throw new \LogicException('Please use setEditor() before calling ' . __METHOD__ . '().');
-		}
+		$this->assertUsage(__METHOD__, $scope_bit);
 
 		if ( $value !== null ) {
 			$value = $this->_sanitize($value);
@@ -222,16 +218,34 @@ class ConfigSetting
 			}
 		}
 
-		if ( !isset($scope_bit) ) {
-			throw new \LogicException('Unable to set config setting value due scope mismatch.');
-		}
-
 		// Don't store inherited value.
 		if ( $value === $this->getInheritedValue($scope_bit) ) {
 			$value = null;
 		}
 
 		$this->_editor->set($this->_getScopedName($scope_bit), $value);
+	}
+
+	/**
+	 * Determines if config setting is being used correctly.
+	 *
+	 * @param string  $caller_method Caller method.
+	 * @param integer $scope_bit     Scope bit.
+	 *
+	 * @return void
+	 * @throws \LogicException When no editor was set upfront.
+	 * @throws \InvalidArgumentException When $scope_bit isn't supported by config setting.
+	 */
+	public function assertUsage($caller_method, $scope_bit = null)
+	{
+		if ( !isset($this->_editor) ) {
+			throw new \LogicException('Please use setEditor() before calling ' . $caller_method . '().');
+		}
+
+		if ( isset($scope_bit) && !$this->isWithinScope($scope_bit) ) {
+			$error_msg = 'The usage of "%s" scope for "%s" config setting is forbidden.';
+			throw new \InvalidArgumentException(sprintf($error_msg, $scope_bit, $this->getName()));
+		}
 	}
 
 	/**
