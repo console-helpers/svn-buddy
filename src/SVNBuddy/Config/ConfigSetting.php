@@ -195,7 +195,7 @@ class ConfigSetting
 		$this->assertUsage(__METHOD__, $scope_bit);
 
 		if ( $value !== null ) {
-			$value = $this->_sanitize($value);
+			$value = $this->_normalizeValue($value);
 			$this->validate($value);
 			$value = $this->_castValue($value);
 		}
@@ -281,25 +281,21 @@ class ConfigSetting
 	}
 
 	/**
-	 * Sanitizes value.
+	 * Normalizes value.
 	 *
 	 * @param mixed $value Value.
 	 *
 	 * @return mixed
 	 */
-	private function _sanitize($value)
+	private function _normalizeValue($value)
 	{
 		if ( !is_array($value) ) {
 			$value = explode(PHP_EOL, $value);
 		}
 
-		$lines = array_unique(array_filter(array_map('trim', $value)));
+		$value = array_unique(array_filter(array_map('trim', $value)));
 
-		if ( $this->_dataType === self::TYPE_ARRAY ) {
-			return $lines;
-		}
-
-		return $lines ? reset($lines) : '';
+		return $this->_dataType === self::TYPE_ARRAY ? $value : implode(PHP_EOL, $value);
 	}
 
 	/**
