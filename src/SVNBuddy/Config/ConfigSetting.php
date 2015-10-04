@@ -161,11 +161,11 @@ class ConfigSetting
 		$this->assertUsage(__METHOD__, $scope_bit);
 
 		if ( isset($scope_bit) ) {
-			return $this->_editor->get($this->_getScopedName($scope_bit), $this->_defaultValue);
+			return $this->_editor->get($this->_getScopedName(__METHOD__, $scope_bit), $this->_defaultValue);
 		}
 
 		if ( $this->isWithinScope(self::SCOPE_WORKING_COPY) ) {
-			$value = $this->_editor->get($this->_getScopedName(self::SCOPE_WORKING_COPY));
+			$value = $this->_editor->get($this->_getScopedName(__METHOD__, self::SCOPE_WORKING_COPY));
 
 			if ( $value !== null ) {
 				return $value;
@@ -173,7 +173,7 @@ class ConfigSetting
 		}
 
 		if ( $this->isWithinScope(self::SCOPE_GLOBAL) ) {
-			$value = $this->_editor->get($this->_getScopedName(self::SCOPE_GLOBAL));
+			$value = $this->_editor->get($this->_getScopedName(__METHOD__, self::SCOPE_GLOBAL));
 
 			if ( $value !== null ) {
 				return $value;
@@ -212,11 +212,11 @@ class ConfigSetting
 		}
 
 		// Don't store inherited value.
-		if ( $value === $this->getInheritedValue($scope_bit) ) {
+		if ( $value === $this->_getInheritedValue(__METHOD__, $scope_bit) ) {
 			$value = null;
 		}
 
-		$this->_editor->set($this->_getScopedName($scope_bit), $value);
+		$this->_editor->set($this->_getScopedName(__METHOD__, $scope_bit), $value);
 	}
 
 	/**
@@ -236,7 +236,7 @@ class ConfigSetting
 		}
 
 		if ( isset($scope_bit) && !$this->isWithinScope($scope_bit) ) {
-			$error_msg = 'The usage of "%s" scope for "%s" config setting is forbidden.';
+			$error_msg = 'The usage of "%s" scope bit for "%s" config setting is forbidden.';
 			throw new \InvalidArgumentException(sprintf($error_msg, $scope_bit, $this->getName()));
 		}
 	}
@@ -244,14 +244,15 @@ class ConfigSetting
 	/**
 	 * Determines if value matches inherited one.
 	 *
-	 * @param integer $scope_bit Scope bit.
+	 * @param string  $caller_method Caller method.
+	 * @param integer $scope_bit     Scope bit.
 	 *
 	 * @return mixed
 	 */
-	protected function getInheritedValue($scope_bit)
+	private function _getInheritedValue($caller_method, $scope_bit)
 	{
 		if ( $scope_bit === self::SCOPE_WORKING_COPY ) {
-			return $this->_editor->get($this->_getScopedName(self::SCOPE_GLOBAL), $this->_defaultValue);
+			return $this->_editor->get($this->_getScopedName($caller_method, self::SCOPE_GLOBAL), $this->_defaultValue);
 		}
 
 		return $this->_defaultValue;
@@ -260,12 +261,13 @@ class ConfigSetting
 	/**
 	 * Returns scoped config setting name.
 	 *
-	 * @param integer $scope Scope.
+	 * @param string  $caller_method Caller method.
+	 * @param integer $scope         Scope.
 	 *
 	 * @return string
 	 * @throws \LogicException When working copy scoped name requested without working copy being set.
 	 */
-	private function _getScopedName($scope)
+	private function _getScopedName($caller_method, $scope)
 	{
 		if ( $scope === self::SCOPE_GLOBAL ) {
 			return 'global-settings.' . $this->_name;
@@ -273,7 +275,7 @@ class ConfigSetting
 
 		if ( !$this->_workingCopyUrl ) {
 			throw new \LogicException(
-				'Please call setWorkingCopyUrl() prior to calling ' . __METHOD__ . '() method.'
+				'Please call setWorkingCopyUrl() prior to calling ' . $caller_method . '() method.'
 			);
 		}
 
