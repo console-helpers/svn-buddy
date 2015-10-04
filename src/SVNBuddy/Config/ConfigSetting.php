@@ -262,7 +262,6 @@ class ConfigSetting
 	 *
 	 * @return string
 	 * @throws \LogicException When working copy scoped name requested without working copy being set.
-	 * @throws \InvalidArgumentException When unknown scope value is given.
 	 */
 	private function _getScopedName($scope)
 	{
@@ -270,19 +269,15 @@ class ConfigSetting
 			return 'global-settings.' . $this->_name;
 		}
 
-		if ( $scope === self::SCOPE_WORKING_COPY ) {
-			if ( !$this->_workingCopyUrl ) {
-				throw new \LogicException(
-					'Please call setWorkingCopyUrl() prior to calling ' . __METHOD__ . '() method.'
-				);
-			}
-
-			$wc_hash = substr(hash_hmac('sha1', $this->_workingCopyUrl, 'svn-buddy'), 0, 8);
-
-			return 'path-settings.' . $wc_hash . '.' . $this->_name;
+		if ( !$this->_workingCopyUrl ) {
+			throw new \LogicException(
+				'Please call setWorkingCopyUrl() prior to calling ' . __METHOD__ . '() method.'
+			);
 		}
 
-		throw new \InvalidArgumentException('The "' . $scope . '" is unknown.');
+		$wc_hash = substr(hash_hmac('sha1', $this->_workingCopyUrl, 'svn-buddy'), 0, 8);
+
+		return 'path-settings.' . $wc_hash . '.' . $this->_name;
 	}
 
 	/**
