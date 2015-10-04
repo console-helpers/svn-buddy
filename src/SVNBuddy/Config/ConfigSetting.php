@@ -114,6 +114,18 @@ class ConfigSetting
 	}
 
 	/**
+	 * Sets config editor.
+	 *
+	 * @param ConfigEditor $editor Config editor.
+	 *
+	 * @return void
+	 */
+	public function setEditor(ConfigEditor $editor)
+	{
+		$this->_editor = $editor;
+	}
+
+	/**
 	 * Sets scope.
 	 *
 	 * @param string $wc_url Working copy url.
@@ -310,18 +322,6 @@ class ConfigSetting
 				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be a string.');
 			}
 		}
-	}
-
-	/**
-	 * Sets config editor.
-	 *
-	 * @param ConfigEditor $editor Config editor.
-	 *
-	 * @return void
-	 */
-	public function setEditor(ConfigEditor $editor)
-	{
-		$this->_editor = $editor;
 	}
 
 }
