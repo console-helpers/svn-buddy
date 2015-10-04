@@ -251,7 +251,7 @@ class ConfigSetting
 	protected function getInheritedValue($scope_bit)
 	{
 		if ( $scope_bit === self::SCOPE_WORKING_COPY ) {
-			return $this->getValue(self::SCOPE_GLOBAL);
+			return $this->_editor->get($this->_getScopedName(self::SCOPE_GLOBAL), $this->_defaultValue);
 		}
 
 		return $this->_defaultValue;
