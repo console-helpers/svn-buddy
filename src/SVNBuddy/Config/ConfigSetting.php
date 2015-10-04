@@ -96,7 +96,7 @@ class ConfigSetting
 		$this->_scope = $scope_bit | self::SCOPE_GLOBAL;
 
 		if ( !in_array($scope_bit, array(self::SCOPE_WORKING_COPY, self::SCOPE_GLOBAL)) ) {
-			throw new \InvalidArgumentException('The $scope must be either "working copy" or "global" or both.');
+			throw new \InvalidArgumentException('The $scope must be either "working copy" or "global".');
 		}
 
 		$this->_name = $name;
