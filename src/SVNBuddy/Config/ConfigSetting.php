@@ -197,16 +197,7 @@ class ConfigSetting
 		if ( $value !== null ) {
 			$value = $this->_sanitize($value);
 			$this->validate($value);
-
-			if ( $this->_dataType === self::TYPE_INTEGER ) {
-				$value = (int)$value;
-			}
-			elseif ( $this->_dataType === self::TYPE_STRING ) {
-				$value = (string)$value;
-			}
-			elseif ( $this->_dataType === self::TYPE_ARRAY ) {
-				$value = implode(PHP_EOL, $value);
-			}
+			$value = $this->_castValue($value);
 		}
 
 		if ( !isset($scope_bit) ) {
@@ -336,6 +327,30 @@ class ConfigSetting
 				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting must be a string.');
 			}
 		}
+	}
+
+	/**
+	 * Casts value.
+	 *
+	 * @param mixed $value Value.
+	 *
+	 * @return mixed
+	 */
+	private function _castValue($value)
+	{
+		if ( $this->_dataType === self::TYPE_INTEGER ) {
+			return (int)$value;
+		}
+
+		if ( $this->_dataType === self::TYPE_STRING ) {
+			return (string)$value;
+		}
+
+		if ( $this->_dataType === self::TYPE_ARRAY ) {
+			return implode(PHP_EOL, $value);
+		}
+
+		return $value;
 	}
 
 }
