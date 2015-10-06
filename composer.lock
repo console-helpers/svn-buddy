@@ -5,6 +5,7 @@
         "This file is @generated automatically"
     ],
     "hash": "a09c6b99468fb664e0c0b7351ccf45d1",
+    "content-hash": "5acc62af7fabc8ac1afa70752263aa92",
     "packages": [
         {
             "name": "pimple/pimple",
@@ -58,12 +59,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/stecman/symfony-console-completion.git",
-                "reference": "c7b9c4514e4491dbddcf76cea777c342447a956e"
+                "reference": "983d6f07b4edf307969f4edf5ab290fd1fb2f5a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/c7b9c4514e4491dbddcf76cea777c342447a956e",
-                "reference": "c7b9c4514e4491dbddcf76cea777c342447a956e",
+                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/983d6f07b4edf307969f4edf5ab290fd1fb2f5a2",
+                "reference": "983d6f07b4edf307969f4edf5ab290fd1fb2f5a2",
                 "shasum": ""
             },
             "require": {
@@ -95,20 +96,20 @@
                 }
             ],
             "description": "Automatic BASH completion for Symfony Console Component based applications.",
-            "time": "2015-09-20 05:23:24"
+            "time": "2015-09-30 10:14:44"
         },
         {
             "name": "symfony/console",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Console.git",
-                "reference": "9ff9032151186bd66ecee727d728f1319f52d1d8"
+                "url": "https://github.com/symfony/console.git",
+                "reference": "06cb17c013a82f94a3d840682b49425cd00a2161"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/9ff9032151186bd66ecee727d728f1319f52d1d8",
-                "reference": "9ff9032151186bd66ecee727d728f1319f52d1d8",
+                "url": "https://api.github.com/repos/symfony/console/zipball/06cb17c013a82f94a3d840682b49425cd00a2161",
+                "reference": "06cb17c013a82f94a3d840682b49425cd00a2161",
                 "shasum": ""
             },
             "require": {
@@ -152,20 +153,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-09-03 11:40:38"
+            "time": "2015-09-25 08:32:23"
         },
         {
             "name": "symfony/process",
-            "version": "v2.7.4",
+            "version": "v2.7.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/Process.git",
-                "reference": "f7b3f73f70a7f8f49a1c838dc3debbf054732d8e"
+                "url": "https://github.com/symfony/process.git",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Process/zipball/f7b3f73f70a7f8f49a1c838dc3debbf054732d8e",
-                "reference": "f7b3f73f70a7f8f49a1c838dc3debbf054732d8e",
+                "url": "https://api.github.com/repos/symfony/process/zipball/b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
+                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
                 "shasum": ""
             },
             "require": {
@@ -201,7 +202,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2015-08-27 06:45:45"
+            "time": "2015-09-19 19:59:23"
         }
     ],
     "packages-dev": [
@@ -211,12 +212,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aik099/CodingStandard.git",
-                "reference": "59b7ae44ae87ea8f6a5164aa81f23b2e754c4e8b"
+                "reference": "51d923fd462bcbc5438bf716e11d77171d411030"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/59b7ae44ae87ea8f6a5164aa81f23b2e754c4e8b",
-                "reference": "59b7ae44ae87ea8f6a5164aa81f23b2e754c4e8b",
+                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/51d923fd462bcbc5438bf716e11d77171d411030",
+                "reference": "51d923fd462bcbc5438bf716e11d77171d411030",
                 "shasum": ""
             },
             "require-dev": {
@@ -243,7 +244,7 @@
                 "PHP_CodeSniffer",
                 "codesniffer"
             ],
-            "time": "2015-09-09 16:27:08"
+            "time": "2015-10-06 07:28:23"
         },
         {
             "name": "hamcrest/hamcrest-php",
