@@ -12,7 +12,6 @@ namespace Tests\aik099\SVNBuddy;
 
 
 use aik099\SVNBuddy\WorkingDirectory;
-use Mockery as m;
 
 abstract class WorkingDirectoryAwareTestCase extends \PHPUnit_Framework_TestCase
 {

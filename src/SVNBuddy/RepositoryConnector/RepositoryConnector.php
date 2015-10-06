@@ -19,8 +19,6 @@ use aik099\SVNBuddy\Process\IProcessFactory;
 
 /**
  * Executes command on the repository.
- *
- * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class RepositoryConnector
 {

@@ -12,7 +12,6 @@ namespace Tests\aik099\SVNBuddy;
 
 
 use aik099\SVNBuddy\Config\ConfigEditor;
-use Mockery as m;
 
 class ConfigEditorTest extends WorkingDirectoryAwareTestCase
 {

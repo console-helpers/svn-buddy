@@ -11,8 +11,6 @@
 namespace Tests\aik099\SVNBuddy\Command;
 
 
-use Mockery as m;
-
 class MergeCommandTest extends AbstractCommandTestCase
 {
 

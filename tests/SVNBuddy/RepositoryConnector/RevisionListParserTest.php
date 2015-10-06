@@ -12,7 +12,6 @@ namespace Tests\aik099\SVNBuddy\RepositoryConnector;
 
 
 use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
-use Mockery as m;
 
 class RevisionListParserTest extends \PHPUnit_Framework_TestCase
 {

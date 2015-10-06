@@ -13,10 +13,7 @@ namespace Tests\aik099\SVNBuddy\RepositoryConnector;
 
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\ConsoleIO;
-use aik099\SVNBuddy\Exception\RepositoryCommandException;
 use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
-use Mockery as m;
-use Mockery\MockInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Tests\aik099\SVNBuddy\WorkingDirectoryTest;
 
@@ -74,14 +71,14 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	{
 		parent::setUp();
 
-		$this->_configEditor = m::mock('aik099\\SVNBuddy\\Config\\ConfigEditor');
-		$this->_processFactory = m::mock('aik099\\SVNBuddy\\Process\\IProcessFactory');
-		$this->_io = m::mock('aik099\\SVNBuddy\\ConsoleIO');
+		$this->_configEditor = $this->prophesize('aik099\\SVNBuddy\\Config\\ConfigEditor');
+		$this->_processFactory = $this->prophesize('aik099\\SVNBuddy\\Process\\IProcessFactory');
+		$this->_io = $this->prophesize('aik099\\SVNBuddy\\ConsoleIO');
 		$this->_cacheManager = new CacheManager($this->getWorkingDirectory());
-		$this->_process = m::mock('Symfony\\Component\\Process\\Process');
+		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
 
 		// Called from "__destruct".
-		$this->_process->shouldReceive('stop');
+		$this->_process->stop();
 
 		$no_auto_connector = array(
 			'testConfigUsernameUsed',
@@ -221,23 +218,25 @@ MSG;
 	 */
 	private function _expectCommand($command, $output, $is_successful = true, $is_interactive = false)
 	{
-		$patched_command = preg_replace('/^svn /', 'svn --non-interactive ', $command);
-
 		if ( !$is_interactive ) {
-			$this->_process->shouldReceive('setInput')->with('')->once();
+			$this->_process->setInput('')->shouldBeCalled();
 		}
 
-		$this->_process->shouldReceive('getCommandLine')->andReturn($command, $patched_command);
-		$this->_process->shouldReceive('setCommandLine')->andReturn($patched_command);
+		$patched_command = preg_replace('/^svn /', 'svn --non-interactive ', $command);
+		$this->_process->getCommandLine()->willReturn($command)->shouldBeCalled();
+		$this->_process->setCommandLine($patched_command)->will(function ($args, $process) {
+			$process->getCommandLine()->willReturn($args[0]);
+		})->shouldBeCalled();
 
-		$expectation = $this->_process->shouldReceive('mustRun')->once();
+		$expectation = $this->_process->mustRun(null)->shouldBeCalled();
 
 		if ( $is_successful ) {
-			$this->_process->shouldReceive('getOutput')->once()->andReturn($output);
+			$this->_process->getOutput()->willReturn($output)->shouldBeCalled();
 
-			/*$this->_io->shouldReceive('write')
-				->with(hm::matchesPattern('#svn command \([\d.]+ ms\): ' . preg_quote($command) . '#'))
-				->once();*/
+			/*$this->_io->write(
+				hm::matchesPattern('#svn command \([\d.]+ ms\): ' . preg_quote($command) . '#')
+			)
+			->shouldBeCalled();*/
 		}
 		else {
 			$mock_definition = array(
@@ -250,19 +249,16 @@ MSG;
 			);
 
 			foreach ( $mock_definition as $method_name => $return_value ) {
-				$this->_process->shouldReceive($method_name)->atLeast()->once()->andReturn($return_value);
+				$this->_process->{$method_name}()->willReturn($return_value)->shouldBeCalled();
 			}
 
 			$process = $this->_process;
-			$expectation->andThrow('Exception')->andReturnUsing(function () use ($process) {
-				return new ProcessFailedException($process);
+			$expectation->will(function () use ($process) {
+				throw new ProcessFailedException($process->reveal());
 			});
 		}
 
-		$this->_processFactory->shouldReceive('createProcess')
-			->with($command, 1200)
-			->once()
-			->andReturn($this->_process);
+		$this->_processFactory->createProcess($command, 1200)->willReturn($this->_process)->shouldBeCalled();
 	}
 
 	/**
@@ -276,20 +272,19 @@ MSG;
 	 */
 	private function _createRepositoryConnector($svn_username, $svn_password, $is_verbose = false)
 	{
-		$this->_configEditor->shouldReceive('get')
-			->with('repository-connector.username')
-			->once()
-			->andReturn($svn_username);
-		$this->_configEditor->shouldReceive('get')
-			->with('repository-connector.password')
-			->once()
-			->andReturn($svn_password);
+		$this->_configEditor->get('repository-connector.username')->willReturn($svn_username)->shouldBeCalled();
+		$this->_configEditor->get('repository-connector.password')->willReturn($svn_password)->shouldBeCalled();
 
 		if ( isset($is_verbose) ) {
-			$this->_io->shouldReceive('isVerbose')->once()->andReturn($is_verbose);
+			$this->_io->isVerbose()->willReturn($is_verbose)->shouldBeCalled();
 		}
 
-		return new RepositoryConnector($this->_configEditor, $this->_processFactory, $this->_io, $this->_cacheManager);
+		return new RepositoryConnector(
+			$this->_configEditor->reveal(),
+			$this->_processFactory->reveal(),
+			$this->_io->reveal(),
+			$this->_cacheManager
+		);
 	}
 
 }

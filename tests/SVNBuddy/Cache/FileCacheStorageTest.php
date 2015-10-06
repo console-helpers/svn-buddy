@@ -12,7 +12,6 @@ namespace Tests\aik099\SVNBuddy\Cache;
 
 
 use aik099\SVNBuddy\Cache\FileCacheStorage;
-use Mockery as m;
 
 class FileCacheStorageTest extends \PHPUnit_Framework_TestCase
 {

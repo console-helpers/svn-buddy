@@ -13,8 +13,6 @@ namespace aik099\SVNBuddy\Cache;
 
 /**
  * Caches information about repository.
- *
- * @method \Mockery\Expectation shouldReceive(string $name)
  */
 class FileCacheStorage implements ICacheStorage
 {

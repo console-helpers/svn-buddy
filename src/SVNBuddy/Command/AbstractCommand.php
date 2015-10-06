@@ -29,8 +29,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command class.
- *
- * @method \Mockery\Expectation shouldReceive(string $name)
  */
 abstract class AbstractCommand extends Command implements CompletionAwareInterface
 {

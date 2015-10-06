@@ -11,8 +11,6 @@
 namespace Tests\aik099\SVNBuddy;
 
 
-use Mockery as m;
-
 class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 {
 
