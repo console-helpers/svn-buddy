@@ -205,7 +205,7 @@ class ConfigSetting
 		if ( $value !== null ) {
 			$value = $this->_normalizeValue($value);
 			$this->validate($value);
-			$value = $this->_castValue($value);
+			$value = $this->_convertToScalarValue($value);
 		}
 
 		if ( !isset($scope_bit) ) {
@@ -300,23 +300,15 @@ class ConfigSetting
 	 */
 	private function _normalizeValue($value)
 	{
-		if ( !$this->_isArray() && is_array($value) ) {
-			throw new \InvalidArgumentException(
-				'The value data type is not compatible with "' . $this->getName() . '" config setting.'
-			);
-		}
-
-		if ( !is_array($value) ) {
-			$value = strlen($value) ? explode(PHP_EOL, $value) : array();
-		}
-
-		$value = array_map('trim', $value);
-
 		if ( $this->_isArray() ) {
-			return array_filter($value);
+			if ( !is_array($value) ) {
+				$value = strlen($value) ? explode(PHP_EOL, $value) : array();
+			}
+
+			return array_filter(array_map('trim', $value));
 		}
 
-		return implode(PHP_EOL, $value);
+		return is_string($value) ? trim($value) : $value;
 	}
 
 	/**
@@ -331,38 +323,38 @@ class ConfigSetting
 	{
 		if ( $this->_dataType === self::TYPE_INTEGER ) {
 			if ( !is_numeric($value) ) {
-				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting value must be an integer.');
+				throw new \InvalidArgumentException(
+					'The "' . $this->_name . '" config setting value must be an integer.'
+				);
 			}
 		}
 		elseif ( $this->_dataType === self::TYPE_STRING ) {
 			if ( !is_string($value) ) {
-				throw new \InvalidArgumentException('The "' . $this->_name . '" config setting value must be a string.');
+				throw new \InvalidArgumentException(
+					'The "' . $this->_name . '" config setting value must be a string.'
+				);
 			}
 		}
 	}
 
 	/**
-	 * Casts value.
+	 * Converts value into scalar for used for storage.
 	 *
 	 * @param mixed $value Value.
 	 *
 	 * @return mixed
 	 */
-	private function _castValue($value)
+	private function _convertToScalarValue($value)
 	{
-		if ( $this->_dataType === self::TYPE_INTEGER ) {
-			return (int)$value;
-		}
-
-		if ( $this->_dataType === self::TYPE_STRING ) {
-			return (string)$value;
-		}
-
 		if ( $this->_isArray() ) {
 			return implode(PHP_EOL, $value);
 		}
 
-		return $value;
+		if ( $this->_dataType === self::TYPE_INTEGER ) {
+			return (int)$value;
+		}
+
+		return (string)$value;
 	}
 
 	/**
