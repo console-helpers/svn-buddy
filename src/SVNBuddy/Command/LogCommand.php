@@ -338,13 +338,7 @@ TEXT;
 	 */
 	protected function getMergeConflictRegExps()
 	{
-		$merge_conflict_regexps = $this->getSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS);
-
-		if ( !$merge_conflict_regexps ) {
-			return array();
-		}
-
-		return explode(PHP_EOL, $merge_conflict_regexps);
+		return $this->getSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS);
 	}
 
 	/**
