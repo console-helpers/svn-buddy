@@ -45,9 +45,11 @@ class DateHelper extends Helper
 			array('name' => 'second', 'amount' => 1),
 		);
 
+		// @codeCoverageIgnoreStart
 		if ( !isset($to_date) ) {
 			$to_date = time();
 		}
+		// @codeCoverageIgnoreEnd
 
 		$diff = abs($to_date - $from_date);
 
