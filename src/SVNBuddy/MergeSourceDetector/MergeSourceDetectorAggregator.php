@@ -42,6 +42,8 @@ class MergeSourceDetectorAggregator extends AbstractMergeSourceDetector
 	 */
 	public function detect($repository_url)
 	{
+		usort($this->_detectors, array($this, 'sortDetectors'));
+
 		foreach ( $this->_detectors as $detector ) {
 			$result = $detector->detect($repository_url);
 
@@ -51,6 +53,23 @@ class MergeSourceDetectorAggregator extends AbstractMergeSourceDetector
 		}
 
 		return null;
+	}
+
+	/**
+	 * Sorts detectors by weight.
+	 *
+	 * @param AbstractMergeSourceDetector $detector_a Detector A.
+	 * @param AbstractMergeSourceDetector $detector_b Detector B.
+	 *
+	 * @return integer
+	 */
+	public function sortDetectors(AbstractMergeSourceDetector $detector_a, AbstractMergeSourceDetector $detector_b)
+	{
+		if ( $detector_a->getWeight() == $detector_b->getWeight() ) {
+			return 0;
+		}
+
+		return ($detector_a->getWeight() < $detector_b->getWeight()) ? 1 : -1;
 	}
 
 }
