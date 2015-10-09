@@ -15,6 +15,23 @@ abstract class AbstractMergeSourceDetector
 {
 
 	/**
+	 * Weight.
+	 *
+	 * @var integer
+	 */
+	private $_weight;
+
+	/**
+	 * Creates detector.
+	 *
+	 * @param integer $weight Weight.
+	 */
+	public function __construct($weight = 0)
+	{
+		$this->_weight = $weight;
+	}
+
+	/**
 	 * Detects merge source from repository url.
 	 *
 	 * @param string $repository_url Repository url.
@@ -22,5 +39,15 @@ abstract class AbstractMergeSourceDetector
 	 * @return null|string
 	 */
 	abstract public function detect($repository_url);
+
+	/**
+	 * Returns relative detector weight.
+	 *
+	 * @return integer
+	 */
+	public function getWeight()
+	{
+		return $this->_weight;
+	}
 
 }

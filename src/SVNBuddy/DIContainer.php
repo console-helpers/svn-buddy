@@ -73,7 +73,7 @@ class DIContainer extends Container
 		$this['merge_source_detector'] = function () {
 			$merge_source_detector = new MergeSourceDetectorAggregator();
 			$merge_source_detector->add(new ClassicMergeSourceDetector());
-			$merge_source_detector->add(new InPortalMergeSourceDetector());
+			$merge_source_detector->add(new InPortalMergeSourceDetector(50));
 
 			return $merge_source_detector;
 		};
