@@ -13,18 +13,8 @@ namespace Tests\aik099\SVNBuddy\MergeSourceDetector;
 
 use aik099\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 
-class ClassicMergeSourceDetectorTest extends \PHPUnit_Framework_TestCase
+class ClassicMergeSourceDetectorTest extends AbstractMergeSourceDetectorTestCase
 {
-
-	/**
-	 * @dataProvider repositoryUrlDataProvider
-	 */
-	public function testDetect($repository_url, $result)
-	{
-		$merge_source_detector = new ClassicMergeSourceDetector();
-
-		$this->assertSame($result, $merge_source_detector->detect($repository_url));
-	}
 
 	public function repositoryUrlDataProvider()
 	{
@@ -42,6 +32,18 @@ class ClassicMergeSourceDetectorTest extends \PHPUnit_Framework_TestCase
 			'tag root folder' => array('svn://localhost/tags/tag_name', 'svn://localhost/trunk'),
 			'tag sub-folder' => array('svn://localhost/tags/tag_name/folder', 'svn://localhost/trunk'),
 		);
+	}
+
+	/**
+	 * Creates detector.
+	 *
+	 * @param integer $weight Weight.
+	 *
+	 * @return ClassicMergeSourceDetector
+	 */
+	protected function createDetector($weight = 0)
+	{
+		return new ClassicMergeSourceDetector($weight);
 	}
 
 }
