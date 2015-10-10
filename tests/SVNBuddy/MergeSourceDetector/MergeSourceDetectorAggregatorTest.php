@@ -14,9 +14,6 @@ namespace Tests\aik099\SVNBuddy\MergeSourceDetector;
 use aik099\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use Prophecy\Prophecy\ObjectProphecy;
 
-/**
- * @requires PHP 7.0.0-dev
- */
 class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestCase
 {
 
@@ -32,15 +29,15 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 		parent::setUp();
 
 		$sub_detector1 = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
-		$sub_detector1->getWeight()->willReturn(2);
+		$sub_detector1->getWeight()->willReturn(2)->shouldBeCalled();
 		$this->detectors[] = $sub_detector1;
 
 		$sub_detector2 = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
-		$sub_detector2->getWeight()->willReturn(1);
+		$sub_detector2->getWeight()->willReturn(1)->shouldBeCalled();
 		$this->detectors[] = $sub_detector2;
 
 		$sub_detector2 = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
-		$sub_detector2->getWeight()->willReturn(3);
+		$sub_detector2->getWeight()->willReturn(3)->shouldBeCalled();
 		$this->detectors[] = $sub_detector2;
 	}
 
@@ -49,7 +46,7 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 	 */
 	public function testDetect($repository_url, $result)
 	{
-		$this->markTestSkipped();
+		$this->markTestSkipped('Cross-detector matching tests done separately');
 	}
 
 	public function testNoMatchFound()
@@ -72,6 +69,19 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 		$this->detectors[2]->detect('A')->willReturn('A3')->shouldBeCalled();
 
 		$this->assertEquals('A3', $detector->detect('A'));
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage Another detector with same weight is already added.
+	 */
+	public function testAddingDetectorWithDuplicateWeight()
+	{
+		$sub_detector = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector->getWeight()->willReturn(1)->shouldBeCalled();
+
+		$detector = $this->createDetector();
+		$detector->add($sub_detector->reveal());
 	}
 
 	/**

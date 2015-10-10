@@ -26,7 +26,7 @@ abstract class AbstractMergeSourceDetector
 	 *
 	 * @param integer $weight Weight.
 	 */
-	public function __construct($weight = 0)
+	public function __construct($weight)
 	{
 		$this->_weight = $weight;
 	}
