@@ -56,23 +56,4 @@ class RevisionListParser
 		return array_keys($ret);
 	}
 
-	/**
-	 * Creates ranges from given revision list.
-	 *
-	 * @param array $revisions Revisions.
-	 *
-	 * @return array
-	 */
-	public function createRanges(array $revisions)
-	{
-		$ret = array();
-		sort($revisions, SORT_NUMERIC);
-
-		foreach ( $revisions as $revision ) {
-			$ret[] = array($revision, $revision);
-		}
-
-		return $ret;
-	}
-
 }

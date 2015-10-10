@@ -107,24 +107,4 @@ class RevisionListParserTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	public function testRevisionRangeBuilding()
-	{
-		$this->markTestIncomplete('TODO');
-
-		$expected = array('1:5', '8:9');
-		$actual = $this->_revisionListParser->createRanges(array(1, 2, 3, 4, 5, 8, 9));
-
-		$this->assertEquals($expected, $actual);
-	}
-
-	public function testSorting()
-	{
-		$this->markTestIncomplete('TODO');
-
-		$expected = array(1, 2, 3);
-		$actual = $this->_revisionListParser->createRanges(array(3, 2, 1));
-
-		$this->assertEquals($expected, $actual);
-	}
-
 }
