@@ -65,7 +65,7 @@ abstract class AbstractCommandTestCase extends WorkingDirectoryAwareTestCase
 		$input['command'] = $this->command->getName();
 		$options['interactive'] = true;
 
-		$exit_code = $this->commandTester->execute($input, $options);
+		$this->commandTester->execute($input, $options);
 
 		return $this->commandTester->getDisplay();
 	}

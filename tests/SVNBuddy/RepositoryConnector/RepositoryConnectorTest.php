@@ -14,6 +14,7 @@ namespace Tests\aik099\SVNBuddy\RepositoryConnector;
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\ConsoleIO;
 use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
+use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Tests\aik099\SVNBuddy\WorkingDirectoryTest;
 
@@ -23,21 +24,21 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	/**
 	 * Config editor.
 	 *
-	 * @var MockInterface
+	 * @var ObjectProphecy
 	 */
 	private $_configEditor;
 
 	/**
 	 * Process factory.
 	 *
-	 * @var MockInterface
+	 * @var ObjectProphecy
 	 */
 	private $_processFactory;
 
 	/**
 	 * Process.
 	 *
-	 * @var MockInterface
+	 * @var ObjectProphecy
 	 */
 	private $_process;
 
