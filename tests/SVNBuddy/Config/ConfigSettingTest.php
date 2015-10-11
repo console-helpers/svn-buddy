@@ -13,24 +13,17 @@ namespace Tests\aik099\SVNBuddy\Config;
 
 use aik099\SVNBuddy\Config\ConfigSetting;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 use Tests\aik099\SVNBuddy\ProphecyToken\ConfigStorageNameToken;
 
-class ConfigSettingTest extends \PHPUnit_Framework_TestCase
+class ConfigSettingTest extends AbstractConfigSettingTest
 {
-
-	/**
-	 * Config editor
-	 *
-	 * @var ObjectProphecy
-	 */
-	protected $configEditor;
 
 	protected function setUp()
 	{
-		parent::setUp();
+		$this->defaultDataType = ConfigSetting::TYPE_STRING;
+		$this->defaultValue = 'default';
 
-		$this->configEditor = $this->prophesize('aik099\\SVNBuddy\Config\\ConfigEditor');
+		parent::setUp();
 	}
 
 	/**
@@ -38,7 +31,7 @@ class ConfigSettingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testCreateWithCorrectDataType($data_type)
 	{
-		new ConfigSetting('name', $data_type, null);
+		$this->createConfigSetting(null, $data_type, false);
 
 		$this->assertTrue(true);
 	}
@@ -59,277 +52,6 @@ class ConfigSettingTest extends \PHPUnit_Framework_TestCase
 	public function testCreateWithIncorrectDataType()
 	{
 		new ConfigSetting('name', 'float', null);
-	}
-
-	/**
-	 * @dataProvider scopeDataProvider
-	 */
-	public function testCreateWithCorrectScope($scope_bit, array $scope_bits)
-	{
-		$config_setting = $this->createConfigSetting($scope_bit);
-
-		foreach ( $scope_bits as $check_scope_bit => $check_value ) {
-			$this->assertSame(
-				$check_value,
-				$config_setting->isWithinScope($check_scope_bit),
-				'The "' . $scope_bit . '" expands into "' . $check_scope_bit . '" scope bit.'
-			);
-		}
-	}
-
-	public function scopeDataProvider()
-	{
-		return array(
-			'global scope bit' => array(
-				ConfigSetting::SCOPE_GLOBAL,
-				array(ConfigSetting::SCOPE_GLOBAL => true, ConfigSetting::SCOPE_WORKING_COPY => false),
-			),
-			'working copy scope bit' => array(
-				ConfigSetting::SCOPE_WORKING_COPY,
-				array(ConfigSetting::SCOPE_WORKING_COPY => true, ConfigSetting::SCOPE_GLOBAL => true),
-			),
-			'no scope bit' => array(
-				null,
-				array(ConfigSetting::SCOPE_WORKING_COPY => true, ConfigSetting::SCOPE_GLOBAL => true),
-			),
-		);
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The $scope must be either "working copy" or "global".
-	 * @dataProvider incorrectScopeDataProvider
-	 */
-	public function testCreateWithIncorrectScope($scope)
-	{
-		$this->createConfigSetting($scope);
-	}
-
-	public function incorrectScopeDataProvider()
-	{
-		return array(
-			'empty scope bit' => array(0),
-			'mixed scope bits' => array(ConfigSetting::SCOPE_GLOBAL | ConfigSetting::SCOPE_WORKING_COPY),
-		);
-	}
-
-	public function testGetName()
-	{
-		$config_setting = $this->createConfigSetting();
-
-		$this->assertEquals('name', $config_setting->getName());
-	}
-
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please use setEditor() before calling aik099\SVNBuddy\Config\ConfigSetting::getValue().
-	 */
-	public function testGetValueWithoutEditor()
-	{
-		$this->createConfigSetting(null, ConfigSetting::TYPE_STRING, false)->getValue();
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The usage of "2" scope bit for "name" config setting is forbidden.
-	 */
-	public function testGetValueWithForbiddenScopeBit()
-	{
-		$this->createConfigSetting(ConfigSetting::SCOPE_GLOBAL)->getValue(ConfigSetting::SCOPE_WORKING_COPY);
-	}
-
-	/**
-	 * @dataProvider scopeBitDataProvider
-	 */
-	public function testGetValueWithCorrectScopeBit($scope_bit)
-	{
-		$config_setting = $this->createConfigSetting();
-
-		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
-			$config_setting->setWorkingCopyUrl('url');
-		}
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', $scope_bit), 'default')
-			->willReturn('OK')
-			->shouldBeCalled();
-
-		$this->assertEquals('OK', $config_setting->getValue($scope_bit));
-	}
-
-	/**
-	 * @dataProvider scopeBitDataProvider
-	 */
-	public function testGetValueFromWithoutFallback($scope_bit)
-	{
-		$config_setting = $this->createConfigSetting($scope_bit);
-
-		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
-			$config_setting->setWorkingCopyUrl('url');
-		}
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', $scope_bit))
-			->willReturn('OK')
-			->shouldBeCalled();
-
-		$this->assertEquals('OK', $config_setting->getValue());
-	}
-
-	public function testGetValueFromWorkingCopyWithFallbackToGlobal()
-	{
-		$config_setting = $this->createConfigSetting();
-		$config_setting->setWorkingCopyUrl('url');
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_WORKING_COPY))
-			->shouldBeCalled();
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL))
-			->willReturn('G_OK')
-			->shouldBeCalled();
-
-		$this->assertEquals('G_OK', $config_setting->getValue());
-	}
-
-	public function testGetValueFromGlobalWithFallbackToDefault()
-	{
-		$config_setting = $this->createConfigSetting(ConfigSetting::SCOPE_GLOBAL);
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL))
-			->shouldBeCalled();
-
-		$this->assertEquals('default', $config_setting->getValue());
-	}
-
-	public function testGetValueFromWorkingCopyWithFallbackToDefault()
-	{
-		$config_setting = $this->createConfigSetting();
-		$config_setting->setWorkingCopyUrl('url');
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_WORKING_COPY))
-			->shouldBeCalled();
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL))
-			->shouldBeCalled();
-
-		$this->assertEquals('default', $config_setting->getValue());
-	}
-
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please use setEditor() before calling aik099\SVNBuddy\Config\ConfigSetting::setValue().
-	 */
-	public function testSetValueWithoutEditor()
-	{
-		$this->createConfigSetting(null, ConfigSetting::TYPE_STRING, false)->setValue('value');
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The usage of "2" scope bit for "name" config setting is forbidden.
-	 */
-	public function testSetValueWithForbiddenScopeBit()
-	{
-		$this->createConfigSetting(ConfigSetting::SCOPE_GLOBAL)->setValue('value', ConfigSetting::SCOPE_WORKING_COPY);
-	}
-
-	/**
-	 * @dataProvider scopeBitDataProvider
-	 */
-	public function testSetValueWithoutScopeBit($scope_bit)
-	{
-		$config_setting = $this->createConfigSetting($scope_bit);
-
-		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
-			$config_setting->setWorkingCopyUrl('url');
-
-			$this->configEditor
-				->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL), 'default')
-				->shouldBeCalled();
-		}
-
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', $scope_bit), 'value')
-			->shouldBeCalled();
-
-		$config_setting->setValue('value');
-	}
-
-	/**
-	 * @dataProvider scopeBitDataProvider
-	 */
-	public function testSetValueWithScopeBit($scope_bit)
-	{
-		$config_setting = $this->createConfigSetting($scope_bit);
-
-		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
-			$config_setting->setWorkingCopyUrl('url');
-
-			$this->configEditor
-				->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL), 'default')
-				->shouldBeCalled();
-		}
-
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', $scope_bit), 'value')
-			->shouldBeCalled();
-
-		$config_setting->setValue('value', $scope_bit);
-	}
-
-	/**
-	 * @dataProvider scopeBitDataProvider
-	 */
-	public function testSetValueWithInheritance($scope_bit)
-	{
-		$global_value_prediction = $this->configEditor->get(
-			new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL),
-			'default'
-		);
-
-		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
-			$default_value = 'global_value';
-			$global_value_prediction->willReturn($default_value)->shouldBeCalled();
-		}
-		else {
-			$default_value = 'default';
-			$global_value_prediction->shouldNotBeCalled();
-		}
-
-		$config_setting = $this->createConfigSetting($scope_bit);
-
-		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
-			$config_setting->setWorkingCopyUrl('url');
-		}
-
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', $scope_bit), null)
-			->shouldBeCalled();
-
-		$config_setting->setValue($default_value);
-	}
-
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling aik099\SVNBuddy\Config\ConfigSetting::getValue() method.
-	 */
-	public function testGetValueWithoutWorkingCopy()
-	{
-		$this->createConfigSetting()->getValue();
-	}
-
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling aik099\SVNBuddy\Config\ConfigSetting::setValue() method.
-	 */
-	public function testSetValueWithoutWorkingCopy()
-	{
-		$this->createConfigSetting()->setValue('value');
 	}
 
 	/**
@@ -510,35 +232,120 @@ class ConfigSettingTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
-	public function scopeBitDataProvider()
+	/**
+	 * @dataProvider setValueWithInheritanceDataProvider
+	 */
+	public function testSetValueWithInheritance($scope_bit, $data_type, array $defaults)
+	{
+		$wc_value = $defaults[0];
+		$global_value = $defaults[1];
+
+		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
+			$this->configEditor
+				->get(
+					new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL),
+					$this->convertToStorage($global_value)
+				)
+				->willReturn(
+					$this->convertToStorage($wc_value)
+				)
+				->shouldBeCalled();
+
+			$config_setting = $this->createConfigSetting($scope_bit, $data_type, true, $global_value);
+			$config_setting->setWorkingCopyUrl('url');
+
+			$this->configEditor
+				->set(new ConfigStorageNameToken('name', $scope_bit), null)
+				->shouldBeCalled();
+
+			$config_setting->setValue($wc_value);
+		}
+		else {
+			$this->configEditor
+				->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL), $global_value)
+				->shouldNotBeCalled();
+
+			$config_setting = $this->createConfigSetting($scope_bit, $data_type, true, $global_value);
+
+			$this->configEditor
+				->set(new ConfigStorageNameToken('name', $scope_bit), null)
+				->shouldBeCalled();
+
+			$config_setting->setValue($global_value);
+		}
+	}
+
+	public function setValueWithInheritanceDataProvider()
 	{
 		return array(
-			'working copy scope' => array(ConfigSetting::SCOPE_WORKING_COPY),
-			'global scope' => array(ConfigSetting::SCOPE_GLOBAL),
+			'global, string' => array(
+				ConfigSetting::SCOPE_GLOBAL,
+				ConfigSetting::TYPE_STRING,
+				array('global_value', 'default'),
+			),
+			'working copy, string' => array(
+				ConfigSetting::SCOPE_WORKING_COPY,
+				ConfigSetting::TYPE_STRING,
+				array('global_value', 'default'),
+			),
+			'global, integer' => array(
+				ConfigSetting::SCOPE_GLOBAL,
+				ConfigSetting::TYPE_INTEGER,
+				array(2, 1),
+			),
+			'working copy, integer' => array(
+				ConfigSetting::SCOPE_WORKING_COPY,
+				ConfigSetting::TYPE_INTEGER,
+				array(2, 1),
+			),
+			'global, array' => array(
+				ConfigSetting::SCOPE_GLOBAL,
+				ConfigSetting::TYPE_ARRAY,
+				array(array('global_value'), array('default')),
+			),
+			'working copy, array' => array(
+				ConfigSetting::SCOPE_WORKING_COPY,
+				ConfigSetting::TYPE_ARRAY,
+				array(array('global_value'), array('default')),
+			),
 		);
 	}
 
 	/**
-	 * Creates config setting.
-	 *
-	 * @param integer $scope_bit   Scope bit.
-	 * @param int     $data_type   Data type.
-	 * @param boolean $with_editor Connect editor to the setting.
-	 *
-	 * @return ConfigSetting
+	 * @dataProvider storageDataProvider
 	 */
-	protected function createConfigSetting(
-		$scope_bit = null,
-		$data_type = ConfigSetting::TYPE_STRING,
-		$with_editor = true
-	) {
-		$config_setting = new ConfigSetting('name', $data_type, 'default', $scope_bit);
+	public function testStorage($user_value, $stored_value, $data_type)
+	{
+		$this->configEditor
+			->set(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL), $stored_value)
+			->shouldBeCalled();
 
-		if ( $with_editor ) {
-			$config_setting->setEditor($this->configEditor->reveal());
-		}
+		$config_setting = $this->createConfigSetting(ConfigSetting::SCOPE_GLOBAL, $data_type);
+		$config_setting->setValue($user_value);
+	}
 
-		return $config_setting;
+	/**
+	 * @dataProvider storageDataProvider
+	 */
+	public function testDefaultValueIsConvertedToScalar($default_value, $stored_value, $data_type)
+	{
+		$this->configEditor
+			->get(new ConfigStorageNameToken('name', ConfigSetting::SCOPE_GLOBAL), $stored_value)
+			->willReturn(null)
+			->shouldBeCalled();
+
+		$config_setting = $this->createConfigSetting(ConfigSetting::SCOPE_GLOBAL, $data_type, true, $default_value);
+		$config_setting->getValue(ConfigSetting::SCOPE_GLOBAL);
+	}
+
+	public function storageDataProvider()
+	{
+		return array(
+			'array into string' => array(array('a', 'b'), 'a' . PHP_EOL . 'b', ConfigSetting::TYPE_ARRAY),
+			'array as string' => array('a' . PHP_EOL . 'b', 'a' . PHP_EOL . 'b', ConfigSetting::TYPE_ARRAY),
+			'integer' => array(1, 1, ConfigSetting::TYPE_INTEGER),
+			'string' => array('a', 'a', ConfigSetting::TYPE_STRING),
+		);
 	}
 
 }
