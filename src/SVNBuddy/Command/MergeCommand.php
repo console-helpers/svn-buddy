@@ -11,7 +11,8 @@
 namespace aik099\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use aik099\SVNBuddy\Config\StringConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
@@ -568,12 +569,12 @@ TEXT;
 	/**
 	 * Returns list of config settings.
 	 *
-	 * @return ConfigSetting[]
+	 * @return AbstractConfigSetting[]
 	 */
 	public function getConfigSettings()
 	{
 		return array(
-			new ConfigSetting(self::SETTING_MERGE_SOURCE_URL, ConfigSetting::TYPE_STRING, ''),
+			new StringConfigSetting(self::SETTING_MERGE_SOURCE_URL, ''),
 		);
 	}
 

@@ -11,20 +11,8 @@
 namespace aik099\SVNBuddy\Config;
 
 
-class PathsConfigSetting extends ConfigSetting
+class PathsConfigSetting extends ArrayConfigSetting
 {
-
-	/**
-	 * Creates config setting instance.
-	 *
-	 * @param string  $name    Name.
-	 * @param mixed   $default Default value.
-	 * @param integer $scope   Scope.
-	 */
-	public function __construct($name, $default, $scope = null)
-	{
-		parent::__construct($name, self::TYPE_ARRAY, $default, $scope);
-	}
 
 	/**
 	 * Performs value validation.

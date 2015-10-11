@@ -11,8 +11,20 @@
 namespace aik099\SVNBuddy\Config;
 
 
-class RegExpsConfigSetting extends ArrayConfigSetting
+class IntegerConfigSetting extends AbstractConfigSetting
 {
+
+	/**
+	 * Converts value into scalar for used for storage.
+	 *
+	 * @param mixed $value Value.
+	 *
+	 * @return mixed
+	 */
+	protected function convertToStorageFormat($value)
+	{
+		return (int)$value;
+	}
 
 	/**
 	 * Performs value validation.
@@ -24,12 +36,10 @@ class RegExpsConfigSetting extends ArrayConfigSetting
 	 */
 	protected function validate($value)
 	{
-		parent::validate($value);
-
-		foreach ( $value as $regexp ) {
-			if ( @preg_match($regexp, 'test') === false ) {
-				throw new \InvalidArgumentException('The "' . $regexp . '" is not a valid regular expression.');
-			}
+		if ( !is_numeric($value) ) {
+			throw new \InvalidArgumentException(
+				'The "' . $this->getName() . '" config setting value must be an integer.'
+			);
 		}
 	}
 

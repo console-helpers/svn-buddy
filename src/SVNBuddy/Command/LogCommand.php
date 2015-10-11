@@ -11,7 +11,8 @@
 namespace aik099\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use aik099\SVNBuddy\Config\IntegerConfigSetting;
 use aik099\SVNBuddy\Config\RegExpsConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\DateHelper;
@@ -386,12 +387,12 @@ TEXT;
 	/**
 	 * Returns list of config settings.
 	 *
-	 * @return ConfigSetting[]
+	 * @return AbstractConfigSetting[]
 	 */
 	public function getConfigSettings()
 	{
 		return array(
-			new ConfigSetting(self::SETTING_LOG_LIMIT, ConfigSetting::TYPE_INTEGER, 10),
+			new IntegerConfigSetting(self::SETTING_LOG_LIMIT, 10),
 			new RegExpsConfigSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS, '#/composer\.lock$#'),
 		);
 	}

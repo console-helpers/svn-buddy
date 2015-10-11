@@ -11,14 +11,8 @@
 namespace aik099\SVNBuddy\Config;
 
 
-class ConfigSetting
+abstract class AbstractConfigSetting
 {
-
-	const TYPE_STRING = 1;
-
-	const TYPE_INTEGER = 2;
-
-	const TYPE_ARRAY = 3;
 
 	const SCOPE_GLOBAL = 1;
 
@@ -37,13 +31,6 @@ class ConfigSetting
 	 * @var string
 	 */
 	private $_name;
-
-	/**
-	 * Data type.
-	 *
-	 * @var integer
-	 */
-	private $_dataType;
 
 	/**
 	 * Default value.
@@ -70,24 +57,13 @@ class ConfigSetting
 	 * Creates config setting instance.
 	 *
 	 * @param string  $name      Name.
-	 * @param integer $data_type Data type.
 	 * @param mixed   $default   Default value.
 	 * @param integer $scope_bit Scope.
+	 *
+	 * @throws \InvalidArgumentException When wrong scope bit given.
 	 */
-	public function __construct($name, $data_type, $default, $scope_bit = null)
+	public function __construct($name, $default, $scope_bit = null)
 	{
-		$data_types = array(
-			self::TYPE_STRING,
-			self::TYPE_INTEGER,
-			self::TYPE_ARRAY,
-		);
-
-		if ( !in_array($data_type, $data_types) ) {
-			throw new \InvalidArgumentException('The "' . $data_type . '" is not valid config setting data type.');
-		}
-
-		$this->_dataType = $data_type;
-
 		if ( !isset($scope_bit) ) {
 			$scope_bit = self::SCOPE_WORKING_COPY;
 		}
@@ -100,7 +76,7 @@ class ConfigSetting
 		}
 
 		$this->_name = $name;
-		$this->_defaultValue = $this->_convertToScalarValue($this->_normalizeValue($default));
+		$this->_defaultValue = $this->convertToStorageFormat($this->normalizeValue($default));
 	}
 
 	/**
@@ -186,7 +162,7 @@ class ConfigSetting
 			}
 		}
 
-		return $this->_normalizeValue($value);
+		return $this->normalizeValue($value);
 	}
 
 	/**
@@ -203,9 +179,9 @@ class ConfigSetting
 		$this->assertUsage(__METHOD__, $scope_bit);
 
 		if ( $value !== null ) {
-			$value = $this->_normalizeValue($value);
+			$value = $this->normalizeValue($value);
 			$this->validate($value);
-			$value = $this->_convertToScalarValue($value);
+			$value = $this->convertToStorageFormat($value);
 		}
 
 		if ( !isset($scope_bit) ) {
@@ -296,19 +272,10 @@ class ConfigSetting
 	 * @param mixed $value Value.
 	 *
 	 * @return mixed
-	 * @throws \InvalidArgumentException When attempt to set array to non-array config setting was made.
 	 */
-	private function _normalizeValue($value)
+	protected function normalizeValue($value)
 	{
-		if ( $this->_isArray() ) {
-			if ( !is_array($value) ) {
-				$value = strlen($value) ? explode(PHP_EOL, $value) : array();
-			}
-
-			return array_filter(array_map('trim', $value));
-		}
-
-		return is_string($value) ? trim($value) : $value;
+		return $value;
 	}
 
 	/**
@@ -317,25 +284,8 @@ class ConfigSetting
 	 * @param mixed $value Value.
 	 *
 	 * @return void
-	 * @throws \InvalidArgumentException When validation failed.
 	 */
-	protected function validate($value)
-	{
-		if ( $this->_dataType === self::TYPE_INTEGER ) {
-			if ( !is_numeric($value) ) {
-				throw new \InvalidArgumentException(
-					'The "' . $this->_name . '" config setting value must be an integer.'
-				);
-			}
-		}
-		elseif ( $this->_dataType === self::TYPE_STRING ) {
-			if ( !is_string($value) ) {
-				throw new \InvalidArgumentException(
-					'The "' . $this->_name . '" config setting value must be a string.'
-				);
-			}
-		}
-	}
+	abstract protected function validate($value);
 
 	/**
 	 * Converts value into scalar for used for storage.
@@ -344,27 +294,6 @@ class ConfigSetting
 	 *
 	 * @return mixed
 	 */
-	private function _convertToScalarValue($value)
-	{
-		if ( $this->_isArray() ) {
-			return implode(PHP_EOL, $value);
-		}
-
-		if ( $this->_dataType === self::TYPE_INTEGER ) {
-			return (int)$value;
-		}
-
-		return (string)$value;
-	}
-
-	/**
-	 * Determines if config setting has array data type.
-	 *
-	 * @return boolean
-	 */
-	private function _isArray()
-	{
-		return $this->_dataType === self::TYPE_ARRAY;
-	}
+	abstract protected function convertToStorageFormat($value);
 
 }

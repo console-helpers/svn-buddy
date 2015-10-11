@@ -11,8 +11,9 @@
 namespace aik099\SVNBuddy\Command;
 
 
+use aik099\SVNBuddy\Config\ArrayConfigSetting;
 use aik099\SVNBuddy\Config\ConfigEditor;
-use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\AbstractConfigSetting;
 use aik099\SVNBuddy\InteractiveEditor;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
@@ -41,7 +42,7 @@ class ConfigCommand extends AbstractCommand implements IAggregatorAwareCommand
 	/**
 	 * Config settings.
 	 *
-	 * @var ConfigSetting[]
+	 * @var AbstractConfigSetting[]
 	 */
 	protected $configSettings = array();
 
@@ -174,7 +175,7 @@ TEXT;
 		$value = $config_setting->getValue($this->getValueFilter());
 		$retry = false;
 
-		if ( is_array($value) ) {
+		if ( $config_setting instanceof ArrayConfigSetting ) {
 			$value = implode(PHP_EOL, $value);
 		}
 
@@ -284,7 +285,7 @@ TEXT;
 	 *
 	 * @param integer $scope_filter Scope filter.
 	 *
-	 * @return ConfigSetting[]
+	 * @return AbstractConfigSetting[]
 	 */
 	protected function getConfigSettingsByScope($scope_filter)
 	{
@@ -304,7 +305,7 @@ TEXT;
 	 *
 	 * @param string $name Setting name.
 	 *
-	 * @return ConfigSetting
+	 * @return AbstractConfigSetting
 	 * @throws \InvalidArgumentException When non-existing/outside of scope setting given.
 	 */
 	protected function getConfigSetting($name)
@@ -329,7 +330,7 @@ TEXT;
 	 */
 	protected function getScopeFilter()
 	{
-		return $this->isGlobal() ? ConfigSetting::SCOPE_GLOBAL : ConfigSetting::SCOPE_WORKING_COPY;
+		return $this->isGlobal() ? AbstractConfigSetting::SCOPE_GLOBAL : AbstractConfigSetting::SCOPE_WORKING_COPY;
 	}
 
 	/**
@@ -339,17 +340,17 @@ TEXT;
 	 */
 	protected function getValueFilter()
 	{
-		return $this->isGlobal() ? ConfigSetting::SCOPE_GLOBAL : null;
+		return $this->isGlobal() ? AbstractConfigSetting::SCOPE_GLOBAL : null;
 	}
 
 	/**
 	 * Returns possible settings with their defaults.
 	 *
-	 * @return ConfigSetting[]
+	 * @return AbstractConfigSetting[]
 	 */
 	protected function getConfigSettings()
 	{
-		/** @var ConfigSetting[] $config_settings */
+		/** @var AbstractConfigSetting[] $config_settings */
 		$config_settings = array();
 
 		foreach ( $this->getApplication()->all() as $command ) {

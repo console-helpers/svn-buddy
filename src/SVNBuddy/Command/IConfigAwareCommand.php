@@ -11,7 +11,7 @@
 namespace aik099\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\AbstractConfigSetting;
 
 interface IConfigAwareCommand
 {
@@ -19,7 +19,7 @@ interface IConfigAwareCommand
 	/**
 	 * Returns list of config settings.
 	 *
-	 * @return ConfigSetting[]
+	 * @return AbstractConfigSetting[]
 	 */
 	public function getConfigSettings();
 

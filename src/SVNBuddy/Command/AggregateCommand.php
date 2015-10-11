@@ -11,7 +11,7 @@
 namespace aik099\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\AbstractConfigSetting;
 use aik099\SVNBuddy\Config\PathsConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -357,12 +357,12 @@ TEXT;
 	/**
 	 * Returns list of config settings.
 	 *
-	 * @return ConfigSetting[]
+	 * @return AbstractConfigSetting[]
 	 */
 	public function getConfigSettings()
 	{
 		return array(
-			new PathsConfigSetting(self::SETTING_AGGREGATE_IGNORE, '', ConfigSetting::SCOPE_GLOBAL),
+			new PathsConfigSetting(self::SETTING_AGGREGATE_IGNORE, '', AbstractConfigSetting::SCOPE_GLOBAL),
 		);
 	}
 

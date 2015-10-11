@@ -12,7 +12,7 @@ namespace aik099\SVNBuddy\Command;
 
 
 use aik099\SVNBuddy\Config\ConfigEditor;
-use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\AbstractConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\ContainerHelper;
 use aik099\SVNBuddy\ConsoleIO;
@@ -195,7 +195,8 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	 *
 	 * @param string $name Name.
 	 *
-	 * @return ConfigSetting
+	 * @return AbstractConfigSetting
+	 * @throws \LogicException When command attempts to read other command settings.
 	 */
 	private function _getConfigSetting($name)
 	{
@@ -205,7 +206,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 
 		foreach ( $this->getConfigSettings() as $config_setting ) {
 			if ( $config_setting->getName() === $name ) {
-				if ( $config_setting->isWithinScope(ConfigSetting::SCOPE_WORKING_COPY) ) {
+				if ( $config_setting->isWithinScope(AbstractConfigSetting::SCOPE_WORKING_COPY) ) {
 					$config_setting->setWorkingCopyUrl($this->getWorkingCopyUrl());
 				}
 

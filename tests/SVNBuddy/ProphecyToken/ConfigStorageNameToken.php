@@ -11,7 +11,7 @@
 namespace Tests\aik099\SVNBuddy\ProphecyToken;
 
 
-use aik099\SVNBuddy\Config\ConfigSetting;
+use aik099\SVNBuddy\Config\AbstractConfigSetting;
 use Prophecy\Argument\Token\TokenInterface;
 
 class ConfigStorageNameToken implements TokenInterface
@@ -32,7 +32,7 @@ class ConfigStorageNameToken implements TokenInterface
 	 */
 	public function __construct($name, $scope_bit)
 	{
-		if ( $scope_bit === ConfigSetting::SCOPE_WORKING_COPY ) {
+		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$this->_pattern = '/^path-settings\.(.*)\.' . preg_quote($name, '/') . '$/';
 		}
 		else {
