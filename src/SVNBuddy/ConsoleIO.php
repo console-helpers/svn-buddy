@@ -193,7 +193,7 @@ class ConsoleIO
 	{
 		/** @var QuestionHelper $helper */
 		$helper = $this->_helperSet->get('question');
-		$choice_question = new ChoiceQuestion($question, $options, $default);
+		$choice_question = new ChoiceQuestion('<question>' . $question . '</question> ', $options, $default);
 		$choice_question->setErrorMessage($error_message);
 
 		return $helper->ask($this->_input, $this->_output, $choice_question);
