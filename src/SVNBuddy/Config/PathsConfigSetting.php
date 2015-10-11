@@ -40,7 +40,7 @@ class PathsConfigSetting extends ConfigSetting
 
 		foreach ( $value as $path ) {
 			if ( !file_exists($path) || !is_dir($path) ) {
-				throw new \InvalidArgumentException('The "' . $path . '" path doesn\'t exit or not a directory.');
+				throw new \InvalidArgumentException('The "' . $path . '" path doesn\'t exist or not a directory.');
 			}
 		}
 	}
