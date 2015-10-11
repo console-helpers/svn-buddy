@@ -153,6 +153,7 @@ class RevisionLog
 	 * @param integer $revision Revision.
 	 *
 	 * @return array
+	 * @throws \InvalidArgumentException When revision is not found.
 	 */
 	public function getRevisionData($revision)
 	{
@@ -212,9 +213,12 @@ class RevisionLog
 
 		$cache_key = 'log:' . $project_url;
 		$cache = $this->_cacheManager->getCache($cache_key);
-		$this->_revisions = $cache['revisions'];
-		$this->_bugRevisions = $cache['bug_revisions'];
-		$this->_pathRevisions = $cache['path_revisions'];
+
+		if ( is_array($cache) ) {
+			$this->_revisions = $cache['revisions'];
+			$this->_bugRevisions = $cache['bug_revisions'];
+			$this->_pathRevisions = $cache['path_revisions'];
+		}
 
 		$from_revision = $this->_getLastRevision();
 		$to_revision = $this->_repositoryConnector->getLastRevision($project_url);
