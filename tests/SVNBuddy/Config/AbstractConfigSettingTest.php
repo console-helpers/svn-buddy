@@ -322,7 +322,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame($normalized_value, $config_setting->getValue());
 	}
 
-	abstract public function normalizationValueDataProvider();
+	abstract public function normalizationValueDataProvider($test_name, $a_value = null, $b_value = null);
 
 	public function scopeBitDataProvider()
 	{
@@ -375,7 +375,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		}
 	}
 
-	abstract public function setValueWithInheritanceDataProvider();
+	abstract public function setValueWithInheritanceDataProvider($test_name, $a_value = null, $b_value = null);
 
 	/**
 	 * @dataProvider storageDataProvider
@@ -404,7 +404,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		$config_setting->getValue(AbstractConfigSetting::SCOPE_GLOBAL);
 	}
 
-	abstract public function storageDataProvider();
+	abstract public function storageDataProvider($test_name, $a_value = null, $b_value = null);
 
 	/**
 	 * Creates config setting.
@@ -442,7 +442,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param integer $scope_bit Scope bit.
+	 * @param mixed $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

@@ -29,28 +29,31 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		parent::setUp();
 	}
 
-	public function normalizationValueDataProvider()
+	public function normalizationValueDataProvider($test_name, $a_value = 'a', $b_value = 'b')
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
 			'empty string' => array(
 				'',
 				'',
 			),
 			'one line string' => array(
-				'a',
-				'a',
+				$a_value,
+				$a_value,
 			),
 			'one line string trimmed' => array(
-				' a ',
-				'a',
+				' ' . $a_value . ' ',
+				$a_value,
 			),
 			'multi-line string' => array(
-				'a' . PHP_EOL . 'b',
-				'a' . PHP_EOL . 'b',
+				$a_value . PHP_EOL . $b_value,
+				$a_value . PHP_EOL . $b_value,
 			),
 			'multi-line string trimmed' => array(
-				' a' . PHP_EOL . 'b ',
-				'a' . PHP_EOL . 'b',
+				' ' . $a_value . PHP_EOL . $b_value . ' ',
+				$a_value . PHP_EOL . $b_value,
 			),
 		);
 	}
@@ -74,31 +77,37 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider()
+	public function setValueWithInheritanceDataProvider($test_name, $a_value = 'global_value', $b_value = 'default')
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
 			'global, string' => array(
 				AbstractConfigSetting::SCOPE_GLOBAL,
-				array('global_value', 'default'),
+				array($a_value, $b_value),
 			),
 			'working copy, string' => array(
 				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array('global_value', 'default'),
+				array($a_value, $b_value),
 			),
 		);
 	}
 
-	public function storageDataProvider()
+	public function storageDataProvider($test_name, $a_value = 'a', $b_value = 'b')
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
-			'string' => array('a', 'a'),
+			'string' => array($a_value, $a_value),
 		);
 	}
 
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param integer $scope_bit Scope bit.
+	 * @param mixed $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed
@@ -108,8 +117,11 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$ret = 'OK';
 		}
-		else {
+		elseif ( $scope_bit === AbstractConfigSetting::SCOPE_GLOBAL ) {
 			$ret = 'G_OK';
+		}
+		else {
+			$ret = $scope_bit;
 		}
 
 		return $as_stored ? $this->convertToStorage($ret) : $ret;

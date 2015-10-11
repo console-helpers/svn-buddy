@@ -29,16 +29,19 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 		parent::setUp();
 	}
 
-	public function normalizationValueDataProvider()
+	public function normalizationValueDataProvider($test_name, $a_value = 1, $b_value = 0)
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
 			'integer' => array(
-				1,
-				1,
+				$a_value,
+				$a_value,
 			),
 			'integer zero' => array(
-				0,
-				0,
+				$b_value,
+				$b_value,
 			),
 		);
 	}
@@ -81,31 +84,37 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider()
+	public function setValueWithInheritanceDataProvider($test_name, $a_value = 2, $b_value = 1)
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
 			'global, integer' => array(
 				AbstractConfigSetting::SCOPE_GLOBAL,
-				array(2, 1),
+				array($a_value, $b_value),
 			),
 			'working copy, integer' => array(
 				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array(2, 1),
+				array($a_value, $b_value),
 			),
 		);
 	}
 
-	public function storageDataProvider()
+	public function storageDataProvider($test_name, $a_value = 1, $b_value = 1)
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
-			'integer' => array(1, 1),
+			'integer' => array($a_value, $a_value),
 		);
 	}
 
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param integer $scope_bit Scope bit.
+	 * @param mixed $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed
@@ -115,8 +124,11 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$ret = 1;
 		}
-		else {
+		elseif ( $scope_bit === AbstractConfigSetting::SCOPE_GLOBAL ) {
 			$ret = 2;
+		}
+		else {
+			$ret = $scope_bit;
 		}
 
 		return $as_stored ? $this->convertToStorage($ret) : $ret;

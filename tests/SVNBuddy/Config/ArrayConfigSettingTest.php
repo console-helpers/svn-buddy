@@ -29,8 +29,11 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		parent::setUp();
 	}
 
-	public function normalizationValueDataProvider()
+	public function normalizationValueDataProvider($test_name, $a_value = array('a'), $b_value = array('b'))
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
 			'empty array' => array(
 				array(),
@@ -41,58 +44,64 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 				array(),
 			),
 			'array' => array(
-				array('a', 'b'),
-				array('a', 'b'),
+				array($a_value, $b_value),
+				array($a_value, $b_value),
 			),
 			'array as scalar' => array(
-				'a' . PHP_EOL . 'b',
-				array('a', 'b'),
+				$a_value . PHP_EOL . $b_value,
+				array($a_value, $b_value),
 			),
 			'array with empty value' => array(
-				array('a', '', 'b', ''),
-				array('a', 'b'),
+				array($a_value, '', $b_value, ''),
+				array($a_value, $b_value),
 			),
 			'array with empty value as scalar' => array(
-				'a' . PHP_EOL . PHP_EOL . 'b' . PHP_EOL,
-				array('a', 'b'),
+				$a_value . PHP_EOL . PHP_EOL . $b_value . PHP_EOL,
+				array($a_value, $b_value),
 			),
 			'array each element trimmed' => array(
-				array(' a ', ' b '),
-				array('a', 'b'),
+				array(' ' . $a_value . ' ', ' ' . $b_value . ' '),
+				array($a_value, $b_value),
 			),
 			'array each element trimmed as scalar' => array(
-				' a ' . PHP_EOL . ' b ',
-				array('a', 'b'),
+				' ' . $a_value . ' ' . PHP_EOL . ' ' . $b_value . ' ',
+				array($a_value, $b_value),
 			),
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider()
+	public function setValueWithInheritanceDataProvider($test_name, $a_value = array('global_value'), $b_value = array('default'))
 	{
+		$a_value = $this->getSampleValue($a_value);
+		$b_value = $this->getSampleValue($b_value);
+
 		return array(
 			'global, array' => array(
 				AbstractConfigSetting::SCOPE_GLOBAL,
-				array(array('global_value'), array('default')),
+				array($a_value, $b_value),
 			),
 			'working copy, array' => array(
 				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array(array('global_value'), array('default')),
+				array($a_value, $b_value),
 			),
 		);
 	}
 
-	public function storageDataProvider()
+	public function storageDataProvider($test_name, $a_value = array('a'), $b_value = array('b'))
 	{
+		$a_value = $this->getSampleValue($a_value, true);
+		$b_value = $this->getSampleValue($b_value, true);
+
 		return array(
-			'array into string' => array(array('a', 'b'), 'a' . PHP_EOL . 'b'),
-			'array as string' => array('a' . PHP_EOL . 'b', 'a' . PHP_EOL . 'b'),
+			'array into string' => array(array($a_value, $b_value), $a_value . PHP_EOL . $b_value),
+			'array as string' => array($a_value . PHP_EOL . $b_value, $a_value . PHP_EOL . $b_value),
 		);
 	}
 
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param integer $scope_bit Scope bit.
+	 * @param mixed $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed
@@ -102,8 +111,11 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$ret = array('OK');
 		}
-		else {
+		elseif ( $scope_bit === AbstractConfigSetting::SCOPE_GLOBAL ) {
 			$ret = array('G_OK');
+		}
+		else {
+			$ret = $scope_bit;
 		}
 
 		return $as_stored ? $this->convertToStorage($ret) : $ret;

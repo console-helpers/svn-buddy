@@ -13,19 +13,12 @@ namespace Tests\aik099\SVNBuddy\Config;
 
 use aik099\SVNBuddy\Config\AbstractConfigSetting;
 
-class PathsConfigSettingTest extends ArrayConfigSettingTest
+class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 {
-
-	/**
-	 * Temp folder.
-	 *
-	 * @var string
-	 */
-	protected $tempFolder = '';
 
 	protected function setUp()
 	{
-		$this->className = 'aik099\\SVNBuddy\\Config\\PathsConfigSetting';
+		$this->className = 'aik099\\SVNBuddy\\Config\\RegExpsConfigSetting';
 		$this->defaultValue = array('default');
 
 		parent::setUp();
@@ -35,39 +28,14 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	{
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 
-		$this->createTempFolder();
-
 		$this->setExpectedException(
 			'InvalidArgumentException',
-			'The "' . $this->tempFolder . '/non-existing-path" path doesn\'t exist or not a directory.'
+			'The "/wrong-regexp" is not a valid regular expression.'
 		);
 
 		$config_setting->setValue(array(
-			$this->tempFolder . '/non-existing-path',
+			'/wrong-regexp',
 		));
-	}
-
-	/**
-	 * Creates temp folder.
-	 *
-	 * @return void
-	 */
-	protected function createTempFolder()
-	{
-		if ( $this->tempFolder ) {
-			return;
-		}
-
-		$temp_file = tempnam(sys_get_temp_dir(), 'sb_');
-		unlink($temp_file);
-		mkdir($temp_file);
-
-		$this->tempFolder = $temp_file;
-
-		// Don't use "tearDown", because it isn't called for "createTempFolder" within data provider methods.
-		register_shutdown_function(function ($temp_file) {
-			shell_exec('rm -Rf ' . escapeshellarg($temp_file));
-		}, $temp_file);
 	}
 
 	/**
@@ -80,25 +48,17 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	 */
 	protected function getSampleValue($scope_bit, $as_stored = false)
 	{
-		$this->createTempFolder();
-
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
-			$ret = array($this->tempFolder . '/OK');
+			$ret = array('/OK/');
 		}
 		elseif ( $scope_bit === AbstractConfigSetting::SCOPE_GLOBAL ) {
-			$ret = array($this->tempFolder . '/G_OK');
+			$ret = array('/G_OK/');
 		}
 		else {
 			$ret = array();
 
-			foreach ( $scope_bit as $index => $path ) {
-				$ret[$index] = $this->tempFolder . '/' . $path;
-			}
-		}
-
-		foreach ( $ret as $path ) {
-			if ( !file_exists($path) ) {
-				mkdir($path);
+			foreach ( $scope_bit as $index => $value ) {
+				$ret[$index] = '/' . $value . '/';
 			}
 		}
 
