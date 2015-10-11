@@ -174,6 +174,10 @@ TEXT;
 		$value = $config_setting->getValue($this->getValueFilter());
 		$retry = false;
 
+		if ( is_array($value) ) {
+			$value = implode(PHP_EOL, $value);
+		}
+
 		do {
 			try {
 				$retry = false;
