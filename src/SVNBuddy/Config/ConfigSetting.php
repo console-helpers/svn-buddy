@@ -100,7 +100,7 @@ class ConfigSetting
 		}
 
 		$this->_name = $name;
-		$this->_defaultValue = $default;
+		$this->_defaultValue = $this->_convertToScalarValue($this->_normalizeValue($default));
 	}
 
 	/**
