@@ -19,6 +19,8 @@ use aik099\SVNBuddy\Repository\Parser\LogMessageParser;
 class RevisionLog
 {
 
+	const CACHE_FORMAT_VERSION = 1;
+
 	/**
 	 * Repository path.
 	 *
@@ -214,7 +216,7 @@ class RevisionLog
 		$project_url = $this->_getProjectUrl($this->_repositoryUrl);
 
 		$cache_key = 'log:' . $project_url;
-		$cache = $this->_cacheManager->getCache($cache_key);
+		$cache = $this->_cacheManager->getCache($cache_key, $this->getCacheInvalidator());
 
 		if ( is_array($cache) ) {
 			$this->_revisions = $cache['revisions'];
@@ -249,12 +251,26 @@ class RevisionLog
 			$progress_bar->finish();
 			$this->_io->writeln('');
 
-			$this->_cacheManager->setCache($cache_key, array(
-				'revisions' => $this->_revisions,
-				'bug_revisions' => $this->_bugRevisions,
-				'path_revisions' => $this->_pathRevisions,
-			));
+			$this->_cacheManager->setCache(
+				$cache_key,
+				array(
+					'revisions' => $this->_revisions,
+					'bug_revisions' => $this->_bugRevisions,
+					'path_revisions' => $this->_pathRevisions,
+				),
+				$this->getCacheInvalidator()
+			);
 		}
+	}
+
+	/**
+	 * Returns format version.
+	 *
+	 * @return mixed
+	 */
+	protected function getCacheInvalidator()
+	{
+		return 'RevisionLog:' . self::CACHE_FORMAT_VERSION;
 	}
 
 	/**
