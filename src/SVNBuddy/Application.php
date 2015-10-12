@@ -21,7 +21,7 @@ use aik099\SVNBuddy\Command\MergeCommand;
 use aik099\SVNBuddy\Command\ResolveCommand;
 use aik099\SVNBuddy\Command\RevertCommand;
 use aik099\SVNBuddy\Command\UpdateCommand;
-use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
+use aik099\SVNBuddy\Repository\Connector\Connector;
 use Pimple\Container;
 use Symfony\Component\Console\Application as BaseApplication;
 
@@ -71,7 +71,7 @@ class Application extends BaseApplication
 	{
 		$version = parent::getLongVersion();
 
-		/** @var RepositoryConnector $repository_connector */
+		/** @var Connector $repository_connector */
 		$repository_connector = $this->dic['repository_connector'];
 		$client_version = $repository_connector->getCommand('', '--version --quiet')->run();
 

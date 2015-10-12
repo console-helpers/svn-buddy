@@ -13,7 +13,7 @@ namespace aik099\SVNBuddy\Command;
 
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\InteractiveEditor;
-use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
+use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

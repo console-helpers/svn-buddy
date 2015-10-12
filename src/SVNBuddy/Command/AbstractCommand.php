@@ -16,9 +16,9 @@ use aik099\SVNBuddy\Config\AbstractConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\ContainerHelper;
 use aik099\SVNBuddy\ConsoleIO;
-use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
-use aik099\SVNBuddy\RepositoryConnector\RevisionLog;
-use aik099\SVNBuddy\RepositoryConnector\RevisionLogFactory;
+use aik099\SVNBuddy\Repository\Connector\Connector;
+use aik099\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use aik099\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Pimple\Container;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
@@ -43,7 +43,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	/**
 	 * Repository connector
 	 *
-	 * @var RepositoryConnector
+	 * @var Connector
 	 */
 	protected $repositoryConnector;
 

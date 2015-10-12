@@ -15,7 +15,7 @@ use aik099\SVNBuddy\Config\AbstractConfigSetting;
 use aik099\SVNBuddy\Config\StringConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
-use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
+use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;

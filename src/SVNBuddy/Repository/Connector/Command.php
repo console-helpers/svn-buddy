@@ -8,7 +8,7 @@
  * @link      https://github.com/aik099/svn-buddy
  */
 
-namespace aik099\SVNBuddy\RepositoryConnector;
+namespace aik099\SVNBuddy\Repository\Connector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
@@ -17,7 +17,7 @@ use aik099\SVNBuddy\ConsoleIO;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class RepositoryCommand
+class Command
 {
 
 	/**

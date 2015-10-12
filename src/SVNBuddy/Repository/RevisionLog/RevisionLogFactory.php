@@ -8,11 +8,13 @@
  * @link      https://github.com/aik099/svn-buddy
  */
 
-namespace aik099\SVNBuddy\RepositoryConnector;
+namespace aik099\SVNBuddy\Repository\RevisionLog;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\ConsoleIO;
+use aik099\SVNBuddy\Repository\Connector\Connector;
+use aik099\SVNBuddy\Repository\Parser\LogMessageParser;
 
 class RevisionLogFactory
 {
@@ -20,7 +22,7 @@ class RevisionLogFactory
 	/**
 	 * Repository connector.
 	 *
-	 * @var RepositoryConnector
+	 * @var Connector
 	 */
 	private $_repositoryConnector;
 
@@ -41,12 +43,12 @@ class RevisionLogFactory
 	/**
 	 * Create revision log.
 	 *
-	 * @param RepositoryConnector $repository_connector Repository connector.
-	 * @param CacheManager        $cache_manager        Cache manager.
-	 * @param ConsoleIO           $io                   Console IO.
+	 * @param Connector    $repository_connector Repository connector.
+	 * @param CacheManager $cache_manager        Cache manager.
+	 * @param ConsoleIO    $io                   Console IO.
 	 */
 	public function __construct(
-		RepositoryConnector $repository_connector,
+		Connector $repository_connector,
 		CacheManager $cache_manager,
 		ConsoleIO $io
 	) {

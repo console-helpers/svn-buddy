@@ -16,7 +16,7 @@ use aik099\SVNBuddy\Config\IntegerConfigSetting;
 use aik099\SVNBuddy\Config\RegExpsConfigSetting;
 use aik099\SVNBuddy\Exception\CommandException;
 use aik099\SVNBuddy\Helper\DateHelper;
-use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
+use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;

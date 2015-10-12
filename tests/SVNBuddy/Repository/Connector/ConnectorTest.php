@@ -8,17 +8,17 @@
  * @link      https://github.com/aik099/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\RepositoryConnector;
+namespace Tests\aik099\SVNBuddy\Repository\Connector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
 use aik099\SVNBuddy\ConsoleIO;
-use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
+use aik099\SVNBuddy\Repository\Connector\Connector;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Tests\aik099\SVNBuddy\WorkingDirectoryTest;
 
-class RepositoryConnectorTest extends WorkingDirectoryTest
+class ConnectorTest extends WorkingDirectoryTest
 {
 
 	/**
@@ -59,7 +59,7 @@ class RepositoryConnectorTest extends WorkingDirectoryTest
 	/**
 	 * Repository connector.
 	 *
-	 * @var RepositoryConnector
+	 * @var Connector
 	 */
 	private $_repositoryConnector;
 
@@ -269,7 +269,7 @@ MSG;
 	 * @param string  $svn_password Password.
 	 * @param boolean $is_verbose   Is verbose.
 	 *
-	 * @return RepositoryConnector
+	 * @return Connector
 	 */
 	private function _createRepositoryConnector($svn_username, $svn_password, $is_verbose = false)
 	{
@@ -280,7 +280,7 @@ MSG;
 			$this->_io->isVerbose()->willReturn($is_verbose)->shouldBeCalled();
 		}
 
-		return new RepositoryConnector(
+		return new Connector(
 			$this->_configEditor->reveal(),
 			$this->_processFactory->reveal(),
 			$this->_io->reveal(),

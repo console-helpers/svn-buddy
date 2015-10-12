@@ -19,9 +19,9 @@ use aik099\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 use aik099\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 use aik099\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use aik099\SVNBuddy\Process\ProcessFactory;
-use aik099\SVNBuddy\RepositoryConnector\RepositoryConnector;
-use aik099\SVNBuddy\RepositoryConnector\RevisionListParser;
-use aik099\SVNBuddy\RepositoryConnector\RevisionLogFactory;
+use aik099\SVNBuddy\Repository\Connector\Connector;
+use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
+use aik099\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Pimple\Container;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -91,7 +91,7 @@ class DIContainer extends Container
 		};
 
 		$this['repository_connector'] = function ($c) {
-			return new RepositoryConnector($c['config_editor'], $c['process_factory'], $c['io'], $c['cache_manager']);
+			return new Connector($c['config_editor'], $c['process_factory'], $c['io'], $c['cache_manager']);
 		};
 
 		$this['container_helper'] = function ($c) {

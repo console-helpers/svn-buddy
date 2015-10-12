@@ -8,7 +8,7 @@
  * @link      https://github.com/aik099/svn-buddy
  */
 
-namespace aik099\SVNBuddy\RepositoryConnector;
+namespace aik099\SVNBuddy\Repository\Connector;
 
 
 use aik099\SVNBuddy\Cache\CacheManager;
@@ -20,7 +20,7 @@ use aik099\SVNBuddy\Process\IProcessFactory;
 /**
  * Executes command on the repository.
  */
-class RepositoryConnector
+class Connector
 {
 
 	const LAST_REVISION_CACHE = '25 minutes';
@@ -122,7 +122,7 @@ class RepositoryConnector
 	{
 		$final_command = $this->buildCommand($command, $param_string);
 
-		$repository_command = new RepositoryCommand(
+		$repository_command = new Command(
 			$this->_processFactory->createProcess($final_command, 1200),
 			$this->_io,
 			$this->_cacheManager

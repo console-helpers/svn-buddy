@@ -8,7 +8,7 @@
  * @link      https://github.com/aik099/svn-buddy
  */
 
-namespace aik099\SVNBuddy\RepositoryConnector;
+namespace aik099\SVNBuddy\Repository\Parser;
 
 
 class RevisionListParser
