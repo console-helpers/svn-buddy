@@ -19,6 +19,10 @@ class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 	public function testGetRevisionLog()
 	{
 		$repository_connector = $this->prophesize('aik099\\SVNBuddy\\RepositoryConnector\\RepositoryConnector');
+
+		$repository_connector->withCache('1 year')->willReturn($repository_connector)->shouldBeCalled();
+		$repository_connector->getProperty('bugtraq:logregex', 'svn://localhost/trunk')->willReturn('')->shouldBeCalled();
+
 		$repository_connector->getFirstRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
 		$repository_connector->getLastRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
 
@@ -28,7 +32,7 @@ class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 		$io = $this->prophesize('aik099\\SVNBuddy\\ConsoleIO');
 
 		$factory = new RevisionLogFactory($repository_connector->reveal(), $cache_manager->reveal(), $io->reveal());
-		$revision_log = $factory->getRevisionLog('svn://localhost/trunk', '');
+		$revision_log = $factory->getRevisionLog('svn://localhost/trunk');
 
 		$this->assertInstanceOf('aik099\\SVNBuddy\\RepositoryConnector\\RevisionLog', $revision_log);
 	}

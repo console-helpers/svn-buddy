@@ -249,14 +249,7 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	protected function getRevisionLog($repository_url)
 	{
 		if ( !isset($this->_revisionLogs[$repository_url]) ) {
-			$bugtraq_logregex = $this->repositoryConnector->withCache('1 year')->getProperty(
-				'bugtraq:logregex',
-				$repository_url
-			);
-			$this->_revisionLogs[$repository_url] = $this->_revisionLogFactory->getRevisionLog(
-				$repository_url,
-				$bugtraq_logregex
-			);
+			$this->_revisionLogs[$repository_url] = $this->_revisionLogFactory->getRevisionLog($repository_url);
 		}
 
 		return $this->_revisionLogs[$repository_url];

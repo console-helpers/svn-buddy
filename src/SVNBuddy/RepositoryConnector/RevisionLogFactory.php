@@ -58,13 +58,17 @@ class RevisionLogFactory
 	/**
 	 * Returns revision log for url.
 	 *
-	 * @param string $repository_url   Repository url.
-	 * @param string $bugtraq_logregex Regular expression(-s) for bug id finding in log message.
+	 * @param string $repository_url Repository url.
 	 *
 	 * @return RevisionLog
 	 */
-	public function getRevisionLog($repository_url, $bugtraq_logregex)
+	public function getRevisionLog($repository_url)
 	{
+		$bugtraq_logregex = $this->_repositoryConnector->withCache('1 year')->getProperty(
+			'bugtraq:logregex',
+			$repository_url
+		);
+
 		return new RevisionLog(
 			$repository_url,
 			$this->_repositoryConnector,
