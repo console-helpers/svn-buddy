@@ -329,13 +329,16 @@ TEXT;
 	 */
 	protected function getUnmergedRevisions($source_url, $wc_path)
 	{
+		// Avoid missing revision query progress bar overwriting following output.
+		$revision_log = $this->getRevisionLog($source_url);
+
 		$this->io->write(' * Upcoming Merge Status ... ');
 		$unmerged_revisions = $this->calculateUnmergedRevisions($source_url, $wc_path);
 
 		if ( $unmerged_revisions ) {
-			$unmerged_bugs = $this->getRevisionLog($source_url)->getBugsFromRevisions($unmerged_revisions);
-			$error_msg = count($unmerged_revisions) . ' revision(-s) or ' . count($unmerged_bugs) . ' bug(-s) not merged';
-			$this->io->writeln('<error>' . $error_msg . '</error>');
+			$unmerged_bugs = $revision_log->getBugsFromRevisions($unmerged_revisions);
+			$error_msg = '<error>%d revision(-s) or %d bug(-s) not merged</error>';
+			$this->io->writeln(sprintf($error_msg, count($unmerged_revisions), count($unmerged_bugs)));
 		}
 		else {
 			$this->io->writeln('<info>Up to date</info>');
