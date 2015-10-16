@@ -14,6 +14,7 @@ namespace Tests\aik099\SVNBuddy\Repository\RevisionLog;
 use aik099\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\aik099\SVNBuddy\ProphecyToken\RegExToken;
+use Tests\aik099\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
 
 class RevisionLogTest extends \PHPUnit_Framework_TestCase
 {
@@ -187,8 +188,8 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
 
 		$plugin->getLastRevision()->shouldBeCalled();
-		$plugin->parse($this->expectSvnLogQuery(1000, 2000))->shouldBeCalled();
-		$plugin->parse($this->expectSvnLogQuery(2001, 3000))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(1000, 2000)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(2001, 3000)))->shouldBeCalled();
 		$plugin->getCollectedData()->willReturn($new_collected_data['mocked'])->shouldBeCalled();
 
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
