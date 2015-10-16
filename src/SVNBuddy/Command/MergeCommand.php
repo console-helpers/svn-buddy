@@ -381,32 +381,6 @@ TEXT;
 	}
 
 	/**
-	 * Returns not merged revisions (manually compare "svn:mergeinfo" property to log).
-	 *
-	 * @param string $source_url Merge source: url.
-	 * @param string $wc_path    Merge target: working copy path.
-	 *
-	 * @return array
-	 * @todo   Shows more revisions, then "svn mergeinfo" command does.
-	 */
-	protected function calculateUnmergedRevisionsHandmade($source_url, $wc_path)
-	{
-		$source_path = $this->repositoryConnector->getPathFromUrl($source_url);
-
-		$revision_log = $this->getRevisionLog($source_url);
-		$all_revisions = $revision_log->getRevisionsFromPath($source_path);
-		$merged_revisions = $this->getMergedRevisions($source_path, $wc_path);
-
-		$unmerged_revisions = array_diff($all_revisions, $merged_revisions);
-
-		$this->io->writeln('all_count: ' . count($all_revisions));
-		$this->io->writeln('merged_count: ' . count($merged_revisions));
-		$this->io->writeln('unmerged_count: ' . count($unmerged_revisions));
-
-		return $unmerged_revisions;
-	}
-
-	/**
 	 * Parses information from "svn:mergeinfo" property.
 	 *
 	 * @param string $source_path Merge source: path in repository.
