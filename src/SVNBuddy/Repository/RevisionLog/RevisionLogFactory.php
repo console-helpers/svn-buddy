@@ -71,13 +71,19 @@ class RevisionLogFactory
 			$repository_url
 		);
 
-		return new RevisionLog(
+		$revision_log = new RevisionLog(
 			$repository_url,
 			$this->_repositoryConnector,
 			$this->_cacheManager,
-			new LogMessageParser($bugtraq_logregex),
 			$this->_io
 		);
+
+		$revision_log->registerPlugin(new SummaryRevisionLogPlugin());
+		$revision_log->registerPlugin(new PathsRevisionLogPlugin());
+		$revision_log->registerPlugin(new BugsRevisionLogPlugin(new LogMessageParser($bugtraq_logregex)));
+		$revision_log->refresh();
+
+		return $revision_log;
 	}
 
 }

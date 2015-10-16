@@ -12,6 +12,7 @@ namespace Tests\aik099\SVNBuddy\Repository\RevisionLog;
 
 
 use aik099\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use Prophecy\Argument;
 
 class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +28,7 @@ class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 		$repository_connector->getLastRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
 
 		$cache_manager = $this->prophesize('aik099\\SVNBuddy\\Cache\\CacheManager');
-		$cache_manager->getCache('log:svn://localhost')->shouldBeCalled();
+		$cache_manager->getCache('log:svn://localhost', Argument::containingString('main:'))->shouldBeCalled();
 
 		$io = $this->prophesize('aik099\\SVNBuddy\\ConsoleIO');
 

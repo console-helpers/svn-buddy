@@ -182,7 +182,7 @@ TEXT;
 				$revisions = $this->getDirectRevisions($revisions, $source_url);
 			}
 			elseif ( $bugs ) {
-				$revisions = $this->getRevisionLog($source_url)->getRevisionsFromBugs($bugs);
+				$revisions = $this->getRevisionLog($source_url)->find('bugs', $bugs);
 			}
 
 			if ( $revisions ) {
@@ -421,7 +421,7 @@ TEXT;
 			$revisions = $this->_revisionListParser->expandRanges($revisions);
 
 			foreach ( $revisions as $revision ) {
-				$revision_log->getRevisionData($revision);
+				$revision_log->getRevisionData('summary', $revision);
 			}
 		}
 		catch ( \InvalidArgumentException $e ) {
@@ -504,7 +504,7 @@ TEXT;
 		$source_path = $this->repositoryConnector->getPathFromUrl($source_url) . '/';
 
 		foreach ( $conflicts as $conflict_path ) {
-			$path_revisions = $revision_log->getRevisionsFromPath($source_path . $conflict_path);
+			$path_revisions = $revision_log->find('paths', $source_path . $conflict_path);
 			$path_revisions = array_intersect($this->_unmergedRevisions, $path_revisions);
 
 			if ( $path_revisions && isset($largest_suggested_revision) ) {

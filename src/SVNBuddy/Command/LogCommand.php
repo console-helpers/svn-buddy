@@ -126,7 +126,7 @@ TEXT;
 
 		$missing_revisions = array();
 		$revision_log = $this->getRevisionLog($wc_url);
-		$revisions_by_path = $revision_log->getRevisionsFromPath($this->repositoryConnector->getPathFromUrl($wc_url));
+		$revisions_by_path = $revision_log->find('paths', $this->repositoryConnector->getPathFromUrl($wc_url));
 
 		if ( $revisions ) {
 			$revisions = $this->_revisionListParser->expandRanges($revisions);
@@ -135,7 +135,7 @@ TEXT;
 		}
 		elseif ( $bugs ) {
 			// Only show bug-related revisions on given path. The $missing_revisions is always empty.
-			$revisions_from_bugs = $this->getRevisionLog($wc_url)->getRevisionsFromBugs($bugs);
+			$revisions_from_bugs = $revision_log->find('bugs', $bugs);
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions_from_bugs);
 		}
 
@@ -222,7 +222,7 @@ TEXT;
 		$repository_path = $this->repositoryConnector->getPathFromUrl($repository_url) . '/';
 
 		foreach ( $revisions as $revision ) {
-			$revision_data = $revision_log->getRevisionData($revision);
+			$revision_data = $revision_log->getRevisionData('summary', $revision);
 			list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
 			$log_message = preg_replace('/^\[fixes:.*?\]/', "\xE2\x9C\x94", $log_message);
 
@@ -230,7 +230,7 @@ TEXT;
 				$log_message = mb_substr($log_message, 0, 70 - 3) . '...';
 			}
 
-			$new_bugs = implode(', ', $revision_data['bugs']);
+			$new_bugs = implode(', ', $revision_log->getRevisionData('bugs', $revision));
 
 			if ( isset($prev_bugs) && $new_bugs <> $prev_bugs ) {
 				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
@@ -244,9 +244,11 @@ TEXT;
 				$log_message,
 			);
 
+			$revision_paths = $revision_log->getRevisionData('paths', $revision);
+
 			if ( $merge_oracle ) {
 				$merge_conflict_predication = $this->getMergeConflictPrediction(
-					$revision_data['paths'],
+					$revision_paths,
 					$merge_conflict_regexps
 				);
 				$row[] = $merge_conflict_predication ? '<error>' . count($merge_conflict_predication) . '</error>' : '';
@@ -260,7 +262,7 @@ TEXT;
 			if ( $with_details ) {
 				$details = '<fg=white;options=bold>Changed Paths:</>';
 
-				foreach ( $revision_data['paths'] as $path_data ) {
+				foreach ( $revision_paths as $path_data ) {
 					$path_action = $path_data['action'];
 					$relative_path = $this->_getRelativeLogPath($path_data, 'path', $repository_path);
 

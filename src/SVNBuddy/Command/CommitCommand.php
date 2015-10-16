@@ -162,7 +162,7 @@ TEXT;
 			$commit_message .= 'Merging from ' . ucfirst(basename($path)) . ' to ' . ucfirst(basename($wc_url)) . PHP_EOL;
 
 			foreach ( $revisions as $revision ) {
-				$revision_data = $revision_log->getRevisionData($revision);
+				$revision_data = $revision_log->getRevisionData('summary', $revision);
 				$merged_messages[] = ' * r' . $revision . ': ' . $revision_data['msg'];
 			}
 
