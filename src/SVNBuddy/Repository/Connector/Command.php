@@ -160,40 +160,6 @@ class Command
 	}
 
 	/**
-	 * Runs the command.
-	 *
-	 * @param callable|null $callback Callback.
-	 *
-	 * @return string
-	 * @throws RepositoryCommandException When command execution failed.
-	 */
-	private function _doRun($callback = null)
-	{
-		try {
-			$start = microtime(true);
-			$this->_process->mustRun($callback);
-
-			if ( $this->_io->isVerbose() ) {
-				$runtime = sprintf('%01.2f', microtime(true) - $start);
-				$command_line = $this->_process->getCommandLine();
-				$this->_io->writeln(
-					PHP_EOL . '<fg=white;bg=magenta>[svn, ' . round($runtime, 2) . 's]: ' . $command_line . '</>'
-				);
-			}
-		}
-		catch ( ProcessFailedException $e ) {
-			$process = $e->getProcess();
-
-			throw new RepositoryCommandException(
-				$process->getCommandLine(),
-				$process->getErrorOutput()
-			);
-		}
-
-		return (string)$this->_process->getOutput();
-	}
-
-	/**
 	 * Patches process command line for interactivity.
 	 *
 	 * @return void
@@ -228,6 +194,40 @@ class Command
 		}
 
 		return '';
+	}
+
+	/**
+	 * Runs the command.
+	 *
+	 * @param callable|null $callback Callback.
+	 *
+	 * @return string
+	 * @throws RepositoryCommandException When command execution failed.
+	 */
+	private function _doRun($callback = null)
+	{
+		try {
+			$start = microtime(true);
+			$this->_process->mustRun($callback);
+
+			if ( $this->_io->isVerbose() ) {
+				$runtime = sprintf('%01.2f', microtime(true) - $start);
+				$command_line = $this->_process->getCommandLine();
+				$this->_io->writeln(
+					PHP_EOL . '<fg=white;bg=magenta>[svn, ' . round($runtime, 2) . 's]: ' . $command_line . '</>'
+				);
+			}
+		}
+		catch ( ProcessFailedException $e ) {
+			$process = $e->getProcess();
+
+			throw new RepositoryCommandException(
+				$process->getCommandLine(),
+				$process->getErrorOutput()
+			);
+		}
+
+		return (string)$this->_process->getOutput();
 	}
 
 	/**
