@@ -12,17 +12,9 @@ namespace Tests\aik099\SVNBuddy\ProphecyToken;
 
 
 use aik099\SVNBuddy\Config\AbstractConfigSetting;
-use Prophecy\Argument\Token\TokenInterface;
 
-class ConfigStorageNameToken implements TokenInterface
+class ConfigStorageNameToken extends RegExToken
 {
-
-	/**
-	 * Pattern.
-	 *
-	 * @var integer
-	 */
-	private $_pattern;
 
 	/**
 	 * Creates token for matching config setting name used for storage.
@@ -33,43 +25,13 @@ class ConfigStorageNameToken implements TokenInterface
 	public function __construct($name, $scope_bit)
 	{
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
-			$this->_pattern = '/^path-settings\.(.*)\.' . preg_quote($name, '/') . '$/';
+			$pattern = '/^path-settings\.(.*)\.' . preg_quote($name, '/') . '$/';
 		}
 		else {
-			$this->_pattern = '/^global-settings\.' . preg_quote($name, '/') . '$/';
+			$pattern = '/^global-settings\.' . preg_quote($name, '/') . '$/';
 		}
-	}
 
-	/**
-	 * Calculates token match score for provided argument.
-	 *
-	 * @param string $argument Argument.
-	 *
-	 * @return boolean|integer
-	 */
-	public function scoreArgument($argument)
-	{
-		return preg_match($this->_pattern, $argument) ? 8 : false;
-	}
-
-	/**
-	 * Returns true if this token prevents check of other tokens (is last one).
-	 *
-	 * @return boolean|integer
-	 */
-	public function isLast()
-	{
-		return false;
-	}
-
-	/**
-	 * Returns string representation for token.
-	 *
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return sprintf('matches("%s")', $this->_pattern);
+		parent::__construct($pattern);
 	}
 
 }
