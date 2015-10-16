@@ -351,7 +351,7 @@ class Connector
 	 */
 	public function getFirstRevision($url)
 	{
-		$log = $this->getCommand('log', ' -r 1:HEAD --limit 1 --xml {' . $url . '}')->run();
+		$log = $this->withCache('1 year')->getCommand('log', ' -r 1:HEAD --limit 1 --xml {' . $url . '}')->run();
 
 		return (int)$log->logentry['revision'];
 	}
