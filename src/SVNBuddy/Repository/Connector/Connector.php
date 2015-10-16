@@ -116,7 +116,7 @@ class Connector
 	 * @param string      $command      Command.
 	 * @param string|null $param_string Parameter string.
 	 *
-	 * @return RepositoryCommand
+	 * @return Command
 	 */
 	public function getCommand($command, $param_string = null)
 	{
