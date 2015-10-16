@@ -207,7 +207,9 @@ TEXT;
 		foreach ( $new_paths as $new_path => $new_merged_revisions ) {
 			if ( !isset($old_paths[$new_path]) ) {
 				// Merge from new path.
-				$final_paths[$new_path] = $this->_revisionListParser->expandRanges($new_merged_revisions);
+				$final_paths[$new_path] = $this->_revisionListParser->expandRanges(
+					explode(',', $new_merged_revisions)
+				);
 			}
 			elseif ( $new_merged_revisions != $old_paths[$new_path] ) {
 				// Merge on existing path.
