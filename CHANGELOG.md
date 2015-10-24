@@ -45,7 +45,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.0.2] - 2015-09-20
 ### Added
-- Show Subversion client verison as part of `svn-buddy.phar --version` command.
+- Show Subversion client version as part of `svn-buddy.phar --version` command.
 - Use short git commit sha in in version number.
 - Add progress bar to display commit log reading progress.
 
