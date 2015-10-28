@@ -5,9 +5,9 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/aik099/svn-buddy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/aik099/svn-buddy/?branch=master)
 
 
-[![Latest Stable Version](https://poser.pugx.org/aik099/svn-buddy/v/stable)](https://packagist.org/packages/aik099/svn-buddy)
-[![Total Downloads](https://poser.pugx.org/aik099/svn-buddy/downloads)](https://packagist.org/packages/aik099/svn-buddy)
-[![License](https://poser.pugx.org/aik099/svn-buddy/license)](https://packagist.org/packages/aik099/svn-buddy)
+[![Latest Stable Version](https://poser.pugx.org/console-helpers/svn-buddy/v/stable)](https://packagist.org/packages/console-helpers/svn-buddy)
+[![Total Downloads](https://poser.pugx.org/console-helpers/svn-buddy/downloads)](https://packagist.org/packages/console-helpers/svn-buddy)
+[![License](https://poser.pugx.org/console-helpers/svn-buddy/license)](https://packagist.org/packages/console-helpers/svn-buddy)
 
 SVN-Buddy is the Subversion-related toolkit to make working with Subversion from command-line a bit less painful and more productive.
 

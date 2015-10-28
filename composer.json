@@ -1,5 +1,5 @@
 {
-	"name": "aik099/svn-buddy",
+	"name": "console-helpers/svn-buddy",
 	"description": "Easier way to control work with Subversion repositories from command-line",
 	"license": "BSD 3-Clause",
 	"authors": [
