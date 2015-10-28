@@ -11,8 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
-use ConsoleHelpers\SVNBuddy\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser;
 

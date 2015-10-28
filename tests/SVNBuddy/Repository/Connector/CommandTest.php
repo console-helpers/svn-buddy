@@ -50,7 +50,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		parent::setUp();
 
 		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
-		$this->_io = $this->prophesize('ConsoleHelpers\\SVNBuddy\\ConsoleIO');
+		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
 
 		$this->_command = $this->_createCommand();

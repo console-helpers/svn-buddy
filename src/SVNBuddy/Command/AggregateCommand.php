@@ -13,7 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\PathsConfigSetting;
-use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

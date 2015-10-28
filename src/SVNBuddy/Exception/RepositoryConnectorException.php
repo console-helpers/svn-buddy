@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Exception;
 
 
+use ConsoleHelpers\ConsoleKit\Exception\AbstractException;
+
 class RepositoryConnectorException extends AbstractException
 {
 

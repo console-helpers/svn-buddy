@@ -11,9 +11,9 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
-use ConsoleHelpers\SVNBuddy\ConsoleIO;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 

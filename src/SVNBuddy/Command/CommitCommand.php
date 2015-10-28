@@ -11,7 +11,7 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Symfony\Component\Console\Input\InputArgument;

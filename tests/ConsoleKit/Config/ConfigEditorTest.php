@@ -8,10 +8,11 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy;
+namespace Tests\ConsoleHelpers\Config\ConsoleKit;
 
 
-use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
+use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 
 class ConfigEditorTest extends WorkingDirectoryAwareTestCase
 {
@@ -78,22 +79,15 @@ class ConfigEditorTest extends WorkingDirectoryAwareTestCase
 		$this->assertEquals('default-value', $config_editor->get('top.sub1.sub11', 'default-value'));
 	}
 
-	/**
-	 * @dataProvider configDefaultsDataProvider
-	 */
-	public function testConfigDefaults($default_name, $default_value)
+	public function testConfigDefaults()
 	{
-		$config_editor = new ConfigEditor($this->configPath);
-
-		$this->assertSame($default_value, $config_editor->get($default_name));
-	}
-
-	public function configDefaultsDataProvider()
-	{
-		return array(
-			'setting:repository-connector.username' => array('repository-connector.username', ''),
-			'setting:repository-connector.password' => array('repository-connector.password', ''),
+		$config_editor = new ConfigEditor(
+			$this->configPath,
+			array('setting_a' => 'value_a', 'setting_b' => 'value_b')
 		);
+
+		$this->assertEquals('value_a', $config_editor->get('setting_a'));
+		$this->assertEquals('value_b', $config_editor->get('setting_b'));
 	}
 
 	public function testConfigFileCreation()

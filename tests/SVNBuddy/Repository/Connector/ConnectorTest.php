@@ -12,11 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
-use ConsoleHelpers\SVNBuddy\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Tests\ConsoleHelpers\SVNBuddy\WorkingDirectoryAwareTestCase;
+use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 
 class ConnectorTest extends WorkingDirectoryAwareTestCase
 {
@@ -67,9 +66,9 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	{
 		parent::setUp();
 
-		$this->_configEditor = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Config\\ConfigEditor');
+		$this->_configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
 		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
-		$this->_io = $this->prophesize('ConsoleHelpers\\SVNBuddy\\ConsoleIO');
+		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 		$this->_cacheManager = new CacheManager($this->getWorkingDirectory());
 		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
 

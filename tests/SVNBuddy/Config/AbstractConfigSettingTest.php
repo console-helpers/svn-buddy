@@ -44,7 +44,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->configEditor = $this->prophesize('ConsoleHelpers\\SVNBuddy\Config\\ConfigEditor');
+		$this->configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
 	}
 
 	/**

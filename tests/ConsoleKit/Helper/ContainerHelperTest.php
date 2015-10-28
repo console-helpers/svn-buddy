@@ -8,11 +8,11 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Helper;
+namespace Tests\ConsoleHelpers\ConsoleKit\Helper;
 
 
-use ConsoleHelpers\SVNBuddy\Helper\ContainerHelper;
-use Pimple\Container;
+use ConsoleHelpers\ConsoleKit\Helper\ContainerHelper;
+use ConsoleHelpers\ConsoleKit\Container;
 
 class ContainerHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class ContainerHelperTest extends \PHPUnit_Framework_TestCase
 	protected $containerHelper;
 
 	/**
-	 * Pimple container.
+	 * Container.
 	 *
 	 * @var Container
 	 */

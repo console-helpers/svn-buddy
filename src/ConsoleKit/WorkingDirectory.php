@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy;
+namespace ConsoleHelpers\ConsoleKit;
 
 
-use ConsoleHelpers\SVNBuddy\Exception\ApplicationException;
+use ConsoleHelpers\ConsoleKit\Exception\ApplicationException;
 
 class WorkingDirectory
 {

@@ -11,7 +11,7 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

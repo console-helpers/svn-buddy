@@ -12,8 +12,6 @@ namespace ConsoleHelpers\SVNBuddy;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
-use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
-use ConsoleHelpers\SVNBuddy\Helper\ContainerHelper;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
@@ -22,12 +20,8 @@ use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
-use Pimple\Container;
-use Symfony\Component\Console\Helper\HelperSet;
-use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
-class DIContainer extends Container
+class Container extends \ConsoleHelpers\ConsoleKit\Container
 {
 
 	/**
@@ -37,35 +31,15 @@ class DIContainer extends Container
 	{
 		parent::__construct($values);
 
-		$this['config_file'] = '{base}/config.json';
+		$this['app_name'] = 'SVN-Buddy';
+		$this['app_version'] = '@git-version@';
+
 		$this['working_directory_sub_folder'] = '.svn-buddy';
 
-		$this['working_directory'] = function ($c) {
-			$working_directory = new WorkingDirectory($c['working_directory_sub_folder']);
-
-			return $working_directory->get();
-		};
-
-		$this['config_editor'] = function ($c) {
-			return new ConfigEditor(str_replace('{base}', $c['working_directory'], $c['config_file']));
-		};
-
-		$this['input'] = function () {
-			return new ArgvInput();
-		};
-
-		$this['output'] = function () {
-			return new ConsoleOutput();
-		};
-
-		$this['io'] = function ($c) {
-			return new ConsoleIO($c['input'], $c['output'], $c['helper_set']);
-		};
-
-		// Would be replaced with actual HelperSet from extended Application class.
-		$this['helper_set'] = function () {
-			return new HelperSet();
-		};
+		$this['config_defaults'] = array(
+			'repository-connector.username' => '',
+			'repository-connector.password' => '',
+		);
 
 		$this['process_factory'] = function () {
 			return new ProcessFactory();
@@ -93,10 +67,6 @@ class DIContainer extends Container
 
 		$this['repository_connector'] = function ($c) {
 			return new Connector($c['config_editor'], $c['process_factory'], $c['io'], $c['cache_manager']);
-		};
-
-		$this['container_helper'] = function ($c) {
-			return new ContainerHelper($c);
 		};
 
 		$this['date_helper'] = function () {

@@ -14,7 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\IntegerConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\RegExpsConfigSetting;
-use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Symfony\Component\Console\Helper\Table;

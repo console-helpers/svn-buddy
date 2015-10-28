@@ -11,26 +11,17 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\Command\AbstractCommand as BaseCommand;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use ConsoleHelpers\SVNBuddy\Exception\CommandException;
-use ConsoleHelpers\SVNBuddy\Helper\ContainerHelper;
-use ConsoleHelpers\SVNBuddy\ConsoleIO;
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
-use Pimple\Container;
-use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
-use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command class.
  */
-abstract class AbstractCommand extends Command implements CompletionAwareInterface
+abstract class AbstractCommand extends BaseCommand
 {
 
 	/**
@@ -83,86 +74,20 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	private $_configEditor;
 
 	/**
-	 * Console IO.
-	 *
-	 * @var ConsoleIO
-	 */
-	protected $io;
-
-	/**
-	 * {@inheritdoc}
-	 */
-	protected function initialize(InputInterface $input, OutputInterface $output)
-	{
-		parent::initialize($input, $output);
-
-		// Don't use IO from container, because it contains outer IO which doesn't reflect sub-command calls.
-		$this->io = new ConsoleIO($input, $output, $this->getHelperSet());
-
-		$this->prepareDependencies();
-	}
-
-	/**
-	 * Return possible values for the named option
-	 *
-	 * @param string            $optionName Option name.
-	 * @param CompletionContext $context    Completion context.
-	 *
-	 * @return array
-	 */
-	public function completeOptionValues($optionName, CompletionContext $context)
-	{
-		$this->prepareDependencies();
-
-		return array();
-	}
-
-	/**
-	 * Return possible values for the named argument
-	 *
-	 * @param string            $argumentName Argument name.
-	 * @param CompletionContext $context      Completion context.
-	 *
-	 * @return array
-	 */
-	public function completeArgumentValues($argumentName, CompletionContext $context)
-	{
-		$this->prepareDependencies();
-
-		return array();
-	}
-
-	/**
 	 * Prepare dependencies.
 	 *
 	 * @return void
 	 */
 	protected function prepareDependencies()
 	{
+		parent::prepareDependencies();
+
 		$container = $this->getContainer();
 
 		$this->repositoryConnector = $container['repository_connector'];
 		$this->_revisionLogFactory = $container['revision_log_factory'];
 		$this->workingDirectory = $container['working_directory'];
 		$this->_configEditor = $container['config_editor'];
-	}
-
-	/**
-	 * Runs another command.
-	 *
-	 * @param string $name      Command name.
-	 * @param array  $arguments Arguments.
-	 *
-	 * @return integer
-	 */
-	protected function runOtherCommand($name, array $arguments = array())
-	{
-		$arguments['command'] = $name;
-		$cleanup_command = $this->getApplication()->find($name);
-
-		$input = new ArrayInput($arguments);
-
-		return $cleanup_command->run($input, $this->io->getOutput());
 	}
 
 	/**
@@ -266,25 +191,6 @@ abstract class AbstractCommand extends Command implements CompletionAwareInterfa
 	protected function getList($string, $separator = ',')
 	{
 		return array_filter(array_map('trim', explode($separator, $string)));
-	}
-
-	/**
-	 * Returns container.
-	 *
-	 * @return Container
-	 */
-	protected function getContainer()
-	{
-		static $container;
-
-		if ( !isset($container) ) {
-			/** @var ContainerHelper $container_helper */
-			$container_helper = $this->getHelper('container');
-
-			$container = $container_helper->getContainer();
-		}
-
-		return $container;
 	}
 
 	/**

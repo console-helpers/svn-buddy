@@ -13,7 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
-use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;

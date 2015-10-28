@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Config;
 
 
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
+
 abstract class AbstractConfigSetting
 {
 

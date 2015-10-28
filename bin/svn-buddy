@@ -9,42 +9,8 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-class DetectAutoloader
-{
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-	/**
-	 * Detects autoloader.
-	 *
-	 * @return void
-	 */
-	public static function detect()
-	{
-		$autoloaded = false;
-		$autoload_locations = array(
-			// When executed directly.
-			__DIR__ . '/../vendor/autoload.php',
-
-			// When executed from PHAR.
-			__DIR__ . '/../../../autoload.php',
-		);
-
-		foreach ( $autoload_locations as $autoload_location ) {
-			if ( file_exists($autoload_location) ) {
-				$autoloaded = true;
-				require_once $autoload_location;
-				break;
-			}
-		}
-
-		if ( !$autoloaded ) {
-		    throw new \RunTimeException('Cannot find an autoload.php file, have you executed composer install command?');
-		}
-	}
-
-}
-
-DetectAutoloader::detect();
-
-$container = new \ConsoleHelpers\SVNBuddy\DIContainer();
+$container = new \ConsoleHelpers\SVNBuddy\Container();
 $app = new \ConsoleHelpers\SVNBuddy\Application($container);
-$app->run($container['input'], $container['output']);
+$app->run();

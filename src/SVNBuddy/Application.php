@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy;
 
 
+use ConsoleHelpers\ConsoleKit\Application as BaseApplication;
+use ConsoleHelpers\ConsoleKit\Container as BaseContainer;
 use ConsoleHelpers\SVNBuddy\Command\AggregateCommand;
 use ConsoleHelpers\SVNBuddy\Command\CleanupCommand;
 use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
@@ -18,41 +20,24 @@ use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
 use ConsoleHelpers\SVNBuddy\Command\ConfigCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
 use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
-use ConsoleHelpers\SVNBuddy\Command\ResolveCommand;
 use ConsoleHelpers\SVNBuddy\Command\RevertCommand;
 use ConsoleHelpers\SVNBuddy\Command\UpdateCommand;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use Pimple\Container;
-use Symfony\Component\Console\Application as BaseApplication;
 
 class Application extends BaseApplication
 {
 
 	/**
-	 * Dependency injection container.
-	 *
-	 * @var DIContainer
-	 */
-	protected $dic;
-
-	/**
 	 * Creates application.
 	 *
-	 * @param Container $container Container.
+	 * @param BaseContainer $container Container.
 	 */
-	public function __construct(Container $container)
+	public function __construct(BaseContainer $container)
 	{
-		$this->dic = $container;
-
-		parent::__construct('SVN-Buddy', '@git-version@');
+		parent::__construct($container);
 
 		$helper_set = $this->getHelperSet();
-		$helper_set->set($this->dic['container_helper']);
 		$helper_set->set($this->dic['date_helper']);
-
-		$container['helper_set'] = function () use ($helper_set) {
-			return $helper_set;
-		};
 
 		set_time_limit(0);
 		ini_set('memory_limit', -1);

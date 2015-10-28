@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Exception;
+namespace ConsoleHelpers\ConsoleKit\Exception;
 
 
 abstract class AbstractException extends \Exception

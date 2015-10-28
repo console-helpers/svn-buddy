@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Helper;
+namespace ConsoleHelpers\ConsoleKit\Helper;
 
 
-use Pimple\Container;
+use ConsoleHelpers\ConsoleKit\Container;
 use Symfony\Component\Console\Helper\Helper;
 
 class ContainerHelper extends Helper

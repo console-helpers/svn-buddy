@@ -20,12 +20,14 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/"
+			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/",
+			"ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/"
+			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/",
+			"Tests\\ConsoleHelpers\\ConsoleKit\\": "tests/ConsoleKit/"
 		}
 	},
 	"bin": ["bin/svn-buddy"]

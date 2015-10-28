@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Config;
+namespace ConsoleHelpers\ConsoleKit\Config;
 
 
 class ConfigEditor
@@ -22,16 +22,6 @@ class ConfigEditor
 	protected $filename;
 
 	/**
-	 * Default settings.
-	 *
-	 * @var array
-	 */
-	protected static $defaultSettings = array(
-		'repository-connector.username' => '',
-		'repository-connector.password' => '',
-	);
-
-	/**
 	 * Settings.
 	 *
 	 * @var array
@@ -42,11 +32,12 @@ class ConfigEditor
 	 * Creates config instance.
 	 *
 	 * @param string $filename Filename.
+	 * @param array  $defaults Defaults.
 	 */
-	public function __construct($filename)
+	public function __construct($filename, array $defaults = array())
 	{
 		$this->filename = $filename;
-		$this->load();
+		$this->load($defaults);
 	}
 
 	/**
@@ -97,9 +88,11 @@ class ConfigEditor
 	/**
 	 * Loads config contents from disk.
 	 *
+	 * @param array $defaults Defaults.
+	 *
 	 * @return void
 	 */
-	protected function load()
+	protected function load(array $defaults)
 	{
 		if ( file_exists($this->filename) ) {
 			$this->settings = json_decode(file_get_contents($this->filename), true);
@@ -107,7 +100,7 @@ class ConfigEditor
 			return;
 		}
 
-		$this->settings = self::$defaultSettings;
+		$this->settings = $defaults;
 		$this->store();
 	}
 

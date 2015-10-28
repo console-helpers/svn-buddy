@@ -12,7 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 
 use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
-use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;

@@ -46,7 +46,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
 		$this->cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
-		$this->io = $this->prophesize('ConsoleHelpers\\SVNBuddy\\ConsoleIO');
+		$this->io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 	}
 
 	/**

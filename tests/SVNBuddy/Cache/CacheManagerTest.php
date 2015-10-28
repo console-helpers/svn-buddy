@@ -12,7 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Cache;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
-use Tests\ConsoleHelpers\SVNBuddy\WorkingDirectoryAwareTestCase;
+use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 
 class CacheManagerTest extends WorkingDirectoryAwareTestCase
 {

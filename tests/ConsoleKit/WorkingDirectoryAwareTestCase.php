@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy;
+namespace Tests\ConsoleHelpers\ConsoleKit;
 
 
-use ConsoleHelpers\SVNBuddy\WorkingDirectory;
+use ConsoleHelpers\ConsoleKit\WorkingDirectory;
 
 abstract class WorkingDirectoryAwareTestCase extends \PHPUnit_Framework_TestCase
 {

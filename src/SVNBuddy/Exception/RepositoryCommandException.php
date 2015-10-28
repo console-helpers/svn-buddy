@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Exception;
 
 
+use ConsoleHelpers\ConsoleKit\Exception\AbstractException;
+
 /**
  * @link http://docs.sharpsvn.net/current/html/T_SharpSvn_SvnErrorCode.htm
  * @link https://subversion.apache.org/docs/api/1.8/svn__error__codes_8h_source.html

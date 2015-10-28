@@ -13,9 +13,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\SVNBuddy\Application;
 use ConsoleHelpers\SVNBuddy\Command\AbstractCommand;
-use ConsoleHelpers\SVNBuddy\DIContainer;
+use ConsoleHelpers\SVNBuddy\Container;
 use Symfony\Component\Console\Tester\CommandTester;
-use Tests\ConsoleHelpers\SVNBuddy\WorkingDirectoryAwareTestCase;
+use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 
 abstract class AbstractCommandTestCase extends WorkingDirectoryAwareTestCase
 {
@@ -45,7 +45,7 @@ abstract class AbstractCommandTestCase extends WorkingDirectoryAwareTestCase
 	{
 		parent::setUp();
 
-		$container = new DIContainer();
+		$container = new Container();
 
 		$application = new Application($container);
 		$this->command = $application->find($this->commandName);
