@@ -207,6 +207,7 @@ abstract class AbstractCommand extends BaseCommand
 	 * Return working copy path.
 	 *
 	 * @return string
+	 * @throws \RuntimeException When folder isn't a working copy.
 	 */
 	protected function getWorkingCopyPath()
 	{
@@ -229,6 +230,7 @@ abstract class AbstractCommand extends BaseCommand
 	 * Return working copy path.
 	 *
 	 * @return string
+	 * @throws \RuntimeException When url was given instead of path.
 	 */
 	protected function getPath()
 	{

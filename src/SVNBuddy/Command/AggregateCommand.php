@@ -245,6 +245,7 @@ TEXT;
 	 * @param string $sub_command Sub-command.
 	 *
 	 * @return void
+	 * @throws \RuntimeException When command was used inside a working copy.
 	 */
 	protected function runSubCommand($sub_command)
 	{
