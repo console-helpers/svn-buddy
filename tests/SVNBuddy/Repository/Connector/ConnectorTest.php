@@ -16,9 +16,9 @@ use aik099\SVNBuddy\ConsoleIO;
 use aik099\SVNBuddy\Repository\Connector\Connector;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Tests\aik099\SVNBuddy\WorkingDirectoryTest;
+use Tests\aik099\SVNBuddy\WorkingDirectoryAwareTestCase;
 
-class ConnectorTest extends WorkingDirectoryTest
+class ConnectorTest extends WorkingDirectoryAwareTestCase
 {
 
 	/**
