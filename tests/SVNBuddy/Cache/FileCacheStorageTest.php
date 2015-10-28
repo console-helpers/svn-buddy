@@ -5,7 +5,7 @@
  * the LICENSE file that was distributed with this source code.
  *
  * @copyright Alexander Obuhovich <aik.bold@gmail.com>
- * @link      https://github.com/aik099/svn-buddy
+ * @link      https://github.com/console-helpers/svn-buddy
  */
 
 namespace Tests\aik099\SVNBuddy\Cache;
