@@ -45,7 +45,7 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	/**
 	 * Console IO.
 	 *
-	 * @var ConsoleIO
+	 * @var ObjectProphecy
 	 */
 	private $_io;
 
@@ -63,11 +63,6 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	 */
 	private $_repositoryConnector;
 
-	/**
-	 * Prepares fixture.
-	 *
-	 * @return void
-	 */
 	protected function setUp()
 	{
 		parent::setUp();
