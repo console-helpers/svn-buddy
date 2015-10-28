@@ -27,6 +27,10 @@
 			 lowUpperBound="35" highLowerBound="70"/>
 	</logging>-->
 
+	<php>
+		<server name="working_directory" value=".svn-buddy"/>
+	</php>
+
 	<filter>
 		<whitelist>
             <directory>src/SVNBuddy</directory>

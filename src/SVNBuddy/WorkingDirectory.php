@@ -17,13 +17,36 @@ class WorkingDirectory
 {
 
 	/**
+	 * Name of sub folder placed in user's home directory.
+	 *
+	 * @var string
+	 */
+	private $_subFolder;
+
+	/**
+	 * WorkingDirectory constructor.
+	 *
+	 * @param string $sub_folder Sub folder.
+	 *
+	 * @throws ApplicationException When $sub_folder is a path or empty.
+	 */
+	public function __construct($sub_folder)
+	{
+		if ( !strlen($sub_folder) || strpos($sub_folder, DIRECTORY_SEPARATOR) !== false ) {
+			throw new ApplicationException('The $sub_folder is a path or empty.');
+		}
+
+		$this->_subFolder = $sub_folder;
+	}
+
+	/**
 	 * Creates (if missing) working directory and returns full path to it.
 	 *
 	 * @return string
 	 */
 	public function get()
 	{
-		$working_directory = $this->getUserHomeDirectory() . '/.svn-buddy';
+		$working_directory = $this->getUserHomeDirectory() . '/' . $this->_subFolder;
 
 		if ( !file_exists($working_directory) ) {
 			mkdir($working_directory, 0777, true);

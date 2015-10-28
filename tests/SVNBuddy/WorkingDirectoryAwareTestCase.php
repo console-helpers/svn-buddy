@@ -16,18 +16,9 @@ use aik099\SVNBuddy\WorkingDirectory;
 abstract class WorkingDirectoryAwareTestCase extends \PHPUnit_Framework_TestCase
 {
 
-	/**
-	 * Original value of "HOME" environment variable.
-	 *
-	 * @var string
-	 */
-	private $_homeDirectoryBackup;
-
 	protected function setUp()
 	{
 		parent::setUp();
-
-		$this->_homeDirectoryBackup = getenv('HOME');
 
 		if ( $this->requireWorkingDirectory() ) {
 			$this->_createTempHomeDirectory();
@@ -51,7 +42,13 @@ abstract class WorkingDirectoryAwareTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	protected function getWorkingDirectory()
 	{
-		$working_directory = new WorkingDirectory();
+		$sub_folder = array_key_exists('working_directory', $_SERVER) ? $_SERVER['working_directory'] : '';
+
+		if ( !strlen($sub_folder) ) {
+			$this->fail('Please set "working_directory" environment variable before calling ' . __METHOD__ . '.');
+		}
+
+		$working_directory = new WorkingDirectory($sub_folder);
 
 		return $working_directory->get();
 	}
@@ -60,7 +57,7 @@ abstract class WorkingDirectoryAwareTestCase extends \PHPUnit_Framework_TestCase
 	{
 		parent::tearDown();
 
-		$this->_restoreHomeDirectory($this->_homeDirectoryBackup);
+		$this->_restoreHomeDirectory();
 	}
 
 	/**
@@ -80,10 +77,17 @@ abstract class WorkingDirectoryAwareTestCase extends \PHPUnit_Framework_TestCase
 	/**
 	 * Restores original home directory and removes temporary one.
 	 *
-	 * @param string $original_home_directory Directory.
+	 * @return void
+	 * @throws \LogicException When original home directory is empty.
 	 */
-	private function _restoreHomeDirectory($original_home_directory)
+	private function _restoreHomeDirectory()
 	{
+		$original_home_directory = $_SERVER['HOME'];
+
+		if ( empty($original_home_directory) ) {
+			throw new \LogicException('Unable to restore empty home directory.');
+		}
+
 		$current_home_directory = getenv('HOME');
 
 		if ( $current_home_directory && $current_home_directory != $original_home_directory ) {

@@ -37,16 +37,17 @@ class DIContainer extends Container
 	{
 		parent::__construct($values);
 
-		$this['configFile'] = '{base}/config.json';
+		$this['config_file'] = '{base}/config.json';
+		$this['working_directory_sub_folder'] = '.svn-buddy';
 
-		$this['working_directory'] = function () {
-			$working_directory = new WorkingDirectory();
+		$this['working_directory'] = function ($c) {
+			$working_directory = new WorkingDirectory($c['working_directory_sub_folder']);
 
 			return $working_directory->get();
 		};
 
 		$this['config_editor'] = function ($c) {
-			return new ConfigEditor(str_replace('{base}', $c['working_directory'], $c['configFile']));
+			return new ConfigEditor(str_replace('{base}', $c['working_directory'], $c['config_file']));
 		};
 
 		$this['input'] = function () {

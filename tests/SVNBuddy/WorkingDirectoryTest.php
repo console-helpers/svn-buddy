@@ -11,8 +11,28 @@
 namespace Tests\aik099\SVNBuddy;
 
 
+use aik099\SVNBuddy\WorkingDirectory;
+
 class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 {
+
+	/**
+	 * @expectedException \aik099\SVNBuddy\Exception\ApplicationException
+	 * @expectedExceptionMessage The $sub_folder is a path or empty.
+	 * @dataProvider incorrectSubFolderDataProvider
+	 */
+	public function testCreationWithIncorrectSubFolder($sub_folder)
+	{
+		new WorkingDirectory($sub_folder);
+	}
+
+	public function incorrectSubFolderDataProvider()
+	{
+		return array(
+			'empty sub-folder' => array(''),
+			'path sub-folder' => array('a/b'),
+		);
+	}
 
 	public function testWorkingDirectoryCreation()
 	{
@@ -56,7 +76,9 @@ class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 	 */
 	protected function getExpectedWorkingDirectory()
 	{
-		return getenv('HOME') . '/.svn-buddy';
+		$sub_folder = array_key_exists('working_directory', $_SERVER) ? $_SERVER['working_directory'] : '';
+
+		return getenv('HOME') . '/' . $sub_folder;
 	}
 
 }
