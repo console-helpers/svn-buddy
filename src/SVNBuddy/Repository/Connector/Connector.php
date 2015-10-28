@@ -8,14 +8,14 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Repository\Connector;
+namespace ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\Config\ConfigEditor;
-use aik099\SVNBuddy\Exception\RepositoryCommandException;
-use aik099\SVNBuddy\ConsoleIO;
-use aik099\SVNBuddy\Process\IProcessFactory;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
+use ConsoleHelpers\SVNBuddy\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 
 /**
  * Executes command on the repository.

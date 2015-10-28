@@ -8,13 +8,13 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Command;
+namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\ArrayConfigSetting;
-use aik099\SVNBuddy\Config\ConfigEditor;
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
-use aik099\SVNBuddy\InteractiveEditor;
+use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;

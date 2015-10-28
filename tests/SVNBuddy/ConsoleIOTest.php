@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy;
+namespace Tests\ConsoleHelpers\SVNBuddy;
 
 
-use aik099\SVNBuddy\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\ConsoleIO;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;

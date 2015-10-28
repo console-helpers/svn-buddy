@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\RevisionLog;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-use aik099\SVNBuddy\Repository\RevisionLog\IRevisionLogPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\IRevisionLogPlugin;
 
 abstract class AbstractRevisionLogPluginTestCase extends \PHPUnit_Framework_TestCase
 {

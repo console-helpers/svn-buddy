@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\MergeSourceDetector;
+namespace Tests\ConsoleHelpers\SVNBuddy\MergeSourceDetector;
 
 
-use aik099\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 
 abstract class AbstractMergeSourceDetectorTestCase extends \PHPUnit_Framework_TestCase
 {

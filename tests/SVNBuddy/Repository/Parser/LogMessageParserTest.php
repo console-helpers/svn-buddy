@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\Parser;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 
-use aik099\SVNBuddy\Repository\Parser\LogMessageParser;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser;
 
 class LogMessageParserTest extends \PHPUnit_Framework_TestCase
 {

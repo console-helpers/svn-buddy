@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Exception;
+namespace Tests\ConsoleHelpers\SVNBuddy\Exception;
 
 
-use aik099\SVNBuddy\Exception\RepositoryCommandException;
+use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 
 class RepositoryCommandExceptionTest extends \PHPUnit_Framework_TestCase
 {

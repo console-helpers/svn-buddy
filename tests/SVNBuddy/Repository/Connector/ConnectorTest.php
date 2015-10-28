@@ -8,15 +8,15 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\Connector;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\ConsoleIO;
-use aik099\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Tests\aik099\SVNBuddy\WorkingDirectoryAwareTestCase;
+use Tests\ConsoleHelpers\SVNBuddy\WorkingDirectoryAwareTestCase;
 
 class ConnectorTest extends WorkingDirectoryAwareTestCase
 {
@@ -67,9 +67,9 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	{
 		parent::setUp();
 
-		$this->_configEditor = $this->prophesize('aik099\\SVNBuddy\\Config\\ConfigEditor');
-		$this->_processFactory = $this->prophesize('aik099\\SVNBuddy\\Process\\IProcessFactory');
-		$this->_io = $this->prophesize('aik099\\SVNBuddy\\ConsoleIO');
+		$this->_configEditor = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Config\\ConfigEditor');
+		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
+		$this->_io = $this->prophesize('ConsoleHelpers\\SVNBuddy\\ConsoleIO');
 		$this->_cacheManager = new CacheManager($this->getWorkingDirectory());
 		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
 
@@ -154,7 +154,7 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 		}
 		catch ( \Exception $thrown_exception ) {
 			$this->assertEquals(
-				'aik099\\SVNBuddy\\Exception\\RepositoryCommandException',
+				'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
 				get_class($thrown_exception),
 				'Exception of correct class was thrown'
 			);
@@ -192,7 +192,7 @@ error output
 MSG;
 
 		$this->setExpectedException(
-			'aik099\\SVNBuddy\\Exception\\RepositoryCommandException',
+			'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
 			$exception_msg,
 			0
 		);

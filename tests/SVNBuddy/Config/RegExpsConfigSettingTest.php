@@ -8,17 +8,17 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Config;
+namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 
 class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 {
 
 	protected function setUp()
 	{
-		$this->className = 'aik099\\SVNBuddy\\Config\\RegExpsConfigSetting';
+		$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\RegExpsConfigSetting';
 		$this->defaultValue = array('default');
 
 		parent::setUp();

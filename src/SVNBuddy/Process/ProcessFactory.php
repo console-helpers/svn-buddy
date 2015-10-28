@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Process;
+namespace ConsoleHelpers\SVNBuddy\Process;
 
 
 use Symfony\Component\Process\Process;

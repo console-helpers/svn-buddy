@@ -8,14 +8,14 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Command;
+namespace Tests\ConsoleHelpers\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Application;
-use aik099\SVNBuddy\Command\AbstractCommand;
-use aik099\SVNBuddy\DIContainer;
+use ConsoleHelpers\SVNBuddy\Application;
+use ConsoleHelpers\SVNBuddy\Command\AbstractCommand;
+use ConsoleHelpers\SVNBuddy\DIContainer;
 use Symfony\Component\Console\Tester\CommandTester;
-use Tests\aik099\SVNBuddy\WorkingDirectoryAwareTestCase;
+use Tests\ConsoleHelpers\SVNBuddy\WorkingDirectoryAwareTestCase;
 
 abstract class AbstractCommandTestCase extends WorkingDirectoryAwareTestCase
 {

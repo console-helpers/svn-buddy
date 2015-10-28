@@ -45,6 +45,6 @@ class DetectAutoloader
 
 DetectAutoloader::detect();
 
-$container = new \aik099\SVNBuddy\DIContainer();
-$app = new \aik099\SVNBuddy\Application($container);
+$container = new \ConsoleHelpers\SVNBuddy\DIContainer();
+$app = new \ConsoleHelpers\SVNBuddy\Application($container);
 $app->run($container['input'], $container['output']);

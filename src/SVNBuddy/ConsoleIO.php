@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy;
+namespace ConsoleHelpers\SVNBuddy;
 
 
 use Symfony\Component\Console\Helper\HelperSet;

@@ -8,11 +8,11 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\RevisionLog;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-use aik099\SVNBuddy\Repository\RevisionLog\BugsRevisionLogPlugin;
-use aik099\SVNBuddy\Repository\RevisionLog\IRevisionLogPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\BugsRevisionLogPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\IRevisionLogPlugin;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class BugsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
@@ -27,7 +27,7 @@ class BugsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 
 	protected function setUp()
 	{
-		$this->logMessageParser = $this->prophesize('aik099\\SVNBuddy\\Repository\\Parser\\LogMessageParser');
+		$this->logMessageParser = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Parser\\LogMessageParser');
 
 		parent::setUp();
 	}

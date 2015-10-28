@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Helper;
+namespace ConsoleHelpers\SVNBuddy\Helper;
 
 
 use Pimple\Container;

@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Command;
+namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 
 interface IConfigAwareCommand
 {

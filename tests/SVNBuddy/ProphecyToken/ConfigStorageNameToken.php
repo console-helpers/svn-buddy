@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\ProphecyToken;
+namespace Tests\ConsoleHelpers\SVNBuddy\ProphecyToken;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 
 class ConfigStorageNameToken extends RegExToken
 {

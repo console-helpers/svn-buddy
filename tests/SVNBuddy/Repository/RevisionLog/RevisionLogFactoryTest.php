@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\RevisionLog;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-use aik099\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Prophecy\Argument;
 
 class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
@@ -19,7 +19,7 @@ class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetRevisionLog()
 	{
-		$repository_connector = $this->prophesize('aik099\\SVNBuddy\\Repository\\Connector\\Connector');
+		$repository_connector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
 
 		$repository_connector->withCache('1 year')->willReturn($repository_connector)->shouldBeCalled();
 		$repository_connector->getProperty('bugtraq:logregex', 'svn://localhost/trunk')->willReturn('')->shouldBeCalled();
@@ -27,15 +27,15 @@ class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 		$repository_connector->getFirstRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
 		$repository_connector->getLastRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
 
-		$cache_manager = $this->prophesize('aik099\\SVNBuddy\\Cache\\CacheManager');
+		$cache_manager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
 		$cache_manager->getCache('log:svn://localhost', Argument::containingString('main:'))->shouldBeCalled();
 
-		$io = $this->prophesize('aik099\\SVNBuddy\\ConsoleIO');
+		$io = $this->prophesize('ConsoleHelpers\\SVNBuddy\\ConsoleIO');
 
 		$factory = new RevisionLogFactory($repository_connector->reveal(), $cache_manager->reveal(), $io->reveal());
 		$revision_log = $factory->getRevisionLog('svn://localhost/trunk');
 
-		$this->assertInstanceOf('aik099\\SVNBuddy\\Repository\\RevisionLog\\RevisionLog', $revision_log);
+		$this->assertInstanceOf('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLog', $revision_log);
 	}
 
 }

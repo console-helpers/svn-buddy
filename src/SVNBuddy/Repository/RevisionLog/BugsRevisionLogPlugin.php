@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Repository\RevisionLog;
+namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-use aik099\SVNBuddy\Repository\Parser\LogMessageParser;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser;
 
 class BugsRevisionLogPlugin implements IRevisionLogPlugin
 {

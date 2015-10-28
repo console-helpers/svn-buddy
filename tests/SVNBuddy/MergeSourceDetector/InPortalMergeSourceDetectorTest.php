@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\MergeSourceDetector;
+namespace Tests\ConsoleHelpers\SVNBuddy\MergeSourceDetector;
 
 
-use aik099\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 
 class InPortalMergeSourceDetectorTest extends AbstractMergeSourceDetectorTestCase
 {

@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\Parser;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 
-use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 
 class RevisionListParserTest extends \PHPUnit_Framework_TestCase
 {

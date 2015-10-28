@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\MergeSourceDetector;
+namespace Tests\ConsoleHelpers\SVNBuddy\MergeSourceDetector;
 
 
-use aik099\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestCase
@@ -28,15 +28,15 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 	{
 		parent::setUp();
 
-		$sub_detector1 = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector1 = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
 		$sub_detector1->getWeight()->willReturn(2)->shouldBeCalled();
 		$this->detectors[] = $sub_detector1;
 
-		$sub_detector2 = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector2 = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
 		$sub_detector2->getWeight()->willReturn(1)->shouldBeCalled();
 		$this->detectors[] = $sub_detector2;
 
-		$sub_detector2 = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector2 = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
 		$sub_detector2->getWeight()->willReturn(3)->shouldBeCalled();
 		$this->detectors[] = $sub_detector2;
 	}
@@ -77,7 +77,7 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 	 */
 	public function testAddingDetectorWithDuplicateWeight()
 	{
-		$sub_detector = $this->prophesize('aik099\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
 		$sub_detector->getWeight()->willReturn(1)->shouldBeCalled();
 
 		$detector = $this->createDetector();

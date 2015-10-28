@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\Connector;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-use aik099\SVNBuddy\Repository\Connector\Command;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class CommandTest extends \PHPUnit_Framework_TestCase
@@ -50,8 +50,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		parent::setUp();
 
 		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
-		$this->_io = $this->prophesize('aik099\\SVNBuddy\\ConsoleIO');
-		$this->_cacheManager = $this->prophesize('aik099\\SVNBuddy\\Cache\\CacheManager');
+		$this->_io = $this->prophesize('ConsoleHelpers\\SVNBuddy\\ConsoleIO');
+		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
 
 		$this->_command = $this->_createCommand();
 	}

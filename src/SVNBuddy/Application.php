@@ -8,20 +8,20 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy;
+namespace ConsoleHelpers\SVNBuddy;
 
 
-use aik099\SVNBuddy\Command\AggregateCommand;
-use aik099\SVNBuddy\Command\CleanupCommand;
-use aik099\SVNBuddy\Command\CommitCommand;
-use aik099\SVNBuddy\Command\CompletionCommand;
-use aik099\SVNBuddy\Command\ConfigCommand;
-use aik099\SVNBuddy\Command\LogCommand;
-use aik099\SVNBuddy\Command\MergeCommand;
-use aik099\SVNBuddy\Command\ResolveCommand;
-use aik099\SVNBuddy\Command\RevertCommand;
-use aik099\SVNBuddy\Command\UpdateCommand;
-use aik099\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Command\AggregateCommand;
+use ConsoleHelpers\SVNBuddy\Command\CleanupCommand;
+use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
+use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
+use ConsoleHelpers\SVNBuddy\Command\ConfigCommand;
+use ConsoleHelpers\SVNBuddy\Command\LogCommand;
+use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
+use ConsoleHelpers\SVNBuddy\Command\ResolveCommand;
+use ConsoleHelpers\SVNBuddy\Command\RevertCommand;
+use ConsoleHelpers\SVNBuddy\Command\UpdateCommand;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use Pimple\Container;
 use Symfony\Component\Console\Application as BaseApplication;
 

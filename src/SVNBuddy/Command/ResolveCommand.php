@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Command;
+namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Exception\CommandException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

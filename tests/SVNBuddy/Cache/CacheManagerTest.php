@@ -8,11 +8,11 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Cache;
+namespace Tests\ConsoleHelpers\SVNBuddy\Cache;
 
 
-use aik099\SVNBuddy\Cache\CacheManager;
-use Tests\aik099\SVNBuddy\WorkingDirectoryAwareTestCase;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use Tests\ConsoleHelpers\SVNBuddy\WorkingDirectoryAwareTestCase;
 
 class CacheManagerTest extends WorkingDirectoryAwareTestCase
 {

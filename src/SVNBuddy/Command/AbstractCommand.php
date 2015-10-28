@@ -8,17 +8,17 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Command;
+namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\ConfigEditor;
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
-use aik099\SVNBuddy\Exception\CommandException;
-use aik099\SVNBuddy\Helper\ContainerHelper;
-use aik099\SVNBuddy\ConsoleIO;
-use aik099\SVNBuddy\Repository\Connector\Connector;
-use aik099\SVNBuddy\Repository\RevisionLog\RevisionLog;
-use aik099\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Helper\ContainerHelper;
+use ConsoleHelpers\SVNBuddy\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Pimple\Container;
 use Stecman\Component\Symfony\Console\BashCompletion\Completion\CompletionAwareInterface;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;

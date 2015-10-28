@@ -8,13 +8,13 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Config;
+namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Tests\aik099\SVNBuddy\ProphecyToken\ConfigStorageNameToken;
+use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\ConfigStorageNameToken;
 
 abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,7 +44,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->configEditor = $this->prophesize('aik099\\SVNBuddy\Config\\ConfigEditor');
+		$this->configEditor = $this->prophesize('ConsoleHelpers\\SVNBuddy\Config\\ConfigEditor');
 	}
 
 	/**
@@ -110,7 +110,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please use setEditor() before calling aik099\SVNBuddy\Config\AbstractConfigSetting::getValue().
+	 * @expectedExceptionMessage Please use setEditor() before calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::getValue().
 	 */
 	public function testGetValueWithoutEditor()
 	{
@@ -215,7 +215,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please use setEditor() before calling aik099\SVNBuddy\Config\AbstractConfigSetting::setValue().
+	 * @expectedExceptionMessage Please use setEditor() before calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::setValue().
 	 */
 	public function testSetValueWithoutEditor()
 	{
@@ -287,7 +287,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling aik099\SVNBuddy\Config\AbstractConfigSetting::getValue() method.
+	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::getValue() method.
 	 */
 	public function testGetValueWithoutWorkingCopy()
 	{
@@ -296,7 +296,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 
 	/**
 	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling aik099\SVNBuddy\Config\AbstractConfigSetting::setValue() method.
+	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::setValue() method.
 	 */
 	public function testSetValueWithoutWorkingCopy()
 	{

@@ -8,16 +8,16 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy;
+namespace Tests\ConsoleHelpers\SVNBuddy;
 
 
-use aik099\SVNBuddy\WorkingDirectory;
+use ConsoleHelpers\SVNBuddy\WorkingDirectory;
 
 class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 {
 
 	/**
-	 * @expectedException \aik099\SVNBuddy\Exception\ApplicationException
+	 * @expectedException \ConsoleHelpers\SVNBuddy\Exception\ApplicationException
 	 * @expectedExceptionMessage The $sub_folder is a path or empty.
 	 * @dataProvider incorrectSubFolderDataProvider
 	 */
@@ -47,7 +47,7 @@ class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 	}
 
 	/**
-	 * @expectedException \aik099\SVNBuddy\Exception\ApplicationException
+	 * @expectedException \ConsoleHelpers\SVNBuddy\Exception\ApplicationException
 	 * @expectedExceptionMessage The HOME environment variable must be set to run correctly
 	 */
 	public function testBrokenLinuxEnvironment()
@@ -58,7 +58,7 @@ class WorkingDirectoryTest extends WorkingDirectoryAwareTestCase
 
 	/**
 	 * @runInSeparateProcess
-	 * @expectedException \aik099\SVNBuddy\Exception\ApplicationException
+	 * @expectedException \ConsoleHelpers\SVNBuddy\Exception\ApplicationException
 	 * @expectedExceptionMessage The APPDATA environment variable must be set to run correctly
 	 */
 	public function testBrokenWindowsEnvironment()

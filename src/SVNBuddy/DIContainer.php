@@ -8,20 +8,20 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy;
+namespace ConsoleHelpers\SVNBuddy;
 
 
-use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\Config\ConfigEditor;
-use aik099\SVNBuddy\Helper\ContainerHelper;
-use aik099\SVNBuddy\Helper\DateHelper;
-use aik099\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
-use aik099\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
-use aik099\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
-use aik099\SVNBuddy\Process\ProcessFactory;
-use aik099\SVNBuddy\Repository\Connector\Connector;
-use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
-use aik099\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\SVNBuddy\Helper\ContainerHelper;
+use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
+use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Pimple\Container;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArgvInput;

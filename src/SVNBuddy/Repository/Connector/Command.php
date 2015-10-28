@@ -8,12 +8,12 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Repository\Connector;
+namespace ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\Exception\RepositoryCommandException;
-use aik099\SVNBuddy\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
+use ConsoleHelpers\SVNBuddy\ConsoleIO;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 

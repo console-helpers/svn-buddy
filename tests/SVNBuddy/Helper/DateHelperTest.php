@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Helper;
+namespace Tests\ConsoleHelpers\SVNBuddy\Helper;
 
 
-use aik099\SVNBuddy\Helper\DateHelper;
+use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 
 class DateHelperTest extends \PHPUnit_Framework_TestCase
 {

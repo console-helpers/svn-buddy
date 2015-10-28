@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Command;
+namespace Tests\ConsoleHelpers\SVNBuddy\Command;
 
 
 class MergeCommandTest extends AbstractCommandTestCase

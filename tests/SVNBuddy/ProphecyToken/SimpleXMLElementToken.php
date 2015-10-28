@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\ProphecyToken;
+namespace Tests\ConsoleHelpers\SVNBuddy\ProphecyToken;
 
 
 use Prophecy\Argument\Token\TokenInterface;

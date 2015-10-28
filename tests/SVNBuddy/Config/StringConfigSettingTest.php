@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Config;
+namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 
 class StringConfigSettingTest extends AbstractConfigSettingTest
 {
@@ -19,7 +19,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 	protected function setUp()
 	{
 		if ( !isset($this->className) ) {
-			$this->className = 'aik099\\SVNBuddy\\Config\\StringConfigSetting';
+			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\StringConfigSetting';
 		}
 
 		if ( !isset($this->defaultValue) ) {

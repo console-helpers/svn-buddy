@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Repository\Parser;
+namespace ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 
 class RevisionListParser

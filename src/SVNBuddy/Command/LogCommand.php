@@ -8,15 +8,15 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Command;
+namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
-use aik099\SVNBuddy\Config\IntegerConfigSetting;
-use aik099\SVNBuddy\Config\RegExpsConfigSetting;
-use aik099\SVNBuddy\Exception\CommandException;
-use aik099\SVNBuddy\Helper\DateHelper;
-use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\IntegerConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\RegExpsConfigSetting;
+use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;

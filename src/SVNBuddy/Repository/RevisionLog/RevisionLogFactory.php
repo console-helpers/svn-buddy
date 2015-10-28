@@ -8,13 +8,13 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Repository\RevisionLog;
+namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-use aik099\SVNBuddy\Cache\CacheManager;
-use aik099\SVNBuddy\ConsoleIO;
-use aik099\SVNBuddy\Repository\Connector\Connector;
-use aik099\SVNBuddy\Repository\Parser\LogMessageParser;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser;
 
 class RevisionLogFactory
 {

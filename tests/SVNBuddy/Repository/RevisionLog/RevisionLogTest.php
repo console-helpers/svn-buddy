@@ -8,13 +8,13 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Repository\RevisionLog;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-use aik099\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use Prophecy\Prophecy\ObjectProphecy;
-use Tests\aik099\SVNBuddy\ProphecyToken\RegExToken;
-use Tests\aik099\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
+use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\RegExToken;
+use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
 
 class RevisionLogTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,9 +44,9 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->repositoryConnector = $this->prophesize('aik099\\SVNBuddy\\Repository\\Connector\\Connector');
-		$this->cacheManager = $this->prophesize('aik099\\SVNBuddy\\Cache\\CacheManager');
-		$this->io = $this->prophesize('aik099\\SVNBuddy\\ConsoleIO');
+		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
+		$this->cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
+		$this->io = $this->prophesize('ConsoleHelpers\\SVNBuddy\\ConsoleIO');
 	}
 
 	/**
@@ -61,7 +61,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testPluginRegistrationSuccess()
 	{
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
@@ -77,7 +77,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testPluginRegistrationFailure()
 	{
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
@@ -88,7 +88,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindCriterionSuccess()
 	{
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 		$plugin->find(array('criterion'))->willReturn('OK')->shouldBeCalled();
 
@@ -100,7 +100,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindCriteriaSuccess()
 	{
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 		$plugin->find(array('criterion1', 'criterion2'))->willReturn('OK')->shouldBeCalled();
 
@@ -122,7 +122,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetRevisionDataSuccess()
 	{
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 		$plugin->getRevisionData(1)->willReturn('OK')->shouldBeCalled();
 
@@ -144,7 +144,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetBugsFromRevisions()
 	{
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('bugs')->shouldBeCalled();
 		$plugin->getRevisionData(1)->willReturn(array('A', 'B'))->shouldBeCalled();
 		$plugin->getRevisionData(2)->willReturn(array('B', 'C'))->shouldBeCalled();
@@ -183,7 +183,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->io->createProgressBar(2)->willReturn($progress_bar)->shouldBeCalled();
 		$this->io->writeln('')->shouldBeCalled();
 
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
 
@@ -219,7 +219,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 			->willReturn($collected_data)
 			->shouldBeCalled();
 
-		$plugin = $this->prophesize('aik099\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
 		$plugin->setCollectedData($collected_data['mocked'])->shouldBeCalled();
@@ -311,7 +311,7 @@ OUTPUT;
 			$result = simplexml_load_string($result);
 		}
 
-		$command = $this->prophesize('aik099\\SVNBuddy\\Repository\\Connector\\Command');
+		$command = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Command');
 		$command->run()->willReturn($result)->shouldBeCalled();
 
 		$this->repositoryConnector->getCommand($command_name, $param_string)->willReturn($command)->shouldBeCalled();

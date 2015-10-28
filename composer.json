@@ -20,12 +20,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"aik099\\SVNBuddy\\": "src/SVNBuddy/"
+			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Tests\\aik099\\SVNBuddy\\": "tests/SVNBuddy/"
+			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/"
 		}
 	},
 	"bin": ["bin/svn-buddy"]

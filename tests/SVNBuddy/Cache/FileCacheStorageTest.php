@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Cache;
+namespace Tests\ConsoleHelpers\SVNBuddy\Cache;
 
 
-use aik099\SVNBuddy\Cache\FileCacheStorage;
+use ConsoleHelpers\SVNBuddy\Cache\FileCacheStorage;
 
 class FileCacheStorageTest extends \PHPUnit_Framework_TestCase
 {

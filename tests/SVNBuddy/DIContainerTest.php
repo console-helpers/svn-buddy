@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy;
+namespace Tests\ConsoleHelpers\SVNBuddy;
 
 
-use aik099\SVNBuddy\DIContainer;
+use ConsoleHelpers\SVNBuddy\DIContainer;
 
 class DIContainerTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,20 +29,20 @@ class DIContainerTest extends \PHPUnit_Framework_TestCase
 	public function instanceDataProvider()
 	{
 		return array(
-			array('aik099\\SVNBuddy\\Cache\\CacheManager', 'cache_manager'),
-			array('aik099\\SVNBuddy\\Config\\ConfigEditor', 'config_editor'),
-			array('aik099\\SVNBuddy\\Helper\\ContainerHelper', 'container_helper'),
-			array('aik099\\SVNBuddy\\Helper\\DateHelper', 'date_helper'),
-			array('aik099\\SVNBuddy\\MergeSourceDetector\\MergeSourceDetectorAggregator', 'merge_source_detector'),
-			array('aik099\\SVNBuddy\\Process\\ProcessFactory', 'process_factory'),
-			array('aik099\\SVNBuddy\\Repository\\Connector\\Connector', 'repository_connector'),
-			array('aik099\\SVNBuddy\\Repository\\Parser\\RevisionListParser', 'revision_list_parser'),
-			array('aik099\\SVNBuddy\\Repository\\RevisionLog\\RevisionLogFactory', 'revision_log_factory'),
+			array('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager', 'cache_manager'),
+			array('ConsoleHelpers\\SVNBuddy\\Config\\ConfigEditor', 'config_editor'),
+			array('ConsoleHelpers\\SVNBuddy\\Helper\\ContainerHelper', 'container_helper'),
+			array('ConsoleHelpers\\SVNBuddy\\Helper\\DateHelper', 'date_helper'),
+			array('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\MergeSourceDetectorAggregator', 'merge_source_detector'),
+			array('ConsoleHelpers\\SVNBuddy\\Process\\ProcessFactory', 'process_factory'),
+			array('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector', 'repository_connector'),
+			array('ConsoleHelpers\\SVNBuddy\\Repository\\Parser\\RevisionListParser', 'revision_list_parser'),
+			array('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLogFactory', 'revision_log_factory'),
 			array('Symfony\\Component\\Console\\Helper\\HelperSet', 'helper_set'),
 			array('Symfony\\Component\\Console\\Input\\ArgvInput', 'input'),
 			array('Symfony\\Component\\Console\\Output\\ConsoleOutput', 'output'),
-			array('aik099\\SVNBuddy\\ConsoleIO', 'io'),
-			array('aik099\\SVNBuddy\\InteractiveEditor', 'editor'),
+			array('ConsoleHelpers\\SVNBuddy\\ConsoleIO', 'io'),
+			array('ConsoleHelpers\\SVNBuddy\\InteractiveEditor', 'editor'),
 		);
 	}
 

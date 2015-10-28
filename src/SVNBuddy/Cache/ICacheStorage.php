@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Cache;
+namespace ConsoleHelpers\SVNBuddy\Cache;
 
 
 interface ICacheStorage

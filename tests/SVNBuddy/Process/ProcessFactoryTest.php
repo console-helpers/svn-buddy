@@ -8,17 +8,17 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Process;
+namespace Tests\ConsoleHelpers\SVNBuddy\Process;
 
 
-use aik099\SVNBuddy\Process\ProcessFactory;
+use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 
 class ProcessFactoryTest extends \PHPUnit_Framework_TestCase
 {
 
 	public function testImplementsCorrectInterface()
 	{
-		$this->assertInstanceOf('aik099\\SVNBuddy\\Process\\IProcessFactory', new ProcessFactory());
+		$this->assertInstanceOf('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory', new ProcessFactory());
 	}
 
 	public function testProcessCanBeCreated()

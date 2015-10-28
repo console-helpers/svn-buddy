@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Config;
+namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 
 class PathsConfigSettingTest extends ArrayConfigSettingTest
 {
@@ -25,7 +25,7 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 
 	protected function setUp()
 	{
-		$this->className = 'aik099\\SVNBuddy\\Config\\PathsConfigSetting';
+		$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\PathsConfigSetting';
 		$this->defaultValue = array('default');
 
 		parent::setUp();

@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy;
+namespace Tests\ConsoleHelpers\SVNBuddy;
 
 
-use aik099\SVNBuddy\Config\ConfigEditor;
+use ConsoleHelpers\SVNBuddy\Config\ConfigEditor;
 
 class ConfigEditorTest extends WorkingDirectoryAwareTestCase
 {

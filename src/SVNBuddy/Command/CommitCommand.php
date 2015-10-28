@@ -8,12 +8,12 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace aik099\SVNBuddy\Command;
+namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use aik099\SVNBuddy\Exception\CommandException;
-use aik099\SVNBuddy\InteractiveEditor;
-use aik099\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\InteractiveEditor;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

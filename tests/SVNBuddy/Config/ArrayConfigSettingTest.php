@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\aik099\SVNBuddy\Config;
+namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
-use aik099\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 
 class ArrayConfigSettingTest extends AbstractConfigSettingTest
 {
@@ -19,7 +19,7 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 	protected function setUp()
 	{
 		if ( !isset($this->className) ) {
-			$this->className = 'aik099\\SVNBuddy\\Config\\ArrayConfigSetting';
+			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\ArrayConfigSetting';
 		}
 
 		if ( !isset($this->defaultValue) ) {
