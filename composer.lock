@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f21fe6835fc87d20fe0ddef3eb24dee2",
-    "content-hash": "e7512df80c554033568949689ed980cf",
+    "hash": "8101ad00d5bb4924c9686bdc22c46e19",
+    "content-hash": "6b1207257b849fdfa2bc36e279b32e15",
     "packages": [
         {
             "name": "console-helpers/console-kit",
@@ -13,27 +13,33 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "857a0c99c4eb0a093b1b4668f6741fcca9d41a32"
+                "reference": "9e0c5bedf16c6e76d23b5346ba84465013bf2959"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/857a0c99c4eb0a093b1b4668f6741fcca9d41a32",
-                "reference": "857a0c99c4eb0a093b1b4668f6741fcca9d41a32",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/9e0c5bedf16c6e76d23b5346ba84465013bf2959",
+                "reference": "9e0c5bedf16c6e76d23b5346ba84465013bf2959",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "pimple/pimple": ">=2.0",
-                "stecman/symfony-console-completion": "~0.6",
-                "symfony/console": ">=2.7"
+                "pimple/pimple": "^2.0|^3.0",
+                "stecman/symfony-console-completion": "^0.6.1",
+                "symfony/console": "^2.7"
             },
             "require-dev": {
                 "aik099/coding-standard": "dev-master"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/"
+                    "ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/",
+                    "Tests\\ConsoleHelpers\\ConsoleKit\\": "tests/ConsoleKit/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -47,7 +53,7 @@
                 }
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
-            "time": "2015-10-29 20:03:29"
+            "time": "2015-10-29 20:29:50"
         },
         {
             "name": "pimple/pimple",
@@ -97,7 +103,7 @@
         },
         {
             "name": "stecman/symfony-console-completion",
-            "version": "dev-master",
+            "version": "0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stecman/symfony-console-completion.git",
@@ -142,16 +148,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.7.5",
+            "version": "v2.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "06cb17c013a82f94a3d840682b49425cd00a2161"
+                "reference": "5efd632294c8320ea52492db22292ff853a43766"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/06cb17c013a82f94a3d840682b49425cd00a2161",
-                "reference": "06cb17c013a82f94a3d840682b49425cd00a2161",
+                "url": "https://api.github.com/repos/symfony/console/zipball/5efd632294c8320ea52492db22292ff853a43766",
+                "reference": "5efd632294c8320ea52492db22292ff853a43766",
                 "shasum": ""
             },
             "require": {
@@ -160,7 +166,6 @@
             "require-dev": {
                 "psr/log": "~1.0",
                 "symfony/event-dispatcher": "~2.1",
-                "symfony/phpunit-bridge": "~2.7",
                 "symfony/process": "~2.1"
             },
             "suggest": {
@@ -195,27 +200,24 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-09-25 08:32:23"
+            "time": "2015-10-20 14:38:46"
         },
         {
             "name": "symfony/process",
-            "version": "v2.7.5",
+            "version": "v2.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9"
+                "reference": "4a959dd4e19c2c5d7512689413921e0a74386ec7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
-                "reference": "b27c8e317922cd3cdd3600850273cf6b82b2e8e9",
+                "url": "https://api.github.com/repos/symfony/process/zipball/4a959dd4e19c2c5d7512689413921e0a74386ec7",
+                "reference": "4a959dd4e19c2c5d7512689413921e0a74386ec7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.9"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "~2.7"
             },
             "type": "library",
             "extra": {
@@ -244,7 +246,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2015-09-19 19:59:23"
+            "time": "2015-10-23 14:47:27"
         }
     ],
     "packages-dev": [
@@ -254,12 +256,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aik099/CodingStandard.git",
-                "reference": "51d923fd462bcbc5438bf716e11d77171d411030"
+                "reference": "b36c9389bd8caaeb28fdc960ec9c1c3a5a7d759e"
             },
             "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/b36c9389bd8caaeb28fdc960ec9c1c3a5a7d759e",
-                "reference": "51d923fd462bcbc5438bf716e11d77171d411030",
+                "reference": "b36c9389bd8caaeb28fdc960ec9c1c3a5a7d759e",
                 "shasum": ""
             },
             "require-dev": {
@@ -286,19 +288,16 @@
                 "PHP_CodeSniffer",
                 "codesniffer"
             ],
-            "time": "2015-10-06 07:28:23"
+            "time": "2015-10-22 19:29:49"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "stecman/symfony-console-completion": 20,
         "aik099/coding-standard": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {
-        "php": ">=5.3.2"
-    },
+    "platform": [],
     "platform-dev": []
 }

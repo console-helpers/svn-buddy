@@ -10,7 +10,6 @@
 	],
 	"require": {
 		"symfony/process": ">=2.7",
-		"stecman/symfony-console-completion": "~0.6@dev",
 		"console-helpers/console-kit": "^0.0.1"
 	},
 	"require-dev": {
