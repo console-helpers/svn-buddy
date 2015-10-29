@@ -4,9 +4,51 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c9a26efcdf581fbf8d173d7453b93f3e",
-    "content-hash": "db2540e8c5fef2f25f0cd97d8ae84d7c",
+    "hash": "f21fe6835fc87d20fe0ddef3eb24dee2",
+    "content-hash": "e7512df80c554033568949689ed980cf",
     "packages": [
+        {
+            "name": "console-helpers/console-kit",
+            "version": "v0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/console-helpers/console-kit.git",
+                "reference": "857a0c99c4eb0a093b1b4668f6741fcca9d41a32"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/857a0c99c4eb0a093b1b4668f6741fcca9d41a32",
+                "reference": "857a0c99c4eb0a093b1b4668f6741fcca9d41a32",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "pimple/pimple": ">=2.0",
+                "stecman/symfony-console-completion": "~0.6",
+                "symfony/console": ">=2.7"
+            },
+            "require-dev": {
+                "aik099/coding-standard": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD 3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Obuhovich",
+                    "email": "aik.bold@gmail.com"
+                }
+            ],
+            "description": "Toolkit for creating command line applications using Symfony Console component",
+            "time": "2015-10-29 20:03:29"
+        },
         {
             "name": "pimple/pimple",
             "version": "v3.0.2",
@@ -216,7 +258,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/51d923fd462bcbc5438bf716e11d77171d411030",
+                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/b36c9389bd8caaeb28fdc960ec9c1c3a5a7d759e",
                 "reference": "51d923fd462bcbc5438bf716e11d77171d411030",
                 "shasum": ""
             },
