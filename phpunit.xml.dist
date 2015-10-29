@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="true"
-	backupStaticAttributes="false"
-	bootstrap="vendor/autoload.php"
+<phpunit bootstrap="vendor/autoload.php"
 	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	processIsolation="false"
-	stopOnFailure="false"
 	strict="true"
 	verbose="true">
 
 	<testsuites>
-		<testsuite name="SVNBuddy">
-			<directory>tests/SVNBuddy</directory>
+		<testsuite name="default">
+			<directory>tests</directory>
 		</testsuite>
 	</testsuites>
 
@@ -29,7 +22,7 @@
 
 	<filter>
 		<whitelist>
-            <directory>src/SVNBuddy</directory>
+            <directory>src</directory>
 		</whitelist>
 	</filter>
 </phpunit>
