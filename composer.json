@@ -9,10 +9,7 @@
 		}
 	],
 	"require": {
-		"php": ">=5.3.2",
-		"symfony/console": ">=2.7",
 		"symfony/process": ">=2.7",
-		"pimple/pimple": ">=2.0",
 		"stecman/symfony-console-completion": "~0.6@dev",
 		"console-helpers/console-kit": "^0.0.1"
 	},
@@ -21,14 +18,12 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/",
-			"ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/"
+			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/",
-			"Tests\\ConsoleHelpers\\ConsoleKit\\": "tests/ConsoleKit/"
+			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/"
 		}
 	},
 	"bin": ["bin/svn-buddy"]
