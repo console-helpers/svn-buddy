@@ -127,7 +127,6 @@ class Command
 	 */
 	public function run($callback = null)
 	{
-		$this->_patchProcess();
 		$command_line = $this->_process->getCommandLine();
 		$cache_key = $this->_getCacheKey();
 
@@ -157,29 +156,6 @@ class Command
 		}
 
 		return $output;
-	}
-
-	/**
-	 * Patches process command line for interactivity.
-	 *
-	 * @return void
-	 */
-	private function _patchProcess()
-	{
-		$interactivity_part = ' --non-interactive ';
-		$command_line = $this->_process->getCommandLine();
-
-		if ( $this->_isInteractive ) {
-			$command_line = str_replace($interactivity_part, ' ', $command_line);
-			$this->_process->setInput(STDIN);
-		}
-		elseif ( strpos($command_line, $interactivity_part) === false ) {
-			$parts = explode(' ', $command_line, 2);
-			$command_line = $parts[0] . ' --non-interactive ' . $parts[1];
-			$this->_process->setInput('');
-		}
-
-		$this->_process->setCommandLine($command_line);
 	}
 
 	/**

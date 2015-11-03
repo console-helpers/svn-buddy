@@ -58,19 +58,11 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
 	public function testRunWithoutCallback()
 	{
-		$this->_process->getCommandLine()->willReturn('svn log --limit 5')->shouldBeCalled();
-		$this->_process->setInput('')->shouldBeCalled();
+		$this->_process->getCommandLine()->willReturn('svn --non-interactive log --limit 5')->shouldBeCalled();
 		$this->_process->mustRun(null)->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(false);
-
-		$this->_process
-			->setCommandLine('svn --non-interactive log --limit 5')
-			->will(function ($args, $process) {
-				$process->getCommandLine()->willReturn($args[0])->shouldBeCalled();
-			})
-			->shouldBeCalled();
 
 		$this->assertEquals('OK', $this->_command->run());
 	}

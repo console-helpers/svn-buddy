@@ -101,7 +101,7 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	{
 		$repository_connector = $this->_createRepositoryConnector('user', '');
 
-		$this->_expectCommand('svn --username user --version', 'OK');
+		$this->_expectCommand('svn --non-interactive --username user --version', 'OK');
 		$this->assertEquals('OK', $repository_connector->getCommand('--version')->run());
 	}
 
@@ -109,44 +109,44 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	{
 		$repository_connector = $this->_createRepositoryConnector('', 'pass');
 
-		$this->_expectCommand('svn --password pass --version', 'OK');
+		$this->_expectCommand('svn --non-interactive --password pass --version', 'OK');
 		$this->assertEquals('OK', $repository_connector->getCommand('--version')->run());
 	}
 
 	public function testSimpleCommand()
 	{
-		$this->_expectCommand('svn --version', 'OK');
+		$this->_expectCommand('svn --non-interactive --version', 'OK');
 		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('--version')->run());
 	}
 
 	public function testCommandWithParams()
 	{
-		$this->_expectCommand('svn log -r 12', 'OK');
+		$this->_expectCommand('svn --non-interactive log -r 12', 'OK');
 		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '-r 12')->run());
 	}
 
 	public function testCommandWithPath()
 	{
-		$this->_expectCommand("svn log 'path/to/folder'", 'OK');
+		$this->_expectCommand("svn --non-interactive log 'path/to/folder'", 'OK');
 		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '{path/to/folder}')->run());
 	}
 
 	public function testCommandWithPathAndLeadingSlash()
 	{
-		$this->_expectCommand("svn log '/path/to/folder'", 'OK');
+		$this->_expectCommand("svn --non-interactive log '/path/to/folder'", 'OK');
 		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '{/path/to/folder}')->run());
 	}
 
 	public function testCommandWithPathAndParams()
 	{
-		$this->_expectCommand("svn log -r 12 'path/to/folder'", 'OK');
+		$this->_expectCommand("svn --non-interactive log -r 12 'path/to/folder'", 'OK');
 		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '-r 12 {path/to/folder}')->run());
 	}
 
 	public function testCommandThatFails()
 	{
 		$thrown_exception = null;
-		$this->_expectCommand('svn any', '', false);
+		$this->_expectCommand('svn --non-interactive any', '', false);
 
 		try {
 			$this->_repositoryConnector->getCommand('any')->run();
@@ -173,7 +173,7 @@ MSG;
 
 	public function testGetPropertyFound()
 	{
-		$this->_expectCommand("svn propget test-p 'the/path'", 'OK');
+		$this->_expectCommand("svn --non-interactive propget test-p 'the/path'", 'OK');
 
 		$this->assertEquals(
 			'OK',
@@ -196,7 +196,7 @@ MSG;
 			0
 		);
 
-		$this->_expectCommand("svn propget test-p 'the/path'", '', false);
+		$this->_expectCommand("svn --non-interactive propget test-p 'the/path'", '', false);
 
 		$this->_repositoryConnector->getProperty('test-p', 'the/path');
 	}
@@ -204,24 +204,15 @@ MSG;
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string  $command        Command.
-	 * @param string  $output         Output.
-	 * @param boolean $is_successful  Should command be successful.
-	 * @param boolean $is_interactive Is interactive.
+	 * @param string  $command       Command.
+	 * @param string  $output        Output.
+	 * @param boolean $is_successful Should command be successful.
 	 *
 	 * @return void
 	 */
-	private function _expectCommand($command, $output, $is_successful = true, $is_interactive = false)
+	private function _expectCommand($command, $output, $is_successful = true)
 	{
-		if ( !$is_interactive ) {
-			$this->_process->setInput('')->shouldBeCalled();
-		}
-
-		$patched_command = preg_replace('/^svn /', 'svn --non-interactive ', $command);
 		$this->_process->getCommandLine()->willReturn($command)->shouldBeCalled();
-		$this->_process->setCommandLine($patched_command)->will(function ($args, $process) {
-			$process->getCommandLine()->willReturn($args[0]);
-		})->shouldBeCalled();
 
 		$expectation = $this->_process->mustRun(null)->shouldBeCalled();
 

@@ -101,6 +101,8 @@ class Connector
 		$username = $this->_configEditor->get('repository-connector.username');
 		$password = $this->_configEditor->get('repository-connector.password');
 
+		$this->_svnCommand .= ' --non-interactive';
+
 		if ( $username ) {
 			$this->_svnCommand .= ' --username ' . $username;
 		}
