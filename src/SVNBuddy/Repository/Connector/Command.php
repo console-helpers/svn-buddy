@@ -42,13 +42,6 @@ class Command
 	private $_cacheManager;
 
 	/**
-	 * Is command interactive.
-	 *
-	 * @var boolean
-	 */
-	private $_isInteractive = false;
-
-	/**
 	 * Cache duration.
 	 *
 	 * @var mixed
@@ -74,20 +67,6 @@ class Command
 		$this->_process = $process;
 		$this->_io = $io;
 		$this->_cacheManager = $cache_manager;
-	}
-
-	/**
-	 * Changes command interactivity status.
-	 *
-	 * @param boolean $is_interactive Is interactive.
-	 *
-	 * @return self
-	 */
-	public function setInteractive($is_interactive)
-	{
-		$this->_isInteractive = $is_interactive;
-
-		return $this;
 	}
 
 	/**
