@@ -210,14 +210,18 @@ class Connector
 	 * @param string $absolute_url URL.
 	 *
 	 * @return string
-	 * @throws \InvalidArgumentException When url is malformed.
+	 * @throws \InvalidArgumentException When invalid url is given.
 	 */
 	public function getPathFromUrl($absolute_url)
 	{
+		if ( !$this->isUrl($absolute_url) ) {
+			throw new \InvalidArgumentException('The repository URL "' . $absolute_url . '" is invalid.');
+		}
+
 		$relative_url = parse_url($absolute_url, PHP_URL_PATH);
 
 		if ( $relative_url === false ) {
-			throw new \InvalidArgumentException('The repository URL "' . $absolute_url . '" is malformed.');
+			throw new \InvalidArgumentException('The repository URL "' . $absolute_url . '" is invalid.');
 		}
 
 		return $relative_url;
@@ -345,9 +349,14 @@ class Connector
 	 * @param string $url Url.
 	 *
 	 * @return integer
+	 * @throws \InvalidArgumentException When not an url was given.
 	 */
 	public function getFirstRevision($url)
 	{
+		if ( !$this->isUrl($url) ) {
+			throw new \InvalidArgumentException('The repository URL "' . $url . '" is invalid.');
+		}
+
 		$log = $this->withCache('1 year')->getCommand('log', ' -r 1:HEAD --limit 1 --xml {' . $url . '}')->run();
 
 		return (int)$log->logentry['revision'];
