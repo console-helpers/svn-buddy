@@ -125,11 +125,6 @@ class Command
 			}
 		}
 
-		// Callback most likely processed output anyway.
-		if ( is_callable($callback) ) {
-			return null;
-		}
-
 		if ( strpos($command_line, '--xml') !== false ) {
 			return simplexml_load_string($output);
 		}
