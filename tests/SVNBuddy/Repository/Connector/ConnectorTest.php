@@ -218,28 +218,23 @@ MSG;
 
 		if ( $is_successful ) {
 			$this->_process->getOutput()->willReturn($output)->shouldBeCalled();
-
-			/*$this->_io->write(
-				hm::matchesPattern('#svn command \([\d.]+ ms\): ' . preg_quote($command) . '#')
-			)
-			->shouldBeCalled();*/
 		}
 		else {
-			$mock_definition = array(
-				'isSuccessful' => false,
-				'getExitCode' => 1,
-				'getExitCodeText' => 'exit code text',
-				'isOutputDisabled' => false,
-				'getOutput' => 'normal output',
-				'getErrorOutput' => 'error output',
-			);
-
-			foreach ( $mock_definition as $method_name => $return_value ) {
-				$this->_process->{$method_name}()->willReturn($return_value)->shouldBeCalled();
-			}
-
 			$process = $this->_process;
 			$expectation->will(function () use ($process) {
+				$mock_definition = array(
+					'isSuccessful' => false,
+					'getExitCode' => 1,
+					'getExitCodeText' => 'exit code text',
+					'isOutputDisabled' => false,
+					'getOutput' => 'normal output',
+					'getErrorOutput' => 'error output',
+				);
+
+				foreach ( $mock_definition as $method_name => $return_value ) {
+					$process->{$method_name}()->willReturn($return_value)->shouldBeCalled();
+				}
+
 				throw new ProcessFailedException($process->reveal());
 			});
 		}
