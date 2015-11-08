@@ -11,9 +11,10 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
+use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ConnectorTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,13 +41,6 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 	private $_processFactory;
 
 	/**
-	 * Process.
-	 *
-	 * @var ObjectProphecy
-	 */
-	private $_process;
-
-	/**
 	 * Cache manager.
 	 *
 	 * @var ObjectProphecy
@@ -68,10 +62,13 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
 		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
-		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
 
-		// Called from "__destruct".
-		$this->_process->stop();
+		// To get nice exception back when unexpected command is executed.
+		$this->_processFactory
+			->createProcess(Argument::any(), 1200)
+			->will(function (array $args) {
+				throw new \LogicException('The createProcess("' . $args[0] . '", 1200) call wasn\'t expected.');
+			});
 
 		$this->_repositoryConnector = $this->_createRepositoryConnector('', '');
 	}
@@ -114,6 +111,15 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage The "log -r 5" sub-command contains spaces.
+	 */
+	public function testSubCommandWithSpace()
+	{
+		$this->_repositoryConnector->getCommand('log -r 5')->run();
+	}
+
+	/**
 	 * @dataProvider commandWithParamsDataProvider
 	 */
 	public function testCommandWithParams($params, $expected_command)
@@ -144,21 +150,236 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
+	public function testGetPropertyWithRevision()
+	{
+		$this->_expectCommand("svn --non-interactive propget prop-name 'the/path' --revision 5", 'OK');
+
+		$this->assertEquals(
+			'OK',
+			$this->_repositoryConnector->getProperty('prop-name', 'the/path', 5)
+		);
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage The "/path/to/folder" is not an URL.
+	 */
+	public function testGetPathFromNonUrl()
+	{
+		$this->_repositoryConnector->getPathFromUrl('/path/to/folder');
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage The URL "svn://" is malformed.
+	 */
+	public function testGetPathFromMalformedUrl()
+	{
+		$this->_repositoryConnector->getPathFromUrl('svn://');
+	}
+
+	public function testGetPathFromUrl()
+	{
+		$actual = $this->_repositoryConnector->getPathFromUrl('svn://repository.com/path/to/project');
+
+		$this->assertEquals('/path/to/project', $actual);
+	}
+
+	public function testGetWorkingCopyUrlFromUrl()
+	{
+		$expected = 'svn://repository.com/path/to/project';
+
+		$this->assertEquals($expected, $this->_repositoryConnector->getWorkingCopyUrl($expected));
+	}
+
+	/**
+	 * @dataProvider svnInfoDataProvider
+	 */
+	public function testGetWorkingCopyUrlFromPath($svn_info)
+	{
+		$this->_expectCommand("svn --non-interactive info --xml '/path/to/working-copy'", $svn_info);
+
+		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
+		$this->assertEquals('svn://repository.com/path/to/project', $actual);
+	}
+
+	public function svnInfoDataProvider()
+	{
+		$svn16_info = <<<XML
+<?xml version="1.0"?>
+<info>
+<entry
+   kind="dir"
+   path="/path/to/working-copy"
+   revision="100">
+<url>svn://repository.com/path/to/project</url>
+<repository>
+<root>svn://repository.com</root>
+<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
+</repository>
+<wc-info>
+<schedule>normal</schedule>
+<depth>infinity</depth>
+</wc-info>
+<commit
+   revision="100">
+<author>user</author>
+<date>2015-11-04T16:20:28.991340Z</date>
+</commit>
+</entry>
+</info>
+XML;
+
+		$svn17_info = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+<entry
+   kind="dir"
+   path="/path/to/working-copy"
+   revision="100">
+<url>svn://repository.com/path/to/project</url>
+<repository>
+<root>svn://repository.com</root>
+<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
+</repository>
+<wc-info>
+<wcroot-abspath>/path/to/working-copy</wcroot-abspath>
+<schedule>normal</schedule>
+<depth>infinity</depth>
+</wc-info>
+<commit
+   revision="100">
+<author>user</author>
+<date>2015-11-04T16:20:28.991340Z</date>
+</commit>
+</entry>
+</info>
+XML;
+
+		return array(
+			'svn1.6' => array($svn16_info),
+			'svn1.7' => array($svn17_info),
+		);
+	}
+
+	/**
+	 * @expectedException \LogicException
+	 * @expectedExceptionMessage The directory "/path/to/working-copy" not found in "svn info" command results.
+	 */
+	public function testGetWorkingCopyUrlWithBrokenSvnInfo()
+	{
+		$svn16_info = <<<XML
+<?xml version="1.0"?>
+<info>
+<entry
+   kind="dir"
+   path="/path/to"
+   revision="100">
+<url>svn://repository.com/path/to/project</url>
+<repository>
+<root>svn://repository.com</root>
+<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
+</repository>
+<wc-info>
+<schedule>normal</schedule>
+<depth>infinity</depth>
+</wc-info>
+<commit
+   revision="100">
+<author>user</author>
+<date>2015-11-04T16:20:28.991340Z</date>
+</commit>
+</entry>
+</info>
+XML;
+
+		$this->_expectCommand("svn --non-interactive info --xml '/path/to/working-copy'", $svn16_info);
+
+		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
+	}
+
+	public function testGetWorkingCopyUrlOnOldFormatWorkingCopy()
+	{
+		$that = $this;
+
+		$this->_io->writeln(array('', '<error>error message</error>', ''))->shouldBeCalled();
+		$this->_io
+			->askConfirmation('Run "svn upgrade"', false)
+			->will(function () use ($that) {
+				$svn16_info = <<<XML
+<?xml version="1.0"?>
+<info>
+<entry
+   kind="dir"
+   path="/path/to/working-copy"
+   revision="100">
+<url>svn://repository.com/path/to/project</url>
+<repository>
+<root>svn://repository.com</root>
+<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
+</repository>
+<wc-info>
+<schedule>normal</schedule>
+<depth>infinity</depth>
+</wc-info>
+<commit
+   revision="100">
+<author>user</author>
+<date>2015-11-04T16:20:28.991340Z</date>
+</commit>
+</entry>
+</info>
+XML;
+				$that->_expectCommand("svn --non-interactive info --xml '/path/to/working-copy'", $svn16_info);
+
+				return true;
+			})
+			->shouldBeCalled();
+
+		$this->_expectCommand(
+			"svn --non-interactive info --xml '/path/to/working-copy'",
+			'',
+			'error message',
+			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
+		);
+
+		$this->_expectCommand("svn --non-interactive upgrade '/path/to/working-copy'", 'OK');
+
+		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
+		$this->assertEquals('svn://repository.com/path/to/project', $actual);
+	}
+
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string $command Command.
-	 * @param string $output  Output.
-	 *
-	 * @return void
+	 * @param string       $command    Command.
+	 * @param string       $output     Output.
+	 * @param string|null  $error_msg  Error msg.
+	 * @param integer $error_code Error code.
 	 */
-	private function _expectCommand($command, $output)
+	private function _expectCommand($command, $output, $error_msg = null, $error_code = 0)
 	{
-		$this->_process->getCommandLine()->willReturn($command)->shouldBeCalled();
-		$this->_process->mustRun(null)->shouldBeCalled();
-		$this->_process->getOutput()->willReturn($output)->shouldBeCalled();
+		$process = $this->prophesize('Symfony\\Component\\Process\\Process');
+		$process->getCommandLine()->willReturn($command)->shouldBeCalled();
 
-		$this->_processFactory->createProcess($command, 1200)->willReturn($this->_process)->shouldBeCalled();
+		$expectation = $process
+			->mustRun(strpos($command, 'upgrade') !== false ? Argument::type('callable') : null)
+			->shouldBeCalled();
+
+		if ( isset($error_code) && isset($error_msg) ) {
+			$expectation->willThrow(
+				new RepositoryCommandException($command, 'svn: E' . $error_code . ': ' . $error_msg)
+			);
+		}
+		else {
+			$expectation->willReturn(null);
+			$process->getOutput()->willReturn($output)->shouldBeCalled();
+		}
+
+		$this->_io->isVerbose()->willReturn(false);
+		$this->_io->isDebug()->willReturn(false);
+
+		$this->_processFactory->createProcess($command, 1200)->willReturn($process)->shouldBeCalled();
 	}
 
 	/**
