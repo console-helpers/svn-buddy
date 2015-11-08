@@ -327,20 +327,12 @@ class Connector
 	{
 		$svn_info = $this->getCommand('info', '--xml {' . $path_or_url . '}')->run();
 
-		foreach ( $svn_info->entry as $entry ) {
-			if ( $entry['kind'] != 'dir' ) {
-				continue;
-			}
-
-			// When getting remote "svn info", then path is last folder only.
-			if ( basename($this->getSvnInfoEntryPath($entry)) == basename($path_or_url) ) {
-				return $entry;
-			}
+		// When getting remote "svn info", then path is last folder only.
+		if ( basename($this->_getSvnInfoEntryPath($svn_info->entry)) != basename($path_or_url) ) {
+			throw new \LogicException('The directory "' . $path_or_url . '" not found in "svn info" command results.');
 		}
 
-		$error_msg = 'The directory "' . $path_or_url . '" not found in "svn info" command results.';
-
-		throw new \LogicException($error_msg);
+		return $svn_info->entry;
 	}
 
 	/**
@@ -350,17 +342,17 @@ class Connector
 	 *
 	 * @return string
 	 */
-	protected function getSvnInfoEntryPath(\SimpleXMLElement $svn_info_entry)
+	private function _getSvnInfoEntryPath(\SimpleXMLElement $svn_info_entry)
 	{
 		// SVN 1.7+.
 		$path = (string)$svn_info_entry->{'wc-info'}->{'wcroot-abspath'};
 
-		if ( !$path ) {
-			// SVN 1.6-.
-			$path = (string)$svn_info_entry['path'];
+		if ( $path ) {
+			return $path;
 		}
 
-		return $path;
+		// SVN 1.6-.
+		return (string)$svn_info_entry['path'];
 	}
 
 	/**
