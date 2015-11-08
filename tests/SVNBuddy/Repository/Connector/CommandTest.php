@@ -14,6 +14,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\RegExToken;
@@ -80,6 +81,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_process->getOutput()->willReturn($process_output)->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
+		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
 		$this->assertCommandOutput($callback, $is_xml, $process_output);
@@ -116,6 +118,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_process->getOutput()->willReturn($process_output)->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
+		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 
 		$this->_cacheManager
 			->getCache('command:' . $command_line, $invalidator)
@@ -223,10 +226,28 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(true)->shouldBeCalled();
+		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
 		$this->_io
 			->writeln(new RegExToken("#^\n<fg=white;bg=magenta>\[svn, [\d\.]+s\]: svn log</>$#s"))
+			->shouldBeCalled();
+
+		$this->_command->run();
+	}
+
+	public function testDebugOutput()
+	{
+		$this->_process->getCommandLine()->willReturn('svn log')->shouldBeCalled();
+		$this->_process->mustRun(null)->shouldBeCalled();
+		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
+
+		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
+		$this->_io->isDebug()->willReturn(true)->shouldBeCalled();
+		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
+
+		$this->_io
+			->writeln('OK', OutputInterface::OUTPUT_RAW)
 			->shouldBeCalled();
 
 		$this->_command->run();
@@ -247,6 +268,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
+		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 		$this->_io->write($expected_output)->shouldBeCalled();
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
@@ -289,6 +311,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
 		$this->_process->getOutput()->shouldNotBeCalled();
 		$this->_io->isVerbose()->shouldNotBeCalled();
+		$this->_io->isDebug()->shouldNotBeCalled();
 
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 

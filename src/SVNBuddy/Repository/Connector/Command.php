@@ -14,6 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\Connector;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -177,7 +178,13 @@ class Command
 			);
 		}
 
-		return (string)$this->_process->getOutput();
+		$output = (string)$this->_process->getOutput();
+
+		if ( $this->_io->isDebug() ) {
+			$this->_io->writeln($output, OutputInterface::OUTPUT_RAW);
+		}
+
+		return $output;
 	}
 
 	/**
