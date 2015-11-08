@@ -73,159 +73,90 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		// Called from "__destruct".
 		$this->_process->stop();
 
-		$with_exceptions = array(
-			'testCommandThatFails',
-			'testGetPropertyNotFound',
-		);
-
-		$this->_repositoryConnector = $this->_createRepositoryConnector(
-			'',
-			'',
-			in_array($this->getName(false), $with_exceptions) ? null : false
-		);
+		$this->_repositoryConnector = $this->_createRepositoryConnector('', '');
 	}
 
-	public function testConfigUsernameUsed()
+	/**
+	 * @dataProvider baseCommandBuildingDataProvider
+	 */
+	public function testBaseCommandBuilding($username, $password, $expected_command)
 	{
-		$repository_connector = $this->_createRepositoryConnector('user', '');
+		$repository_connector = $this->_createRepositoryConnector($username, $password);
 
-		$this->_expectCommand('svn --non-interactive --username user --version', 'OK');
-		$this->assertEquals('OK', $repository_connector->getCommand('--version')->run());
+		$this->_expectCommand($expected_command, 'OK');
+		$this->assertEquals('OK', $repository_connector->getCommand('', '--version')->run());
 	}
 
-	public function testConfigPasswordUsed()
+	public function baseCommandBuildingDataProvider()
 	{
-		$repository_connector = $this->_createRepositoryConnector('', 'pass');
-
-		$this->_expectCommand('svn --non-interactive --password pass --version', 'OK');
-		$this->assertEquals('OK', $repository_connector->getCommand('--version')->run());
+		return array(
+			'no username, no password' => array('', '', 'svn --non-interactive --version'),
+			'username, no password' => array('user', '', 'svn --non-interactive --username user --version'),
+			'no username, password' => array('', 'pass', 'svn --non-interactive --password pass --version'),
+			'username, password' => array(
+				'user',
+				'pass',
+				'svn --non-interactive --username user --password pass --version',
+			),
+		);
 	}
 
-	public function testSimpleCommand()
+	public function testCommandWithoutSubCommand()
 	{
 		$this->_expectCommand('svn --non-interactive --version', 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('--version')->run());
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('', '--version')->run());
 	}
 
-	public function testCommandWithParams()
+	public function testCommandWithoutParams()
 	{
-		$this->_expectCommand('svn --non-interactive log -r 12', 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '-r 12')->run());
+		$this->_expectCommand('svn --non-interactive log', 'OK');
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log')->run());
 	}
 
-	public function testCommandWithPath()
+	/**
+	 * @dataProvider commandWithParamsDataProvider
+	 */
+	public function testCommandWithParams($params, $expected_command)
 	{
-		$this->_expectCommand("svn --non-interactive log 'path/to/folder'", 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '{path/to/folder}')->run());
+		$this->_expectCommand($expected_command, 'OK');
+		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', $params)->run());
 	}
 
-	public function testCommandWithPathAndLeadingSlash()
+	public function commandWithParamsDataProvider()
 	{
-		$this->_expectCommand("svn --non-interactive log '/path/to/folder'", 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '{/path/to/folder}')->run());
+		return array(
+			'regular param' => array('-r 12', 'svn --non-interactive log -r 12'),
+			'path param' => array('{path/to/folder}', "svn --non-interactive log 'path/to/folder'"),
+			'regular and path param' => array(
+				'-r 12 {path/to/folder}',
+				"svn --non-interactive log -r 12 'path/to/folder'",
+			),
+		);
 	}
 
-	public function testCommandWithPathAndParams()
+	public function testGetProperty()
 	{
-		$this->_expectCommand("svn --non-interactive log -r 12 'path/to/folder'", 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', '-r 12 {path/to/folder}')->run());
-	}
-
-	public function testCommandThatFails()
-	{
-		$thrown_exception = null;
-		$this->_expectCommand('svn --non-interactive any', '', false);
-
-		try {
-			$this->_repositoryConnector->getCommand('any')->run();
-		}
-		catch ( \Exception $thrown_exception ) {
-			$this->assertEquals(
-				'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
-				get_class($thrown_exception),
-				'Exception of correct class was thrown'
-			);
-		}
-
-		$this->assertNotNull($thrown_exception, 'Exception was thrown when command execution failed');
-
-		$error_msg = <<<MSG
-Command:
-svn --non-interactive any
-Error #0:
-error output
-MSG;
-
-		$this->assertEquals($error_msg, $thrown_exception->getMessage());
-	}
-
-	public function testGetPropertyFound()
-	{
-		$this->_expectCommand("svn --non-interactive propget test-p 'the/path'", 'OK');
+		$this->_expectCommand("svn --non-interactive propget prop-name 'the/path'", 'OK');
 
 		$this->assertEquals(
 			'OK',
-			$this->_repositoryConnector->getProperty('test-p', 'the/path')
+			$this->_repositoryConnector->getProperty('prop-name', 'the/path')
 		);
-	}
-
-	public function testGetPropertyNotFound()
-	{
-		$exception_msg = <<<MSG
-Command:
-svn --non-interactive propget test-p 'the/path'
-Error #0:
-error output
-MSG;
-
-		$this->setExpectedException(
-			'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
-			$exception_msg,
-			0
-		);
-
-		$this->_expectCommand("svn --non-interactive propget test-p 'the/path'", '', false);
-
-		$this->_repositoryConnector->getProperty('test-p', 'the/path');
 	}
 
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string  $command       Command.
-	 * @param string  $output        Output.
-	 * @param boolean $is_successful Should command be successful.
+	 * @param string $command Command.
+	 * @param string $output  Output.
 	 *
 	 * @return void
 	 */
-	private function _expectCommand($command, $output, $is_successful = true)
+	private function _expectCommand($command, $output)
 	{
 		$this->_process->getCommandLine()->willReturn($command)->shouldBeCalled();
-
-		$expectation = $this->_process->mustRun(null)->shouldBeCalled();
-
-		if ( $is_successful ) {
-			$this->_process->getOutput()->willReturn($output)->shouldBeCalled();
-		}
-		else {
-			$process = $this->_process;
-			$expectation->will(function () use ($process) {
-				$mock_definition = array(
-					'isSuccessful' => false,
-					'getExitCode' => 1,
-					'getExitCodeText' => 'exit code text',
-					'isOutputDisabled' => false,
-					'getOutput' => 'normal output',
-					'getErrorOutput' => 'error output',
-				);
-
-				foreach ( $mock_definition as $method_name => $return_value ) {
-					$process->{$method_name}()->willReturn($return_value)->shouldBeCalled();
-				}
-
-				throw new ProcessFailedException($process->reveal());
-			});
-		}
+		$this->_process->mustRun(null)->shouldBeCalled();
+		$this->_process->getOutput()->willReturn($output)->shouldBeCalled();
 
 		$this->_processFactory->createProcess($command, 1200)->willReturn($this->_process)->shouldBeCalled();
 	}
@@ -233,20 +164,15 @@ MSG;
 	/**
 	 * Creates repository connector.
 	 *
-	 * @param string  $svn_username Username.
-	 * @param string  $svn_password Password.
-	 * @param boolean $is_verbose   Is verbose.
+	 * @param string $username Username.
+	 * @param string $password Password.
 	 *
 	 * @return Connector
 	 */
-	private function _createRepositoryConnector($svn_username, $svn_password, $is_verbose = false)
+	private function _createRepositoryConnector($username, $password)
 	{
-		$this->_configEditor->get('repository-connector.username')->willReturn($svn_username)->shouldBeCalled();
-		$this->_configEditor->get('repository-connector.password')->willReturn($svn_password)->shouldBeCalled();
-
-		if ( isset($is_verbose) ) {
-			$this->_io->isVerbose()->willReturn($is_verbose)->shouldBeCalled();
-		}
+		$this->_configEditor->get('repository-connector.username')->willReturn($username)->shouldBeCalled();
+		$this->_configEditor->get('repository-connector.password')->willReturn($password)->shouldBeCalled();
 
 		return new Connector(
 			$this->_configEditor->reveal(),

@@ -113,29 +113,29 @@ class Connector
 	}
 
 	/**
-	 * Builds a command
+	 * Builds a command.
 	 *
-	 * @param string      $command      Command.
+	 * @param string      $sub_command  Sub command.
 	 * @param string|null $param_string Parameter string.
 	 *
 	 * @return Command
 	 */
-	public function getCommand($command, $param_string = null)
+	public function getCommand($sub_command, $param_string = null)
 	{
-		$final_command = $this->buildCommand($command, $param_string);
+		$command_line = $this->buildCommand($sub_command, $param_string);
 
-		$repository_command = new Command(
-			$this->_processFactory->createProcess($final_command, 1200),
+		$command = new Command(
+			$this->_processFactory->createProcess($command_line, 1200),
 			$this->_io,
 			$this->_cacheManager
 		);
 
 		if ( isset($this->_nextCommandCacheDuration) ) {
-			$repository_command->setCacheDuration($this->_nextCommandCacheDuration);
+			$command->setCacheDuration($this->_nextCommandCacheDuration);
 			$this->_nextCommandCacheDuration = null;
 		}
 
-		return $repository_command;
+		return $command;
 	}
 
 	/**
@@ -150,24 +150,28 @@ class Connector
 	protected function buildCommand($sub_command, $param_string = null)
 	{
 		if ( strpos($sub_command, ' ') !== false ) {
-			throw new \InvalidArgumentException('The "' . $sub_command . '" sub-command contains spaces');
+			throw new \InvalidArgumentException('The "' . $sub_command . '" sub-command contains spaces.');
 		}
 
-		$final_command = $this->_svnCommand . ' ' . $sub_command;
+		$command_line = $this->_svnCommand;
+
+		if ( !empty($sub_command) ) {
+			$command_line .= ' ' . $sub_command;
+		}
 
 		if ( !empty($param_string) ) {
-			$final_command .= ' ' . $param_string;
+			$command_line .= ' ' . $param_string;
 		}
 
-		$final_command = preg_replace_callback(
+		$command_line = preg_replace_callback(
 			'/\{([^\}]*)\}/',
 			function (array $matches) {
 				return escapeshellarg($matches[1]);
 			},
-			$final_command
+			$command_line
 		);
 
-		return $final_command;
+		return $command_line;
 	}
 
 	/**
