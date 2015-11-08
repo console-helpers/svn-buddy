@@ -246,7 +246,7 @@ class Connector
 		}
 
 		try {
-			$wc_url = (string)$this->getSvnInfoEntry($wc_path)->url;
+			$wc_url = (string)$this->_getSvnInfoEntry($wc_path)->url;
 		}
 		catch ( RepositoryCommandException $e ) {
 			if ( $e->getCode() == RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED ) {
@@ -282,7 +282,7 @@ class Connector
 			$cache_duration = self::LAST_REVISION_CACHE;
 		}
 
-		$svn_info = $this->withCache($cache_duration)->getSvnInfoEntry($path_or_url);
+		$svn_info = $this->withCache($cache_duration)->_getSvnInfoEntry($path_or_url);
 
 		return (int)$svn_info->commit['revision'];
 	}
@@ -323,7 +323,7 @@ class Connector
 	 * @return \SimpleXMLElement
 	 * @throws \LogicException When unexpected 'svn info' results retrieved.
 	 */
-	protected function getSvnInfoEntry($path_or_url)
+	private function _getSvnInfoEntry($path_or_url)
 	{
 		$svn_info = $this->getCommand('info', '--xml {' . $path_or_url . '}')->run();
 
