@@ -11,13 +11,11 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 
-class ConnectorTest extends WorkingDirectoryAwareTestCase
+class ConnectorTest extends \PHPUnit_Framework_TestCase
 {
 
 	/**
@@ -26,6 +24,13 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	 * @var ObjectProphecy
 	 */
 	private $_configEditor;
+
+	/**
+	 * Console IO.
+	 *
+	 * @var ObjectProphecy
+	 */
+	private $_io;
 
 	/**
 	 * Process factory.
@@ -42,16 +47,9 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 	private $_process;
 
 	/**
-	 * Console IO.
-	 *
-	 * @var ObjectProphecy
-	 */
-	private $_io;
-
-	/**
 	 * Cache manager.
 	 *
-	 * @var CacheManager
+	 * @var ObjectProphecy
 	 */
 	private $_cacheManager;
 
@@ -67,34 +65,24 @@ class ConnectorTest extends WorkingDirectoryAwareTestCase
 		parent::setUp();
 
 		$this->_configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
-		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
-		$this->_cacheManager = new CacheManager($this->getWorkingDirectory());
+		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
+		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
 		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
 
 		// Called from "__destruct".
 		$this->_process->stop();
-
-		$no_auto_connector = array(
-			'testConfigUsernameUsed',
-			'testConfigPasswordUsed',
-			'testWorkingDirectoryCreation',
-			'testBrokenLinuxEnvironment',
-			'testBrokenWindowsEnvironment',
-		);
 
 		$with_exceptions = array(
 			'testCommandThatFails',
 			'testGetPropertyNotFound',
 		);
 
-		if ( !in_array($this->getName(false), $no_auto_connector) ) {
-			$this->_repositoryConnector = $this->_createRepositoryConnector(
-				'',
-				'',
-				in_array($this->getName(false), $with_exceptions) ? null : false
-			);
-		}
+		$this->_repositoryConnector = $this->_createRepositoryConnector(
+			'',
+			'',
+			in_array($this->getName(false), $with_exceptions) ? null : false
+		);
 	}
 
 	public function testConfigUsernameUsed()
@@ -264,7 +252,7 @@ MSG;
 			$this->_configEditor->reveal(),
 			$this->_processFactory->reveal(),
 			$this->_io->reveal(),
-			$this->_cacheManager
+			$this->_cacheManager->reveal()
 		);
 	}
 
