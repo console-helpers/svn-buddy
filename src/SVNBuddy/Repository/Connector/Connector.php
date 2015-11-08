@@ -219,13 +219,13 @@ class Connector
 	public function getPathFromUrl($absolute_url)
 	{
 		if ( !$this->isUrl($absolute_url) ) {
-			throw new \InvalidArgumentException('The repository URL "' . $absolute_url . '" is invalid.');
+			throw new \InvalidArgumentException('The "' . $absolute_url . '" is not an URL.');
 		}
 
 		$relative_url = parse_url($absolute_url, PHP_URL_PATH);
 
 		if ( $relative_url === false ) {
-			throw new \InvalidArgumentException('The repository URL "' . $absolute_url . '" is invalid.');
+			throw new \InvalidArgumentException('The URL "' . $absolute_url . '" is malformed.');
 		}
 
 		return $relative_url;
