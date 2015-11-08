@@ -316,11 +316,6 @@ class Connector
 
 		$error_msg = 'The directory "' . $path_or_url . '" not found in "svn info" command results.';
 
-		if ( $this->_io->isVerbose() ) {
-			$xml = str_replace(array('<info>', '</info>'), array('<root>', '</root>'), $svn_info->asXML());
-			$error_msg .= PHP_EOL . ' XML:' . PHP_EOL . $xml;
-		}
-
 		throw new \LogicException($error_msg);
 	}
 
