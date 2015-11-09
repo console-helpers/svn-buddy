@@ -255,6 +255,58 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('svn://repository.com/path/to/project', $actual);
 	}
 
+	public function testGetWorkingCopyUrlWithUnknownError()
+	{
+		$this->_expectCommand(
+			"svn --non-interactive info --xml '/path/to/working-copy'",
+			'',
+			'error message',
+			555
+		);
+
+		$this->setExpectedException(
+			'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
+			<<<MESSAGE
+Command:
+svn --non-interactive info --xml '/path/to/working-copy'
+Error #555:
+error message
+MESSAGE
+		);
+
+		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
+	}
+
+	public function testGetWorkingCopyUrlOnOldFormatWorkingCopyAndUpgradeRejected()
+	{
+		$this->_io->writeln(array('', '<error>error message</error>', ''))->shouldBeCalled();
+		$this->_io
+			->askConfirmation('Run "svn upgrade"', false)
+			->willReturn(false)
+			->shouldBeCalled();
+
+		$this->_expectCommand(
+			"svn --non-interactive info --xml '/path/to/working-copy'",
+			'',
+			'error message',
+			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
+		);
+
+		$exception_msg = <<<MESSAGE
+Command:
+svn --non-interactive info --xml '/path/to/working-copy'
+Error #%d:
+error message
+MESSAGE;
+
+		$this->setExpectedException(
+			'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
+			sprintf($exception_msg, RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED)
+		);
+
+		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
+	}
+
 	/**
 	 * Sets expectation for specific command.
 	 *
