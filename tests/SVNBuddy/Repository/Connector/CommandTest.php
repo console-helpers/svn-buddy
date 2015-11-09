@@ -64,7 +64,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @dataProvider runWithoutCachingDataProvider
 	 */
-	public function testRunWithoutCaching($callback, $is_xml)
+	public function testRunWithoutCaching($use_callback, $is_xml)
 	{
 		if ( $is_xml ) {
 			$command_line = 'svn log --xml';
@@ -75,9 +75,20 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
+		$callback_called = false;
+		$callback = $this->createRunCallback($use_callback, $callback_called);
+
 		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 
-		$this->_process->mustRun($callback)->shouldBeCalled();
+		$this->_process
+			->mustRun($callback)
+			->will(function (array $args) {
+				if ( is_callable($args[0]) ) {
+					call_user_func($args[0], Process::OUT, 'OK');
+				}
+			})
+			->shouldBeCalled();
+
 		$this->_process->getOutput()->willReturn($process_output)->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
@@ -85,24 +96,26 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
 		$this->assertCommandOutput($callback, $is_xml, $process_output);
+
+		if ( $use_callback ) {
+			$this->assertTrue($callback_called, 'Callback was called.');
+		}
 	}
 
 	public function runWithoutCachingDataProvider()
 	{
-		$callback = function ($output, $type) {};
-
 		return array(
-			'w/o callback, not xml' => array(null, false),
-			'w/o callback, is xml' => array(null, true),
-			'w callback, not xml' => array($callback, false),
-			'w callback, is xml' => array($callback, true),
+			'w/o callback, not xml' => array(false, false),
+			'w/o callback, is xml' => array(false, true),
+			'w callback, not xml' => array(true, false),
+			'w callback, is xml' => array(true, true),
 		);
 	}
 
 	/**
 	 * @dataProvider runWithCacheDataProvider
 	 */
-	public function testRunWithMissingCache($duration, $invalidator, $callback, $is_xml)
+	public function testRunWithMissingCache($duration, $invalidator, $use_callback, $is_xml)
 	{
 		if ( $is_xml ) {
 			$command_line = 'svn log --xml';
@@ -113,8 +126,20 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
+		$callback_called = false;
+		$callback = $this->createRunCallback($use_callback, $callback_called);
+
 		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
-		$this->_process->mustRun($callback)->shouldBeCalled();
+
+		$this->_process
+			->mustRun($callback)
+			->will(function (array $args) {
+				if ( is_callable($args[0]) ) {
+					call_user_func($args[0], Process::OUT, 'OK');
+				}
+			})
+			->shouldBeCalled();
+
 		$this->_process->getOutput()->willReturn($process_output)->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
@@ -137,12 +162,16 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		}
 
 		$this->assertCommandOutput($callback, $is_xml, $process_output);
+
+		if ( $use_callback ) {
+			$this->assertTrue($callback_called, 'Callback was called.');
+		}
 	}
 
 	/**
 	 * @dataProvider runWithCacheDataProvider
 	 */
-	public function testRunWithExistingCache($duration, $invalidator, $callback, $is_xml)
+	public function testRunWithExistingCache($duration, $invalidator, $use_callback, $is_xml)
 	{
 		if ( $is_xml ) {
 			$command_line = 'svn log --xml';
@@ -152,6 +181,9 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$command_line = 'svn log';
 			$process_output = 'OK';
 		}
+
+		$callback_called = false;
+		$callback = $this->createRunCallback($use_callback, $callback_called);
 
 		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 		$this->_process->mustRun($callback)->shouldNotBeCalled();
@@ -171,29 +203,52 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		}
 
 		$this->assertCommandOutput($callback, $is_xml, $process_output);
+
+		if ( $use_callback ) {
+			$this->assertTrue($callback_called, 'Callback was called.');
+		}
 	}
 
 	public function runWithCacheDataProvider()
 	{
-		$callback = function ($output, $type) {};
-
 		return array(
-			'duration only, w/o callback, not xml' => array(100, null, null, false),
-			'invalidator only, w/o callback, not xml' => array(null, 'invalidator', null, false),
-			'duration and invalidator, w/o callback, not xml' => array(100, 'invalidator', null, false),
+			'duration only, w/o callback, not xml' => array(100, null, false, false),
+			'invalidator only, w/o callback, not xml' => array(null, 'invalidator', false, false),
+			'duration and invalidator, w/o callback, not xml' => array(100, 'invalidator', false, false),
 
-			'duration only, w/o callback, is xml' => array(100, null, null, true),
-			'invalidator only, w/o callback, is xml' => array(null, 'invalidator', null, true),
-			'duration and invalidator, w/o callback, is xml' => array(100, 'invalidator', null, true),
+			'duration only, w/o callback, is xml' => array(100, null, false, true),
+			'invalidator only, w/o callback, is xml' => array(null, 'invalidator', false, true),
+			'duration and invalidator, w/o callback, is xml' => array(100, 'invalidator', false, true),
 
-			'duration only, w callback, not xml' => array(100, null, $callback, false),
-			'invalidator only, w callback, not xml' => array(null, 'invalidator', $callback, false),
-			'duration and invalidator, w callback, not xml' => array(100, 'invalidator', $callback, false),
+			'duration only, w callback, not xml' => array(100, null, true, false),
+			'invalidator only, w callback, not xml' => array(null, 'invalidator', true, false),
+			'duration and invalidator, w callback, not xml' => array(100, 'invalidator', true, false),
 
-			'duration only, w callback, is xml' => array(100, null, $callback, true),
-			'invalidator only, w callback, is xml' => array(null, 'invalidator', $callback, true),
-			'duration and invalidator, w callback, is xml' => array(100, 'invalidator', $callback, true),
+			'duration only, w callback, is xml' => array(100, null, true, true),
+			'invalidator only, w callback, is xml' => array(null, 'invalidator', true, true),
+			'duration and invalidator, w callback, is xml' => array(100, 'invalidator', true, true),
 		);
+	}
+
+	/**
+	 * Creates callback that checks, that it was invoked.
+	 *
+	 * @param boolean $use_callback Determines if callback should be created.
+	 * @param boolean $callback_called Records if callback was called.
+	 *
+	 * @return callable|null
+	 */
+	protected function createRunCallback($use_callback, &$callback_called)
+	{
+		if ( $use_callback ) {
+			$callback_called = false;
+
+			return function ($output, $type) use (&$callback_called) {
+				$callback_called = true;
+			};
+		}
+
+		return null;
 	}
 
 	/**
