@@ -205,60 +205,9 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 
 	public function svnInfoDataProvider()
 	{
-		$svn16_info = <<<XML
-<?xml version="1.0"?>
-<info>
-<entry
-   kind="dir"
-   path="/path/to/working-copy"
-   revision="100">
-<url>svn://repository.com/path/to/project</url>
-<repository>
-<root>svn://repository.com</root>
-<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
-</repository>
-<wc-info>
-<schedule>normal</schedule>
-<depth>infinity</depth>
-</wc-info>
-<commit
-   revision="100">
-<author>user</author>
-<date>2015-11-04T16:20:28.991340Z</date>
-</commit>
-</entry>
-</info>
-XML;
-
-		$svn17_info = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<info>
-<entry
-   kind="dir"
-   path="/path/to/working-copy"
-   revision="100">
-<url>svn://repository.com/path/to/project</url>
-<repository>
-<root>svn://repository.com</root>
-<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
-</repository>
-<wc-info>
-<wcroot-abspath>/path/to/working-copy</wcroot-abspath>
-<schedule>normal</schedule>
-<depth>infinity</depth>
-</wc-info>
-<commit
-   revision="100">
-<author>user</author>
-<date>2015-11-04T16:20:28.991340Z</date>
-</commit>
-</entry>
-</info>
-XML;
-
 		return array(
-			'svn1.6' => array($svn16_info),
-			'svn1.7' => array($svn17_info),
+			'svn1.6' => array($this->getFixture('svn_info_16.xml')),
+			'svn1.7' => array($this->getFixture('svn_info_17.xml')),
 		);
 	}
 
@@ -268,32 +217,10 @@ XML;
 	 */
 	public function testGetWorkingCopyUrlWithBrokenSvnInfo()
 	{
-		$svn16_info = <<<XML
-<?xml version="1.0"?>
-<info>
-<entry
-   kind="dir"
-   path="/path/to"
-   revision="100">
-<url>svn://repository.com/path/to/project</url>
-<repository>
-<root>svn://repository.com</root>
-<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
-</repository>
-<wc-info>
-<schedule>normal</schedule>
-<depth>infinity</depth>
-</wc-info>
-<commit
-   revision="100">
-<author>user</author>
-<date>2015-11-04T16:20:28.991340Z</date>
-</commit>
-</entry>
-</info>
-XML;
-
-		$this->_expectCommand("svn --non-interactive info --xml '/path/to/working-copy'", $svn16_info);
+		$this->_expectCommand(
+			"svn --non-interactive info --xml '/path/to/working-copy'",
+			$this->getFixture('svn_info_broken.xml')
+		);
 
 		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 	}
@@ -306,31 +233,10 @@ XML;
 		$this->_io
 			->askConfirmation('Run "svn upgrade"', false)
 			->will(function () use ($that) {
-				$svn16_info = <<<XML
-<?xml version="1.0"?>
-<info>
-<entry
-   kind="dir"
-   path="/path/to/working-copy"
-   revision="100">
-<url>svn://repository.com/path/to/project</url>
-<repository>
-<root>svn://repository.com</root>
-<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
-</repository>
-<wc-info>
-<schedule>normal</schedule>
-<depth>infinity</depth>
-</wc-info>
-<commit
-   revision="100">
-<author>user</author>
-<date>2015-11-04T16:20:28.991340Z</date>
-</commit>
-</entry>
-</info>
-XML;
-				$that->_expectCommand("svn --non-interactive info --xml '/path/to/working-copy'", $svn16_info);
+				$that->_expectCommand(
+					"svn --non-interactive info --xml '/path/to/working-copy'",
+					$that->getFixture('svn_info_16.xml')
+				);
 
 				return true;
 			})
@@ -401,6 +307,25 @@ XML;
 			$this->_io->reveal(),
 			$this->_cacheManager->reveal()
 		);
+	}
+
+	/**
+	 * Returns fixture by name.
+	 *
+	 * @param string $name Fixture name.
+	 *
+	 * @return string
+	 * @throws \InvalidArgumentException When fixture wasn't found.
+	 */
+	protected function getFixture($name)
+	{
+		$fixture_filename = __DIR__ . '/fixtures/' . $name;
+
+		if ( !file_exists($fixture_filename) ) {
+			throw new \InvalidArgumentException('The "' . $name . '" fixture does not exist.');
+		}
+
+		return file_get_contents($fixture_filename);
 	}
 
 }
