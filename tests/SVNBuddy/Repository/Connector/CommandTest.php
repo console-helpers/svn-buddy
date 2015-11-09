@@ -75,16 +75,16 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
-		$callback_called = false;
-		$callback = $this->createRunCallback($use_callback, $callback_called);
+		$callback_output = null;
+		$callback = $this->createRunCallback($use_callback, $callback_output);
 
 		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 
 		$this->_process
 			->mustRun($callback)
-			->will(function (array $args) {
+			->will(function (array $args) use ($process_output) {
 				if ( is_callable($args[0]) ) {
-					call_user_func($args[0], Process::OUT, 'OK');
+					call_user_func($args[0], Process::OUT, $process_output);
 				}
 			})
 			->shouldBeCalled();
@@ -98,7 +98,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->assertCommandOutput($callback, $is_xml, $process_output);
 
 		if ( $use_callback ) {
-			$this->assertTrue($callback_called, 'Callback was called.');
+			$this->assertEquals($process_output, $callback_output);
 		}
 	}
 
@@ -126,16 +126,16 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
-		$callback_called = false;
-		$callback = $this->createRunCallback($use_callback, $callback_called);
+		$callback_output = null;
+		$callback = $this->createRunCallback($use_callback, $callback_output);
 
 		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 
 		$this->_process
 			->mustRun($callback)
-			->will(function (array $args) {
+			->will(function (array $args) use ($process_output) {
 				if ( is_callable($args[0]) ) {
-					call_user_func($args[0], Process::OUT, 'OK');
+					call_user_func($args[0], Process::OUT, $process_output);
 				}
 			})
 			->shouldBeCalled();
@@ -164,7 +164,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->assertCommandOutput($callback, $is_xml, $process_output);
 
 		if ( $use_callback ) {
-			$this->assertTrue($callback_called, 'Callback was called.');
+			$this->assertEquals($process_output, $callback_output);
 		}
 	}
 
@@ -182,8 +182,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
-		$callback_called = false;
-		$callback = $this->createRunCallback($use_callback, $callback_called);
+		$callback_output = null;
+		$callback = $this->createRunCallback($use_callback, $callback_output);
 
 		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 		$this->_process->mustRun($callback)->shouldNotBeCalled();
@@ -205,7 +205,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->assertCommandOutput($callback, $is_xml, $process_output);
 
 		if ( $use_callback ) {
-			$this->assertTrue($callback_called, 'Callback was called.');
+			$this->assertEquals($process_output, $callback_output);
 		}
 	}
 
@@ -233,18 +233,18 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Creates callback that checks, that it was invoked.
 	 *
-	 * @param boolean $use_callback Determines if callback should be created.
-	 * @param boolean $callback_called Records if callback was called.
+	 * @param boolean $use_callback    Determines if callback should be created.
+	 * @param boolean $callback_output Records if callback was called.
 	 *
 	 * @return callable|null
 	 */
-	protected function createRunCallback($use_callback, &$callback_called)
+	protected function createRunCallback($use_callback, &$callback_output)
 	{
 		if ( $use_callback ) {
-			$callback_called = false;
+			$callback_output = null;
 
-			return function ($output, $type) use (&$callback_called) {
-				$callback_called = true;
+			return function ($type, $buffer) use (&$callback_output) {
+				$callback_output = $buffer;
 			};
 		}
 
