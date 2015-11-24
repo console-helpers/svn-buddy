@@ -140,6 +140,16 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
+	public function testGetCommandWithCaching()
+	{
+		$this->_expectCommand('svn --non-interactive info', 'OK');
+
+		$this->_cacheManager->getCache('command:svn --non-interactive info', null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->setCache('command:svn --non-interactive info', 'OK', null, 100)->shouldBeCalled();
+
+		$this->_repositoryConnector->withCache(100)->getCommand('info')->run();
+	}
+
 	public function testGetProperty()
 	{
 		$this->_expectCommand("svn --non-interactive propget prop-name 'the/path'", 'OK');
