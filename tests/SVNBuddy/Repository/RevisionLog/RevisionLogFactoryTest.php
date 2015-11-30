@@ -27,6 +27,8 @@ class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 		$repository_connector->getFirstRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
 		$repository_connector->getLastRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
 
+		$repository_connector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
+
 		$cache_manager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
 		$cache_manager->getCache('log:svn://localhost', Argument::containingString('main:'))->shouldBeCalled();
 

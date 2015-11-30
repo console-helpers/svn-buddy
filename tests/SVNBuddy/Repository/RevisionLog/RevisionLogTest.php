@@ -164,6 +164,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
 		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(3000)->shouldBeCalled();
+		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
 			->getCache('log:svn://localhost', $cache_invalidator)
@@ -213,6 +214,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		}
 
 		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
+		$this->repositoryConnector->getProjectUrl($repository_url)->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
 			->getCache('log:svn://localhost', $cache_invalidator)
