@@ -101,6 +101,12 @@ TEXT;
 				'Detects commits with possible merge conflicts'
 			)
 			->addOption(
+				'merge-status',
+				null,
+				InputOption::VALUE_NONE,
+				'Show merge revisions (if any) for each revisions'
+			)
+			->addOption(
 				'limit',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -197,17 +203,22 @@ TEXT;
 	 */
 	protected function printRevisions(array $revisions, $repository_url, $with_details = false)
 	{
+		$table = new Table($this->io->getOutput());
+		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
+
 		$merge_oracle = $this->io->getOption('merge-oracle');
 
+		// Add "M.O." header.
 		if ( $merge_oracle ) {
+			$headers[] = 'M.O.';
 			$merge_conflict_regexps = $this->getMergeConflictRegExps();
 		}
 
-		$table = new Table($this->io->getOutput());
-		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message', 'Merged In');
+		// Add "Merged Via" header.
+		$merge_status = $this->io->getOption('merge-status');
 
-		if ( $merge_oracle ) {
-			$headers[] = 'M.O.';
+		if ( $merge_status ) {
+			$headers[] = 'Merged Via';
 		}
 
 		$table->setHeaders($headers);
@@ -226,8 +237,8 @@ TEXT;
 			list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
 			$log_message = preg_replace('/^\[fixes:.*?\]/', "\xE2\x9C\x94", $log_message);
 
-			if ( mb_strlen($log_message) > 70 ) {
-				$log_message = mb_substr($log_message, 0, 70 - 3) . '...';
+			if ( mb_strlen($log_message) > 68 ) {
+				$log_message = mb_substr($log_message, 0, 68 - 3) . '...';
 			}
 
 			$new_bugs = implode(', ', $revision_log->getRevisionData('bugs', $revision));
@@ -236,19 +247,17 @@ TEXT;
 				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
 			}
 
-			$merged_via = $revision_log->getRevisionData('merges', $revision);
-
 			$row = array(
 				$revision,
 				$revision_data['author'],
 				$date_helper->getAgoTime($revision_data['date']),
 				'<fg=' . $last_color . '>' . $new_bugs . '</>',
 				$log_message,
-				$merged_via ? implode(', ', $merged_via) : '',
 			);
 
 			$revision_paths = $revision_log->getRevisionData('paths', $revision);
 
+			// Add "M.O." column.
 			if ( $merge_oracle ) {
 				$merge_conflict_predication = $this->getMergeConflictPrediction(
 					$revision_paths,
@@ -258,6 +267,12 @@ TEXT;
 			}
 			else {
 				$merge_conflict_predication = array();
+			}
+
+			// Add "Merged Via" column.
+			if ( $merge_status ) {
+				$merged_via = $revision_log->getRevisionData('merges', $revision);
+				$row[] = $merged_via ? implode(', ', $merged_via) : '';
 			}
 
 			$table->addRow($row);
