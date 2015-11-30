@@ -291,7 +291,7 @@ OUTPUT;
 
 		$this->expectRepositoryCommand(
 			'log',
-			'-r ' . $from_revision . ':' . $to_revision . ' --xml --verbose {svn://localhost}',
+			'-r ' . $from_revision . ':' . $to_revision . ' --xml --verbose --use-merge-history {svn://localhost}',
 			$svn_log_output
 		);
 
