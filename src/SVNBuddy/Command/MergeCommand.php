@@ -158,10 +158,6 @@ TEXT;
 
 		$wc_path = $this->getWorkingCopyPath();
 
-		if ( $this->repositoryConnector->isWorkingCopy(dirname($wc_path)) ) {
-			throw new \InvalidArgumentException('The "' . $wc_path . '" isn\'t working copy topmost folder.');
-		}
-
 		$this->ensureLatestWorkingCopy($wc_path);
 
 		$source_url = $this->getSourceUrl($wc_path);
@@ -199,7 +195,7 @@ TEXT;
 		}
 		elseif ( $this->_unmergedRevisions ) {
 			$this->runOtherCommand('log', array(
-				'path' => $source_url,
+				'path' => $this->repositoryConnector->getProjectUrl($source_url),
 				'--revisions' => implode(',', $this->_unmergedRevisions),
 				'--details' => $this->io->getOption('details'),
 				'--merge-oracle' => true,
