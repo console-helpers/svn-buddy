@@ -11,6 +11,7 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
+use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -351,6 +352,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 					'isSuccessful' => false,
 					'getExitCode' => 1,
 					'getExitCodeText' => 'exit code text',
+					'getWorkingDirectory' => '', // New in Symfony 2.8.
 					'isOutputDisabled' => false,
 					'getOutput' => 'normal output',
 					'getErrorOutput' => 'error output',
@@ -376,10 +378,13 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$this->_command->run();
 		}
 		catch ( \Exception $thrown_exception ) {
-			$this->assertEquals(
+			$this->assertInstanceOf(
 				'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
-				get_class($thrown_exception),
-				'Exception of correct class was thrown'
+				$thrown_exception,
+				sprintf(
+					'Exception of correct class was thrown' . PHP_EOL . 'Message:' . PHP_EOL . '%s',
+					$thrown_exception->getMessage()
+				)
 			);
 		}
 
