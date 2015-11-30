@@ -565,7 +565,7 @@ class Connector
 	public function isWorkingCopy($path)
 	{
 		if ( $this->isUrl($path) || !file_exists($path) || !is_dir($path) ) {
-			throw new \InvalidArgumentException('Path not found or isn\'t a directory.');
+			throw new \InvalidArgumentException('Path "' . $path . '" not found or isn\'t a directory.');
 		}
 
 		try {
