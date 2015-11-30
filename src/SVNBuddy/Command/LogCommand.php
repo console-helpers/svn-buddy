@@ -204,7 +204,7 @@ TEXT;
 		}
 
 		$table = new Table($this->io->getOutput());
-		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
+		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message', 'Merged In');
 
 		if ( $merge_oracle ) {
 			$headers[] = 'M.O.';
@@ -236,12 +236,15 @@ TEXT;
 				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
 			}
 
+			$merged_via = $revision_log->getRevisionData('merges', $revision);
+
 			$row = array(
 				$revision,
 				$revision_data['author'],
 				$date_helper->getAgoTime($revision_data['date']),
 				'<fg=' . $last_color . '>' . $new_bugs . '</>',
 				$log_message,
+				$merged_via ? implode(', ', $merged_via) : '',
 			);
 
 			$revision_paths = $revision_log->getRevisionData('paths', $revision);

@@ -177,7 +177,7 @@ class RevisionLog
 
 			$command = $this->_repositoryConnector->getCommand(
 				'log',
-				'-r ' . $range_start . ':' . $range_end . ' --xml --verbose {' . $project_url . '}'
+				'-r ' . $range_start . ':' . $range_end . ' --xml --verbose --use-merge-history {' . $project_url . '}'
 			);
 
 			$this->_parseLog($command->run());
