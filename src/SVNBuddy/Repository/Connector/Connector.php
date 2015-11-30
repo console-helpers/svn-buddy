@@ -300,6 +300,22 @@ class Connector
 	}
 
 	/**
+	 * Returns project url (container for "trunk/branches/tags/releases" folders).
+	 *
+	 * @param string $repository_url Repository url.
+	 *
+	 * @return string
+	 */
+	public function getProjectUrl($repository_url)
+	{
+		if ( preg_match('#^(.*?)/(trunk|branches|tags|releases).*$#', $repository_url, $regs) ) {
+			return $regs[1];
+		}
+
+		return $repository_url;
+	}
+
+	/**
 	 * Returns "svn info" entry for path or url.
 	 *
 	 * @param string $path_or_url Path or url.

@@ -87,7 +87,7 @@ class RevisionLog
 			throw new \LogicException('Please register at least one revision log plugin.');
 		}
 
-		$project_url = $this->_getProjectUrl($this->_repositoryUrl);
+		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
 
 		// Initialize plugins with data from cache.
 		$cache_key = 'log:' . $project_url;
@@ -114,22 +114,6 @@ class RevisionLog
 
 			$this->_cacheManager->setCache($cache_key, $cache, $this->_getCacheInvalidator());
 		}
-	}
-
-	/**
-	 * Returns project url (container for "trunk/branches/tags/releases" folders).
-	 *
-	 * @param string $repository_url Repository url.
-	 *
-	 * @return string
-	 */
-	private function _getProjectUrl($repository_url)
-	{
-		if ( preg_match('#^(.*?)/(trunk|branches|tags|releases).*$#', $repository_url, $regs) ) {
-			return $regs[1];
-		}
-
-		return $repository_url;
 	}
 
 	/**
@@ -164,7 +148,7 @@ class RevisionLog
 
 		if ( $last_revision === null ) {
 			return $this->_repositoryConnector->getFirstRevision(
-				$this->_getProjectUrl($this->_repositoryUrl)
+				$this->_repositoryConnector->getProjectUrl($this->_repositoryUrl)
 			);
 		}
 
@@ -182,7 +166,7 @@ class RevisionLog
 	private function _queryRevisionData($from_revision, $to_revision)
 	{
 		$range_start = $from_revision;
-		$project_url = $this->_getProjectUrl($this->_repositoryUrl);
+		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
 
 		$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 1000));
 		$progress_bar->setFormat(' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%%');
