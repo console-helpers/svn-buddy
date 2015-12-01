@@ -11,7 +11,6 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -344,25 +343,19 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->_process->getCommandLine()->willReturn('svn log')->shouldBeCalled();
 
+		$that = $this;
 		$process = $this->_process;
+
 		$this->_process
 			->mustRun(null)
-			->will(function () use ($process) {
-				$mock_definition = array(
-					'isSuccessful' => false,
-					'getExitCode' => 1,
-					'getExitCodeText' => 'exit code text',
-					'getWorkingDirectory' => '', // New in Symfony 2.8.
-					'isOutputDisabled' => false,
-					'getOutput' => 'normal output',
-					'getErrorOutput' => 'error output',
-				);
+			->will(function () use ($process, $that) {
+				/** @var ProcessFailedException $exception */
+				$exception = $that->prophesize('Symfony\\Component\\Process\\Exception\\ProcessFailedException');
+				$exception->getProcess()->willReturn($process)->shouldBeCalled();
 
-				foreach ( $mock_definition as $method_name => $return_value ) {
-					$process->{$method_name}()->willReturn($return_value)->shouldBeCalled();
-				}
+				$process->getErrorOutput()->willReturn('error output')->shouldBeCalled();
 
-				throw new ProcessFailedException($process->reveal());
+				throw $exception->reveal();
 			})
 			->shouldBeCalled();
 
