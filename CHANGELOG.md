@@ -5,11 +5,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Show number of unmerged bugs (not only unmerged revisions) in `merge` command.
+- The output of executed repository commands is shown, when verbosity is set to debug (-vvv).
+- Added support for merging sub-folders in a working copy.
+- Added `--merge-status` option for `log` command, that shows `Merged Via` column containing merge revisions affecting displayed revision.
 
 ### Changed
 - The `log` command will throw an exception, when given revision doesn't exist at given path.
 - The inherited (from global or default value) config setting value now isn't stored.
 - The format of revision log cache now will be updated automatically, when needed by `RevisionLog` class.
+- Show current folder path in error about incorrect working copy folder.
 
 ### Fixed
 - Attempt to edit global version of working copy setting resulted in Fatal Error.
@@ -18,9 +22,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The newline symbols were stripped of string-type config setting value.
 - Duplicate lines were removed from array-type config setting value.
 - The `InPortalMergeSourceDetector` class wasn't working when repository url with sub-folder was given.
-- Notice was emitted on first revision log cache read attempt.
+- Notice was emitted on missing revision log cache read attempt.
 - The missing revision query progress bar was erasing all text on same line (seen on `merge` command).
 - Fixed fatal error, when attempting to perform first merge on a tag.
+- Attempt to set working copy config setting outside working copy was showing wrong path in the error message.
 
 ## [0.0.3] - 2015-09-26
 
@@ -63,3 +68,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Initial release.
 - Adding `aggregate`, `cleanup`, `commit`, `log`, `merge` and `revert` commands.
+
+[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/console-helpers/svn-buddy/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/console-helpers/svn-buddy/compare/v0.0.1...v0.0.2
