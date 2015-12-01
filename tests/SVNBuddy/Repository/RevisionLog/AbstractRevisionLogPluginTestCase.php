@@ -40,43 +40,35 @@ abstract class AbstractRevisionLogPluginTestCase extends \PHPUnit_Framework_Test
 		$svn_log_output = <<<OUTPUT
 <?xml version="1.0"?>
 <log>
-<logentry
-   revision="20128">
-<author>alex</author>
-<date>2015-10-13T13:30:16.473960Z</date>
-<paths>
-<path
-   kind="file"
-   action="M">/projects/project_a/trunk/sub-folder/file.tpl</path>
-<path
-   kind="dir"
-   action="M">/projects/project_a/trunk/sub-folder</path>
-</paths>
-<msg>JRA-1 - task title</msg>
-</logentry>
-<logentry
-   revision="20127">
-<author>erik</author>
-<date>2015-10-13T13:00:15.434252Z</date>
-<paths>
-<path
-   kind="file"
-   action="A"
-   unknown-attribute="unknown-value">/projects/project_a/trunk/another_file.php</path>
-</paths>
-<msg>JRA-2 - task title</msg>
-</logentry>
-<logentry
-   revision="20125">
-<author>erik</author>
-<date>2015-10-13T13:00:15.434252Z</date>
-<paths>
-<path
-   kind="file"
-   action="M">/projects/project_a/trunk/another_file.php</path>
-</paths>
-<msg>JRA-1 - task title (reverts JRA-3)</msg>
-</logentry>
+   <logentry revision="20128">
+      <author>alex</author>
+      <date>2015-10-13T13:30:16.473960Z</date>
+      <paths>
+         <path action="M" kind="file">/projects/project_a/trunk/sub-folder/file.tpl</path>
+         <path action="M" kind="dir">/projects/project_a/trunk/sub-folder</path>
+      </paths>
+      <msg>JRA-1 - task title</msg>
+      <logentry revision="10100"></logentry>
+      <logentry revision="10101"></logentry>
+   </logentry>
+   <logentry revision="20127">
+      <author>erik</author>
+      <date>2015-10-13T13:00:15.434252Z</date>
+      <paths>
+         <path action="A" kind="file" unknown-attribute="unknown-value">/projects/project_a/trunk/another_file.php</path>
+      </paths>
+      <msg>JRA-2 - task title</msg>
+   </logentry>
+   <logentry revision="20125">
+      <author>erik</author>
+      <date>2015-10-13T13:00:15.434252Z</date>
+      <paths>
+         <path action="M" kind="file">/projects/project_a/trunk/another_file.php</path>
+      </paths>
+      <msg>JRA-1 - task title (reverts JRA-3)</msg>
+      <logentry revision="10101"></logentry>
+      <logentry revision="10105"></logentry>
+   </logentry>
 </log>
 OUTPUT;
 
