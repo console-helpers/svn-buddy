@@ -341,23 +341,13 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
 	public function testRunError()
 	{
+		/** @var ProcessFailedException $exception */
+		$exception = $this->prophesize('Symfony\\Component\\Process\\Exception\\ProcessFailedException');
+		$exception->getProcess()->willReturn($this->_process)->shouldBeCalled();
+
+		$this->_process->mustRun(null)->willThrow($exception->reveal())->shouldBeCalled();
 		$this->_process->getCommandLine()->willReturn('svn log')->shouldBeCalled();
-
-		$that = $this;
-		$process = $this->_process;
-
-		$this->_process
-			->mustRun(null)
-			->will(function () use ($process, $that) {
-				/** @var ProcessFailedException $exception */
-				$exception = $that->prophesize('Symfony\\Component\\Process\\Exception\\ProcessFailedException');
-				$exception->getProcess()->willReturn($process)->shouldBeCalled();
-
-				$process->getErrorOutput()->willReturn('error output')->shouldBeCalled();
-
-				throw $exception->reveal();
-			})
-			->shouldBeCalled();
+		$this->_process->getErrorOutput()->willReturn('error output')->shouldBeCalled();
 
 		$this->_process->getOutput()->shouldNotBeCalled();
 		$this->_io->isVerbose()->shouldNotBeCalled();
