@@ -79,6 +79,16 @@ class MergesRevisionLogPlugin implements IRevisionLogPlugin
 	 */
 	public function find(array $criteria)
 	{
+		if ( !$criteria ) {
+			return array();
+		}
+
+		$first_criteria = reset($criteria);
+
+		if ( $first_criteria === 'all_merges' ) {
+			return array_keys($this->_mergeRevisions);
+		}
+
 		$merged_revisions = array();
 
 		foreach ( $criteria as $merge_revision ) {

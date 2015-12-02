@@ -109,6 +109,28 @@ class MergesRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		);
 	}
 
+	public function testFindAllMerges()
+	{
+		$collected_data = array(
+			'merge_revisions' => array(
+				100 => array(50, 60),
+				200 => array(60, 65),
+			),
+			'merged_revisions' => array(
+				50 => array(100),
+				60 => array(100, 200),
+				65 => array(200),
+			),
+		);
+
+		$this->plugin->setCollectedData($collected_data);
+
+		$this->assertEquals(
+			array(100, 200),
+			$this->plugin->find(array('all_merges'))
+		);
+	}
+
 	public function testGetRevisionDataSuccess()
 	{
 		$collected_data = array(
