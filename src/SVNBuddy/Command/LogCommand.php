@@ -101,6 +101,18 @@ TEXT;
 				'Detects commits with possible merge conflicts'
 			)
 			->addOption(
+				'merges',
+				null,
+				InputOption::VALUE_NONE,
+				'Print only merge commits'
+			)
+			->addOption(
+				'no-merges',
+				null,
+				InputOption::VALUE_NONE,
+				'Do not print merge commits'
+			)
+			->addOption(
 				'merge-status',
 				null,
 				InputOption::VALUE_NONE,
@@ -143,6 +155,13 @@ TEXT;
 			// Only show bug-related revisions on given path. The $missing_revisions is always empty.
 			$revisions_from_bugs = $revision_log->find('bugs', $bugs);
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions_from_bugs);
+		}
+
+		if ( $this->io->getOption('merges') ) {
+			$revisions_by_path = array_intersect($revisions_by_path, $revision_log->find('merges', 'all_merges'));
+		}
+		elseif ( $this->io->getOption('no-merges') ) {
+			$revisions_by_path = array_diff($revisions_by_path, $revision_log->find('merges', 'all_merges'));
 		}
 
 		if ( $missing_revisions ) {

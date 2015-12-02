@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added support for merging sub-folders in a working copy.
 - Added `--merge-status` option for `log` command, that shows `Merged Via` column containing merge revisions affecting displayed revision.
 - Show time estimated completion time, when downloading revision log info.
+- Added `--merges` option for `log` command to display only merge revisions.
+- Added `--no-merges` option for `log` command to display only non-merge revisions.
 
 ### Changed
 - The `log` command will throw an exception, when given revision doesn't exist at given path.
