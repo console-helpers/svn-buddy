@@ -86,6 +86,11 @@ class BugsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->assertEmpty($this->plugin->find(array('JRA-6')), 'No revisions were found.');
 	}
 
+	public function testFindWithEmptyCriteria()
+	{
+		$this->assertEmpty($this->plugin->find(array()), 'No revisions were found.');
+	}
+
 	public function testFindNoDuplicates()
 	{
 		$collected_data = array(

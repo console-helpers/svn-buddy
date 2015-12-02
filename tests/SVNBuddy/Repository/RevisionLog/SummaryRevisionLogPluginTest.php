@@ -80,6 +80,11 @@ class SummaryRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->assertEmpty($this->plugin->find(array('author:alex')), 'No revisions were found.');
 	}
 
+	public function testFindWithEmptyCriteria()
+	{
+		$this->assertEmpty($this->plugin->find(array()), 'No revisions were found.');
+	}
+
 	public function testFindNoDuplicates()
 	{
 		$this->markTestIncomplete('Until multi-field search is implemented this can\'t be tested');
