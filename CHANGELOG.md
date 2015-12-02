@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The output of executed repository commands is shown, when verbosity is set to debug (-vvv).
 - Added support for merging sub-folders in a working copy.
 - Added `--merge-status` option for `log` command, that shows `Merged Via` column containing merge revisions affecting displayed revision.
+- Show time estimated completion time, when downloading revision log info.
 
 ### Changed
 - The `log` command will throw an exception, when given revision doesn't exist at given path.

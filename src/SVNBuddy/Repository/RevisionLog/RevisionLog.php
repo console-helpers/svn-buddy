@@ -169,7 +169,9 @@ class RevisionLog
 		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
 
 		$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 1000));
-		$progress_bar->setFormat(' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%%');
+		$progress_bar->setFormat(
+			' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%'
+		);
 		$progress_bar->start();
 
 		while ( $range_start < $to_revision ) {
