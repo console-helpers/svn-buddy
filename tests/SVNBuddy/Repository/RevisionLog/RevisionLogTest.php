@@ -175,7 +175,9 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 		$progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
 		$progress_bar
-			->setFormat(' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%%')
+			->setFormat(
+				' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%'
+			)
 			->shouldBeCalled();
 		$progress_bar->start()->shouldBeCalled();
 		$progress_bar->advance()->shouldBeCalled();
