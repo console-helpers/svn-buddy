@@ -188,7 +188,7 @@ TEXT;
 		$revisions_by_path_with_limit_count = count($revisions_by_path_with_limit);
 
 		$this->io->writeln(sprintf(
-			'* Showing <info>%d</info> of <info>%d</info> revision(-s):',
+			' * Showing <info>%d</info> of <info>%d</info> revision(-s):',
 			$revisions_by_path_with_limit_count,
 			$revisions_by_path_count
 		));
