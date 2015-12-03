@@ -119,6 +119,18 @@ TEXT;
 				'Do not print merge commits'
 			)
 			->addOption(
+				'merged',
+				null,
+				InputOption::VALUE_NONE,
+				'Print only merged commits'
+			)
+			->addOption(
+				'not-merged',
+				null,
+				InputOption::VALUE_NONE,
+				'Print only not merged commits'
+			)
+			->addOption(
 				'merge-status',
 				null,
 				InputOption::VALUE_NONE,
@@ -168,6 +180,13 @@ TEXT;
 		}
 		elseif ( $this->io->getOption('no-merges') ) {
 			$revisions_by_path = array_diff($revisions_by_path, $revision_log->find('merges', 'all_merges'));
+		}
+
+		if ( $this->io->getOption('merged') ) {
+			$revisions_by_path = array_intersect($revisions_by_path, $revision_log->find('merges', 'all_merged'));
+		}
+		elseif ( $this->io->getOption('not-merged') ) {
+			$revisions_by_path = array_diff($revisions_by_path, $revision_log->find('merges', 'all_merged'));
 		}
 
 		if ( $missing_revisions ) {

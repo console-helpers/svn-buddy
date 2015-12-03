@@ -88,6 +88,9 @@ class MergesRevisionLogPlugin implements IRevisionLogPlugin
 		if ( $first_criteria === 'all_merges' ) {
 			return array_keys($this->_mergeRevisions);
 		}
+		elseif ( $first_criteria === 'all_merged' ) {
+			return array_keys($this->_mergedRevisions);
+		}
 
 		$merged_revisions = array();
 

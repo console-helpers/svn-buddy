@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Show number of displayed and total revisions in `log` command output.
 - Added `--summary` option for `log` command to display change summary (how much paths were added/changed/removed) of each revision.
 - The `merge` and `aggregate` commands would also forward `--summary` option to the underlying `log` command call.
+- Added `--merged` and `--not-merged` options for `log` command to show merged and not yet merged revisions respectively (works based on merge commits only).
 
 ### Changed
 - The `log` command will throw an exception, when given revision doesn't exist at given path.
