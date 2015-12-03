@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Show time estimated completion time, when downloading revision log info.
 - Added `--merges` option for `log` command to display only merge revisions.
 - Added `--no-merges` option for `log` command to display only non-merge revisions.
+- Show number of displayed and total revisions in `log` command output.
 
 ### Changed
 - The `log` command will throw an exception, when given revision doesn't exist at given path.

@@ -184,15 +184,16 @@ TEXT;
 			$revisions_by_path_with_limit = array_slice($revisions_by_path, 0, $this->getLimit());
 		}
 
-		$this->printRevisions($revisions_by_path_with_limit, $wc_url, (boolean)$this->io->getOption('details'));
-
 		$revisions_by_path_count = count($revisions_by_path);
 		$revisions_by_path_with_limit_count = count($revisions_by_path_with_limit);
 
-		if ( $revisions_by_path_count > $revisions_by_path_with_limit_count ) {
-			$revisions_left = $revisions_by_path_count - $revisions_by_path_with_limit_count;
-			$this->io->writeln($revisions_left . ' revision(-s) not shown');
-		}
+		$this->io->writeln(sprintf(
+			'* Showing <info>%d</info> of <info>%d</info> revision(-s):',
+			$revisions_by_path_with_limit_count,
+			$revisions_by_path_count
+		));
+
+		$this->printRevisions($revisions_by_path_with_limit, $wc_url, (boolean)$this->io->getOption('details'));
 	}
 
 	/**
