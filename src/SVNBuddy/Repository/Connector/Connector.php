@@ -394,7 +394,7 @@ class Connector
 		$ret = array();
 
 		foreach ( $this->getWorkingCopyStatus($wc_path) as $path => $status ) {
-			if ( $status['item'] == 'conflicted' || $status['props'] == 'conflicted' ) {
+			if ( $status['item'] == 'conflicted' || $status['props'] == 'conflicted' || $status['tree-conflicted'] ) {
 				$ret[] = $path;
 			}
 		}
@@ -516,6 +516,7 @@ class Connector
 				$ret[$path] = array(
 					'item' => (string)$entry->{'wc-status'}['item'],
 					'props' => (string)$entry->{'wc-status'}['props'],
+					'tree-conflicted' => (string)$entry->{'wc-status'}['tree-conflicted'] === 'true',
 				);
 			}
 		}

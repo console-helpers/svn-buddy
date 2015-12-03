@@ -32,6 +32,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The missing revision query progress bar was erasing all text on same line (seen on `merge` command).
 - Fixed fatal error, when attempting to perform first merge on a tag.
 - Attempt to set working copy config setting outside working copy was showing wrong path in the error message.
+- Tree conflict during merge wasn't blocking all further merge attempts.
 
 ## [0.0.3] - 2015-09-26
 
