@@ -107,7 +107,13 @@ TEXT;
 				'details',
 				'd',
 				InputOption::VALUE_NONE,
-				'Shows path affected in each revision'
+				'Shows paths affected in each revision'
+			)
+			->addOption(
+				'summary',
+				's',
+				InputOption::VALUE_NONE,
+				'Shows summary of paths affected in each revision'
 			)
 			/*->addOption(
 				'rollback',
@@ -198,6 +204,7 @@ TEXT;
 				'path' => $this->repositoryConnector->getProjectUrl($source_url),
 				'--revisions' => implode(',', $this->_unmergedRevisions),
 				'--details' => $this->io->getOption('details'),
+				'--summary' => $this->io->getOption('summary'),
 				'--merge-oracle' => true,
 			));
 		}

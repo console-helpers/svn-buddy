@@ -92,7 +92,13 @@ TEXT;
 				'details',
 				'd',
 				InputOption::VALUE_NONE,
-				'Shows path affected in each revision'
+				'Shows paths affected in each revision'
+			)
+			->addOption(
+				'summary',
+				's',
+				InputOption::VALUE_NONE,
+				'Shows summary of paths affected in each revision'
 			)
 			->addOption(
 				'merge-oracle',
@@ -226,6 +232,11 @@ TEXT;
 		$table = new Table($this->io->getOutput());
 		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
 
+		// Add "Summary" header.
+		if ( $this->io->getOption('summary') ) {
+			$headers[] = 'Summary';
+		}
+
 		$merge_oracle = $this->io->getOption('merge-oracle');
 
 		// Add "M.O." header.
@@ -276,6 +287,11 @@ TEXT;
 			);
 
 			$revision_paths = $revision_log->getRevisionData('paths', $revision);
+
+			// Add "Summary" column.
+			if ( $this->io->getOption('summary') ) {
+				$row[] = $this->generateChangeSummary($revision_paths);
+			}
 
 			// Add "M.O." column.
 			if ( $merge_oracle ) {
@@ -343,6 +359,42 @@ TEXT;
 		}
 
 		$table->render();
+	}
+
+	/**
+	 * Generates change summary for a revision.
+	 *
+	 * @param array $revision_paths Revision paths.
+	 *
+	 * @return string
+	 */
+	protected function generateChangeSummary(array $revision_paths)
+	{
+		$summary = array('added' => 0, 'changed' => 0, 'removed' => 0);
+
+		foreach ( $revision_paths as $path_data ) {
+			$path_action = $path_data['action'];
+
+			if ( $path_action == 'A' ) {
+				$summary['added']++;
+			}
+			elseif ( $path_action == 'D' ) {
+				$summary['removed']++;
+			}
+			else {
+				$summary['changed']++;
+			}
+		}
+
+		if ( $summary['added'] ) {
+			$summary['added'] = '<fg=green>+' . $summary['added'] . '</>';
+		}
+
+		if ( $summary['removed'] ) {
+			$summary['removed'] = '<fg=red>-' . $summary['removed'] . '</>';
+		}
+
+		return implode(' ', array_filter($summary));
 	}
 
 	/**
