@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+## [0.0.4] - 2015-12-04
+### Added
 - Show number of unmerged bugs (not only unmerged revisions) in `merge` command.
 - The output of executed repository commands is shown, when verbosity is set to debug (-vvv).
 - Added support for merging sub-folders in a working copy.
@@ -37,7 +47,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Tree conflict during merge wasn't blocking all further merge attempts.
 
 ## [0.0.3] - 2015-09-26
-
 ### Added
 - Added `update` command with `up` alias.
 - Added `Config` class to allow storing per-working copy and global configuration settings.
@@ -78,6 +87,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release.
 - Adding `aggregate`, `cleanup`, `commit`, `log`, `merge` and `revert` commands.
 
-[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/console-helpers/svn-buddy/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/console-helpers/svn-buddy/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/console-helpers/svn-buddy/compare/v0.0.1...v0.0.2
