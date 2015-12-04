@@ -48,6 +48,10 @@ class MergesRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->assertEquals($collected_data, $this->plugin->getCollectedData());
 	}
 
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage The merge revision 105 not found.
+	 */
 	public function testFindNoMatch()
 	{
 		$collected_data = array(
@@ -57,7 +61,7 @@ class MergesRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 
 		$this->plugin->setCollectedData($collected_data);
 
-		$this->assertEmpty($this->plugin->find(array(105)), 'No revisions were found.');
+		$this->plugin->find(array(105));
 	}
 
 	public function testFindWithEmptyCriteria()

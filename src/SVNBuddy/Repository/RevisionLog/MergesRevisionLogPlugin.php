@@ -76,6 +76,7 @@ class MergesRevisionLogPlugin implements IRevisionLogPlugin
 	 * @param array $criteria Criteria.
 	 *
 	 * @return array
+	 * @throws \InvalidArgumentException When one of given merge revision wasn't found.
 	 */
 	public function find(array $criteria)
 	{
@@ -96,7 +97,7 @@ class MergesRevisionLogPlugin implements IRevisionLogPlugin
 
 		foreach ( $criteria as $merge_revision ) {
 			if ( !array_key_exists($merge_revision, $this->_mergeRevisions) ) {
-				continue;
+				throw new \InvalidArgumentException('The merge revision ' . $merge_revision . ' not found.');
 			}
 
 			foreach ( $this->_mergeRevisions[$merge_revision] as $merged_revision ) {
