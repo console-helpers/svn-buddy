@@ -125,6 +125,12 @@ TEXT;
 				'Print only merged commits'
 			)
 			->addOption(
+				'merged-by',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Show revisions merged via given revision(-s)'
+			)
+			->addOption(
 				'not-merged',
 				null,
 				InputOption::VALUE_NONE,
@@ -173,6 +179,20 @@ TEXT;
 			// Only show bug-related revisions on given path. The $missing_revisions is always empty.
 			$revisions_from_bugs = $revision_log->find('bugs', $bugs);
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions_from_bugs);
+		}
+
+		$merged_by = $this->getList($this->io->getOption('merged-by'));
+
+		if ( $merged_by ) {
+			// Exclude revisions, that were merged outside of project root folder in repository.
+			$merged_by = $this->_revisionListParser->expandRanges($merged_by);
+			$revisions_by_path = $revision_log->find(
+				'paths',
+				$this->repositoryConnector->getProjectUrl(
+					$this->repositoryConnector->getPathFromUrl($wc_url)
+				)
+			);
+			$revisions_by_path = array_intersect($revisions_by_path, $revision_log->find('merges', $merged_by));
 		}
 
 		if ( $this->io->getOption('merges') ) {
