@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8101ad00d5bb4924c9686bdc22c46e19",
-    "content-hash": "6b1207257b849fdfa2bc36e279b32e15",
+    "hash": "991b79314d2a55235caaa7d7baa1b4fc",
+    "content-hash": "5d6ce25c19d68a2dc65e7dc322199eae",
     "packages": [
         {
             "name": "console-helpers/console-kit",
-            "version": "v0.0.1",
+            "version": "v0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "9e0c5bedf16c6e76d23b5346ba84465013bf2959"
+                "reference": "3961c1126423f90cf3442f24a4b4e6afcb9927e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/9e0c5bedf16c6e76d23b5346ba84465013bf2959",
-                "reference": "9e0c5bedf16c6e76d23b5346ba84465013bf2959",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/3961c1126423f90cf3442f24a4b4e6afcb9927e0",
+                "reference": "3961c1126423f90cf3442f24a4b4e6afcb9927e0",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 }
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
-            "time": "2015-10-29 20:29:50"
+            "time": "2016-03-03 17:41:10"
         },
         {
             "name": "pimple/pimple",
@@ -103,21 +103,21 @@
         },
         {
             "name": "stecman/symfony-console-completion",
-            "version": "0.6.1",
+            "version": "0.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stecman/symfony-console-completion.git",
-                "reference": "983d6f07b4edf307969f4edf5ab290fd1fb2f5a2"
+                "reference": "3f9a6c017e688c771df9948521c84c6190175293"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/983d6f07b4edf307969f4edf5ab290fd1fb2f5a2",
-                "reference": "983d6f07b4edf307969f4edf5ab290fd1fb2f5a2",
+                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/3f9a6c017e688c771df9948521c84c6190175293",
+                "reference": "3f9a6c017e688c771df9948521c84c6190175293",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "symfony/console": "~2.3"
+                "symfony/console": "~2.3 || ~3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "~4.4"
@@ -144,20 +144,20 @@
                 }
             ],
             "description": "Automatic BASH completion for Symfony Console Component based applications.",
-            "time": "2015-09-30 10:14:44"
+            "time": "2015-12-12 12:23:58"
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.0",
+            "version": "v2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "d232bfc100dfd32b18ccbcab4bcc8f28697b7e41"
+                "reference": "56cc5caf051189720b8de974e4746090aaa10d44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/d232bfc100dfd32b18ccbcab4bcc8f28697b7e41",
-                "reference": "d232bfc100dfd32b18ccbcab4bcc8f28697b7e41",
+                "url": "https://api.github.com/repos/symfony/console/zipball/56cc5caf051189720b8de974e4746090aaa10d44",
+                "reference": "56cc5caf051189720b8de974e4746090aaa10d44",
                 "shasum": ""
             },
             "require": {
@@ -204,29 +204,32 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-11-30 12:35:10"
+            "time": "2016-02-28 16:20:50"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "0b6a8940385311a24e060ec1fe35680e17c74497"
+                "reference": "1289d16209491b584839022f29257ad859b8532d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/0b6a8940385311a24e060ec1fe35680e17c74497",
-                "reference": "0b6a8940385311a24e060ec1fe35680e17c74497",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/1289d16209491b584839022f29257ad859b8532d",
+                "reference": "1289d16209491b584839022f29257ad859b8532d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
+            "suggest": {
+                "ext-mbstring": "For best performance"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev"
+                    "dev-master": "1.1-dev"
                 }
             },
             "autoload": {
@@ -260,20 +263,20 @@
                 "portable",
                 "shim"
             ],
-            "time": "2015-11-04 20:28:58"
+            "time": "2016-01-20 09:13:37"
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.0",
+            "version": "v2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "1b988a88e3551102f3c2d9e1d47a18c3a78d6312"
+                "reference": "7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/1b988a88e3551102f3c2d9e1d47a18c3a78d6312",
-                "reference": "1b988a88e3551102f3c2d9e1d47a18c3a78d6312",
+                "url": "https://api.github.com/repos/symfony/process/zipball/7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe",
+                "reference": "7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe",
                 "shasum": ""
             },
             "require": {
@@ -309,7 +312,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2015-11-30 12:35:10"
+            "time": "2016-02-02 13:33:15"
         }
     ],
     "packages-dev": [
@@ -319,12 +322,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aik099/CodingStandard.git",
-                "reference": "b36c9389bd8caaeb28fdc960ec9c1c3a5a7d759e"
+                "reference": "eab50b83546dbbee649c06c6a42c8f2761b2b653"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/b36c9389bd8caaeb28fdc960ec9c1c3a5a7d759e",
-                "reference": "b36c9389bd8caaeb28fdc960ec9c1c3a5a7d759e",
+                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/eab50b83546dbbee649c06c6a42c8f2761b2b653",
+                "reference": "eab50b83546dbbee649c06c6a42c8f2761b2b653",
                 "shasum": ""
             },
             "require-dev": {
@@ -351,7 +354,7 @@
                 "PHP_CodeSniffer",
                 "codesniffer"
             ],
-            "time": "2015-10-22 19:29:49"
+            "time": "2016-02-26 20:33:27"
         }
     ],
     "aliases": [],

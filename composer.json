@@ -10,7 +10,7 @@
 	],
 	"require": {
 		"symfony/process": ">=2.7",
-		"console-helpers/console-kit": "^0.0.1"
+		"console-helpers/console-kit": "^0.0.2"
 	},
 	"require-dev": {
 		"aik099/coding-standard": "dev-master"
