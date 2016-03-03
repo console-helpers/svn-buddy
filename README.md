@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/console-helpers/svn-buddy.svg?branch=master)](https://travis-ci.org/console-helpers/svn-buddy)
 [![Coverage Status](https://coveralls.io/repos/console-helpers/svn-buddy/badge.svg?branch=master&service=github)](https://coveralls.io/github/console-helpers/svn-buddy?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/aik099/svn-buddy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/aik099/svn-buddy/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/?branch=master)
 
 
 [![Latest Stable Version](https://poser.pugx.org/console-helpers/svn-buddy/v/stable)](https://packagist.org/packages/console-helpers/svn-buddy)
