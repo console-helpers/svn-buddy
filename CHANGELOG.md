@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- Added `repository-connector.last-revision-cache-duration` config setting ("10 minutes" by default), for specifying time for how long repository should not be queried for new revisions. Set according to commit/merge frequency for your repository.
 
 ### Changed
 - The last revision from repository is now cached for 10 instead of 25 minutes (helps, when doing many merged in short period of time).

@@ -23,8 +23,6 @@ use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 class Connector
 {
 
-	const LAST_REVISION_CACHE = '10 minutes';
-
 	const STATUS_UNVERSIONED = 'unversioned';
 
 	/**
@@ -70,6 +68,13 @@ class Connector
 	private $_nextCommandCacheDuration = null;
 
 	/**
+	 * Whatever to cache last repository revision or not.
+	 *
+	 * @var mixed
+	 */
+	private $_lastRevisionCacheDuration = null;
+
+	/**
 	 * Creates repository connector.
 	 *
 	 * @param ConfigEditor    $config_editor   ConfigEditor.
@@ -87,6 +92,14 @@ class Connector
 		$this->_processFactory = $process_factory;
 		$this->_io = $io;
 		$this->_cacheManager = $cache_manager;
+
+		$cache_duration = $this->_configEditor->get('repository-connector.last-revision-cache-duration');
+
+		if ( (string)$cache_duration === '' || substr($cache_duration, 0, 1) === '0' ) {
+			$cache_duration = null;
+		}
+
+		$this->_lastRevisionCacheDuration = $cache_duration;
 
 		$this->prepareSvnCommand();
 	}
@@ -279,7 +292,7 @@ class Connector
 	{
 		// Cache "svn info" commands to remote urls, not the working copy.
 		if ( !isset($cache_duration) && $this->isUrl($path_or_url) ) {
-			$cache_duration = self::LAST_REVISION_CACHE;
+			$cache_duration = $this->_lastRevisionCacheDuration;
 		}
 
 		$svn_info = $this->withCache($cache_duration)->_getSvnInfoEntry($path_or_url);

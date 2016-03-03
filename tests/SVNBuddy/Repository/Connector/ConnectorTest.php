@@ -19,6 +19,8 @@ use Prophecy\Prophecy\ObjectProphecy;
 class ConnectorTest extends \PHPUnit_Framework_TestCase
 {
 
+	const DUMMY_REPO = 'svn://repository.com/path/to/project';
+
 	/**
 	 * Config editor.
 	 *
@@ -190,16 +192,14 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetPathFromUrl()
 	{
-		$actual = $this->_repositoryConnector->getPathFromUrl('svn://repository.com/path/to/project');
+		$actual = $this->_repositoryConnector->getPathFromUrl(self::DUMMY_REPO);
 
 		$this->assertEquals('/path/to/project', $actual);
 	}
 
 	public function testGetWorkingCopyUrlFromUrl()
 	{
-		$expected = 'svn://repository.com/path/to/project';
-
-		$this->assertEquals($expected, $this->_repositoryConnector->getWorkingCopyUrl($expected));
+		$this->assertEquals(self::DUMMY_REPO, $this->_repositoryConnector->getWorkingCopyUrl(self::DUMMY_REPO));
 	}
 
 	/**
@@ -210,7 +210,7 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$this->_expectCommand("svn --non-interactive info --xml '/path/to/working-copy'", $svn_info);
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
-		$this->assertEquals('svn://repository.com/path/to/project', $actual);
+		$this->assertEquals(self::DUMMY_REPO, $actual);
 	}
 
 	public function svnInfoDataProvider()
@@ -262,7 +262,7 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$this->_expectCommand("svn --non-interactive upgrade '/path/to/working-copy'", 'OK');
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
-		$this->assertEquals('svn://repository.com/path/to/project', $actual);
+		$this->assertEquals(self::DUMMY_REPO, $actual);
 	}
 
 	public function testGetWorkingCopyUrlWithUnknownError()
@@ -318,6 +318,92 @@ MESSAGE;
 	}
 
 	/**
+	 * @dataProvider getLastRevisionWithoutAutomaticDataProvider
+	 */
+	public function testGetLastRevisionWithoutAutomaticCaching($cache_duration)
+	{
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', $cache_duration);
+
+		$this->_expectCommand(
+			$raw_command,
+			$this->getFixture('svn_info_remote.xml')
+		);
+
+		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO, null));
+	}
+
+	public function getLastRevisionWithoutAutomaticDataProvider()
+	{
+		return array(
+			array(''),
+			array(0),
+			array('0 seconds'),
+			array('0 minutes'),
+		);
+	}
+
+	public function testGetLastRevisionWithAutomaticCaching()
+	{
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('command:' . $raw_command, $raw_command_output, null, '1 minute')
+			->shouldBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+
+		$this->_expectCommand(
+			$raw_command,
+			$raw_command_output
+		);
+
+		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO, null));
+	}
+
+	public function testGetLastRevisionWithManualCaching()
+	{
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('command:' . $raw_command, $raw_command_output, null, '5 hours')
+			->shouldBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+
+		$this->_expectCommand(
+			$raw_command,
+			$raw_command_output
+		);
+
+		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO, '5 hours'));
+	}
+
+	public function testGetLastRevisionNoAutomaticCachingForPaths()
+	{
+		$path = '/path/to/working-copy';
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+
+		$this->_expectCommand(
+			$raw_command,
+			$this->getFixture('svn_info_16.xml')
+		);
+
+		$this->assertEquals(100, $repository_connector->getLastRevision($path, null));
+	}
+
+	/**
 	 * Sets expectation for specific command.
 	 *
 	 * @param string       $command    Command.
@@ -353,15 +439,20 @@ MESSAGE;
 	/**
 	 * Creates repository connector.
 	 *
-	 * @param string $username Username.
-	 * @param string $password Password.
+	 * @param string $username                     Username.
+	 * @param string $password                     Password.
+	 * @param string $last_revision_cache_duration Last revision cache duration.
 	 *
 	 * @return Connector
 	 */
-	private function _createRepositoryConnector($username, $password)
+	private function _createRepositoryConnector($username, $password, $last_revision_cache_duration = '10 minutes')
 	{
 		$this->_configEditor->get('repository-connector.username')->willReturn($username)->shouldBeCalled();
 		$this->_configEditor->get('repository-connector.password')->willReturn($password)->shouldBeCalled();
+		$this->_configEditor
+			->get('repository-connector.last-revision-cache-duration')
+			->willReturn($last_revision_cache_duration)
+			->shouldBeCalled();
 
 		return new Connector(
 			$this->_configEditor->reveal(),

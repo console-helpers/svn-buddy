@@ -25,7 +25,11 @@ class ContainerTest extends BaseContainerTest
 			'app_name' => array('SVN-Buddy', 'app_name'),
 			'app_version' => array('@git-version@', 'app_version'),
 			'config_defaults' => array(
-				array('repository-connector.username' => '', 'repository-connector.password' => ''),
+				array(
+					'repository-connector.username' => '',
+					'repository-connector.password' => '',
+					'repository-connector.last-revision-cache-duration' => '10 minutes',
+				),
 				'config_defaults',
 			),
 			'working_directory_sub_folder' => array('.svn-buddy', 'working_directory_sub_folder'),

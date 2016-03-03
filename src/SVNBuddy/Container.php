@@ -39,6 +39,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 		$this['config_defaults'] = array(
 			'repository-connector.username' => '',
 			'repository-connector.password' => '',
+			'repository-connector.last-revision-cache-duration' => '10 minutes',
 		);
 
 		$this['process_factory'] = function () {
