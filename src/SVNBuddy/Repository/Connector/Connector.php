@@ -23,7 +23,7 @@ use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 class Connector
 {
 
-	const LAST_REVISION_CACHE = '25 minutes';
+	const LAST_REVISION_CACHE = '10 minutes';
 
 	const STATUS_UNVERSIONED = 'unversioned';
 
