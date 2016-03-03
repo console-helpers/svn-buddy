@@ -243,12 +243,8 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$this->_io
 			->askConfirmation('Run "svn upgrade"', false)
 			->will(function () use ($that) {
-				$that->_expectCommand(
-					"svn --non-interactive info --xml '/path/to/working-copy'",
-					$that->getFixture('svn_info_16.xml')
-				);
-
-				return true;
+				// Trick to allow calling private methods within the closure on PHP 5.3.
+				return $that->closureGetWorkingCopyUrlOnOldFormatWorkingCopy();
 			})
 			->shouldBeCalled();
 
@@ -263,6 +259,16 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 		$this->assertEquals(self::DUMMY_REPO, $actual);
+	}
+
+	public function closureGetWorkingCopyUrlOnOldFormatWorkingCopy()
+	{
+		$this->_expectCommand(
+			"svn --non-interactive info --xml '/path/to/working-copy'",
+			$this->getFixture('svn_info_16.xml')
+		);
+
+		return true;
 	}
 
 	public function testGetWorkingCopyUrlWithUnknownError()
