@@ -1,6 +1,7 @@
 {
 	"name": "console-helpers/svn-buddy",
 	"description": "Easier way to control work with Subversion repositories from command-line",
+	"keywords": ["subversion", "svn", "cli"],
 	"license": "BSD 3-Clause",
 	"authors": [
 		{
@@ -10,7 +11,7 @@
 	],
 	"require": {
 		"symfony/process": ">=2.7",
-		"console-helpers/console-kit": "^0.0.2"
+		"console-helpers/console-kit": "^0.1"
 	},
 	"require-dev": {
 		"aik099/coding-standard": "dev-master"
@@ -23,6 +24,11 @@
 	"autoload-dev": {
 		"psr-4": {
 			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/"
+		}
+	},
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1.x-dev"
 		}
 	},
 	"bin": ["bin/svn-buddy"]

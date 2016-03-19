@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "991b79314d2a55235caaa7d7baa1b4fc",
-    "content-hash": "5d6ce25c19d68a2dc65e7dc322199eae",
+    "hash": "3b559b70fe20fbb3e58b08130905f65b",
+    "content-hash": "f7a3fa5882b01efdcaa5da339f9d5a38",
     "packages": [
         {
             "name": "console-helpers/console-kit",
-            "version": "v0.0.2",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "3961c1126423f90cf3442f24a4b4e6afcb9927e0"
+                "reference": "147afbf8393af25c5122017235f32d7b74fc7c15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/3961c1126423f90cf3442f24a4b4e6afcb9927e0",
-                "reference": "3961c1126423f90cf3442f24a4b4e6afcb9927e0",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/147afbf8393af25c5122017235f32d7b74fc7c15",
+                "reference": "147afbf8393af25c5122017235f32d7b74fc7c15",
                 "shasum": ""
             },
             "require": {
@@ -33,7 +33,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.0.x-dev"
+                    "dev-master": "0.1.x-dev"
                 }
             },
             "autoload": {
@@ -53,7 +53,7 @@
                 }
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
-            "time": "2016-03-03 17:41:10"
+            "time": "2016-03-19 21:40:46"
         },
         {
             "name": "pimple/pimple",
@@ -208,7 +208,7 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
