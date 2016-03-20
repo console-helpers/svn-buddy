@@ -56,6 +56,7 @@ TEXT;
 		$command->runLive(array(
 			$wc_path => '.',
 		));
+		$this->setSetting(MergeCommand::SETTING_MERGE_RECENT_CONFLICTS, null, 'merge');
 		$this->io->writeln('<info>Done</info>');
 	}
 

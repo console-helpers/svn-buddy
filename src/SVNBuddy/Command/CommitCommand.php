@@ -120,6 +120,7 @@ TEXT;
 		file_put_contents($tmp_file, $edited_commit_message);
 
 		$this->repositoryConnector->getCommand('commit', '{' . $wc_path . '} -F {' . $tmp_file . '}')->runLive();
+		$this->setSetting(MergeCommand::SETTING_MERGE_RECENT_CONFLICTS, null, 'merge');
 		unlink($tmp_file);
 
 		$this->io->writeln('<info>Done</info>');
@@ -159,7 +160,7 @@ TEXT;
 		foreach ( $merged_revisions as $path => $revisions ) {
 			$merged_messages = array();
 			$revision_log = $this->getRevisionLog($repository_url . $path);
-			$commit_message .= 'Merging from ' . ucfirst(basename($path)) . ' to ' . ucfirst(basename($wc_url)) . PHP_EOL;
+			$commit_message .= $this->getCommitMessageHeading($wc_url, $path) . PHP_EOL;
 
 			foreach ( $revisions as $revision ) {
 				$revision_data = $revision_log->getRevisionData('summary', $revision);
@@ -170,7 +171,44 @@ TEXT;
 			$commit_message .= implode(PHP_EOL, $merged_messages) . PHP_EOL;
 		}
 
+		$commit_message .= $this->getCommitMessageConflicts();
+
 		return rtrim($commit_message);
+	}
+
+	/**
+	 * Builds commit message heading.
+	 *
+	 * @param string $wc_url Working copy url.
+	 * @param string $path   Source path for merge operation.
+	 *
+	 * @return string
+	 */
+	protected function getCommitMessageHeading($wc_url, $path)
+	{
+		return 'Merging from ' . ucfirst(basename($path)) . ' to ' . ucfirst(basename($wc_url));
+	}
+
+	/**
+	 * Returns recent merge conflicts.
+	 *
+	 * @return string
+	 */
+	protected function getCommitMessageConflicts()
+	{
+		$recent_conflicts = $this->getSetting(MergeCommand::SETTING_MERGE_RECENT_CONFLICTS, 'merge');
+
+		if ( !$recent_conflicts ) {
+			return '';
+		}
+
+		$ret = PHP_EOL . 'Conflicts:' . PHP_EOL;
+
+		foreach ( $recent_conflicts as $conflict_path ) {
+			$ret .= ' * ' . $conflict_path . PHP_EOL;
+		}
+
+		return $ret;
 	}
 
 	/**

@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- When conflicts were detected during merge, then conflicted paths would be listed in auto-generated commit message.
 
 ### Changed
 ...

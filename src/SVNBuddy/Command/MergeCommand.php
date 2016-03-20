@@ -12,6 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
@@ -27,6 +28,8 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 {
 
 	const SETTING_MERGE_SOURCE_URL = 'merge.source-url';
+
+	const SETTING_MERGE_RECENT_CONFLICTS = 'merge.recent-conflicts';
 
 	const REVISION_ALL = 'all';
 
@@ -486,6 +489,7 @@ TEXT;
 			return;
 		}
 
+		$this->rememberConflicts($conflicts);
 		$this->io->writeln('<error>' . count($conflicts) . ' conflict(-s)</error>');
 
 		$table = new Table($this->io->getOutput());
@@ -526,6 +530,21 @@ TEXT;
 	}
 
 	/**
+	 * Adds new conflicts to already remembered ones.
+	 *
+	 * @param array $conflicts Conflicts.
+	 *
+	 * @return void
+	 */
+	protected function rememberConflicts(array $conflicts)
+	{
+		$previous_conflicts = $this->getSetting(self::SETTING_MERGE_RECENT_CONFLICTS);
+		$new_conflicts = array_unique(array_merge($previous_conflicts, $conflicts));
+
+		$this->setSetting(self::SETTING_MERGE_RECENT_CONFLICTS, $new_conflicts);
+	}
+
+	/**
 	 * Returns revisions not larger, then given one.
 	 *
 	 * @param array   $revisions    Revisions.
@@ -555,6 +574,7 @@ TEXT;
 	{
 		return array(
 			new StringConfigSetting(self::SETTING_MERGE_SOURCE_URL, ''),
+			new ArrayConfigSetting(self::SETTING_MERGE_RECENT_CONFLICTS, array()),
 		);
 	}
 
