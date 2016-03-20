@@ -93,43 +93,55 @@ abstract class AbstractCommand extends BaseCommand
 	/**
 	 * Returns command setting value.
 	 *
-	 * @param string $name Name.
+	 * @param string      $name         Name.
+	 * @param string|null $command_name Command name to get settings from instead of current command.
 	 *
 	 * @return mixed
 	 */
-	protected function getSetting($name)
+	protected function getSetting($name, $command_name = null)
 	{
-		return $this->_getConfigSetting($name)->getValue();
+		return $this->_getConfigSetting($name, $command_name)->getValue();
 	}
 
 	/**
 	 * Sets command setting value.
 	 *
-	 * @param string $name  Name.
-	 * @param mixed  $value Value.
+	 * @param string      $name         Name.
+	 * @param mixed       $value        Value.
+	 * @param string|null $command_name Command name to get settings from instead of current command.
 	 *
 	 * @return void
 	 */
-	protected function setSetting($name, $value)
+	protected function setSetting($name, $value, $command_name = null)
 	{
-		$this->_getConfigSetting($name)->setValue($value);
+		$this->_getConfigSetting($name, $command_name)->setValue($value);
 	}
 
 	/**
 	 * Validates command setting usage.
 	 *
-	 * @param string $name Name.
+	 * @param string      $name         Name.
+	 * @param string|null $command_name Command name to get settings from instead of current command.
 	 *
 	 * @return AbstractConfigSetting
-	 * @throws \LogicException When command attempts to read other command settings.
+	 * @throws \LogicException When command don't have any config settings to provide.
+	 * @throws \LogicException When config setting is not found.
 	 */
-	private function _getConfigSetting($name)
+	private function _getConfigSetting($name, $command_name = null)
 	{
-		if ( !($this instanceof IConfigAwareCommand) ) {
-			throw new \LogicException('Command does not have any settings.');
+		// By default access own config settings.
+		if ( !isset($command_name) ) {
+			$command_name = $this->getName();
 		}
 
-		foreach ( $this->getConfigSettings() as $config_setting ) {
+		/** @var IConfigAwareCommand $command */
+		$command = $this->getApplication()->get($command_name);
+
+		if ( !($command instanceof IConfigAwareCommand) ) {
+			throw new \LogicException('The "' . $command_name . '" command does not have any settings.');
+		}
+
+		foreach ( $command->getConfigSettings() as $config_setting ) {
 			if ( $config_setting->getName() === $name ) {
 				if ( $config_setting->isWithinScope(AbstractConfigSetting::SCOPE_WORKING_COPY) ) {
 					$config_setting->setWorkingCopyUrl($this->getWorkingCopyUrl());
@@ -141,7 +153,7 @@ abstract class AbstractCommand extends BaseCommand
 			}
 		}
 
-		throw new \LogicException('Command can only access own settings.');
+		throw new \LogicException('The "' . $command_name . '" command doesn\'t have "' . $name . '" config setting.');
 	}
 
 	/**
