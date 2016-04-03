@@ -410,6 +410,35 @@ MESSAGE;
 	}
 
 	/**
+	 * @dataProvider getProjectUrlDataProvider
+	 */
+	public function testGetProjectUrl($repository_url)
+	{
+		$this->assertEquals(
+			'svn://user@domain.com/path/to/project',
+			$this->_repositoryConnector->getProjectUrl($repository_url)
+		);
+	}
+
+	public function getProjectUrlDataProvider()
+	{
+		return array(
+			// Root.
+			'root' => array('svn://user@domain.com/path/to/project'),
+			'trunk root' => array('svn://user@domain.com/path/to/project/trunk'),
+			'branch root' => array('svn://user@domain.com/path/to/project/branches/blue'),
+			'tag root' => array('svn://user@domain.com/path/to/project/tags/blue'),
+			'release root' => array('svn://user@domain.com/path/to/project/releases/blue'),
+
+			// Sub folder.
+			'trunk sub-folder' => array('svn://user@domain.com/path/to/project/trunk/sub-folder'),
+			'branch sub-folder' => array('svn://user@domain.com/path/to/project/branches/blue/sub-folder'),
+			'tag sub-folder' => array('svn://user@domain.com/path/to/project/tags/blue/sub-folder'),
+			'release sub-folder' => array('svn://user@domain.com/path/to/project/releases/blue/sub-folder'),
+		);
+	}
+
+	/**
 	 * Sets expectation for specific command.
 	 *
 	 * @param string       $command    Command.
