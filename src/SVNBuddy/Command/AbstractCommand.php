@@ -239,6 +239,19 @@ abstract class AbstractCommand extends BaseCommand
 	}
 
 	/**
+	 * Returns all refs.
+	 *
+	 * @return array
+	 */
+	protected function getAllRefs()
+	{
+		$wc_url = $this->getWorkingCopyUrl();
+		$revision_log = $this->getRevisionLog($wc_url);
+
+		return $revision_log->find('refs', 'all_refs');
+	}
+
+	/**
 	 * Return working copy path.
 	 *
 	 * @return string
