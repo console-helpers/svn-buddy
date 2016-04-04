@@ -15,7 +15,7 @@ php:
     - 5.5
     - 5.6
     - hhvm
-    - 7
+    - 7.0
 
 before_install:
     - composer config -g github-oauth.github.com 8a184177873281ce443912bd9f8fc4a959f7e7bb
