@@ -159,6 +159,10 @@ TEXT;
 			return array('all');
 		}
 
+		if ( $optionName == 'source-url' ) {
+			return $this->getAllRefs();
+		}
+
 		return $ret;
 	}
 
