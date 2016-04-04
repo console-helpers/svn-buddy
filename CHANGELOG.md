@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - When conflicts were detected during merge, then conflicted paths would be listed in auto-generated commit message.
 - The `--source-url` option of `merge` command can be specified in short form (e.g. `trunk`, `branches/branch-name`, `tags/tag-name`, `name` (for branch-to-branch or tag-to-tag merges).
+- Added `--refs` option (with auto-complete) for `log` command to show revisions from ref instead of current working copy path.
 
 ### Changed
 ...

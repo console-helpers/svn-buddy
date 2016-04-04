@@ -17,6 +17,8 @@ use ConsoleHelpers\SVNBuddy\Config\RegExpsConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
@@ -38,6 +40,13 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 * @var RevisionListParser
 	 */
 	private $_revisionListParser;
+
+	/**
+	 * Revision log
+	 *
+	 * @var RevisionLog
+	 */
+	private $_revisionLog;
 
 	/**
 	 * Prepare dependencies.
@@ -87,6 +96,12 @@ TEXT;
 				'b',
 				InputOption::VALUE_REQUIRED,
 				'Bugs to merge (e.g. "JRA-1234,43644")'
+			)
+			->addOption(
+				'refs',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Refs (e.g. "trunk", "branches/branch-name", "tags/tag-name")'
 			)
 			->addOption(
 				'details',
@@ -153,6 +168,35 @@ TEXT;
 	}
 
 	/**
+	 * Return possible values for the named option
+	 *
+	 * @param string            $optionName Option name.
+	 * @param CompletionContext $context    Completion context.
+	 *
+	 * @return array
+	 */
+	public function completeOptionValues($optionName, CompletionContext $context)
+	{
+		$ret = parent::completeOptionValues($optionName, $context);
+
+		if ( $optionName === 'refs' ) {
+			return $this->getAllRefs();
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function initialize(InputInterface $input, OutputInterface $output)
+	{
+		parent::initialize($input, $output);
+
+		$this->_revisionLog = $this->getRevisionLog($this->getWorkingCopyUrl());
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
@@ -167,8 +211,25 @@ TEXT;
 		$wc_url = $this->getWorkingCopyUrl();
 
 		$missing_revisions = array();
-		$revision_log = $this->getRevisionLog($wc_url);
-		$revisions_by_path = $revision_log->find('paths', $this->repositoryConnector->getPathFromUrl($wc_url));
+		$refs = $this->getList($this->io->getOption('refs'));
+
+		if ( $refs ) {
+			$incorrect_refs = array_diff($refs, $this->getAllRefs());
+
+			if ( $incorrect_refs ) {
+				throw new \InvalidArgumentException(
+					'The following refs are unknown: "' . implode('", "', $incorrect_refs) . '".'
+				);
+			}
+
+			$revisions_by_path = $this->_revisionLog->find('refs', $refs);
+		}
+		else {
+			$revisions_by_path = $this->_revisionLog->find(
+				'paths',
+				$this->repositoryConnector->getPathFromUrl($wc_url)
+			);
+		}
 
 		if ( $revisions ) {
 			$revisions = $this->_revisionListParser->expandRanges($revisions);
@@ -177,7 +238,7 @@ TEXT;
 		}
 		elseif ( $bugs ) {
 			// Only show bug-related revisions on given path. The $missing_revisions is always empty.
-			$revisions_from_bugs = $revision_log->find('bugs', $bugs);
+			$revisions_from_bugs = $this->_revisionLog->find('bugs', $bugs);
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions_from_bugs);
 		}
 
@@ -186,27 +247,27 @@ TEXT;
 		if ( $merged_by ) {
 			// Exclude revisions, that were merged outside of project root folder in repository.
 			$merged_by = $this->_revisionListParser->expandRanges($merged_by);
-			$revisions_by_path = $revision_log->find(
+			$revisions_by_path = $this->_revisionLog->find(
 				'paths',
 				$this->repositoryConnector->getProjectUrl(
 					$this->repositoryConnector->getPathFromUrl($wc_url)
 				)
 			);
-			$revisions_by_path = array_intersect($revisions_by_path, $revision_log->find('merges', $merged_by));
+			$revisions_by_path = array_intersect($revisions_by_path, $this->_revisionLog->find('merges', $merged_by));
 		}
 
 		if ( $this->io->getOption('merges') ) {
-			$revisions_by_path = array_intersect($revisions_by_path, $revision_log->find('merges', 'all_merges'));
+			$revisions_by_path = array_intersect($revisions_by_path, $this->_revisionLog->find('merges', 'all_merges'));
 		}
 		elseif ( $this->io->getOption('no-merges') ) {
-			$revisions_by_path = array_diff($revisions_by_path, $revision_log->find('merges', 'all_merges'));
+			$revisions_by_path = array_diff($revisions_by_path, $this->_revisionLog->find('merges', 'all_merges'));
 		}
 
 		if ( $this->io->getOption('merged') ) {
-			$revisions_by_path = array_intersect($revisions_by_path, $revision_log->find('merges', 'all_merged'));
+			$revisions_by_path = array_intersect($revisions_by_path, $this->_revisionLog->find('merges', 'all_merged'));
 		}
 		elseif ( $this->io->getOption('not-merged') ) {
-			$revisions_by_path = array_diff($revisions_by_path, $revision_log->find('merges', 'all_merged'));
+			$revisions_by_path = array_diff($revisions_by_path, $this->_revisionLog->find('merges', 'all_merged'));
 		}
 
 		if ( $missing_revisions ) {
@@ -299,11 +360,10 @@ TEXT;
 		$prev_bugs = null;
 		$last_color = 'yellow';
 		$last_revision = end($revisions);
-		$revision_log = $this->getRevisionLog($repository_url);
 		$repository_path = $this->repositoryConnector->getPathFromUrl($repository_url) . '/';
 
 		foreach ( $revisions as $revision ) {
-			$revision_data = $revision_log->getRevisionData('summary', $revision);
+			$revision_data = $this->_revisionLog->getRevisionData('summary', $revision);
 			list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
 			$log_message = preg_replace('/^\[fixes:.*?\]/', "\xE2\x9C\x94", $log_message);
 
@@ -311,7 +371,7 @@ TEXT;
 				$log_message = mb_substr($log_message, 0, 68 - 3) . '...';
 			}
 
-			$new_bugs = implode(', ', $revision_log->getRevisionData('bugs', $revision));
+			$new_bugs = implode(', ', $this->_revisionLog->getRevisionData('bugs', $revision));
 
 			if ( isset($prev_bugs) && $new_bugs <> $prev_bugs ) {
 				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
@@ -325,7 +385,7 @@ TEXT;
 				$log_message,
 			);
 
-			$revision_paths = $revision_log->getRevisionData('paths', $revision);
+			$revision_paths = $this->_revisionLog->getRevisionData('paths', $revision);
 
 			// Add "Summary" column.
 			if ( $this->io->getOption('summary') ) {
@@ -346,7 +406,7 @@ TEXT;
 
 			// Add "Merged Via" column.
 			if ( $merge_status ) {
-				$merged_via = $revision_log->getRevisionData('merges', $revision);
+				$merged_via = $this->_revisionLog->getRevisionData('merges', $revision);
 				$row[] = $merged_via ? implode(', ', $merged_via) : '';
 			}
 
