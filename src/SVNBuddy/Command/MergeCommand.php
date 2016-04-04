@@ -16,6 +16,7 @@ use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
@@ -55,6 +56,13 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	private $_unmergedRevisions = array();
 
 	/**
+	 * Url resolver.
+	 *
+	 * @var UrlResolver
+	 */
+	private $_urlResolver;
+
+	/**
 	 * Prepare dependencies.
 	 *
 	 * @return void
@@ -67,6 +75,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 		$this->_mergeSourceDetector = $container['merge_source_detector'];
 		$this->_revisionListParser = $container['revision_list_parser'];
+		$this->_urlResolver = $container['repository_url_resolver'];
 	}
 
 	/**
@@ -92,7 +101,7 @@ TEXT;
 				'source-url',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Source url'
+				'Source url (absolute or relative url, same project branch/tag name)'
 			)
 			->addOption(
 				'revisions',
@@ -286,6 +295,10 @@ TEXT;
 
 		if ( $source_url === null ) {
 			$source_url = $this->getSetting(self::SETTING_MERGE_SOURCE_URL);
+		}
+		elseif ( !$this->repositoryConnector->isUrl($source_url) ) {
+			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+			$source_url = $this->_urlResolver->resolve($wc_url, $source_url);
 		}
 
 		if ( !$source_url ) {

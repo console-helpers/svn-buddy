@@ -18,6 +18,7 @@ use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 
@@ -52,6 +53,10 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			$merge_source_detector->add(new InPortalMergeSourceDetector(50));
 
 			return $merge_source_detector;
+		};
+
+		$this['repository_url_resolver'] = function ($c) {
+			return new UrlResolver($c['repository_connector']);
 		};
 
 		$this['cache_manager'] = function ($c) {
