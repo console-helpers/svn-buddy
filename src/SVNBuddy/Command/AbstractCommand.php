@@ -246,7 +246,13 @@ abstract class AbstractCommand extends BaseCommand
 	 */
 	protected function getPath()
 	{
-		$path = $this->io->getArgument('path');
+		// During auto-complete the IO isn't set.
+		if ( !isset($this->io) ) {
+			$path = '.';
+		}
+		else {
+			$path = $this->io->getArgument('path');
+		}
 
 		if ( !$this->repositoryConnector->isUrl($path) ) {
 			$path = realpath($path);
