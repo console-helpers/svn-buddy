@@ -82,6 +82,7 @@ class RevisionLogFactory
 		$revision_log->registerPlugin(new PathsRevisionLogPlugin());
 		$revision_log->registerPlugin(new BugsRevisionLogPlugin(new LogMessageParser($bugtraq_logregex)));
 		$revision_log->registerPlugin(new MergesRevisionLogPlugin());
+		$revision_log->registerPlugin(new RefsRevisionLogPlugin());
 		$revision_log->refresh();
 
 		return $revision_log;
