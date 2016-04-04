@@ -37,7 +37,7 @@ abstract class AbstractRevisionLogPluginTestCase extends \PHPUnit_Framework_Test
 	 */
 	protected function getSvnLogFixture()
 	{
-		$svn_log_output = <<<OUTPUT
+		$svn_log_output = <<<XML
 <?xml version="1.0"?>
 <log>
    <logentry revision="20128">
@@ -70,7 +70,7 @@ abstract class AbstractRevisionLogPluginTestCase extends \PHPUnit_Framework_Test
       <logentry revision="10105"></logentry>
    </logentry>
 </log>
-OUTPUT;
+XML;
 
 		return new \SimpleXMLElement($svn_log_output);
 	}
