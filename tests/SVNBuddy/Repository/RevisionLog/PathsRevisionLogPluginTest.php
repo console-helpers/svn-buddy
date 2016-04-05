@@ -170,6 +170,39 @@ class PathsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		);
 	}
 
+	public function testFindAll()
+	{
+		$collected_data = array(
+			'revision_paths' => array(
+				100 => array(
+					array(
+						'path' => '/folder/sub-folder/file1.php',
+						'kind' => 'file',
+						'action' => 'M',
+					),
+				),
+				200 => array(
+					array(
+						'path' => '/folder/sub-folder/file2.php',
+						'kind' => 'file',
+						'action' => 'M',
+					),
+				),
+			),
+			'path_revisions' => array(
+				'/folder/sub-folder/file1.php' => array(100),
+				'/folder/sub-folder/file2.php' => array(200),
+			),
+		);
+
+		$this->plugin->setCollectedData($collected_data);
+
+		$this->assertEquals(
+			array(100, 200),
+			$this->plugin->find(array(''))
+		);
+	}
+
 	public function testGetRevisionDataSuccess()
 	{
 		$expected = array(

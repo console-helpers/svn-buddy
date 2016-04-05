@@ -82,15 +82,22 @@ class PathsRevisionLogPlugin implements IRevisionLogPlugin
 	 */
 	public function find(array $criteria)
 	{
-		$path_revisions = array();
+		if ( reset($criteria) === '' ) {
+			// Include revisions from all paths.
+			$path_revisions = $this->_revisionPaths;
+		}
+		else {
+			// Include revisions from given sub-path only.
+			$path_revisions = array();
 
-		foreach ( $criteria as $path ) {
-			$path_length = strlen($path);
+			foreach ( $criteria as $path ) {
+				$path_length = strlen($path);
 
-			foreach ( $this->_pathRevisions as $test_path => $revisions ) {
-				if ( substr($test_path, 0, $path_length) == $path ) {
-					foreach ( $revisions as $revision ) {
-						$path_revisions[$revision] = true;
+				foreach ( $this->_pathRevisions as $test_path => $revisions ) {
+					if ( substr($test_path, 0, $path_length) == $path ) {
+						foreach ( $revisions as $revision ) {
+							$path_revisions[$revision] = true;
+						}
 					}
 				}
 			}
