@@ -172,31 +172,6 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "/path/to/folder" is not an URL.
-	 */
-	public function testGetPathFromNonUrl()
-	{
-		$this->_repositoryConnector->getPathFromUrl('/path/to/folder');
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The URL "svn://" is malformed.
-	 */
-	public function testGetPathFromMalformedUrl()
-	{
-		$this->_repositoryConnector->getPathFromUrl('svn://');
-	}
-
-	public function testGetPathFromUrl()
-	{
-		$actual = $this->_repositoryConnector->getPathFromUrl(self::DUMMY_REPO);
-
-		$this->assertEquals('/path/to/project', $actual);
-	}
-
 	public function testGetWorkingCopyUrlFromUrl()
 	{
 		$this->assertEquals(self::DUMMY_REPO, $this->_repositoryConnector->getWorkingCopyUrl(self::DUMMY_REPO));
@@ -321,6 +296,63 @@ MESSAGE;
 		);
 
 		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
+	}
+
+	public function testGetRelativePathWithAutomaticCaching()
+	{
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('command:' . $raw_command, $raw_command_output, null, '1 year')
+			->shouldBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b');
+
+		$this->_expectCommand(
+			$raw_command,
+			$raw_command_output
+		);
+
+		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath(self::DUMMY_REPO, null));
+	}
+
+	public function testGetRelativePathWithManualCaching()
+	{
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('command:' . $raw_command, $raw_command_output, null, '5 hours')
+			->shouldBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+
+		$this->_expectCommand(
+			$raw_command,
+			$raw_command_output
+		);
+
+		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath(self::DUMMY_REPO, '5 hours'));
+	}
+
+	public function testGetRelativePathNoAutomaticCachingForPaths()
+	{
+		$path = '/path/to/working-copy';
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+
+		$this->_expectCommand(
+			$raw_command,
+			$this->getFixture('svn_info_16.xml')
+		);
+
+		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path, null));
 	}
 
 	/**

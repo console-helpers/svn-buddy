@@ -227,7 +227,7 @@ TEXT;
 		else {
 			$revisions_by_path = $this->_revisionLog->find(
 				'paths',
-				$this->repositoryConnector->getPathFromUrl($wc_url)
+				$this->repositoryConnector->getRelativePath($this->getWorkingCopyPath())
 			);
 		}
 
@@ -250,7 +250,7 @@ TEXT;
 			$revisions_by_path = $this->_revisionLog->find(
 				'paths',
 				$this->repositoryConnector->getProjectUrl(
-					$this->repositoryConnector->getPathFromUrl($wc_url)
+					$this->repositoryConnector->getRelativePath($this->getWorkingCopyPath())
 				)
 			);
 			$revisions_by_path = array_intersect($revisions_by_path, $this->_revisionLog->find('merges', $merged_by));
@@ -299,7 +299,7 @@ TEXT;
 			$revisions_by_path_count
 		));
 
-		$this->printRevisions($revisions_by_path_with_limit, $wc_url, (boolean)$this->io->getOption('details'));
+		$this->printRevisions($revisions_by_path_with_limit, (boolean)$this->io->getOption('details'));
 	}
 
 	/**
@@ -321,13 +321,12 @@ TEXT;
 	/**
 	 * Prints revisions.
 	 *
-	 * @param array   $revisions      Revisions.
-	 * @param string  $repository_url Repository url.
-	 * @param boolean $with_details   Print extended revision details (e.g. paths changed).
+	 * @param array   $revisions    Revisions.
+	 * @param boolean $with_details Print extended revision details (e.g. paths changed).
 	 *
 	 * @return void
 	 */
-	protected function printRevisions(array $revisions, $repository_url, $with_details = false)
+	protected function printRevisions(array $revisions, $with_details = false)
 	{
 		$table = new Table($this->io->getOutput());
 		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
@@ -360,7 +359,10 @@ TEXT;
 		$prev_bugs = null;
 		$last_color = 'yellow';
 		$last_revision = end($revisions);
-		$repository_path = $this->repositoryConnector->getPathFromUrl($repository_url) . '/';
+
+		$repository_path = $this->repositoryConnector->getRelativePath(
+			$this->getWorkingCopyPath()
+		) . '/';
 
 		foreach ( $revisions as $revision ) {
 			$revision_data = $this->_revisionLog->getRevisionData('summary', $revision);

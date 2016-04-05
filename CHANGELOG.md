@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
 
 ## [0.1.0] - 2016-03-19
 ### Added

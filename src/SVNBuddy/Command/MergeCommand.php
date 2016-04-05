@@ -333,10 +333,8 @@ TEXT;
 	 */
 	protected function printSourceAndTarget($source_url, $wc_path)
 	{
-		$relative_source_url = $this->repositoryConnector->getPathFromUrl($source_url);
-		$relative_target_url = $this->repositoryConnector->getPathFromUrl(
-			$this->repositoryConnector->getWorkingCopyUrl($wc_path)
-		);
+		$relative_source_url = $this->repositoryConnector->getRelativePath($source_url);
+		$relative_target_url = $this->repositoryConnector->getRelativePath($wc_path);
 
 		$this->io->writeln(' * Merge Source ... <info>' . $relative_source_url . '</info>');
 		$this->io->writeln(' * Merge Target ... <info>' . $relative_target_url . '</info>');
@@ -525,7 +523,7 @@ TEXT;
 		}
 
 		$revision_log = $this->getRevisionLog($source_url);
-		$source_path = $this->repositoryConnector->getPathFromUrl($source_url) . '/';
+		$source_path = $this->repositoryConnector->getRelativePath($source_url) . '/';
 
 		foreach ( $conflicts as $conflict_path ) {
 			$path_revisions = $revision_log->find('paths', $source_path . $conflict_path);

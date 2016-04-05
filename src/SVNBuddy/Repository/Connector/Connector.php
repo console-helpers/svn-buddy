@@ -222,26 +222,26 @@ class Connector
 	}
 
 	/**
-	 * Returns path component from absolute URL to repository.
+	 * Returns relative path of given path/url to the root of the repository.
 	 *
-	 * @param string $absolute_url URL.
+	 * @param string $path_or_url    Path or url.
+	 * @param mixed  $cache_duration Cache duration.
 	 *
 	 * @return string
-	 * @throws \InvalidArgumentException When invalid url is given.
 	 */
-	public function getPathFromUrl($absolute_url)
+	public function getRelativePath($path_or_url, $cache_duration = null)
 	{
-		if ( !$this->isUrl($absolute_url) ) {
-			throw new \InvalidArgumentException('The "' . $absolute_url . '" is not an URL.');
+		// Cache "svn info" commands to remote urls, not the working copy.
+		if ( !isset($cache_duration) && $this->isUrl($path_or_url) ) {
+			$cache_duration = '1 year';
 		}
 
-		$relative_url = parse_url($absolute_url, PHP_URL_PATH);
+		$svn_info = $this->withCache($cache_duration)->_getSvnInfoEntry($path_or_url);
 
-		if ( $relative_url === false ) {
-			throw new \InvalidArgumentException('The URL "' . $absolute_url . '" is malformed.');
-		}
+		$wc_url = (string)$svn_info->url;
+		$repository_root_url = (string)$svn_info->repository->root;
 
-		return $relative_url;
+		return preg_replace('/^' . preg_quote($repository_root_url, '/') . '/', '', $wc_url, 1);
 	}
 
 	/**
