@@ -208,8 +208,6 @@ TEXT;
 			throw new \RuntimeException('The "--bugs" and "--revisions" options are mutually exclusive.');
 		}
 
-		$wc_url = $this->getWorkingCopyUrl();
-
 		$missing_revisions = array();
 		$refs = $this->getList($this->io->getOption('refs'));
 
