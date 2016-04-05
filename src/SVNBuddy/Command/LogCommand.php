@@ -550,7 +550,7 @@ TEXT;
 			$ret .= '/';
 		}
 
-		$ret = str_replace($repository_path, '', $ret);
+		$ret = preg_replace('/^' . preg_quote($repository_path, '/') . '/', '', $ret, 1);
 
 		if ( $ret === '' ) {
 			$ret = '.';
