@@ -94,6 +94,7 @@ class PathsRevisionLogPlugin implements IRevisionLogPlugin
 				$path_length = strlen($path);
 
 				foreach ( $this->_pathRevisions as $test_path => $revisions ) {
+					// FIXME: Fast, but does sub-match in inside a folder and "tags/stable" matches also "tags/stable2".
 					if ( substr($test_path, 0, $path_length) == $path ) {
 						foreach ( $revisions as $revision ) {
 							$path_revisions[$revision] = true;
