@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3b559b70fe20fbb3e58b08130905f65b",
-    "content-hash": "f7a3fa5882b01efdcaa5da339f9d5a38",
+    "hash": "6f4cabcf1ee9c6aee08778f1f71c4df5",
+    "content-hash": "d84ccfea06433ec55d13fa6a283ece33",
     "packages": [
         {
             "name": "console-helpers/console-kit",
@@ -148,16 +148,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.3",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "56cc5caf051189720b8de974e4746090aaa10d44"
+                "reference": "9a5aef5fc0d4eff86853d44202b02be8d5a20154"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/56cc5caf051189720b8de974e4746090aaa10d44",
-                "reference": "56cc5caf051189720b8de974e4746090aaa10d44",
+                "url": "https://api.github.com/repos/symfony/console/zipball/9a5aef5fc0d4eff86853d44202b02be8d5a20154",
+                "reference": "9a5aef5fc0d4eff86853d44202b02be8d5a20154",
                 "shasum": ""
             },
             "require": {
@@ -204,7 +204,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-28 16:20:50"
+            "time": "2016-03-17 09:19:04"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -267,16 +267,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.3",
+            "version": "v2.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe"
+                "reference": "fb467471952ef5cf8497c029980e556b47545333"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe",
-                "reference": "7dedd5b60550f33dca16dd7e94ef8aca8b67bbfe",
+                "url": "https://api.github.com/repos/symfony/process/zipball/fb467471952ef5cf8497c029980e556b47545333",
+                "reference": "fb467471952ef5cf8497c029980e556b47545333",
                 "shasum": ""
             },
             "require": {
@@ -312,7 +312,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-02 13:33:15"
+            "time": "2016-03-23 13:11:46"
         }
     ],
     "packages-dev": [
@@ -322,12 +322,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aik099/CodingStandard.git",
-                "reference": "eab50b83546dbbee649c06c6a42c8f2761b2b653"
+                "reference": "c7ef78c8ad44b8d00275b223a94d7781a1eeb808"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/eab50b83546dbbee649c06c6a42c8f2761b2b653",
-                "reference": "eab50b83546dbbee649c06c6a42c8f2761b2b653",
+                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/c7ef78c8ad44b8d00275b223a94d7781a1eeb808",
+                "reference": "c7ef78c8ad44b8d00275b223a94d7781a1eeb808",
                 "shasum": ""
             },
             "require-dev": {
@@ -354,7 +354,7 @@
                 "PHP_CodeSniffer",
                 "codesniffer"
             ],
-            "time": "2016-02-26 20:33:27"
+            "time": "2016-03-30 10:51:46"
         }
     ],
     "aliases": [],
