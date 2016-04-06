@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+
 class RefsRevisionLogPlugin implements IRevisionLogPlugin
 {
 	const CACHE_FORMAT_VERSION = 1;
@@ -28,6 +30,23 @@ class RefsRevisionLogPlugin implements IRevisionLogPlugin
 	 * @var array
 	 */
 	private $_refRevisions = array();
+
+	/**
+	 * Repository connector.
+	 *
+	 * @var Connector
+	 */
+	private $_repositoryConnector;
+
+	/**
+	 * Create refs revision log plugin.
+	 *
+	 * @param Connector $repository_connector Repository connector.
+	 */
+	public function __construct(Connector $repository_connector)
+	{
+		$this->_repositoryConnector = $repository_connector;
+	}
 
 	/**
 	 * Returns plugin name.
@@ -56,11 +75,11 @@ class RefsRevisionLogPlugin implements IRevisionLogPlugin
 				/** @var \SimpleXMLElement $path_node */
 				$path = (string)$path_node;
 
-				if ( !preg_match('#^.*?/(trunk|branches/[^/]*|tags/[^/]*|releases/[^/]*).*$#', $path, $regs) ) {
-					continue;
-				}
+				$ref = $this->_repositoryConnector->getRefByPath($path);
 
-				$revision_refs[$regs[1]] = true;
+				if ( $ref !== false ) {
+					$revision_refs[$ref] = true;
+				}
 			}
 
 			// Path in commit is in unknown format.

@@ -13,9 +13,24 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\IRevisionLogPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RefsRevisionLogPlugin;
+use Prophecy\Prophecy\ObjectProphecy;
 
 class RefsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 {
+
+	/**
+	 * Repository connector.
+	 *
+	 * @var ObjectProphecy
+	 */
+	protected $repositoryConnector;
+
+	protected function setUp()
+	{
+		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
+
+		parent::setUp();
+	}
 
 	public function testGetName()
 	{
@@ -30,6 +45,19 @@ class RefsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		);
 
 		$this->assertEquals($empty_collected_data, $this->plugin->getCollectedData());
+
+		$path_to_ref_mapping = array(
+			'/projects/project_a/trunk/sub-folder/file.tpl' => 'trunk',
+			'/projects/project_a/trunk/sub-folder' => 'trunk',
+			'/projects/project_a/branches/branch-name/another_file.php' => 'branches/branch-name',
+			'/projects/project_a/tags/tag-name/another_file.php' => 'tags/tag-name',
+			'/projects/project_a/unknowns/unknown-name/another_file.php' => false,
+			'/projects/project_a/releases/release-name/another_file.php' => 'releases/release-name',
+		);
+
+		foreach ( $path_to_ref_mapping as $path => $ref ) {
+			$this->repositoryConnector->getRefByPath($path)->willReturn($ref)->shouldBeCalled();
+		}
 
 		$this->plugin->parse($this->getSvnLogFixture());
 
@@ -327,7 +355,7 @@ XML;
 	 */
 	protected function createPlugin()
 	{
-		return new RefsRevisionLogPlugin();
+		return new RefsRevisionLogPlugin($this->repositoryConnector->reveal());
 	}
 
 }
