@@ -209,25 +209,7 @@ TEXT;
 		}
 
 		$missing_revisions = array();
-		$refs = $this->getList($this->io->getOption('refs'));
-
-		if ( $refs ) {
-			$incorrect_refs = array_diff($refs, $this->getAllRefs());
-
-			if ( $incorrect_refs ) {
-				throw new \InvalidArgumentException(
-					'The following refs are unknown: "' . implode('", "', $incorrect_refs) . '".'
-				);
-			}
-
-			$revisions_by_path = $this->_revisionLog->find('refs', $refs);
-		}
-		else {
-			$revisions_by_path = $this->_revisionLog->find(
-				'paths',
-				$this->repositoryConnector->getRelativePath($this->getWorkingCopyPath())
-			);
-		}
+		$revisions_by_path = $this->getRevisionsByPath();
 
 		if ( $revisions ) {
 			$revisions = $this->_revisionListParser->expandRanges($revisions);
@@ -298,6 +280,41 @@ TEXT;
 		));
 
 		$this->printRevisions($revisions_by_path_with_limit, (boolean)$this->io->getOption('details'));
+	}
+
+	/**
+	 * Returns list of revisions by path.
+	 *
+	 * @return array
+	 * @throws CommandException When given refs doesn't exist.
+	 */
+	protected function getRevisionsByPath()
+	{
+		$refs = $this->getList($this->io->getOption('refs'));
+		$relative_path = $this->repositoryConnector->getRelativePath($this->getWorkingCopyPath());
+
+		if ( !$refs ) {
+			$ref = $this->repositoryConnector->getRefByPath($relative_path);
+
+			// Use search by ref, when working copy represents ref root folder.
+			if ( $ref !== false && preg_match('/' . preg_quote($ref, '/') . '$/', $relative_path) ) {
+				return $this->_revisionLog->find('refs', $ref);
+			}
+		}
+
+		if ( $refs ) {
+			$incorrect_refs = array_diff($refs, $this->getAllRefs());
+
+			if ( $incorrect_refs ) {
+				throw new CommandException(
+					'The following refs are unknown: "' . implode('", "', $incorrect_refs) . '".'
+				);
+			}
+
+			return $this->_revisionLog->find('refs', $refs);
+		}
+
+		return $this->_revisionLog->find('paths', $relative_path);
 	}
 
 	/**
