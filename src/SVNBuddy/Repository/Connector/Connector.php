@@ -245,6 +245,22 @@ class Connector
 	}
 
 	/**
+	 * Detects ref from given path.
+	 *
+	 * @param string $path Path to a file.
+	 *
+	 * @return string|boolean
+	 */
+	public function getRefByPath($path)
+	{
+		if ( preg_match('#^.*?/(trunk|branches/[^/]*|tags/[^/]*|releases/[^/]*).*$#', $path, $regs) ) {
+			return $regs[1];
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns URL of the working copy.
 	 *
 	 * @param string $wc_path Working copy path.
