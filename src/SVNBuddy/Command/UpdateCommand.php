@@ -29,7 +29,7 @@ TEXT;
 
 		$this
 			->setName('update')
-			->setDescription('Bring changes from the repository into the working copy.')
+			->setDescription('Bring changes from the repository into the working copy')
 			->setHelp($description)
 			->setAliases(array('up'))
 			->addArgument(
