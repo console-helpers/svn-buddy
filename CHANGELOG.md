@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
+- The output (e.g. revision query progress bar) was interfering with auto-complete (e.g. `--refs` option of `log` command).
 
 ## [0.1.0] - 2016-03-19
 ### Added

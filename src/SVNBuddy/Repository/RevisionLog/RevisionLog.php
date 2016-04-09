@@ -67,7 +67,7 @@ class RevisionLog
 		$repository_url,
 		Connector $repository_connector,
 		CacheManager $cache_manager,
-		ConsoleIO $io
+		ConsoleIO $io = null
 	) {
 		$this->_repositoryUrl = $repository_url;
 		$this->_repositoryConnector = $repository_connector;
@@ -168,11 +168,14 @@ class RevisionLog
 		$range_start = $from_revision;
 		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
 
-		$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 1000));
-		$progress_bar->setFormat(
-			' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%'
-		);
-		$progress_bar->start();
+		// The "io" isn't set during autocomplete.
+		if ( isset($this->_io) ) {
+			$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 1000));
+			$progress_bar->setFormat(
+				' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%'
+			);
+			$progress_bar->start();
+		}
 
 		while ( $range_start < $to_revision ) {
 			$range_end = min($range_start + 1000, $to_revision);
@@ -185,11 +188,15 @@ class RevisionLog
 			$this->_parseLog($command->run());
 			$range_start = $range_end + 1;
 
-			$progress_bar->advance();
+			if ( isset($progress_bar) ) {
+				$progress_bar->advance();
+			}
 		}
 
-		$progress_bar->finish();
-		$this->_io->writeln('');
+		if ( isset($progress_bar) ) {
+			$progress_bar->finish();
+			$this->_io->writeln('');
+		}
 	}
 
 	/**

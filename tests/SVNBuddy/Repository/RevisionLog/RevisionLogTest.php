@@ -11,7 +11,9 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\RegExToken;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
@@ -155,7 +157,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(array('A', 'B', 'C'), $revision_log->getBugsFromRevisions(array(1, 2)));
 	}
 
-	public function testRefreshWithoutCache()
+	public function testRefreshWithoutCacheWithOutput()
 	{
 		$new_collected_data = array(
 			'mocked' => array('NEW_COLLECTED'),
@@ -185,6 +187,38 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 		$this->io->createProgressBar(2)->willReturn($progress_bar)->shouldBeCalled();
 		$this->io->writeln('')->shouldBeCalled();
+
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
+		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
+
+		$plugin->getLastRevision()->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(1000, 2000)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(2001, 3000)))->shouldBeCalled();
+		$plugin->getCollectedData()->willReturn($new_collected_data['mocked'])->shouldBeCalled();
+
+		$revision_log = $this->createRevisionLog('svn://localhost/trunk', $this->io->reveal());
+		$revision_log->registerPlugin($plugin->reveal());
+		$revision_log->refresh();
+	}
+
+	public function testRefreshWithoutCacheWithoutOutput()
+	{
+		$new_collected_data = array(
+			'mocked' => array('NEW_COLLECTED'),
+		);
+		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
+
+		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
+		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(3000)->shouldBeCalled();
+		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
+
+		$this->cacheManager
+			->getCache('log:svn://localhost', $cache_invalidator)
+			->shouldBeCalled();
+		$this->cacheManager
+			->setCache('log:svn://localhost', $new_collected_data, $cache_invalidator)
+			->shouldBeCalled();
 
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
@@ -324,17 +358,18 @@ OUTPUT;
 	/**
 	 * Creates revision log.
 	 *
-	 * @param string $repository_url Repository url.
+	 * @param string    $repository_url Repository url.
+	 * @param ConsoleIO $io             Console IO.
 	 *
 	 * @return RevisionLog
 	 */
-	protected function createRevisionLog($repository_url)
+	protected function createRevisionLog($repository_url, ConsoleIO $io = null)
 	{
 		$revision_log = new RevisionLog(
 			$repository_url,
 			$this->repositoryConnector->reveal(),
 			$this->cacheManager->reveal(),
-			$this->io->reveal()
+			$io
 		);
 
 		return $revision_log;

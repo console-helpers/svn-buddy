@@ -34,37 +34,28 @@ class RevisionLogFactory
 	private $_cacheManager;
 
 	/**
-	 * Console IO.
-	 *
-	 * @var ConsoleIO
-	 */
-	private $_io;
-
-	/**
 	 * Create revision log.
 	 *
 	 * @param Connector    $repository_connector Repository connector.
 	 * @param CacheManager $cache_manager        Cache manager.
-	 * @param ConsoleIO    $io                   Console IO.
 	 */
 	public function __construct(
 		Connector $repository_connector,
-		CacheManager $cache_manager,
-		ConsoleIO $io
+		CacheManager $cache_manager
 	) {
 		$this->_repositoryConnector = $repository_connector;
 		$this->_cacheManager = $cache_manager;
-		$this->_io = $io;
 	}
 
 	/**
 	 * Returns revision log for url.
 	 *
-	 * @param string $repository_url Repository url.
+	 * @param string    $repository_url Repository url.
+	 * @param ConsoleIO $io             Console IO.
 	 *
 	 * @return RevisionLog
 	 */
-	public function getRevisionLog($repository_url)
+	public function getRevisionLog($repository_url, ConsoleIO $io = null)
 	{
 		$bugtraq_logregex = $this->_repositoryConnector->withCache('1 year')->getProperty(
 			'bugtraq:logregex',
@@ -75,7 +66,7 @@ class RevisionLogFactory
 			$repository_url,
 			$this->_repositoryConnector,
 			$this->_cacheManager,
-			$this->_io
+			$io
 		);
 
 		$revision_log->registerPlugin(new SummaryRevisionLogPlugin());

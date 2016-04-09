@@ -34,8 +34,8 @@ class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
 
 		$io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 
-		$factory = new RevisionLogFactory($repository_connector->reveal(), $cache_manager->reveal(), $io->reveal());
-		$revision_log = $factory->getRevisionLog('svn://localhost/trunk');
+		$factory = new RevisionLogFactory($repository_connector->reveal(), $cache_manager->reveal());
+		$revision_log = $factory->getRevisionLog('svn://localhost/trunk', $io->reveal());
 
 		$this->assertInstanceOf('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLog', $revision_log);
 	}
