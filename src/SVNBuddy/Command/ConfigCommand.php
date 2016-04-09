@@ -69,13 +69,13 @@ TEXT;
 				'show',
 				's',
 				InputOption::VALUE_REQUIRED,
-				'Show setting value'
+				'Shows only given (instead of all) setting value'
 			)
 			->addOption(
 				'edit',
 				'e',
 				InputOption::VALUE_REQUIRED,
-				'Change setting value in Interactive Editor'
+				'Change setting value in the Interactive Editor'
 			)
 			->addOption(
 				'delete',
