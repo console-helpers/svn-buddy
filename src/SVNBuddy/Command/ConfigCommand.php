@@ -253,7 +253,7 @@ TEXT;
 		}
 		else {
 			$this->io->writeln(
-				'Showing settings' . $extra_title . ' for <info>' . $this->getWorkingCopyPath() . '</info> path:'
+				'Showing settings' . $extra_title . ' for <info>' . $this->getWorkingCopyUrl() . '</info> url:'
 			);
 		}
 

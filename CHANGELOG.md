@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--refs` option (with auto-complete) for `log` command to show revisions from ref instead of current working copy path.
 
 ### Changed
-...
+- The `config` command now shows working copy url instead of path to stress fact, that settings are stored based on working copy url and not path.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
