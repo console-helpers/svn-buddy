@@ -55,13 +55,13 @@ TEXT;
 				'details',
 				'd',
 				InputOption::VALUE_NONE,
-				'Shows paths affected in each revision'
+				'Shows detailed revision information, e.g. paths affected'
 			)
 			->addOption(
 				'with-summary',
 				's',
 				InputOption::VALUE_NONE,
-				'Shows summary of paths affected in each revision'
+				'Shows number of added/changed/removed paths in the revision'
 			)
 			->addOption(
 				'ignore-add',

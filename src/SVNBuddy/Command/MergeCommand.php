@@ -107,25 +107,25 @@ TEXT;
 				'revisions',
 				'r',
 				InputOption::VALUE_REQUIRED,
-				'Revisions to merge (e.g. "53324,34342,1224-4433,232" or "all" to merge all)'
+				'List of revision(-s) and/or revision range(-s) to merge, e.g. <comment>53324</comment>, <comment>1224-4433</comment> or <comment>all</comment> to merge all'
 			)
 			->addOption(
 				'bugs',
 				'b',
 				InputOption::VALUE_REQUIRED,
-				'Bugs to merge (e.g. "JRA-1234,43644")'
+				'List of bug(-s) to merge, e.g. <comment>JRA-1234</comment>, <comment>43644</comment>'
 			)
 			->addOption(
 				'details',
 				'd',
 				InputOption::VALUE_NONE,
-				'Shows paths affected in each revision'
+				'Shows detailed revision information, e.g. paths affected'
 			)
 			->addOption(
 				'with-summary',
 				's',
 				InputOption::VALUE_NONE,
-				'Shows summary of paths affected in each revision'
+				'Shows number of added/changed/removed paths in the revision'
 			)
 			/*->addOption(
 				'rollback',
