@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - When conflicts were detected during merge, then conflicted paths would be listed in auto-generated commit message.
 - The `--source-url` option of `merge` command can be specified in short form (e.g. `trunk`, `branches/branch-name`, `tags/tag-name`, `name` (for branch-to-branch or tag-to-tag merges).
 - Added `--refs` option (with auto-complete) for `log` command to show revisions from ref instead of current working copy path.
+- Added `log.message-limit` config setting (defaults to 68), that allows to specify optimal commit message column width.
 
 ### Changed
 - The `config` command now shows working copy url instead of path to stress fact, that settings are stored based on working copy url and not path.
@@ -17,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The output (e.g. revision query progress bar) was interfering with auto-complete (e.g. `--refs` option of `log` command).
 - When showing only first line from a multi-line commit message, then `...` wasn't shown at the end to indicate, that not all commit message is displayed.
 - The "," in bug list associated with a revision was colored in same color as bug itself, but it shouldn't be colored at all.
+- Only first line of commit message was displayed even in detailed revision view.
 
 ## [0.1.0] - 2016-03-19
 ### Added

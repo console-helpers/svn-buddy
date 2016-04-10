@@ -32,6 +32,8 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 
 	const SETTING_LOG_LIMIT = 'log.limit';
 
+	const SETTING_LOG_MESSAGE_LIMIT = 'log.message-limit';
+
 	const SETTING_LOG_MERGE_CONFLICT_REGEXPS = 'log.merge-conflict-regexps';
 
 	/**
@@ -404,13 +406,25 @@ TEXT;
 			$this->getWorkingCopyPath()
 		) . '/';
 
+		$log_message_limit = $this->getSetting(self::SETTING_LOG_MESSAGE_LIMIT);
+
 		foreach ( $revisions as $revision ) {
 			$revision_data = $this->_revisionLog->getRevisionData('summary', $revision);
-			list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
-			$log_message = preg_replace('/^\[fixes:.*?\]/', "\xE2\x9C\x94", $log_message);
 
-			if ( strpos($revision_data['msg'], PHP_EOL) !== false || mb_strlen($log_message) > 68 ) {
-				$log_message = mb_substr($log_message, 0, 68 - 3) . '...';
+			if ( $with_details ) {
+				// When details requested don't transform commit message except for word wrapping.
+				$log_message = wordwrap($revision_data['msg'], $log_message_limit); // FIXME: Not UTF-8 safe solution.
+			}
+			else {
+				// When details not requested only operate on first line of commit message.
+				list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
+				$log_message = preg_replace('/^\[fixes:.*?\]/s', "\xE2\x9C\x94", $log_message);
+
+				if ( strpos($revision_data['msg'], PHP_EOL) !== false
+					|| mb_strlen($log_message) > $log_message_limit
+				) {
+					$log_message = mb_substr($log_message, 0, $log_message_limit - 3) . '...';
+				}
 			}
 
 			$new_bugs = $this->_revisionLog->getRevisionData('bugs', $revision);
@@ -647,6 +661,7 @@ TEXT;
 	{
 		return array(
 			new IntegerConfigSetting(self::SETTING_LOG_LIMIT, 10),
+			new IntegerConfigSetting(self::SETTING_LOG_MESSAGE_LIMIT, 68),
 			new RegExpsConfigSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS, '#/composer\.lock$#'),
 		);
 	}
