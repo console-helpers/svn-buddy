@@ -494,8 +494,7 @@ TEXT;
 
 			// Add "Merged Via" column.
 			if ( $with_merge_status ) {
-				$merged_via = $this->_revisionLog->getRevisionData('merges', $revision);
-				$row[] = $merged_via ? implode(', ', $merged_via) : '';
+				$row[] = $this->generateMergedVia($revision);
 			}
 
 			$table->addRow($row);
@@ -615,6 +614,37 @@ TEXT;
 		}
 
 		return implode(' ', array_filter($summary));
+	}
+
+	/**
+	 * Generates content for "Merged Via" cell content.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return string
+	 */
+	protected function generateMergedVia($revision)
+	{
+		$merged_via = $this->_revisionLog->getRevisionData('merges', $revision);
+
+		if ( !$merged_via ) {
+			return '';
+		}
+
+		$merged_via_enhanced = array();
+
+		foreach ( $merged_via as $merged_via_revision ) {
+			$merged_via_revision_refs = $this->_revisionLog->getRevisionData('refs', $merged_via_revision);
+
+			if ( $merged_via_revision_refs ) {
+				$merged_via_enhanced[] = $merged_via_revision . ' (' . implode(',', $merged_via_revision_refs) . ')';
+			}
+			else {
+				$merged_via_enhanced[] = $merged_via_revision;
+			}
+		}
+
+		return $this->formatArray($merged_via_enhanced, 1);
 	}
 
 	/**

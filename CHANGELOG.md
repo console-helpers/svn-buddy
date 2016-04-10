@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `--summary` option of `log`, 'aggregate' and `merge` commands renamed into `--with-summary`.
 - The `--details` option of `log`, 'aggregate' and `merge` commands renamed into `--with-details`.
 - When all revisions are displayed by `log` command display "Showing X revision(-s)" instead of "Showing X of X revision(-s)".
+- The `Merged Via` column (available when `--with-merge-status` option used) of `log` command also shows refs, that merge revision belongs to.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
