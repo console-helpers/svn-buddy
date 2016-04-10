@@ -159,7 +159,7 @@ TEXT;
 				'Shows number of paths in the revision, that can cause conflict upon merging'
 			)
 			->addOption(
-				'merge-status',
+				'with-merge-status',
 				null,
 				InputOption::VALUE_NONE,
 				'Shows merge revisions affecting this revision'
@@ -387,9 +387,9 @@ TEXT;
 		}
 
 		// Add "Merged Via" header.
-		$merge_status = $this->io->getOption('merge-status');
+		$with_merge_status = $this->io->getOption('with-merge-status');
 
-		if ( $merge_status ) {
+		if ( $with_merge_status ) {
 			$headers[] = 'Merged Via';
 		}
 
@@ -462,7 +462,7 @@ TEXT;
 			}
 
 			// Add "Merged Via" column.
-			if ( $merge_status ) {
+			if ( $with_merge_status ) {
 				$merged_via = $this->_revisionLog->getRevisionData('merges', $revision);
 				$row[] = $merged_via ? implode(', ', $merged_via) : '';
 			}
