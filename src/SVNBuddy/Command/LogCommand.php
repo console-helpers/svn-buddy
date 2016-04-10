@@ -251,9 +251,7 @@ TEXT;
 		}
 
 		if ( $missing_revisions ) {
-			throw new CommandException(
-				'No information about ' . implode(', ', $missing_revisions) . ' revision(-s).'
-			);
+			throw new CommandException($this->getMissingRevisionsErrorMessage($missing_revisions));
 		}
 		elseif ( !$revisions_by_path ) {
 			throw new CommandException('No matching revisions found.');
@@ -280,6 +278,28 @@ TEXT;
 		));
 
 		$this->printRevisions($revisions_by_path_with_limit, (boolean)$this->io->getOption('details'));
+	}
+
+	/**
+	 * Shows error about missing revisions.
+	 *
+	 * @param array $missing_revisions Missing revisions.
+	 *
+	 * @return string
+	 */
+	protected function getMissingRevisionsErrorMessage(array $missing_revisions)
+	{
+		$refs = $this->io->getOption('refs');
+		$missing_revisions = implode(', ', $missing_revisions);
+
+		if ( $refs ) {
+			$revision_source = 'in "' . $refs . '" ref(-s)';
+		}
+		else {
+			$revision_source = 'at "' . $this->getWorkingCopyUrl() . '" url';
+		}
+
+		return 'The ' . $missing_revisions . ' revision(-s) not found ' . $revision_source . '.';
 	}
 
 	/**
