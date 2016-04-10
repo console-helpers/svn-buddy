@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `--merge-oracle` option of `log` command renamed into `--with-merge-oracle`.
 - The `--summary` option of `log`, 'aggregate' and `merge` commands renamed into `--with-summary`.
 - The `--details` option of `log`, 'aggregate' and `merge` commands renamed into `--with-details`.
+- When all revisions are displayed by `log` command display "Showing X revision(-s)" instead of "Showing X of X revision(-s)".
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
