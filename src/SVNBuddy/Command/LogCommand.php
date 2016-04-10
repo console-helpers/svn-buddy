@@ -407,6 +407,7 @@ TEXT;
 		) . '/';
 
 		$log_message_limit = $this->getSetting(self::SETTING_LOG_MESSAGE_LIMIT);
+		$bugs_per_row = $with_details ? 1 : 3;
 
 		foreach ( $revisions as $revision ) {
 			$revision_data = $this->_revisionLog->getRevisionData('summary', $revision);
@@ -437,7 +438,7 @@ TEXT;
 				$revision,
 				$revision_data['author'],
 				$date_helper->getAgoTime($revision_data['date']),
-				$this->formatBugs($new_bugs, $last_color),
+				$this->formatBugs($new_bugs, $last_color, $bugs_per_row),
 				$log_message,
 			);
 
@@ -490,6 +491,7 @@ TEXT;
 					$to_colorize = array($path_action . '    ' . $relative_path);
 
 					if ( isset($path_data['copyfrom-path']) ) {
+						// TODO: When copy happened from different ref/project, then relative path = absolute path.
 						$copy_from_rev = $path_data['copyfrom-rev'];
 						$copy_from_path = $this->_getRelativeLogPath($path_data, 'copyfrom-path', $repository_path);
 						$to_colorize[] = '        (from ' . $copy_from_path . ':' . $copy_from_rev . ')';
@@ -522,14 +524,15 @@ TEXT;
 	/**
 	 * Returns formatted list of bugs.
 	 *
-	 * @param array  $bugs  List of bugs.
-	 * @param string $color Color.
+	 * @param array   $bugs         List of bugs.
+	 * @param string  $color        Color.
+	 * @param integer $bugs_per_row Number of bugs displayed per row.
 	 *
 	 * @return string
 	 */
-	protected function formatBugs(array $bugs, $color)
+	protected function formatBugs(array $bugs, $color, $bugs_per_row)
 	{
-		$bug_chunks = array_chunk($bugs, 3);
+		$bug_chunks = array_chunk($bugs, $bugs_per_row);
 
 		$ret = array();
 
@@ -537,7 +540,7 @@ TEXT;
 			$ret[] = '<fg=' . $color . '>' . implode('</>, <fg=' . $color . '>', $bug_chunk) . '</>';
 		}
 
-		return implode(PHP_EOL, $ret);
+		return implode(',' . PHP_EOL, $ret);
 	}
 
 	/**
