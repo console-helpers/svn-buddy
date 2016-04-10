@@ -221,7 +221,7 @@ TEXT;
 				'--revisions' => implode(',', $this->_unmergedRevisions),
 				'--details' => $this->io->getOption('details'),
 				'--summary' => $this->io->getOption('summary'),
-				'--merge-oracle' => true,
+				'--with-merge-oracle' => true,
 			));
 		}
 	}

@@ -153,7 +153,7 @@ TEXT;
 				'Shows number of added/changed/removed paths in the revision'
 			)
 			->addOption(
-				'merge-oracle',
+				'with-merge-oracle',
 				null,
 				InputOption::VALUE_NONE,
 				'Shows number of paths in the revision, that can cause conflict upon merging'
@@ -378,10 +378,10 @@ TEXT;
 			$headers[] = 'Summary';
 		}
 
-		$merge_oracle = $this->io->getOption('merge-oracle');
+		$with_merge_oracle = $this->io->getOption('with-merge-oracle');
 
 		// Add "M.O." header.
-		if ( $merge_oracle ) {
+		if ( $with_merge_oracle ) {
 			$headers[] = 'M.O.';
 			$merge_conflict_regexps = $this->getMergeConflictRegExps();
 		}
@@ -450,7 +450,7 @@ TEXT;
 			}
 
 			// Add "M.O." column.
-			if ( $merge_oracle ) {
+			if ( $with_merge_oracle ) {
 				$merge_conflict_predication = $this->getMergeConflictPrediction(
 					$revision_paths,
 					$merge_conflict_regexps

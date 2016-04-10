@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Wrap list of bug, associated with revision to "3 per row" to avoid too wide table creation.
 - When `log` command showing revisions in detailed view, then how one bug per row to avoid table wrapping.
 - The `--merge-status` option of `log` command renamed into `--with-merge-status`.
+- The `--merge-oracle` option of `log` command renamed into `--with-merge-oracle`.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
