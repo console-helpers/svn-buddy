@@ -158,10 +158,10 @@ TEXT;
 				'Show merge revisions (if any) for each revisions'
 			)
 			->addOption(
-				'limit',
+				'max-count',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Maximum number of log entries'
+				'Limit the number of revisions to output'
 			);
 
 		parent::configure();
@@ -265,7 +265,7 @@ TEXT;
 		}
 		else {
 			// Apply limit only, when no explicit bugs/revisions are set.
-			$revisions_by_path_with_limit = array_slice($revisions_by_path, 0, $this->getLimit());
+			$revisions_by_path_with_limit = array_slice($revisions_by_path, 0, $this->getMaxCount());
 		}
 
 		$revisions_by_path_count = count($revisions_by_path);
@@ -342,12 +342,12 @@ TEXT;
 	 *
 	 * @return integer
 	 */
-	protected function getLimit()
+	protected function getMaxCount()
 	{
-		$option_limit = $this->io->getOption('limit');
+		$max_count = $this->io->getOption('max-count');
 
-		if ( $option_limit !== null ) {
-			return $option_limit;
+		if ( $max_count !== null ) {
+			return $max_count;
 		}
 
 		return $this->getSetting(self::SETTING_LOG_LIMIT);
