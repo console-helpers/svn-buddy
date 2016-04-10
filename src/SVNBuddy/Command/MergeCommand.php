@@ -116,7 +116,7 @@ TEXT;
 				'List of bug(-s) to merge, e.g. <comment>JRA-1234</comment>, <comment>43644</comment>'
 			)
 			->addOption(
-				'details',
+				'with-details',
 				'd',
 				InputOption::VALUE_NONE,
 				'Shows detailed revision information, e.g. paths affected'
@@ -219,7 +219,7 @@ TEXT;
 			$this->runOtherCommand('log', array(
 				'path' => $this->repositoryConnector->getProjectUrl($source_url),
 				'--revisions' => implode(',', $this->_unmergedRevisions),
-				'--details' => $this->io->getOption('details'),
+				'--with-details' => $this->io->getOption('with-details'),
 				'--with-summary' => $this->io->getOption('with-summary'),
 				'--with-merge-oracle' => true,
 			));

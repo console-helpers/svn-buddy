@@ -141,7 +141,7 @@ TEXT;
 				'Show revisions merged by list of revision(-s) and/or revision range(-s)'
 			)
 			->addOption(
-				'details',
+				'with-details',
 				'd',
 				InputOption::VALUE_NONE,
 				'Shows detailed revision information, e.g. paths affected'
@@ -284,7 +284,7 @@ TEXT;
 			$revisions_by_path_count
 		));
 
-		$this->printRevisions($revisions_by_path_with_limit, (boolean)$this->io->getOption('details'));
+		$this->printRevisions($revisions_by_path_with_limit, (boolean)$this->io->getOption('with-details'));
 	}
 
 	/**

@@ -52,7 +52,7 @@ TEXT;
 				'.'
 			)
 			->addOption(
-				'details',
+				'with-details',
 				'd',
 				InputOption::VALUE_NONE,
 				'Shows detailed revision information, e.g. paths affected'
@@ -267,7 +267,7 @@ TEXT;
 		$percent_done = 0;
 		$percent_increment = round(100 / count($working_copies), 2);
 
-		$with_details = $this->io->getOption('details');
+		$with_details = $this->io->getOption('with-details');
 		$with_summary = $this->io->getOption('with-summary');
 
 		foreach ( $working_copies as $index => $wc_path ) {
@@ -282,7 +282,7 @@ TEXT;
 			);
 
 			if ( $with_details && in_array($sub_command, array('log', 'merge')) ) {
-				$sub_command_arguments['--details'] = $with_details;
+				$sub_command_arguments['--with-details'] = $with_details;
 			}
 
 			if ( $with_summary && in_array($sub_command, array('log', 'merge')) ) {

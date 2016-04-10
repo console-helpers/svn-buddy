@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `--merge-status` option of `log` command renamed into `--with-merge-status`.
 - The `--merge-oracle` option of `log` command renamed into `--with-merge-oracle`.
 - The `--summary` option of `log`, 'aggregate' and `merge` commands renamed into `--with-summary`.
+- The `--details` option of `log`, 'aggregate' and `merge` commands renamed into `--with-details`.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
