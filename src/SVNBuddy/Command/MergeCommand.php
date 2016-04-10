@@ -122,7 +122,7 @@ TEXT;
 				'Shows paths affected in each revision'
 			)
 			->addOption(
-				'summary',
+				'with-summary',
 				's',
 				InputOption::VALUE_NONE,
 				'Shows summary of paths affected in each revision'
@@ -220,7 +220,7 @@ TEXT;
 				'path' => $this->repositoryConnector->getProjectUrl($source_url),
 				'--revisions' => implode(',', $this->_unmergedRevisions),
 				'--details' => $this->io->getOption('details'),
-				'--summary' => $this->io->getOption('summary'),
+				'--with-summary' => $this->io->getOption('with-summary'),
 				'--with-merge-oracle' => true,
 			));
 		}

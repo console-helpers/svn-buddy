@@ -58,7 +58,7 @@ TEXT;
 				'Shows paths affected in each revision'
 			)
 			->addOption(
-				'summary',
+				'with-summary',
 				's',
 				InputOption::VALUE_NONE,
 				'Shows summary of paths affected in each revision'
@@ -268,7 +268,7 @@ TEXT;
 		$percent_increment = round(100 / count($working_copies), 2);
 
 		$with_details = $this->io->getOption('details');
-		$with_summary = $this->io->getOption('summary');
+		$with_summary = $this->io->getOption('with-summary');
 
 		foreach ( $working_copies as $index => $wc_path ) {
 			$this->io->writeln(array(
@@ -286,7 +286,7 @@ TEXT;
 			}
 
 			if ( $with_summary && in_array($sub_command, array('log', 'merge')) ) {
-				$sub_command_arguments['--summary'] = $with_summary;
+				$sub_command_arguments['--with-summary'] = $with_summary;
 			}
 
 			$this->runOtherCommand($sub_command, $sub_command_arguments);

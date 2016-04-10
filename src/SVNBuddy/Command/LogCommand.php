@@ -147,7 +147,7 @@ TEXT;
 				'Shows detailed revision information, e.g. paths affected'
 			)
 			->addOption(
-				'summary',
+				'with-summary',
 				's',
 				InputOption::VALUE_NONE,
 				'Shows number of added/changed/removed paths in the revision'
@@ -374,7 +374,9 @@ TEXT;
 		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
 
 		// Add "Summary" header.
-		if ( $this->io->getOption('summary') ) {
+		$with_summary = $this->io->getOption('with-summary');
+
+		if ( $with_summary ) {
 			$headers[] = 'Summary';
 		}
 
@@ -445,7 +447,7 @@ TEXT;
 			$revision_paths = $this->_revisionLog->getRevisionData('paths', $revision);
 
 			// Add "Summary" column.
-			if ( $this->io->getOption('summary') ) {
+			if ( $with_summary ) {
 				$row[] = $this->generateChangeSummary($revision_paths);
 			}
 
