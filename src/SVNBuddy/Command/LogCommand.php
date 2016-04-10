@@ -409,7 +409,7 @@ TEXT;
 			list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
 			$log_message = preg_replace('/^\[fixes:.*?\]/', "\xE2\x9C\x94", $log_message);
 
-			if ( mb_strlen($log_message) > 68 ) {
+			if ( strpos($revision_data['msg'], PHP_EOL) !== false || mb_strlen($log_message) > 68 ) {
 				$log_message = mb_substr($log_message, 0, 68 - 3) . '...';
 			}
 
