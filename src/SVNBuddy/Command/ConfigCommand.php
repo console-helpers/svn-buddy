@@ -57,7 +57,7 @@ TEXT;
 
 		$this
 			->setName('config')
-			->setDescription('Get and set working copy or global settings')
+			->setDescription('Change configuration settings, that are used by other commands')
 			->setHelp($description)
 			->addArgument(
 				'path',
