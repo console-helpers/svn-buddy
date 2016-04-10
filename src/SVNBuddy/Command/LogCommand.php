@@ -153,6 +153,12 @@ TEXT;
 				'Shows number of added/changed/removed paths in the revision'
 			)
 			->addOption(
+				'with-refs',
+				null,
+				InputOption::VALUE_NONE,
+				'Shows revision refs'
+			)
+			->addOption(
 				'with-merge-oracle',
 				null,
 				InputOption::VALUE_NONE,
@@ -380,6 +386,13 @@ TEXT;
 			$headers[] = 'Summary';
 		}
 
+		// Add "Refs" header.
+		$with_refs = $this->io->getOption('with-refs');
+
+		if ( $with_refs ) {
+			$headers[] = 'Refs';
+		}
+
 		$with_merge_oracle = $this->io->getOption('with-merge-oracle');
 
 		// Add "M.O." header.
@@ -440,7 +453,7 @@ TEXT;
 				$revision,
 				$revision_data['author'],
 				$date_helper->getAgoTime($revision_data['date']),
-				$this->formatBugs($new_bugs, $last_color, $bugs_per_row),
+				$this->formatArray($new_bugs, $bugs_per_row, $last_color),
 				$log_message,
 			);
 
@@ -449,6 +462,14 @@ TEXT;
 			// Add "Summary" column.
 			if ( $with_summary ) {
 				$row[] = $this->generateChangeSummary($revision_paths);
+			}
+
+			// Add "Refs" column.
+			if ( $with_refs ) {
+				$row[] = $this->formatArray(
+					$this->_revisionLog->getRevisionData('refs', $revision),
+					1
+				);
 			}
 
 			// Add "M.O." column.
@@ -524,22 +545,29 @@ TEXT;
 	}
 
 	/**
-	 * Returns formatted list of bugs.
+	 * Returns formatted list of records.
 	 *
-	 * @param array   $bugs         List of bugs.
-	 * @param string  $color        Color.
-	 * @param integer $bugs_per_row Number of bugs displayed per row.
+	 * @param array       $items         List of items.
+	 * @param integer     $items_per_row Number of bugs displayed per row.
+	 * @param string|null $color         Color.
 	 *
 	 * @return string
 	 */
-	protected function formatBugs(array $bugs, $color, $bugs_per_row)
+	protected function formatArray(array $items, $items_per_row, $color = null)
 	{
-		$bug_chunks = array_chunk($bugs, $bugs_per_row);
+		$bug_chunks = array_chunk($items, $items_per_row);
 
 		$ret = array();
 
-		foreach ( $bug_chunks as $bug_chunk ) {
-			$ret[] = '<fg=' . $color . '>' . implode('</>, <fg=' . $color . '>', $bug_chunk) . '</>';
+		if ( isset($color) ) {
+			foreach ( $bug_chunks as $bug_chunk ) {
+				$ret[] = '<fg=' . $color . '>' . implode('</>, <fg=' . $color . '>', $bug_chunk) . '</>';
+			}
+		}
+		else {
+			foreach ( $bug_chunks as $bug_chunk ) {
+				$ret[] = implode(', ', $bug_chunk);
+			}
 		}
 
 		return implode(',' . PHP_EOL, $ret);

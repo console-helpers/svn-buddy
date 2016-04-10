@@ -51,6 +51,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `merge` and `aggregate` commands would also forward `--summary` option to the underlying `log` command call.
 - Added `--merged` and `--not-merged` options for `log` command to show merged and not yet merged revisions respectively (works based on merge commits only).
 - Added `-merged-by` option for `log` command to display revisions merged by given revision(-s).
+- Added `--with-refs` option for `log` command to show refs, that revision belongs to in revision list.
 
 ### Changed
 - The `log` command will throw an exception, when given revision doesn't exist at given path.
