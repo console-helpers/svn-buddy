@@ -487,19 +487,22 @@ TEXT;
 						$color_format = in_array($path_data['path'], $merge_conflict_predication) ? 'error' : '';
 					}
 
-					$to_colorize = $path_action . '    ' . $relative_path;
+					$to_colorize = array($path_action . '    ' . $relative_path);
 
 					if ( isset($path_data['copyfrom-path']) ) {
 						$copy_from_rev = $path_data['copyfrom-rev'];
 						$copy_from_path = $this->_getRelativeLogPath($path_data, 'copyfrom-path', $repository_path);
-						$to_colorize .= PHP_EOL . '        (from ' . $copy_from_path . ':' . $copy_from_rev . ')';
+						$to_colorize[] = '        (from ' . $copy_from_path . ':' . $copy_from_rev . ')';
 					}
 
 					if ( $color_format ) {
-						$to_colorize = '<' . $color_format . '>' . $to_colorize . '</>';
+						$details .= '<' . $color_format . '>';
+						$details .= implode('</>' . PHP_EOL . '<' . $color_format . '>', $to_colorize);
+						$details .= '</>';
 					}
-
-					$details .= $to_colorize;
+					else {
+						$details .= implode(PHP_EOL, $to_colorize);
+					}
 				}
 
 				$table->addRow(new TableSeparator());

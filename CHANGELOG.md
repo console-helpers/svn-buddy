@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - When showing only first line from a multi-line commit message, then `...` wasn't shown at the end to indicate, that not all commit message is displayed.
 - The "," in bug list associated with a revision was colored in same color as bug itself, but it shouldn't be colored at all.
 - Only first line of commit message was displayed even in detailed revision view.
+- In `log` details view colored multi-line changed paths (e.g. copy operation) resulted in color affecting nearby cells.
 
 ## [0.1.0] - 2016-03-19
 ### Added
