@@ -70,13 +70,18 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$this->pathAcceptsUrl = true;
 
 		$description = <<<TEXT
-TODO
+<info>NOTE:</info>
+
+The revision is considered merged only, when associated merge revision
+can be found. Unfortunately Subversion doesn't create merge revisions
+on direct path operations (e.g. replacing <comment>tags/stable</comment> with <comment>trunk</comment>) and
+therefore affected revisions won't be considered as merged by SVN-Buddy.
 TEXT;
 
 		$this
 			->setName('log')
 			->setDescription(
-				'Show the log messages for revisions/bugs/path'
+				'Show the log messages for a set of revisions, bugs, paths, refs, etc.'
 			)
 			->setHelp($description)
 			->addArgument(
@@ -89,73 +94,73 @@ TEXT;
 				'revisions',
 				'r',
 				InputOption::VALUE_REQUIRED,
-				'Revision or revision range (e.g. "53324,34342,1224-4433,232")'
+				'List of revision(-s) and/or revision range(-s), e.g. <comment>53324</comment>, <comment>1224-4433</comment>'
 			)
 			->addOption(
 				'bugs',
 				'b',
 				InputOption::VALUE_REQUIRED,
-				'Bugs to merge (e.g. "JRA-1234,43644")'
+				'List of bug(-s), e.g. <comment>JRA-1234</comment>, <comment>43644</comment>'
 			)
 			->addOption(
 				'refs',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Refs (e.g. "trunk", "branches/branch-name", "tags/tag-name")'
-			)
-			->addOption(
-				'details',
-				'd',
-				InputOption::VALUE_NONE,
-				'Shows paths affected in each revision'
-			)
-			->addOption(
-				'summary',
-				's',
-				InputOption::VALUE_NONE,
-				'Shows summary of paths affected in each revision'
-			)
-			->addOption(
-				'merge-oracle',
-				null,
-				InputOption::VALUE_NONE,
-				'Detects commits with possible merge conflicts'
+				'List of refs, e.g. <comment>trunk</comment>, <comment>branches/branch-name</comment>, <comment>tags/tag-name</comment>'
 			)
 			->addOption(
 				'merges',
 				null,
 				InputOption::VALUE_NONE,
-				'Print only merge commits'
+				'Show merge revisions only'
 			)
 			->addOption(
 				'no-merges',
 				null,
 				InputOption::VALUE_NONE,
-				'Do not print merge commits'
+				'Hide merge revisions'
 			)
 			->addOption(
 				'merged',
 				null,
 				InputOption::VALUE_NONE,
-				'Print only merged commits'
-			)
-			->addOption(
-				'merged-by',
-				null,
-				InputOption::VALUE_REQUIRED,
-				'Show revisions merged via given revision(-s)'
+				'Shows only revisions, that were merged at least once'
 			)
 			->addOption(
 				'not-merged',
 				null,
 				InputOption::VALUE_NONE,
-				'Print only not merged commits'
+				'Shows only revisions, that were not merged'
+			)
+			->addOption(
+				'merged-by',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Show revisions merged by list of revision(-s) and/or revision range(-s)'
+			)
+			->addOption(
+				'details',
+				'd',
+				InputOption::VALUE_NONE,
+				'Shows detailed revision information, e.g. paths affected'
+			)
+			->addOption(
+				'summary',
+				's',
+				InputOption::VALUE_NONE,
+				'Shows number of added/changed/removed paths in the revision'
+			)
+			->addOption(
+				'merge-oracle',
+				null,
+				InputOption::VALUE_NONE,
+				'Shows number of paths in the revision, that can cause conflict upon merging'
 			)
 			->addOption(
 				'merge-status',
 				null,
 				InputOption::VALUE_NONE,
-				'Show merge revisions (if any) for each revisions'
+				'Shows merge revisions affecting this revision'
 			)
 			->addOption(
 				'max-count',
