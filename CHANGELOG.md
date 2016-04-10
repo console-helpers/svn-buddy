@@ -10,11 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - The `config` command now shows working copy url instead of path to stress fact, that settings are stored based on working copy url and not path.
+- Wrap list of bug, associated with revision to "3 per row" to avoid too wide table creation.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
 - The output (e.g. revision query progress bar) was interfering with auto-complete (e.g. `--refs` option of `log` command).
 - When showing only first line from a multi-line commit message, then `...` wasn't shown at the end to indicate, that not all commit message is displayed.
+- The "," in bug list associated with a revision was colored in same color as bug itself, but it shouldn't be colored at all.
 
 ## [0.1.0] - 2016-03-19
 ### Added

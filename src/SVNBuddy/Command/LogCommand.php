@@ -413,9 +413,9 @@ TEXT;
 				$log_message = mb_substr($log_message, 0, 68 - 3) . '...';
 			}
 
-			$new_bugs = implode(', ', $this->_revisionLog->getRevisionData('bugs', $revision));
+			$new_bugs = $this->_revisionLog->getRevisionData('bugs', $revision);
 
-			if ( isset($prev_bugs) && $new_bugs <> $prev_bugs ) {
+			if ( isset($prev_bugs) && $new_bugs !== $prev_bugs ) {
 				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
 			}
 
@@ -423,7 +423,7 @@ TEXT;
 				$revision,
 				$revision_data['author'],
 				$date_helper->getAgoTime($revision_data['date']),
-				'<fg=' . $last_color . '>' . $new_bugs . '</>',
+				$this->formatBugs($new_bugs, $last_color),
 				$log_message,
 			);
 
@@ -500,6 +500,27 @@ TEXT;
 		}
 
 		$table->render();
+	}
+
+	/**
+	 * Returns formatted list of bugs.
+	 *
+	 * @param array  $bugs  List of bugs.
+	 * @param string $color Color.
+	 *
+	 * @return string
+	 */
+	protected function formatBugs(array $bugs, $color)
+	{
+		$bug_chunks = array_chunk($bugs, 3);
+
+		$ret = array();
+
+		foreach ( $bug_chunks as $bug_chunk ) {
+			$ret[] = '<fg=' . $color . '>' . implode('</>, <fg=' . $color . '>', $bug_chunk) . '</>';
+		}
+
+		return implode(PHP_EOL, $ret);
 	}
 
 	/**
