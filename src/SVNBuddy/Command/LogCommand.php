@@ -425,9 +425,10 @@ TEXT;
 		$last_color = 'yellow';
 		$last_revision = end($revisions);
 
-		$repository_path = $this->repositoryConnector->getRelativePath(
+		$relative_wc_path = $this->repositoryConnector->getRelativePath(
 			$this->getWorkingCopyPath()
 		) . '/';
+		$project_path = $this->repositoryConnector->getProjectUrl($relative_wc_path) . '/';
 
 		$log_message_limit = $this->getSetting(self::SETTING_LOG_MESSAGE_LIMIT);
 		$bugs_per_row = $with_details ? 1 : 3;
@@ -501,10 +502,11 @@ TEXT;
 
 			if ( $with_details ) {
 				$details = '<fg=white;options=bold>Changed Paths:</>';
+				$path_cut_off_regexp = $this->getPathCutOffRegExp($project_path, $revision);
 
 				foreach ( $revision_paths as $path_data ) {
 					$path_action = $path_data['action'];
-					$relative_path = $this->_getRelativeLogPath($path_data, 'path', $repository_path);
+					$relative_path = $this->_getRelativeLogPath($path_data, 'path', $path_cut_off_regexp);
 
 					$details .= PHP_EOL . ' * ';
 
@@ -523,7 +525,7 @@ TEXT;
 					if ( isset($path_data['copyfrom-path']) ) {
 						// TODO: When copy happened from different ref/project, then relative path = absolute path.
 						$copy_from_rev = $path_data['copyfrom-rev'];
-						$copy_from_path = $this->_getRelativeLogPath($path_data, 'copyfrom-path', $repository_path);
+						$copy_from_path = $this->_getRelativeLogPath($path_data, 'copyfrom-path', $path_cut_off_regexp);
 						$to_colorize[] = '        (from ' . $copy_from_path . ':' . $copy_from_rev . ')';
 					}
 
@@ -687,13 +689,13 @@ TEXT;
 	/**
 	 * Returns relative path to "svn log" returned path.
 	 *
-	 * @param array  $path_data       Path data.
-	 * @param string $path_key        Path key.
-	 * @param string $repository_path Repository path.
+	 * @param array  $path_data           Path data.
+	 * @param string $path_key            Path key.
+	 * @param string $path_cut_off_regexp Path cut off regexp.
 	 *
 	 * @return string
 	 */
-	private function _getRelativeLogPath(array $path_data, $path_key, $repository_path)
+	private function _getRelativeLogPath(array $path_data, $path_key, $path_cut_off_regexp)
 	{
 		$ret = $path_data[$path_key];
 
@@ -701,13 +703,37 @@ TEXT;
 			$ret .= '/';
 		}
 
-		$ret = preg_replace('/^' . preg_quote($repository_path, '/') . '/', '', $ret, 1);
+		$ret = preg_replace($path_cut_off_regexp, '', $ret, 1);
 
 		if ( $ret === '' ) {
 			$ret = '.';
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Returns path cut off regexp.
+	 *
+	 * @param string  $project_path Project path.
+	 * @param integer $revision     Revision.
+	 *
+	 * @return string
+	 */
+	protected function getPathCutOffRegExp($project_path, $revision)
+	{
+		$ret = array();
+		$refs = $this->_revisionLog->getRevisionData('refs', $revision);
+
+		// Remove ref from path only for single-ref revision.
+		if ( count($refs) === 1 ) {
+			$ret[] = $project_path . reset($refs) . '/';
+		}
+
+		// Always remove project path.
+		$ret[] = $project_path;
+
+		return '#^(' . implode('|', array_map('preg_quote', $ret)) . ')#';
 	}
 
 	/**

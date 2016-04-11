@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `--source-url` option of `merge` command can be specified in short form (e.g. `trunk`, `branches/branch-name`, `tags/tag-name`, `name` (for branch-to-branch or tag-to-tag merges).
 - Added `--refs` option (with auto-complete) for `log` command to show revisions from ref instead of current working copy path.
 - Added `log.message-limit` config setting (defaults to 68), that allows to specify optimal commit message column width.
+- Added `--with-refs` option for `log` command to show refs, that revision belongs to in revision list.
 
 ### Changed
 - The `config` command now shows working copy url instead of path to stress fact, that settings are stored based on working copy url and not path.
@@ -19,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `--details` option of `log`, 'aggregate' and `merge` commands renamed into `--with-details`.
 - When all revisions are displayed by `log` command display "Showing X revision(-s)" instead of "Showing X of X revision(-s)".
 - The `Merged Via` column (available when `--with-merge-status` option used) of `log` command also shows refs, that merge revision belongs to.
+- Improved revision path absolute-to-relative transformer and now: the project path is always cut off; the ref is cut off only for single-ref revisions.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
@@ -28,6 +30,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Only first line of commit message was displayed even in detailed revision view.
 - In `log` details view colored multi-line changed paths (e.g. copy operation) resulted in color affecting nearby cells.
 - The "," was lost when bug list was wrapped to the next line.
+- When `--refs` option of `log` command was used together with `--with-details` option the revision path were not transformed from absolute to relative.
 
 ## [0.1.0] - 2016-03-19
 ### Added
@@ -53,7 +56,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `merge` and `aggregate` commands would also forward `--summary` option to the underlying `log` command call.
 - Added `--merged` and `--not-merged` options for `log` command to show merged and not yet merged revisions respectively (works based on merge commits only).
 - Added `-merged-by` option for `log` command to display revisions merged by given revision(-s).
-- Added `--with-refs` option for `log` command to show refs, that revision belongs to in revision list.
 
 ### Changed
 - The `log` command will throw an exception, when given revision doesn't exist at given path.
