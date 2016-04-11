@@ -45,7 +45,7 @@ class CommitCommand extends AbstractCommand
 		$this
 			->setName('commit')
 			->setDescription(
-				'Sends changes to repository'
+				'Send changes from your working copy to the repository'
 			)
 			->setAliases(array('ci'))
 			->addArgument(
