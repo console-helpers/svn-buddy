@@ -85,7 +85,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	{
 		$this
 			->setName('merge')
-			->setDescription('Applies the change from another source to a working copy path')
+			->setDescription('Merge changes from another refs within same project into a working copy')
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,
@@ -96,13 +96,13 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'source-url',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Source url (absolute or relative url, same project branch/tag name)'
+				'Merge source url (absolute or relative) or ref name, e.g. <comment>branches/branch-name</comment>'
 			)
 			->addOption(
 				'revisions',
 				'r',
 				InputOption::VALUE_REQUIRED,
-				'List of revision(-s) and/or revision range(-s) to merge, e.g. <comment>53324</comment>, <comment>1224-4433</comment> or <comment>all</comment> to merge all'
+				'List of revision(-s) and/or revision range(-s) to merge, e.g. <comment>53324</comment>, <comment>1224-4433</comment> or <comment>all</comment>'
 			)
 			->addOption(
 				'bugs',
