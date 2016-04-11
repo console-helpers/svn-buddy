@@ -71,21 +71,11 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	{
 		$this->pathAcceptsUrl = true;
 
-		$description = <<<TEXT
-<info>NOTE:</info>
-
-The revision is considered merged only, when associated merge revision
-can be found. Unfortunately Subversion doesn't create merge revisions
-on direct path operations (e.g. replacing <comment>tags/stable</comment> with <comment>trunk</comment>) and
-therefore affected revisions won't be considered as merged by SVN-Buddy.
-TEXT;
-
 		$this
 			->setName('log')
 			->setDescription(
 				'Show the log messages for a set of revisions, bugs, paths, refs, etc.'
 			)
-			->setHelp($description)
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,

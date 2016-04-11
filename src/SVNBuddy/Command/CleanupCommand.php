@@ -23,16 +23,11 @@ class CleanupCommand extends AbstractCommand implements IAggregatorAwareCommand
 	 */
 	protected function configure()
 	{
-		$description = <<<TEXT
-TODO
-TEXT;
-
 		$this
 			->setName('cleanup')
 			->setDescription(
 				'Recursively clean up the working copy, removing locks, resuming unfinished operations, etc.'
 			)
-			->setHelp($description)
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,

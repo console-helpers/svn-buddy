@@ -23,14 +23,9 @@ class RevertCommand extends AbstractCommand implements IAggregatorAwareCommand
 	 */
 	protected function configure()
 	{
-		$description = <<<TEXT
-TODO
-TEXT;
-
 		$this
 			->setName('revert')
 			->setDescription('Restore pristine working copy file (undo most local edits)')
-			->setHelp($description)
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,

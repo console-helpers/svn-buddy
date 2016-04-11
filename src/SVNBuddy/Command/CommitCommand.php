@@ -42,16 +42,11 @@ class CommitCommand extends AbstractCommand
 	 */
 	protected function configure()
 	{
-		$description = <<<TEXT
-TODO
-TEXT;
-
 		$this
 			->setName('commit')
 			->setDescription(
 				'Sends changes to repository'
 			)
-			->setHelp($description)
 			->setAliases(array('ci'))
 			->addArgument(
 				'path',

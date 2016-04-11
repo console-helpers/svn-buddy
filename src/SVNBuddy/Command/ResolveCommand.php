@@ -24,14 +24,9 @@ class ResolveCommand extends AbstractCommand
 	 */
 	protected function configure()
 	{
-		$description = <<<TEXT
-TODO
-TEXT;
-
 		$this
 			->setName('resolve')
 			->setDescription('Interactively resolves working copy conflicts')
-			->setHelp($description)
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,

@@ -51,14 +51,9 @@ class ConfigCommand extends AbstractCommand implements IAggregatorAwareCommand
 	 */
 	protected function configure()
 	{
-		$description = <<<TEXT
-TODO
-TEXT;
-
 		$this
 			->setName('config')
 			->setDescription('Change configuration settings, that are used by other commands')
-			->setHelp($description)
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,

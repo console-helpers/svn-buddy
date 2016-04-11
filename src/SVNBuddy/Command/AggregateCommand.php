@@ -30,16 +30,11 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 	 */
 	protected function configure()
 	{
-		$description = <<<TEXT
-TODO
-TEXT;
-
 		$this
 			->setName('aggregate')
 			->setDescription(
 				'Runs other command sequentially on every working copy on a path'
 			)
-			->setHelp($description)
 			->addArgument(
 				'sub-command',
 				InputArgument::REQUIRED,

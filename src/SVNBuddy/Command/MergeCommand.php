@@ -83,14 +83,9 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 */
 	protected function configure()
 	{
-		$description = <<<TEXT
-TODO
-TEXT;
-
 		$this
 			->setName('merge')
 			->setDescription('Applies the change from another source to a working copy path')
-			->setHelp($description)
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,
