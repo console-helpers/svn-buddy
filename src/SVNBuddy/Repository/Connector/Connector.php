@@ -96,7 +96,7 @@ class Connector
 		$cache_duration = $this->_configEditor->get('repository-connector.last-revision-cache-duration');
 
 		if ( (string)$cache_duration === '' || substr($cache_duration, 0, 1) === '0' ) {
-			$cache_duration = null;
+			$cache_duration = 0;
 		}
 
 		$this->_lastRevisionCacheDuration = $cache_duration;
@@ -224,24 +224,28 @@ class Connector
 	/**
 	 * Returns relative path of given path/url to the root of the repository.
 	 *
-	 * @param string $path_or_url    Path or url.
-	 * @param mixed  $cache_duration Cache duration.
+	 * @param string $path_or_url Path or url.
 	 *
 	 * @return string
 	 */
-	public function getRelativePath($path_or_url, $cache_duration = null)
+	public function getRelativePath($path_or_url)
 	{
-		// Cache "svn info" commands to remote urls, not the working copy.
-		if ( !isset($cache_duration) && $this->isUrl($path_or_url) ) {
-			$cache_duration = '1 year';
-		}
-
-		$svn_info = $this->withCache($cache_duration)->_getSvnInfoEntry($path_or_url);
-
-		$wc_url = (string)$svn_info->url;
-		$repository_root_url = (string)$svn_info->repository->root;
+		$repository_root_url = $this->getRootUrl($path_or_url);
+		$wc_url = (string)$this->_getSvnInfoEntry($path_or_url)->url;
 
 		return preg_replace('/^' . preg_quote($repository_root_url, '/') . '/', '', $wc_url, 1);
+	}
+
+	/**
+	 * Returns repository root url from given path/url.
+	 *
+	 * @param string $path_or_url Path or url.
+	 *
+	 * @return string
+	 */
+	public function getRootUrl($path_or_url)
+	{
+		return (string)$this->_getSvnInfoEntry($path_or_url)->repository->root;
 	}
 
 	/**
@@ -299,21 +303,16 @@ class Connector
 	/**
 	 * Returns last changed revision on path/url.
 	 *
-	 * @param string $path_or_url    Path or url.
-	 * @param mixed  $cache_duration Cache duration.
+	 * @param string $path_or_url Path or url.
 	 *
 	 * @return integer
 	 */
-	public function getLastRevision($path_or_url, $cache_duration = null)
+	public function getLastRevision($path_or_url)
 	{
 		// Cache "svn info" commands to remote urls, not the working copy.
-		if ( !isset($cache_duration) && $this->isUrl($path_or_url) ) {
-			$cache_duration = $this->_lastRevisionCacheDuration;
-		}
+		$cache_duration = $this->isUrl($path_or_url) ? $this->_lastRevisionCacheDuration : null;
 
-		$svn_info = $this->withCache($cache_duration)->_getSvnInfoEntry($path_or_url);
-
-		return (int)$svn_info->commit['revision'];
+		return (int)$this->_getSvnInfoEntry($path_or_url, $cache_duration)->commit['revision'];
 	}
 
 	/**
@@ -347,14 +346,20 @@ class Connector
 	/**
 	 * Returns "svn info" entry for path or url.
 	 *
-	 * @param string $path_or_url Path or url.
+	 * @param string $path_or_url    Path or url.
+	 * @param mixed  $cache_duration Cache duration.
 	 *
 	 * @return \SimpleXMLElement
 	 * @throws \LogicException When unexpected 'svn info' results retrieved.
 	 */
-	private function _getSvnInfoEntry($path_or_url)
+	private function _getSvnInfoEntry($path_or_url, $cache_duration = null)
 	{
-		$svn_info = $this->getCommand('info', '--xml {' . $path_or_url . '}')->run();
+		// Cache "svn info" commands to remote urls, not the working copy.
+		if ( !isset($cache_duration) && $this->isUrl($path_or_url) ) {
+			$cache_duration = '1 year';
+		}
+
+		$svn_info = $this->withCache($cache_duration)->getCommand('info', '--xml {' . $path_or_url . '}')->run();
 
 		// When getting remote "svn info", then path is last folder only.
 		if ( basename($this->_getSvnInfoEntryPath($svn_info->entry)) != basename($path_or_url) ) {

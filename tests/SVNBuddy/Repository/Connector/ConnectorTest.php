@@ -315,27 +315,7 @@ MESSAGE;
 			$raw_command_output
 		);
 
-		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath(self::DUMMY_REPO, null));
-	}
-
-	public function testGetRelativePathWithManualCaching()
-	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
-		$raw_command_output = $this->getFixture('svn_info_remote.xml');
-
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('command:' . $raw_command, $raw_command_output, null, '5 hours')
-			->shouldBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
-
-		$this->_expectCommand(
-			$raw_command,
-			$raw_command_output
-		);
-
-		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath(self::DUMMY_REPO, '5 hours'));
+		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath(self::DUMMY_REPO));
 	}
 
 	public function testGetRelativePathNoAutomaticCachingForPaths()
@@ -352,7 +332,44 @@ MESSAGE;
 			$this->getFixture('svn_info_16.xml')
 		);
 
-		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path, null));
+		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path));
+	}
+
+	public function testGetRootUrlWithAutomaticCaching()
+	{
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('command:' . $raw_command, $raw_command_output, null, '1 year')
+			->shouldBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b');
+
+		$this->_expectCommand(
+			$raw_command,
+			$raw_command_output
+		);
+
+		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl(self::DUMMY_REPO));
+	}
+
+	public function testGetRootUrlNoAutomaticCachingForPaths()
+	{
+		$path = '/path/to/working-copy';
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
+
+		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+
+		$this->_expectCommand(
+			$raw_command,
+			$this->getFixture('svn_info_16.xml')
+		);
+
+		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($path));
 	}
 
 	/**
@@ -391,7 +408,7 @@ MESSAGE;
 			$this->getFixture('svn_info_remote.xml')
 		);
 
-		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO, null));
+		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO));
 	}
 
 	public function getLastRevisionWithoutAutomaticDataProvider()
@@ -421,27 +438,7 @@ MESSAGE;
 			$raw_command_output
 		);
 
-		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO, null));
-	}
-
-	public function testGetLastRevisionWithManualCaching()
-	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
-		$raw_command_output = $this->getFixture('svn_info_remote.xml');
-
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('command:' . $raw_command, $raw_command_output, null, '5 hours')
-			->shouldBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
-
-		$this->_expectCommand(
-			$raw_command,
-			$raw_command_output
-		);
-
-		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO, '5 hours'));
+		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO));
 	}
 
 	public function testGetLastRevisionNoAutomaticCachingForPaths()
@@ -458,7 +455,7 @@ MESSAGE;
 			$this->getFixture('svn_info_16.xml')
 		);
 
-		$this->assertEquals(100, $repository_connector->getLastRevision($path, null));
+		$this->assertEquals(100, $repository_connector->getLastRevision($path));
 	}
 
 	/**
