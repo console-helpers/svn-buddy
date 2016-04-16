@@ -103,10 +103,16 @@ class RevertCommand extends AbstractCommand implements IAggregatorAwareCommand
 
 		foreach ( $paths as $path ) {
 			$absolute_path = $wc_path . '/' . $path;
+
+			// At some point "svn revert" was improved to do this (maybe after SVN 1.6).
+			if ( !file_exists($absolute_path) ) {
+				continue;
+			}
+
 			$deleted = is_dir($absolute_path) ? rmdir($absolute_path) : unlink($absolute_path);
 
 			if ( $deleted ) {
-				$this->io->writeln('Deleted \'' . str_replace($wc_path, '.', $absolute_path) . '\'');
+				$this->io->writeln('Reverted \'' . str_replace($wc_path, '.', $absolute_path) . '\'');
 			}
 			else {
 				throw new CommandException('Unable to delete "' . $path . '".');
