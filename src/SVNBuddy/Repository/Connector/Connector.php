@@ -519,7 +519,7 @@ class Connector
 	 *
 	 * @return array
 	 */
-	protected function getWorkingCopyStatus($wc_path)
+	public function getWorkingCopyStatus($wc_path)
 	{
 		$ret = array();
 		$status = $this->getCommand('status', '--xml {' . $wc_path . '}')->run();
