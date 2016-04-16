@@ -423,8 +423,21 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$log_message_limit = $this->getSetting(self::SETTING_LOG_MESSAGE_LIMIT);
 		$bugs_per_row = $with_details ? 1 : 3;
 
+		$revisions_data = $this->_revisionLog->getRevisionsData('summary', $revisions);
+		$revisions_paths = $this->_revisionLog->getRevisionsData('paths', $revisions);
+		$revisions_bugs = $this->_revisionLog->getRevisionsData('bugs', $revisions);
+		$revisions_refs = $this->_revisionLog->getRevisionsData('refs', $revisions);
+
+		if ( $with_merge_status ) {
+			$revisions_merged_via = $this->_revisionLog->getRevisionsData('merges', $revisions);
+			$revisions_merged_via_refs = $this->_revisionLog->getRevisionsData(
+				'refs',
+				call_user_func_array('array_merge', $revisions_merged_via)
+			);
+		}
+
 		foreach ( $revisions as $revision ) {
-			$revision_data = $this->_revisionLog->getRevisionData('summary', $revision);
+			$revision_data = $revisions_data[$revision];
 
 			if ( $with_details ) {
 				// When details requested don't transform commit message except for word wrapping.
@@ -442,7 +455,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				}
 			}
 
-			$new_bugs = $this->_revisionLog->getRevisionData('bugs', $revision);
+			$new_bugs = $revisions_bugs[$revision];
 
 			if ( isset($prev_bugs) && $new_bugs !== $prev_bugs ) {
 				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
@@ -456,7 +469,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				$log_message,
 			);
 
-			$revision_paths = $this->_revisionLog->getRevisionData('paths', $revision);
+			$revision_paths = $revisions_paths[$revision];
 
 			// Add "Summary" column.
 			if ( $with_summary ) {
@@ -466,7 +479,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			// Add "Refs" column.
 			if ( $with_refs ) {
 				$row[] = $this->formatArray(
-					$this->_revisionLog->getRevisionData('refs', $revision),
+					$revisions_refs[$revision],
 					1
 				);
 			}
@@ -485,14 +498,14 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 
 			// Add "Merged Via" column.
 			if ( $with_merge_status ) {
-				$row[] = $this->generateMergedVia($revision);
+				$row[] = $this->generateMergedVia($revisions_merged_via[$revision], $revisions_merged_via_refs);
 			}
 
 			$table->addRow($row);
 
 			if ( $with_details ) {
 				$details = '<fg=white;options=bold>Changed Paths:</>';
-				$path_cut_off_regexp = $this->getPathCutOffRegExp($project_path, $revision);
+				$path_cut_off_regexp = $this->getPathCutOffRegExp($project_path, $revisions_refs[$revision]);
 
 				foreach ( $revision_paths as $path_data ) {
 					$path_action = $path_data['action'];
@@ -611,14 +624,13 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	/**
 	 * Generates content for "Merged Via" cell content.
 	 *
-	 * @param integer $revision Revision.
+	 * @param array $merged_via                Merged Via.
+	 * @param array $revisions_merged_via_refs Merged Via Refs.
 	 *
 	 * @return string
 	 */
-	protected function generateMergedVia($revision)
+	protected function generateMergedVia(array $merged_via, array $revisions_merged_via_refs)
 	{
-		$merged_via = $this->_revisionLog->getRevisionData('merges', $revision);
-
 		if ( !$merged_via ) {
 			return '';
 		}
@@ -626,7 +638,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$merged_via_enhanced = array();
 
 		foreach ( $merged_via as $merged_via_revision ) {
-			$merged_via_revision_refs = $this->_revisionLog->getRevisionData('refs', $merged_via_revision);
+			$merged_via_revision_refs = $revisions_merged_via_refs[$merged_via_revision];
 
 			if ( $merged_via_revision_refs ) {
 				$merged_via_enhanced[] = $merged_via_revision . ' (' . implode(',', $merged_via_revision_refs) . ')';
@@ -705,15 +717,14 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	/**
 	 * Returns path cut off regexp.
 	 *
-	 * @param string  $project_path Project path.
-	 * @param integer $revision     Revision.
+	 * @param string $project_path Project path.
+	 * @param array  $refs         Refs.
 	 *
 	 * @return string
 	 */
-	protected function getPathCutOffRegExp($project_path, $revision)
+	protected function getPathCutOffRegExp($project_path, array $refs)
 	{
 		$ret = array();
-		$refs = $this->_revisionLog->getRevisionData('refs', $revision);
 
 		// Remove ref from path only for single-ref revision.
 		if ( count($refs) === 1 ) {

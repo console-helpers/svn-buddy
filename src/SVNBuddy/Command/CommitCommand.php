@@ -157,9 +157,10 @@ class CommitCommand extends AbstractCommand
 			$revision_log = $this->getRevisionLog($repository_url . $path);
 			$commit_message .= $this->getCommitMessageHeading($wc_url, $path) . PHP_EOL;
 
+			$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
+
 			foreach ( $revisions as $revision ) {
-				$revision_data = $revision_log->getRevisionData('summary', $revision);
-				$merged_messages[] = ' * r' . $revision . ': ' . $revision_data['msg'];
+				$merged_messages[] = ' * r' . $revision . ': ' . $revisions_data[$revision]['msg'];
 			}
 
 			$merged_messages = array_unique(array_map('trim', $merged_messages));

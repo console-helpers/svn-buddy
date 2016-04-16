@@ -259,7 +259,7 @@ class RevisionLog
 	 * @return array
 	 * @throws \InvalidArgumentException When unknown plugin is given.
 	 */
-	public function getRevisionData($plugin_name, $revision)
+	protected function getRevisionData($plugin_name, $revision)
 	{
 		if ( !$this->pluginRegistered($plugin_name) ) {
 			throw new \InvalidArgumentException('The "' . $plugin_name . '" revision log plugin is unknown.');
@@ -308,9 +308,10 @@ class RevisionLog
 	public function getBugsFromRevisions(array $revisions)
 	{
 		$bugs = array();
+		$revisions_bugs = $this->getRevisionsData('bugs', $revisions);
 
 		foreach ( $revisions as $revision ) {
-			$revision_bugs = $this->getRevisionData('bugs', $revision);
+			$revision_bugs = $revisions_bugs[$revision];
 
 			foreach ( $revision_bugs as $bug_id ) {
 				$bugs[$bug_id] = true;

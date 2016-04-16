@@ -435,10 +435,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 		try {
 			$revisions = $this->_revisionListParser->expandRanges($revisions);
-
-			foreach ( $revisions as $revision ) {
-				$revision_log->getRevisionData('summary', $revision);
-			}
+			$revision_log->getRevisionsData('summary', $revisions);
 		}
 		catch ( \InvalidArgumentException $e ) {
 			throw new CommandException($e->getMessage());
