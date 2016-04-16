@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `log.message-limit` config setting (defaults to 68), that allows to specify optimal commit message column width.
 - Added `--with-refs` option for `log` command to show refs, that revision belongs to in revision list.
 - The `revert` command now not also reverts changes to paths, that are committed, but also deletes added paths.
+- The `--verbose` option now also shows names of accessed cache files.
 
 ### Changed
 - The `config` command now shows working copy url instead of path to stress fact, that settings are stored based on working copy url and not path.

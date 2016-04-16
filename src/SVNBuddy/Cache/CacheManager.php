@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Cache;
 
 
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
+
 class CacheManager
 {
 
@@ -22,13 +24,22 @@ class CacheManager
 	private $_workingDirectory;
 
 	/**
+	 * Console IO.
+	 *
+	 * @var ConsoleIO
+	 */
+	private $_io;
+
+	/**
 	 * Create cache manager.
 	 *
-	 * @param string $working_directory Working directory.
+	 * @param string    $working_directory Working directory.
+	 * @param ConsoleIO $io                Console IO.
 	 */
-	public function __construct($working_directory)
+	public function __construct($working_directory, ConsoleIO $io = null)
 	{
 		$this->_workingDirectory = $working_directory;
+		$this->_io = $io;
 	}
 
 	/**
@@ -103,7 +114,12 @@ class CacheManager
 		$name_hash = substr(hash_hmac('sha1', $parts[1], 'svn-buddy'), 0, 8);
 		$cache_filename = $this->_workingDirectory . DIRECTORY_SEPARATOR . $parts[0] . '_' . $name_hash . '.cache';
 
-		// echo PHP_EOL . 'Cache File: ' . $cache_filename . PHP_EOL;
+		if ( isset($this->_io) && $this->_io->isVerbose() ) {
+			$this->_io->writeln(array(
+				'',
+				'<fg=white;bg=magenta>[cache]: ' . $cache_filename . '</>',
+			));
+		}
 
 		return new FileCacheStorage($cache_filename);
 	}
