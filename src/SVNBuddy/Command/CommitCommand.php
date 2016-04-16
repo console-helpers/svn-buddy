@@ -150,7 +150,7 @@ class CommitCommand extends AbstractCommand
 
 		$commit_message = '';
 		$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
-		$repository_url = $this->removePathFromURL($wc_url);
+		$repository_url = $this->repositoryConnector->getRootUrl($wc_url);
 
 		foreach ( $merged_revisions as $path => $revisions ) {
 			$merged_messages = array();
@@ -204,20 +204,6 @@ class CommitCommand extends AbstractCommand
 		}
 
 		return $ret;
-	}
-
-	/**
-	 * Removes path component from URL.
-	 *
-	 * @param string $url URL.
-	 *
-	 * @return string
-	 */
-	protected function removePathFromURL($url)
-	{
-		$path = parse_url($url, PHP_URL_PATH);
-
-		return preg_replace('#' . preg_quote($path, '#') . '$#', '', $url, 1);
 	}
 
 	/**

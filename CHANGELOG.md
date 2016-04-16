@@ -31,6 +31,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - In `log` details view colored multi-line changed paths (e.g. copy operation) resulted in color affecting nearby cells.
 - The "," was lost when bug list was wrapped to the next line.
 - When `--refs` option of `log` command was used together with `--with-details` option the revision path were not transformed from absolute to relative.
+- The Subversion repositories hosted on https://unfuddle.com/ were not usable from `commit` command.
 
 ## [0.1.0] - 2016-03-19
 ### Added
