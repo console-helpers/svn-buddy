@@ -122,34 +122,38 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$revision_log->find('mocked', '');
 	}
 
-	public function testGetRevisionDataSuccess()
+	public function testGetRevisionsDataSuccess()
 	{
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->getRevisionData(1)->willReturn('OK')->shouldBeCalled();
+		$plugin->getRevisionsData(array(1))->willReturn('OK')->shouldBeCalled();
 
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
-		$this->assertEquals('OK', $revision_log->getRevisionData('mocked', 1));
+		$this->assertEquals('OK', $revision_log->getRevisionsData('mocked', array(1)));
 	}
 
 	/**
 	 * @expectedException \InvalidArgumentException
 	 * @expectedExceptionMessage The "mocked" revision log plugin is unknown.
 	 */
-	public function testGetRevisionDataFailure()
+	public function testGetRevisionsDataFailure()
 	{
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
-		$revision_log->getRevisionData('mocked', 0);
+		$revision_log->getRevisionsData('mocked', array(0));
 	}
 
 	public function testGetBugsFromRevisions()
 	{
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
 		$plugin->getName()->willReturn('bugs')->shouldBeCalled();
-		$plugin->getRevisionData(1)->willReturn(array('A', 'B'))->shouldBeCalled();
-		$plugin->getRevisionData(2)->willReturn(array('B', 'C'))->shouldBeCalled();
+		$plugin->getRevisionsData(array(1, 2))
+			->willReturn(array(
+				1 => array('A', 'B'),
+				2 => array('B', 'C'),
+			))
+			->shouldBeCalled();
 
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
