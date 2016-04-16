@@ -245,6 +245,48 @@ class PathsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->plugin->getRevisionData(100);
 	}
 
+	public function testGetRevisionsDataSuccess()
+	{
+		$expected = array(
+			array(
+				'path' => '/folder/sub-folder/file1.php',
+				'kind' => 'file',
+				'action' => 'M',
+			),
+			array(
+				'path' => '/folder/sub-folder/file2.php',
+				'kind' => 'file',
+				'action' => 'M',
+			),
+		);
+
+		$collected_data = array(
+			'revision_paths' => array(
+				100 => $expected,
+			),
+			'path_revisions' => array(
+				'/folder/sub-folder/file1.php' => array(100),
+				'/folder/sub-folder/file2.php' => array(100),
+			),
+		);
+
+		$this->plugin->setCollectedData($collected_data);
+
+		$this->assertEquals(
+			array(100 => $expected),
+			$this->plugin->getRevisionsData(array(100))
+		);
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage Revision(-s) "100" not found by "paths" plugin.
+	 */
+	public function testGetRevisionsDataFailure()
+	{
+		$this->plugin->getRevisionsData(array(100));
+	}
+
 	public function testGetCacheInvalidator()
 	{
 		$this->assertInternalType('integer', $this->plugin->getCacheInvalidator());

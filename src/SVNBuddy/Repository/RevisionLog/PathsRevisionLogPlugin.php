@@ -11,7 +11,7 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-class PathsRevisionLogPlugin implements IRevisionLogPlugin
+class PathsRevisionLogPlugin extends AbstractRevisionLogPlugin
 {
 	const CACHE_FORMAT_VERSION = 1;
 
@@ -126,6 +126,28 @@ class PathsRevisionLogPlugin implements IRevisionLogPlugin
 		}
 
 		return $this->_revisionPaths[$revision];
+	}
+
+	/**
+	 * Returns information about revisions.
+	 *
+	 * @param array $revisions Revisions.
+	 *
+	 * @return array
+	 */
+	public function getRevisionsData(array $revisions)
+	{
+		$results = array();
+
+		foreach ( $revisions as $revision ) {
+			if ( isset($this->_revisionPaths[$revision]) ) {
+				$results[$revision] = $this->_revisionPaths[$revision];
+			}
+		}
+
+		$this->assertNoMissingRevisions($revisions, $results);
+
+		return $results;
 	}
 
 	/**

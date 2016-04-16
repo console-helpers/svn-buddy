@@ -11,7 +11,7 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-class SummaryRevisionLogPlugin implements IRevisionLogPlugin
+class SummaryRevisionLogPlugin extends AbstractRevisionLogPlugin
 {
 	const CACHE_FORMAT_VERSION = 1;
 
@@ -124,6 +124,28 @@ class SummaryRevisionLogPlugin implements IRevisionLogPlugin
 		}
 
 		return $this->_revisionSummary[$revision];
+	}
+
+	/**
+	 * Returns information about revisions.
+	 *
+	 * @param array $revisions Revisions.
+	 *
+	 * @return array
+	 */
+	public function getRevisionsData(array $revisions)
+	{
+		$results = array();
+
+		foreach ( $revisions as $revision ) {
+			if ( isset($this->_revisionSummary[$revision]) ) {
+				$results[$revision] = $this->_revisionSummary[$revision];
+			}
+		}
+
+		$this->assertNoMissingRevisions($revisions, $results);
+
+		return $results;
 	}
 
 	/**

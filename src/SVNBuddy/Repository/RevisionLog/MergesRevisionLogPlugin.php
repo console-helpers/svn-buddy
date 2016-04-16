@@ -11,7 +11,7 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-class MergesRevisionLogPlugin implements IRevisionLogPlugin
+class MergesRevisionLogPlugin extends AbstractRevisionLogPlugin
 {
 	const CACHE_FORMAT_VERSION = 1;
 
@@ -122,6 +122,26 @@ class MergesRevisionLogPlugin implements IRevisionLogPlugin
 	{
 		// When revision wasn't yet merged, the merge revisions list is empty.
 		return isset($this->_mergedRevisions[$revision]) ? $this->_mergedRevisions[$revision] : array();
+	}
+
+	/**
+	 * Returns information about revisions.
+	 *
+	 * @param array $revisions Revisions.
+	 *
+	 * @return array
+	 */
+	public function getRevisionsData(array $revisions)
+	{
+		$results = array();
+
+		foreach ( $revisions as $revision ) {
+			if ( isset($this->_mergedRevisions[$revision]) ) {
+				$results[$revision] = $this->_mergedRevisions[$revision];
+			}
+		}
+
+		return $this->addMissingResults($revisions, $results);
 	}
 
 	/**

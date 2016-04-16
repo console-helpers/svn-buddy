@@ -161,6 +161,29 @@ class BugsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->plugin->getRevisionData(100);
 	}
 
+	public function testGetRevisionsData()
+	{
+		$collected_data = array(
+			'revision_bugs' => array(
+				100 => array('JRA-1', 'JRA-2'),
+			),
+			'bug_revisions' => array(
+				'JRA-1' => array(100),
+				'JRA-2' => array(100),
+			),
+		);
+
+		$this->plugin->setCollectedData($collected_data);
+
+		$this->assertEquals(
+			array(
+				100 => array('JRA-1', 'JRA-2'),
+				50 => array(),
+			),
+			$this->plugin->getRevisionsData(array(100, 50))
+		);
+	}
+
 	public function testGetCacheInvalidator()
 	{
 		$this->assertInternalType('integer', $this->plugin->getCacheInvalidator());

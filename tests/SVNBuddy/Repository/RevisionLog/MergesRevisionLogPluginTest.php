@@ -182,6 +182,29 @@ class MergesRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->assertEmpty($this->plugin->getRevisionData(100));
 	}
 
+	public function testGetRevisionsData()
+	{
+		$collected_data = array(
+			'merge_revisions' => array(
+				100 => array(50),
+				200 => array(50),
+			),
+			'merged_revisions' => array(
+				50 => array(100, 200),
+			),
+		);
+
+		$this->plugin->setCollectedData($collected_data);
+
+		$this->assertEquals(
+			array(
+				50 => array(100, 200),
+				70 => array(),
+			),
+			$this->plugin->getRevisionsData(array(50, 70))
+		);
+	}
+
 	public function testGetCacheInvalidator()
 	{
 		$this->assertInternalType('integer', $this->plugin->getCacheInvalidator());

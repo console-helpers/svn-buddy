@@ -13,7 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser;
 
-class BugsRevisionLogPlugin implements IRevisionLogPlugin
+class BugsRevisionLogPlugin extends AbstractRevisionLogPlugin
 {
 	const CACHE_FORMAT_VERSION = 1;
 
@@ -124,6 +124,26 @@ class BugsRevisionLogPlugin implements IRevisionLogPlugin
 		}
 
 		return $this->_revisionBugs[$revision];
+	}
+
+	/**
+	 * Returns information about revisions.
+	 *
+	 * @param array $revisions Revisions.
+	 *
+	 * @return array
+	 */
+	public function getRevisionsData(array $revisions)
+	{
+		$results = array();
+
+		foreach ( $revisions as $revision ) {
+			if ( isset($this->_revisionBugs[$revision]) ) {
+				$results[$revision] = $this->_revisionBugs[$revision];
+			}
+		}
+
+		return $this->addMissingResults($revisions, $results);
 	}
 
 	/**

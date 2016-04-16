@@ -50,6 +50,15 @@ interface IRevisionLogPlugin
 	public function getRevisionData($revision);
 
 	/**
+	 * Returns information about revisions.
+	 *
+	 * @param array $revisions Revisions.
+	 *
+	 * @return array
+	 */
+	public function getRevisionsData(array $revisions);
+
+	/**
 	 * Returns data, collected by plugin.
 	 *
 	 * @return array

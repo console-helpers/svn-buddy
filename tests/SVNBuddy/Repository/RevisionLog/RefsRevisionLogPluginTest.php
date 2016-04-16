@@ -239,6 +239,36 @@ class RefsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->plugin->getRevisionData(100);
 	}
 
+	public function testGetRevisionsData()
+	{
+		$expected = array(
+			array(
+				'branches/branch-name',
+				'tags/tag-name',
+			),
+		);
+
+		$collected_data = array(
+			'revision_refs' => array(
+				100 => $expected,
+			),
+			'ref_revisions' => array(
+				'branches/branch-name' => array(100),
+				'tags/tag-name' => array(100),
+			),
+		);
+
+		$this->plugin->setCollectedData($collected_data);
+
+		$this->assertEquals(
+			array(
+				100 => $expected,
+				105 => array(),
+			),
+			$this->plugin->getRevisionsData(array(100, 105))
+		);
+	}
+
 	public function testGetCacheInvalidator()
 	{
 		$this->assertInternalType('integer', $this->plugin->getCacheInvalidator());

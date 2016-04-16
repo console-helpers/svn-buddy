@@ -269,6 +269,24 @@ class RevisionLog
 	}
 
 	/**
+	 * Returns information about revisions.
+	 *
+	 * @param string $plugin_name Plugin name.
+	 * @param array  $revisions   Revisions.
+	 *
+	 * @return array
+	 * @throws \InvalidArgumentException When unknown plugin is given.
+	 */
+	public function getRevisionsData($plugin_name, array $revisions)
+	{
+		if ( !$this->pluginRegistered($plugin_name) ) {
+			throw new \InvalidArgumentException('The "' . $plugin_name . '" revision log plugin is unknown.');
+		}
+
+		return $this->_plugins[$plugin_name]->getRevisionsData($revisions);
+	}
+
+	/**
 	 * Determines if plugin is registered.
 	 *
 	 * @param string $plugin_name Plugin name.
