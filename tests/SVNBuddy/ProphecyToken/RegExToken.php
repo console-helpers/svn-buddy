@@ -19,7 +19,7 @@ class RegExToken implements TokenInterface
 	/**
 	 * Pattern.
 	 *
-	 * @var integer
+	 * @var string
 	 */
 	private $_pattern;
 
