@@ -257,7 +257,7 @@ class Connector
 	 */
 	public function getRefByPath($path)
 	{
-		if ( preg_match('#^.*?/(trunk|branches/[^/]*|tags/[^/]*|releases/[^/]*).*$#', $path, $regs) ) {
+		if ( preg_match('#^.*?/(trunk|branches/[^/]+|tags/[^/]+|releases/[^/]+).*$#', $path, $regs) ) {
 			return $regs[1];
 		}
 

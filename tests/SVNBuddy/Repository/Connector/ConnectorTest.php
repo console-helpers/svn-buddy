@@ -386,9 +386,12 @@ MESSAGE;
 			array('/projects/project_a/trunk/sub-folder/file.tpl', 'trunk'),
 			array('/projects/project_a/trunk/sub-folder', 'trunk'),
 			array('/projects/project_a/branches/branch-name/another_file.php', 'branches/branch-name'),
+			array('/projects/project_a/branches/', false),
 			array('/projects/project_a/tags/tag-name/another_file.php', 'tags/tag-name'),
+			array('/projects/project_a/tags/', false),
 			array('/projects/project_a/unknowns/unknown-name/another_file.php', false),
 			array('/projects/project_a/releases/release-name/another_file.php', 'releases/release-name'),
+			array('/projects/project_a/releases/', false),
 		);
 	}
 
