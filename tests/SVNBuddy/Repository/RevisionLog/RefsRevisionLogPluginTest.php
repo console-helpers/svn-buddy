@@ -203,42 +203,6 @@ class RefsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		);
 	}
 
-	public function testGetRevisionDataSuccess()
-	{
-		$expected = array(
-			array(
-				'branches/branch-name',
-				'tags/tag-name',
-			),
-		);
-
-		$collected_data = array(
-			'revision_refs' => array(
-				100 => $expected,
-			),
-			'ref_revisions' => array(
-				'branches/branch-name' => array(100),
-				'tags/tag-name' => array(100),
-			),
-		);
-
-		$this->plugin->setCollectedData($collected_data);
-
-		$this->assertEquals(
-			$expected,
-			$this->plugin->getRevisionData(100)
-		);
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Revision "100" not found by "refs" plugin.
-	 */
-	public function testGetRevisionDataFailure()
-	{
-		$this->plugin->getRevisionData(100);
-	}
-
 	public function testGetRevisionsData()
 	{
 		$expected = array(

@@ -157,31 +157,6 @@ class MergesRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		);
 	}
 
-	public function testGetRevisionDataSuccess()
-	{
-		$collected_data = array(
-			'merge_revisions' => array(
-				100 => array(50),
-				200 => array(50),
-			),
-			'merged_revisions' => array(
-				50 => array(100, 200),
-			),
-		);
-
-		$this->plugin->setCollectedData($collected_data);
-
-		$this->assertEquals(
-			array(100, 200),
-			$this->plugin->getRevisionData(50)
-		);
-	}
-
-	public function testGetRevisionDataFailure()
-	{
-		$this->assertEmpty($this->plugin->getRevisionData(100));
-	}
-
 	public function testGetRevisionsData()
 	{
 		$collected_data = array(

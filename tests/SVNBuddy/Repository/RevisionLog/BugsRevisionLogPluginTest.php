@@ -132,35 +132,6 @@ class BugsRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		);
 	}
 
-	public function testGetRevisionDataSuccess()
-	{
-		$collected_data = array(
-			'revision_bugs' => array(
-				100 => array('JRA-1', 'JRA-2'),
-			),
-			'bug_revisions' => array(
-				'JRA-1' => array(100),
-				'JRA-2' => array(100),
-			),
-		);
-
-		$this->plugin->setCollectedData($collected_data);
-
-		$this->assertEquals(
-			array('JRA-1', 'JRA-2'),
-			$this->plugin->getRevisionData(100)
-		);
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Revision "100" not found by "bugs" plugin.
-	 */
-	public function testGetRevisionDataFailure()
-	{
-		$this->plugin->getRevisionData(100);
-	}
-
 	public function testGetRevisionsData()
 	{
 		$collected_data = array(

@@ -40,16 +40,6 @@ interface IRevisionLogPlugin
 	public function find(array $criteria);
 
 	/**
-	 * Returns information about revision.
-	 *
-	 * @param integer $revision Revision.
-	 *
-	 * @return array
-	 * @throws \InvalidArgumentException When revision is not found.
-	 */
-	public function getRevisionData($revision);
-
-	/**
 	 * Returns information about revisions.
 	 *
 	 * @param array $revisions Revisions.

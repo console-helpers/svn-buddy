@@ -170,40 +170,6 @@ class SummaryRevisionLogPluginTest extends AbstractRevisionLogPluginTestCase
 		$this->plugin->find(array('field:keyword'));
 	}
 
-	public function testGetRevisionDataSuccess()
-	{
-		$expected = array(
-			'author' => 'user',
-			'date' => 0,
-			'msg' => 'task title',
-		);
-
-		$collected_data = array(
-			'revision_summary' => array(
-				100 => $expected,
-			),
-			'author_revisions' => array(
-				'user' => array(100),
-			),
-		);
-
-		$this->plugin->setCollectedData($collected_data);
-
-		$this->assertEquals(
-			$expected,
-			$this->plugin->getRevisionData(100)
-		);
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Revision "100" not found by "summary" plugin.
-	 */
-	public function testGetRevisionDataFailure()
-	{
-		$this->plugin->getRevisionData(100);
-	}
-
 	public function testGetRevisionsDataSuccess()
 	{
 		$expected = array(

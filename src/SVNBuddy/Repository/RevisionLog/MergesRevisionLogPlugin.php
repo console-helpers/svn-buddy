@@ -112,19 +112,6 @@ class MergesRevisionLogPlugin extends AbstractRevisionLogPlugin
 	}
 
 	/**
-	 * Returns information about revision.
-	 *
-	 * @param integer $revision Revision.
-	 *
-	 * @return array
-	 */
-	public function getRevisionData($revision)
-	{
-		// When revision wasn't yet merged, the merge revisions list is empty.
-		return isset($this->_mergedRevisions[$revision]) ? $this->_mergedRevisions[$revision] : array();
-	}
-
-	/**
 	 * Returns information about revisions.
 	 *
 	 * @param array $revisions Revisions.

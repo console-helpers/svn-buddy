@@ -111,24 +111,6 @@ class PathsRevisionLogPlugin extends AbstractRevisionLogPlugin
 	}
 
 	/**
-	 * Returns information about revision.
-	 *
-	 * @param integer $revision Revision.
-	 *
-	 * @return array
-	 * @throws \InvalidArgumentException When revision is not found.
-	 */
-	public function getRevisionData($revision)
-	{
-		if ( !isset($this->_revisionPaths[$revision]) ) {
-			$error_msg = 'Revision "%s" not found by "%s" plugin.';
-			throw new \InvalidArgumentException(sprintf($error_msg, $revision, $this->getName()));
-		}
-
-		return $this->_revisionPaths[$revision];
-	}
-
-	/**
 	 * Returns information about revisions.
 	 *
 	 * @param array $revisions Revisions.
