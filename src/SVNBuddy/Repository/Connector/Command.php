@@ -165,7 +165,7 @@ class Command
 				$runtime = sprintf('%01.2f', microtime(true) - $start);
 				$command_line = $this->_process->getCommandLine();
 				$this->_io->writeln(
-					PHP_EOL . '<fg=white;bg=magenta>[svn, ' . round($runtime, 2) . 's]: ' . $command_line . '</>'
+					array('', '<debug>[svn, ' . round($runtime, 2) . 's]: ' . $command_line . '</debug>')
 				);
 			}
 		}

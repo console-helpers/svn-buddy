@@ -21,6 +21,8 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Container extends \ConsoleHelpers\ConsoleKit\Container
 {
@@ -42,6 +44,13 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			'repository-connector.password' => '',
 			'repository-connector.last-revision-cache-duration' => '10 minutes',
 		);
+
+		$this->extend('output', function ($output, $c) {
+			/** @var OutputInterface $output */
+			$output->getFormatter()->setStyle('debug', new OutputFormatterStyle('white', 'magenta'));
+
+		    return $output;
+		});
 
 		$this['process_factory'] = function () {
 			return new ProcessFactory();

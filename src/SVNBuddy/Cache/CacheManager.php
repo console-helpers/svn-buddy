@@ -117,7 +117,7 @@ class CacheManager
 		if ( isset($this->_io) && $this->_io->isVerbose() ) {
 			$this->_io->writeln(array(
 				'',
-				'<fg=white;bg=magenta>[cache]: ' . $cache_filename . '</>',
+				'<debug>[cache]: ' . $cache_filename . '</debug>',
 			));
 		}
 

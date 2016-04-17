@@ -341,7 +341,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 
 		if ( $this->io->isVerbose() ) {
 			$this->io->writeln(
-				PHP_EOL . '<fg=white;bg=magenta>scanning: ' . $path . '</>'
+				array('', '<debug>scanning: ' . $path . '</debug>')
 			);
 		}
 

@@ -285,7 +285,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
 		$this->_io
-			->writeln(new RegExToken("#^\n<fg=white;bg=magenta>\[svn, [\d\.]+s\]: svn log</>$#s"))
+			->writeln(array('', '<debug>[svn, 0s]: svn log</debug>'))
 			->shouldBeCalled();
 
 		$this->_command->run();

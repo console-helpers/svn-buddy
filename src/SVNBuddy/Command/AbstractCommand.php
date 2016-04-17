@@ -17,6 +17,9 @@ use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Base command class.
@@ -72,6 +75,16 @@ abstract class AbstractCommand extends BaseCommand
 	 * @var ConfigEditor
 	 */
 	private $_configEditor;
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function initialize(InputInterface $input, OutputInterface $output)
+	{
+		$output->getFormatter()->setStyle('debug', new OutputFormatterStyle('white', 'magenta'));
+
+		parent::initialize($input, $output);
+	}
 
 	/**
 	 * Prepare dependencies.
