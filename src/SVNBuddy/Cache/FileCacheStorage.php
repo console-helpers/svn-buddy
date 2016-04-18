@@ -17,6 +17,8 @@ namespace ConsoleHelpers\SVNBuddy\Cache;
 class FileCacheStorage implements ICacheStorage
 {
 
+	const COMPRESS_THRESHOLD = 10240;
+
 	/**
 	 * Cache file.
 	 *
@@ -46,8 +48,9 @@ class FileCacheStorage implements ICacheStorage
 		}
 
 		$file_contents = file_get_contents($this->_file);
+		$first_symbol = substr($file_contents, 0, 1);
 
-		if ( strpos($this->_file, '/log_') !== false ) {
+		if ( !in_array($first_symbol, array('{', '[')) ) {
 			$file_contents = gzuncompress($file_contents);
 		}
 
@@ -71,7 +74,7 @@ class FileCacheStorage implements ICacheStorage
 	{
 		$file_contents = json_encode($cache);
 
-		if ( strpos($this->_file, '/log_') !== false ) {
+		if ( strlen($file_contents) > self::COMPRESS_THRESHOLD ) {
 			$file_contents = gzcompress($file_contents);
 		}
 

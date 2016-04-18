@@ -34,12 +34,7 @@ class FileCacheStorageTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		if ( $this->getName(false) === 'testCompressedUsage' ) {
-			$this->cacheFile = sys_get_temp_dir() . '/log_test.cache';
-		}
-		else {
-			$this->cacheFile = sys_get_temp_dir() . '/test.cache';
-		}
+		$this->cacheFile = sys_get_temp_dir() . '/test.cache';
 
 		$this->cache = new FileCacheStorage($this->cacheFile);
 	}
@@ -66,7 +61,7 @@ class FileCacheStorageTest extends \PHPUnit_Framework_TestCase
 
 	public function testCompressedUsage()
 	{
-		$expected = array('key' => 'value');
+		$expected = array('key' => str_repeat('value', 2048));
 		$this->cache->set($expected);
 
 		$this->assertFileExists($this->cacheFile);
