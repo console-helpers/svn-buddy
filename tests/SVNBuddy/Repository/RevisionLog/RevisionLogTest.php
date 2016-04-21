@@ -168,8 +168,8 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		);
 		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
 
-		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
-		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(3000)->shouldBeCalled();
+		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(0)->shouldBeCalled();
+		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(400)->shouldBeCalled();
 		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
@@ -197,8 +197,9 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
 
 		$plugin->getLastRevision()->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(1000, 2000)))->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(2001, 3000)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(0, 199)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(200, 399)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(400, 400)))->shouldBeCalled();
 		$plugin->getCollectedData()->willReturn($new_collected_data['mocked'])->shouldBeCalled();
 
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk', $this->io->reveal());
@@ -213,8 +214,8 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		);
 		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
 
-		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
-		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(3000)->shouldBeCalled();
+		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(0)->shouldBeCalled();
+		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(400)->shouldBeCalled();
 		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
@@ -229,8 +230,9 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
 
 		$plugin->getLastRevision()->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(1000, 2000)))->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(2001, 3000)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(0, 199)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(200, 399)))->shouldBeCalled();
+		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(400, 400)))->shouldBeCalled();
 		$plugin->getCollectedData()->willReturn($new_collected_data['mocked'])->shouldBeCalled();
 
 		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
