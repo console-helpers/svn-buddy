@@ -184,6 +184,7 @@ class RevisionLog
 				'log',
 				'-r ' . $range_start . ':' . $range_end . ' --xml --verbose --use-merge-history {' . $project_url . '}'
 			);
+			$command->setCacheDuration('10 years');
 
 			$this->_parseLog($command->run());
 			$range_start = $range_end + 1;

@@ -355,6 +355,7 @@ OUTPUT;
 
 		$command = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Command');
 		$command->run()->willReturn($result)->shouldBeCalled();
+		$command->setCacheDuration('10 years')->shouldBeCalled();
 
 		$this->repositoryConnector->getCommand($command_name, $param_string)->willReturn($command)->shouldBeCalled();
 	}
