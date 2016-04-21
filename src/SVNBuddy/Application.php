@@ -38,6 +38,7 @@ class Application extends BaseApplication
 
 		$helper_set = $this->getHelperSet();
 		$helper_set->set($this->dic['date_helper']);
+		$helper_set->set($this->dic['size_helper']);
 
 		set_time_limit(0);
 		ini_set('memory_limit', -1);

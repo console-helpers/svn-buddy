@@ -13,6 +13,7 @@ namespace ConsoleHelpers\SVNBuddy;
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
+use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
@@ -86,6 +87,10 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['date_helper'] = function () {
 			return new DateHelper();
+		};
+
+		$this['size_helper'] = function () {
+			return new SizeHelper();
 		};
 
 		$this['editor'] = function () {
