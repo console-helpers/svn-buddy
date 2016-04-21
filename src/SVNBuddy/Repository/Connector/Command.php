@@ -141,7 +141,14 @@ class Command
 	private function _getCacheKey()
 	{
 		if ( $this->_cacheInvalidator || $this->_cacheDuration ) {
-			return 'command:' . $this->_process->getCommandLine();
+			$command_line = $this->_process->getCommandLine();
+			$url_regexp = '/\'((.+):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?\'/';
+
+			if ( preg_match($url_regexp, $command_line, $regs) ) {
+				return $regs[3] . '/command:' . $command_line;
+			}
+
+			return 'misc/command:' . $command_line;
 		}
 
 		return '';

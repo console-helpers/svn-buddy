@@ -146,8 +146,8 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->_expectCommand('svn --non-interactive info', 'OK');
 
-		$this->_cacheManager->getCache('command:svn --non-interactive info', null)->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager->setCache('command:svn --non-interactive info', 'OK', null, 100)->shouldBeCalled();
+		$this->_cacheManager->getCache('misc/command:svn --non-interactive info', null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->setCache('misc/command:svn --non-interactive info', 'OK', null, 100)->shouldBeCalled();
 
 		$this->_repositoryConnector->withCache(100)->getCommand('info')->run();
 	}
@@ -303,9 +303,9 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
-			->setCache('command:' . $raw_command, $raw_command_output, null, '1 year')
+			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 year')
 			->shouldBeCalled();
 
 		$repository_connector = $this->_createRepositoryConnector('a', 'b');
@@ -340,9 +340,9 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
-			->setCache('command:' . $raw_command, $raw_command_output, null, '1 year')
+			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 year')
 			->shouldBeCalled();
 
 		$repository_connector = $this->_createRepositoryConnector('a', 'b');
@@ -429,9 +429,9 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
-			->setCache('command:' . $raw_command, $raw_command_output, null, '1 minute')
+			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 minute')
 			->shouldBeCalled();
 
 		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
