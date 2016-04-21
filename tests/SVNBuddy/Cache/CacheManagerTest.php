@@ -96,6 +96,17 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 		$this->assertCount(0, $this->getCacheFilenames('namespace'));
 	}
 
+	public function testGetWithSubFolder()
+	{
+		$this->assertNull($this->cacheManager->getCache('sub-folder/namespace:name'));
+	}
+
+	public function testSetWithSubFolder()
+	{
+		$this->cacheManager->setCache('sub-folder/namespace:name', 'OK');
+		$this->assertEquals('OK', $this->cacheManager->getCache('sub-folder/namespace:name'));
+	}
+
 	public function testNonVerboseIO()
 	{
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');

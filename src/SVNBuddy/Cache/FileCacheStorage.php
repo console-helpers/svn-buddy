@@ -34,6 +34,12 @@ class FileCacheStorage implements ICacheStorage
 	public function __construct($file)
 	{
 		$this->_file = $file;
+
+		$parent_path = dirname($this->_file);
+
+		if ( !file_exists($parent_path) ) {
+			mkdir($parent_path, 0777, true);
+		}
 	}
 
 	/**
