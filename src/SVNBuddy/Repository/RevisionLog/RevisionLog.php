@@ -88,9 +88,16 @@ class RevisionLog
 		}
 
 		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
+		$url_regexp = '/^((.+):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/';
+
+		if ( preg_match($url_regexp, $project_url, $regs) ) {
+			$cache_key = $regs[3] . '/log:' . $project_url;
+		}
+		else {
+			$cache_key = 'misc/log:' . $project_url;
+		}
 
 		// Initialize plugins with data from cache.
-		$cache_key = 'log:' . $project_url;
 		$cache = $this->_cacheManager->getCache($cache_key, $this->_getCacheInvalidator());
 
 		if ( is_array($cache) ) {

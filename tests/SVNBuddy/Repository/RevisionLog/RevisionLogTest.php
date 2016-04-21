@@ -173,10 +173,10 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
-			->getCache('log:svn://localhost', $cache_invalidator)
+			->getCache('misc/log:svn://localhost', $cache_invalidator)
 			->shouldBeCalled();
 		$this->cacheManager
-			->setCache('log:svn://localhost', $new_collected_data, $cache_invalidator)
+			->setCache('misc/log:svn://localhost', $new_collected_data, $cache_invalidator)
 			->shouldBeCalled();
 
 		$progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
@@ -219,10 +219,10 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
-			->getCache('log:svn://localhost', $cache_invalidator)
+			->getCache('misc/log:svn://localhost', $cache_invalidator)
 			->shouldBeCalled();
 		$this->cacheManager
-			->setCache('log:svn://localhost', $new_collected_data, $cache_invalidator)
+			->setCache('misc/log:svn://localhost', $new_collected_data, $cache_invalidator)
 			->shouldBeCalled();
 
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
@@ -259,7 +259,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->repositoryConnector->getProjectUrl($repository_url)->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
-			->getCache('log:svn://localhost', $cache_invalidator)
+			->getCache('misc/log:svn://localhost', $cache_invalidator)
 			->willReturn($collected_data)
 			->shouldBeCalled();
 
