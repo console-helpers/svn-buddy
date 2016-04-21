@@ -12,6 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Cache;
 
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
 
 class CacheManager
 {
@@ -31,14 +32,23 @@ class CacheManager
 	private $_io;
 
 	/**
+	 * Size helper.
+	 *
+	 * @var SizeHelper
+	 */
+	private $_sizeHelper;
+
+	/**
 	 * Create cache manager.
 	 *
-	 * @param string    $working_directory Working directory.
-	 * @param ConsoleIO $io                Console IO.
+	 * @param string     $working_directory Working directory.
+	 * @param SizeHelper $size_helper       Size helper.
+	 * @param ConsoleIO  $io                Console IO.
 	 */
-	public function __construct($working_directory, ConsoleIO $io = null)
+	public function __construct($working_directory, SizeHelper $size_helper, ConsoleIO $io = null)
 	{
 		$this->_workingDirectory = $working_directory;
+		$this->_sizeHelper = $size_helper;
 		$this->_io = $io;
 	}
 
@@ -115,9 +125,18 @@ class CacheManager
 		$cache_filename = $this->_workingDirectory . DIRECTORY_SEPARATOR . $parts[0] . '_' . $name_hash . '.cache';
 
 		if ( isset($this->_io) && $this->_io->isVerbose() ) {
+			$message = $cache_filename;
+
+			if ( file_exists($cache_filename) ) {
+				$message .= ' (hit: ' . $this->_sizeHelper->formatSize(filesize($cache_filename)) . ')';
+			}
+			else {
+				$message .= ' (miss)';
+			}
+
 			$this->_io->writeln(array(
 				'',
-				'<debug>[cache]: ' . $cache_filename . '</debug>',
+				'<debug>[cache]: ' . $message . '</debug>',
 			));
 		}
 

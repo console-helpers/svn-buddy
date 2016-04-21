@@ -12,6 +12,8 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Cache;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use Prophecy\Argument;
+use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 
 class CacheManagerTest extends WorkingDirectoryAwareTestCase
@@ -24,11 +26,19 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 	 */
 	protected $cacheManager;
 
+	/**
+	 * Size helper.
+	 *
+	 * @var ObjectProphecy
+	 */
+	protected $sizeHelper;
+
 	protected function setUp()
 	{
 		parent::setUp();
 
-		$this->cacheManager = new CacheManager($this->getWorkingDirectory());
+		$this->sizeHelper = $this->prophesize('ConsoleHelpers\SVNBuddy\Helper\SizeHelper');
+		$this->cacheManager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal());
 	}
 
 	/**
@@ -84,6 +94,58 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 		$this->cacheManager->setCache('namespace:name', 'value', 'invalidator1');
 		$this->assertNull($this->cacheManager->getCache('namespace:name', 'invalidator2'));
 		$this->assertCount(0, $this->getCacheFilenames('namespace'));
+	}
+
+	public function testNonVerboseIO()
+	{
+		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
+		$io->isVerbose()->willReturn(false)->shouldBeCalled();
+
+		$cache_manager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal(), $io->reveal());
+		$this->assertNull($cache_manager->getCache('namespace:name'));
+	}
+
+	public function testVerboseCacheMiss()
+	{
+		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
+		$io->isVerbose()->willReturn(true)->shouldBeCalled();
+
+		// For "getCache" call.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss\)</debug>$#');
+
+		$cache_manager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal(), $io->reveal());
+		$this->assertNull($cache_manager->getCache('namespace:name'));
+	}
+
+	public function testVerboseCacheHit()
+	{
+		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
+		$io->isVerbose()->willReturn(true)->shouldBeCalled();
+
+		// For "setCache" call.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss\)</debug>$#');
+
+		// For "getCache" call.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(hit: .*\)</debug>$#');
+
+		$cache_manager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal(), $io->reveal());
+		$cache_manager->setCache('namespace:name', 'OK');
+		$this->assertEquals('OK', $cache_manager->getCache('namespace:name'));
+	}
+
+	/**
+	 * Expects verbose output.
+	 *
+	 * @param ObjectProphecy $io     ConsoleIO mock.
+	 * @param string         $regexp Regexp.
+	 *
+	 * @return void
+	 */
+	protected function expectVerboseOutput(ObjectProphecy $io, $regexp)
+	{
+		$io->writeln(Argument::that(function (array $messages) use ($regexp) {
+			return count($messages) === 2 && $messages[0] === '' && preg_match($regexp, $messages[1]);
+		}))->shouldBeCalled();
 	}
 
 	/**

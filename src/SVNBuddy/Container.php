@@ -70,7 +70,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 		};
 
 		$this['cache_manager'] = function ($c) {
-			return new CacheManager($c['working_directory'], $c['io']);
+			return new CacheManager($c['working_directory'], $c['size_helper'], $c['io']);
 		};
 
 		$this['revision_log_factory'] = function ($c) {
