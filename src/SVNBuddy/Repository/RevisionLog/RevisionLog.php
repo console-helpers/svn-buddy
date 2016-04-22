@@ -88,10 +88,10 @@ class RevisionLog
 		}
 
 		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
-		$url_regexp = '/^((.+):\/)?\/?([^:\/\s]+)((\/\w+)*\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/';
+		$url_regexp = '#^([^:\s]*)://([^@\s]+@)?([^/:\s]+)(:\d+)?([^\s]*)?$#';
 
 		if ( preg_match($url_regexp, $project_url, $regs) ) {
-			$cache_key = $regs[3] . '/log:' . $project_url;
+			$cache_key = $regs[2] . $regs[3] . $regs[4] . '/log:' . $project_url;
 		}
 		else {
 			$cache_key = 'misc/log:' . $project_url;

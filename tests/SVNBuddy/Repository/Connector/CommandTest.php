@@ -384,6 +384,53 @@ MSG;
 	}
 
 	/**
+	 * @dataProvider cacheKeyFormingDataProvider
+	 */
+	public function testCacheKeyForming($repository_url, $cache_namespace)
+	{
+		$command_line = 'svn log ' . escapeshellarg($repository_url) . ' ' . escapeshellarg($repository_url);
+		$process_output = 'OK';
+
+		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
+		$this->_process->mustRun(null)->shouldNotBeCalled();
+
+		$this->_cacheManager
+			->getCache($cache_namespace . ':' . $command_line, null)
+			->willReturn($process_output)
+			->shouldBeCalled();
+		$this->_cacheManager->setCache(Argument::any())->shouldNotBeCalled();
+
+		$this->_command->setCacheDuration('1 minute');
+
+		$this->assertEquals($process_output, $this->_command->run());
+	}
+
+	public function cacheKeyFormingDataProvider()
+	{
+		return array(
+			'no path' => array('svn://domain.tld', 'domain.tld/command'),
+			'root path (trailing)' => array('svn://domain.tld/', 'domain.tld/command'),
+			'path (no trailing)' => array('svn://domain.tld/path', 'domain.tld/command'),
+			'path (trailing)' => array('svn://domain.tld/path/', 'domain.tld/command'),
+
+			'no path; user' => array('svn://user@domain.tld', 'user@domain.tld/command'),
+			'root path (trailing); user' => array('svn://user@domain.tld/', 'user@domain.tld/command'),
+			'path (no trailing); user' => array('svn://user@domain.tld/path', 'user@domain.tld/command'),
+			'path (trailing); user' => array('svn://user@domain.tld/path/', 'user@domain.tld/command'),
+
+			'no path; port' => array('svn://domain.tld:1234', 'domain.tld:1234/command'),
+			'root path (trailing); port' => array('svn://domain.tld:1234/', 'domain.tld:1234/command'),
+			'path (no trailing); port' => array('svn://domain.tld:1234/path', 'domain.tld:1234/command'),
+			'path (trailing); port' => array('svn://domain.tld:1234/path/', 'domain.tld:1234/command'),
+
+			'no path; user; port' => array('svn://user@domain.tld:1234', 'user@domain.tld:1234/command'),
+			'root path (trailing); user; port' => array('svn://user@domain.tld:1234/', 'user@domain.tld:1234/command'),
+			'path (no trailing); user; port' => array('svn://user@domain.tld:1234/path', 'user@domain.tld:1234/command'),
+			'path (trailing); user; port' => array('svn://user@domain.tld:1234/path/', 'user@domain.tld:1234/command'),
+		);
+	}
+
+	/**
 	 * Creates command.
 	 *
 	 * @return Command

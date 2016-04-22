@@ -173,10 +173,10 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
-			->getCache('misc/log:svn://localhost', $cache_invalidator)
+			->getCache('localhost/log:svn://localhost', $cache_invalidator)
 			->shouldBeCalled();
 		$this->cacheManager
-			->setCache('misc/log:svn://localhost', $new_collected_data, $cache_invalidator)
+			->setCache('localhost/log:svn://localhost', $new_collected_data, $cache_invalidator)
 			->shouldBeCalled();
 
 		$progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
@@ -219,10 +219,10 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
-			->getCache('misc/log:svn://localhost', $cache_invalidator)
+			->getCache('localhost/log:svn://localhost', $cache_invalidator)
 			->shouldBeCalled();
 		$this->cacheManager
-			->setCache('misc/log:svn://localhost', $new_collected_data, $cache_invalidator)
+			->setCache('localhost/log:svn://localhost', $new_collected_data, $cache_invalidator)
 			->shouldBeCalled();
 
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
@@ -259,7 +259,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		$this->repositoryConnector->getProjectUrl($repository_url)->willReturn('svn://localhost')->shouldBeCalled();
 
 		$this->cacheManager
-			->getCache('misc/log:svn://localhost', $cache_invalidator)
+			->getCache('localhost/log:svn://localhost', $cache_invalidator)
 			->willReturn($collected_data)
 			->shouldBeCalled();
 
@@ -284,6 +284,57 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 			array('svn://localhost/branches/branch-name', 1000),
 			array('svn://localhost/tags', 1000),
 			array('svn://localhost/tags/tag-name', 1000),
+		);
+	}
+
+	/**
+	 * @dataProvider refreshCacheKeyFormingDataProvider
+	 */
+	public function testRefreshCacheKeyForming($project_url, $cache_namespace)
+	{
+		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
+
+		$this->repositoryConnector->getFirstRevision($project_url)->willReturn(1)->shouldBeCalled();
+		$this->repositoryConnector->getLastRevision($project_url)->willReturn(1)->shouldBeCalled();
+		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn($project_url)->shouldBeCalled();
+
+		$this->cacheManager
+			->getCache($cache_namespace . ':' . $project_url, $cache_invalidator)
+			->shouldBeCalled();
+
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
+		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
+
+		$plugin->getLastRevision()->shouldBeCalled();
+
+		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log->registerPlugin($plugin->reveal());
+		$revision_log->refresh();
+	}
+
+	public function refreshCacheKeyFormingDataProvider()
+	{
+		return array(
+			'no path' => array('svn://domain.tld', 'domain.tld/log'),
+			'root path (trailing)' => array('svn://domain.tld/', 'domain.tld/log'),
+			'path (no trailing)' => array('svn://domain.tld/path', 'domain.tld/log'),
+			'path (trailing)' => array('svn://domain.tld/path/', 'domain.tld/log'),
+
+			'no path; user' => array('svn://user@domain.tld', 'user@domain.tld/log'),
+			'root path (trailing); user' => array('svn://user@domain.tld/', 'user@domain.tld/log'),
+			'path (no trailing); user' => array('svn://user@domain.tld/path', 'user@domain.tld/log'),
+			'path (trailing); user' => array('svn://user@domain.tld/path/', 'user@domain.tld/log'),
+
+			'no path; port' => array('svn://domain.tld:1234', 'domain.tld:1234/log'),
+			'root path (trailing); port' => array('svn://domain.tld:1234/', 'domain.tld:1234/log'),
+			'path (no trailing); port' => array('svn://domain.tld:1234/path', 'domain.tld:1234/log'),
+			'path (trailing); port' => array('svn://domain.tld:1234/path/', 'domain.tld:1234/log'),
+
+			'no path; user; port' => array('svn://user@domain.tld:1234', 'user@domain.tld:1234/log'),
+			'root path (trailing); user; port' => array('svn://user@domain.tld:1234/', 'user@domain.tld:1234/log'),
+			'path (no trailing); user; port' => array('svn://user@domain.tld:1234/path', 'user@domain.tld:1234/log'),
+			'path (trailing); user; port' => array('svn://user@domain.tld:1234/path/', 'user@domain.tld:1234/log'),
 		);
 	}
 
