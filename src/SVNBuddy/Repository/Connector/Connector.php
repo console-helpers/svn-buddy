@@ -25,6 +25,8 @@ class Connector
 
 	const STATUS_UNVERSIONED = 'unversioned';
 
+	const URL_REGEXP = '#([\w]*)://([^@\s\']+@)?([^/:\s\']+)(:\d+)?([^\s\']*)?#';
+
 	/**
 	 * Reference to configuration.
 	 *

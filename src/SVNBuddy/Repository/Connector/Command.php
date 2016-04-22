@@ -142,9 +142,8 @@ class Command
 	{
 		if ( $this->_cacheInvalidator || $this->_cacheDuration ) {
 			$command_line = $this->_process->getCommandLine();
-			$url_regexp = '#\'([^:\s]*)://([^@\s]+@)?([^/:\s]+)(:\d+)?([^\s]*)?\'#';
 
-			if ( preg_match($url_regexp, $command_line, $regs) ) {
+			if ( preg_match(Connector::URL_REGEXP, $command_line, $regs) ) {
 				return $regs[2] . $regs[3] . $regs[4] . '/command:' . $command_line;
 			}
 
