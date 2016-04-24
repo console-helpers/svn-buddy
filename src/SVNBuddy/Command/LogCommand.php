@@ -709,22 +709,6 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	}
 
 	/**
-	 * Returns URL to the working copy.
-	 *
-	 * @return string
-	 */
-	protected function getWorkingCopyUrl()
-	{
-		$wc_path = $this->getWorkingCopyPath();
-
-		if ( !$this->repositoryConnector->isUrl($wc_path) ) {
-			return $this->repositoryConnector->getWorkingCopyUrl($wc_path);
-		}
-
-		return $wc_path;
-	}
-
-	/**
 	 * Returns list of config settings.
 	 *
 	 * @return AbstractConfigSetting[]

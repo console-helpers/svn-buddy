@@ -277,7 +277,7 @@ class Connector
 	public function getWorkingCopyUrl($wc_path)
 	{
 		if ( $this->isUrl($wc_path) ) {
-			return $wc_path;
+			return $this->removeCredentials($wc_path);
 		}
 
 		try {
@@ -330,6 +330,23 @@ class Connector
 	}
 
 	/**
+	 * Removes credentials from url.
+	 *
+	 * @param string $url URL.
+	 *
+	 * @return string
+	 * @throws \InvalidArgumentException When non-url given.
+	 */
+	public function removeCredentials($url)
+	{
+		if ( !$this->isUrl($url) ) {
+			throw new \InvalidArgumentException('Unable to remove credentials from "' . $url . '" path.');
+		}
+
+		return preg_replace('#^(.*)://(.*)@(.*)$#', '$1://$3', $url);
+	}
+
+	/**
 	 * Returns project url (container for "trunk/branches/tags/releases" folders).
 	 *
 	 * @param string $repository_url Repository url.
@@ -361,6 +378,12 @@ class Connector
 			$cache_duration = '1 year';
 		}
 
+		// Remove credentials from url, because "svn info" fails, when used on repository root.
+		if ( $this->isUrl($path_or_url) ) {
+			$path_or_url = $this->removeCredentials($path_or_url);
+		}
+
+		// TODO: When wc path (not url) is given, then credentials can be present in "svn info" result anyway.
 		$svn_info = $this->withCache($cache_duration)->getCommand('info', '--xml {' . $path_or_url . '}')->run();
 
 		// When getting remote "svn info", then path is last folder only.

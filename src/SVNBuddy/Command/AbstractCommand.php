@@ -311,8 +311,12 @@ abstract class AbstractCommand extends BaseCommand
 		if ( !$this->repositoryConnector->isUrl($path) ) {
 			$path = realpath($path);
 		}
-		elseif ( !$this->pathAcceptsUrl ) {
-			throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
+		else {
+			if ( !$this->pathAcceptsUrl ) {
+				throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
+			}
+
+			$path = $this->repositoryConnector->removeCredentials($path);
 		}
 
 		return $path;

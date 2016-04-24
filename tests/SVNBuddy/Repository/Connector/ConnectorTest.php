@@ -172,9 +172,15 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
-	public function testGetWorkingCopyUrlFromUrl()
+	/**
+	 * @dataProvider svnInfoBasedMethodDataProvider
+	 */
+	public function testGetWorkingCopyUrlFromUrl($given_repository_url, $used_repository_url)
 	{
-		$this->assertEquals(self::DUMMY_REPO, $this->_repositoryConnector->getWorkingCopyUrl(self::DUMMY_REPO));
+		$this->assertEquals(
+			$used_repository_url,
+			$this->_repositoryConnector->getWorkingCopyUrl($given_repository_url)
+		);
 	}
 
 	/**
@@ -298,9 +304,12 @@ MESSAGE;
 		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 	}
 
-	public function testGetRelativePathWithAutomaticCaching()
+	/**
+	 * @dataProvider svnInfoBasedMethodDataProvider
+	 */
+	public function testGetRelativePathWithAutomaticCaching($given_repository_url, $used_repository_url)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
 		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
@@ -315,7 +324,7 @@ MESSAGE;
 			$raw_command_output
 		);
 
-		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath(self::DUMMY_REPO));
+		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($given_repository_url));
 	}
 
 	public function testGetRelativePathNoAutomaticCachingForPaths()
@@ -335,9 +344,12 @@ MESSAGE;
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path));
 	}
 
-	public function testGetRootUrlWithAutomaticCaching()
+	/**
+	 * @dataProvider svnInfoBasedMethodDataProvider
+	 */
+	public function testGetRootUrlWithAutomaticCaching($given_repository_url, $used_repository_url)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
 		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
@@ -352,7 +364,7 @@ MESSAGE;
 			$raw_command_output
 		);
 
-		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl(self::DUMMY_REPO));
+		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($given_repository_url));
 	}
 
 	public function testGetRootUrlNoAutomaticCachingForPaths()
@@ -424,9 +436,12 @@ MESSAGE;
 		);
 	}
 
-	public function testGetLastRevisionWithAutomaticCaching()
+	/**
+	 * @dataProvider svnInfoBasedMethodDataProvider
+	 */
+	public function testGetLastRevisionWithAutomaticCaching($given_repository_url, $used_repository_url)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
 		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
@@ -441,7 +456,7 @@ MESSAGE;
 			$raw_command_output
 		);
 
-		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO));
+		$this->assertEquals(100, $repository_connector->getLastRevision($given_repository_url));
 	}
 
 	public function testGetLastRevisionNoAutomaticCachingForPaths()
@@ -459,6 +474,40 @@ MESSAGE;
 		);
 
 		$this->assertEquals(100, $repository_connector->getLastRevision($path));
+	}
+
+	/**
+	 * @dataProvider svnInfoBasedMethodDataProvider
+	 */
+	public function testRemoveCredentials($given_repository_url, $used_repository_url)
+	{
+		$this->assertEquals(
+			$used_repository_url,
+			$this->_repositoryConnector->removeCredentials($given_repository_url)
+		);
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage Unable to remove credentials from "/path/to/working-copy" path.
+	 */
+	public function testRemoveCredentialsFromPath()
+	{
+		$this->_repositoryConnector->removeCredentials('/path/to/working-copy');
+	}
+
+	public function svnInfoBasedMethodDataProvider()
+	{
+		return array(
+			'repo without username' => array(
+				'svn://repository.com/path/to/project',
+				'svn://repository.com/path/to/project',
+			),
+			'repo with username' => array(
+				'svn://user@repository.com/path/to/project',
+				'svn://repository.com/path/to/project',
+			),
+		);
 	}
 
 	/**
