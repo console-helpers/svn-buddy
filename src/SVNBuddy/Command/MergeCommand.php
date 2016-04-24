@@ -527,7 +527,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 			$table->addRow(array(
 				$conflict_path,
-				$path_revisions ? implode(', ', $path_revisions) : '-',
+				$path_revisions ? $this->formatArray($path_revisions, 4) : '-',
 			));
 		}
 

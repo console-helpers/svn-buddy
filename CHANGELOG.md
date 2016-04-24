@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - When all revisions are displayed by `log` command display "Showing X revision(-s)" instead of "Showing X of X revision(-s)".
 - The `Merged Via` column (available when `--with-merge-status` option used) of `log` command also shows refs, that merge revision belongs to.
 - Improved revision path absolute-to-relative transformer and now: the project path is always cut off; the ref is cut off only for single-ref revisions.
+- Wrap list of associated revision next to conflicted paths to "4 per row" to avoid too wide table creation.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.

@@ -222,6 +222,35 @@ abstract class AbstractCommand extends BaseCommand
 	}
 
 	/**
+	 * Returns formatted list of records.
+	 *
+	 * @param array       $items         List of items.
+	 * @param integer     $items_per_row Number of bugs displayed per row.
+	 * @param string|null $color         Color.
+	 *
+	 * @return string
+	 */
+	protected function formatArray(array $items, $items_per_row, $color = null)
+	{
+		$bug_chunks = array_chunk($items, $items_per_row);
+
+		$ret = array();
+
+		if ( isset($color) ) {
+			foreach ( $bug_chunks as $bug_chunk ) {
+				$ret[] = '<fg=' . $color . '>' . implode('</>, <fg=' . $color . '>', $bug_chunk) . '</>';
+			}
+		}
+		else {
+			foreach ( $bug_chunks as $bug_chunk ) {
+				$ret[] = implode(', ', $bug_chunk);
+			}
+		}
+
+		return implode(',' . PHP_EOL, $ret);
+	}
+
+	/**
 	 * Returns URL to the working copy.
 	 *
 	 * @return string
