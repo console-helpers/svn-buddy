@@ -25,6 +25,8 @@ class RepositoryCommandException extends AbstractException
 
 	const SVN_ERR_WC_NOT_WORKING_COPY = 155007;
 
+	const SVN_ERR_FS_NOT_FOUND = 160013;
+
 	/**
 	 * Creates instance of repository command execution exception.
 	 *
@@ -63,6 +65,9 @@ class RepositoryCommandException extends AbstractException
 				// SVN 1.6-.
 				if ( preg_match('/^\'(.*)\' is not a working copy$/', $regs[1]) ) {
 					$error_code = self::SVN_ERR_WC_NOT_WORKING_COPY;
+				}
+				elseif ( preg_match('/^URL \'(.*)\' non-existent in that revision$/', $regs[1]) ) {
+					$error_code = self::SVN_ERR_FS_NOT_FOUND;
 				}
 
 				$error_message .= PHP_EOL . $regs[1];

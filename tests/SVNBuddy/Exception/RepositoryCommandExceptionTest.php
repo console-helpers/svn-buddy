@@ -48,6 +48,12 @@ class RepositoryCommandExceptionTest extends \PHPUnit_Framework_TestCase
 				RepositoryCommandException::SVN_ERR_WC_NOT_WORKING_COPY,
 				'Command:' . PHP_EOL . 'command' . PHP_EOL . 'Error #' . RepositoryCommandException::SVN_ERR_WC_NOT_WORKING_COPY . ':' . PHP_EOL . "'some_folder' is not a working copy",
 			),
+			'svn 1.6- single-line deleted-path error' => array(
+				'command',
+				"svn: URL 'svn://domain.com/path/to/folder' non-existent in that revision",
+				RepositoryCommandException::SVN_ERR_FS_NOT_FOUND,
+				'Command:' . PHP_EOL . 'command' . PHP_EOL . 'Error #' . RepositoryCommandException::SVN_ERR_FS_NOT_FOUND . ':' . PHP_EOL . "URL 'svn://domain.com/path/to/folder' non-existent in that revision",
+			),
 			'svn 1.7- single-line error' => array(
 				'command',
 				'svn: E10: error',
