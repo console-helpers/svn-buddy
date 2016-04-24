@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `Merged Via` column (available when `--with-merge-status` option used) of `log` command also shows refs, that merge revision belongs to.
 - Improved revision path absolute-to-relative transformer and now: the project path is always cut off; the ref is cut off only for single-ref revisions.
 - Wrap list of associated revision next to conflicted paths to "4 per row" to avoid too wide table creation.
+- Name format of per-working copy config setting is changed, which will result in all data being lost unless migrated by hand in "~/.svn-buddy/config.json" file (old "path-settings.wc_url_hash.setting_name", new: "path-settings[wc_url].setting_name").
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.

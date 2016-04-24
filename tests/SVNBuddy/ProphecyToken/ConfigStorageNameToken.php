@@ -25,7 +25,7 @@ class ConfigStorageNameToken extends RegExToken
 	public function __construct($name, $scope_bit)
 	{
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
-			$pattern = '/^path-settings\.(.*)\.' . preg_quote($name, '/') . '$/';
+			$pattern = '/^path-settings\[(.*)\]\.' . preg_quote($name, '/') . '$/';
 		}
 		else {
 			$pattern = '/^global-settings\.' . preg_quote($name, '/') . '$/';

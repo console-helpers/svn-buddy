@@ -182,11 +182,7 @@ abstract class AbstractCommand extends BaseCommand
 			return 'global-settings.';
 		}
 
-		$wc_path = $this->getWorkingCopyPath();
-		$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
-		$wc_hash = substr(hash_hmac('sha1', $wc_url, 'svn-buddy'), 0, 8);
-
-		return 'path-settings.' . $wc_hash . '.';
+		return 'path-settings[' . $this->getWorkingCopyUrl() . '].';
 	}
 
 	/**

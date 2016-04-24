@@ -263,9 +263,7 @@ abstract class AbstractConfigSetting
 			);
 		}
 
-		$wc_hash = substr(hash_hmac('sha1', $this->_workingCopyUrl, 'svn-buddy'), 0, 8);
-
-		return 'path-settings.' . $wc_hash . '.' . $this->_name;
+		return 'path-settings[' . $this->_workingCopyUrl . '].' . $this->_name;
 	}
 
 	/**
