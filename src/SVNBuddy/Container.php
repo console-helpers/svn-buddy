@@ -77,6 +77,10 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			return new RevisionLogFactory($c['repository_connector'], $c['cache_manager']);
 		};
 
+		$this['log_message_parser_factory'] = function () {
+			return new LogMessageParserFactory();
+		};
+
 		$this['revision_list_parser'] = function () {
 			return new RevisionListParser();
 		};
