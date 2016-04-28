@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "757f286b8217f8eeeaf1fbf0d066ba55",
-    "content-hash": "4abf7ebf0f0f4c0f487acd23573629ad",
+    "hash": "4ae157e6c173146f07b2216d6ad1469e",
+    "content-hash": "b7ee3219a9d8e5124ae819a367de5a73",
     "packages": [
         {
             "name": "aura/sql",
-            "version": "2.4.3",
+            "version": "2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auraphp/Aura.Sql.git",
-                "reference": "69ade8ae9920751da9a020eb78f5ed6ee4ac6a88"
+                "reference": "eefbc23126ee6a96fae26250fb1bf20eaa44adec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/69ade8ae9920751da9a020eb78f5ed6ee4ac6a88",
-                "reference": "69ade8ae9920751da9a020eb78f5ed6ee4ac6a88",
+                "url": "https://api.github.com/repos/auraphp/Aura.Sql/zipball/eefbc23126ee6a96fae26250fb1bf20eaa44adec",
+                "reference": "eefbc23126ee6a96fae26250fb1bf20eaa44adec",
                 "shasum": ""
             },
             "require": {
@@ -58,7 +58,7 @@
                 "sqlserver",
                 "sqlsrv"
             ],
-            "time": "2015-03-27 20:02:04"
+            "time": "2016-04-28 18:43:34"
         },
         {
             "name": "console-helpers/console-kit",
@@ -413,6 +413,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "aura/sql": 20,
         "aik099/coding-standard": 20
     },
     "prefer-stable": false,
