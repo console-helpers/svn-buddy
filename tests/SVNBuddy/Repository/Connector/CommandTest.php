@@ -427,6 +427,8 @@ MSG;
 			'root path (trailing); user; port' => array('svn://user@domain.tld:1234/', 'user@domain.tld:1234/command'),
 			'path (no trailing); user; port' => array('svn://user@domain.tld:1234/path', 'user@domain.tld:1234/command'),
 			'path (trailing); user; port' => array('svn://user@domain.tld:1234/path/', 'user@domain.tld:1234/command'),
+
+			'url with revision' => array('svn://in-portal.org/in-bulletin/branches/5.1.x/@12653', 'in-portal.org/command'),
 		);
 	}
 
