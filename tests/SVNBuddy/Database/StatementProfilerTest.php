@@ -121,8 +121,18 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	public function testDuplicateStatementsAreNotAllowed()
 	{
 		$this->statementProfiler->setActive(true);
-		$this->statementProfiler->addProfile(5, 'aa', 'bb', array('cc' => 'dd'));
-		$this->statementProfiler->addProfile(5, 'aa', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->trackDuplicates(true);
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+	}
+
+	public function testDuplicateStatementsAreAllowed()
+	{
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+
+		$this->assertTrue(true);
 	}
 
 	public function testVerboseOutput()

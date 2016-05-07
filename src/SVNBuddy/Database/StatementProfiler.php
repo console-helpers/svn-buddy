@@ -32,6 +32,13 @@ class StatementProfiler implements ProfilerInterface
 	protected $profiles = array();
 
 	/**
+	 * Track duplicate statements.
+	 *
+	 * @var boolean
+	 */
+	protected $trackDuplicates = false;
+
+	/**
 	 * Ignore statements.
 	 *
 	 * @var array
@@ -95,6 +102,18 @@ class StatementProfiler implements ProfilerInterface
 	}
 
 	/**
+	 * Toggle duplicate statement tracker.
+	 *
+	 * @param boolean $track Duplicate statement tracker status.
+	 *
+	 * @return void
+	 */
+	public function trackDuplicates($track)
+	{
+		$this->trackDuplicates = (bool)$track;
+	}
+
+	/**
 	 * Adds a profile entry.
 	 *
 	 * @param float  $duration    The query duration.
@@ -123,7 +142,7 @@ class StatementProfiler implements ProfilerInterface
 
 		$profile_key = md5('statement:' . $normalized_statement . ';bind_values:' . serialize($bind_values));
 
-		if ( isset($this->profiles[$profile_key]) ) {
+		if ( $this->trackDuplicates && isset($this->profiles[$profile_key]) ) {
 			$error_msg = 'Duplicate statement:' . PHP_EOL . $normalized_statement;
 			$error_msg .= PHP_EOL . 'Bind Values:' . PHP_EOL . print_r($bind_values, true);
 
