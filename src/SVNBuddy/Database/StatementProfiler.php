@@ -37,8 +37,14 @@ class StatementProfiler implements ProfilerInterface
 	 * @var array
 	 */
 	protected $ignoreStatements = array(
+		// The "AbstractPlugin::getLastRevision" method.
 		'SELECT LastRevision FROM PluginData WHERE Name = :name',
+
+		// The "AbstractPlugin::getProject" method.
 		'SELECT Id FROM Projects WHERE Path = :path',
+
+		// The "AbstractDatabaseCollectorPlugin::getProjects" method.
+		'SELECT Path, Id AS PathId, RevisionAdded, RevisionDeleted, RevisionLastSeen FROM Paths WHERE PathHash IN (:path_hashes)',
 	);
 
 	/**
