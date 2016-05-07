@@ -51,9 +51,9 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 
 	public function testNoProfileCreatedWhenProfilerIsDisabled()
 	{
-		$this->statementProfiler->addProfile(0, 'aa', 'bb');
+		$this->statementProfiler->addProfile(0, 'perform', 'bb');
 
-		$this->assertCount(0, $this->statementProfiler->getProfiles());
+		$this->assertEmpty($this->statementProfiler->getProfiles());
 	}
 
 	/**
@@ -80,7 +80,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	public function testProfiledInformationIsCorrect()
 	{
 		$this->statementProfiler->setActive(true);
-		$this->statementProfiler->addProfile(5, 'aa', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 
 		$actual_profiles = $this->statementProfiler->getProfiles();
 		$this->assertCount(1, $actual_profiles);
@@ -88,7 +88,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(
 			array(
 				'duration' => 5,
-				'function' => 'aa',
+				'function' => 'perform',
 				'statement' => 'bb',
 				'bind_values' => array('cc' => 'dd'),
 			),
@@ -99,7 +99,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	public function testReset()
 	{
 		$this->statementProfiler->setActive(true);
-		$this->statementProfiler->addProfile(5, 'aa', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 		$this->assertCount(1, $this->statementProfiler->getProfiles());
 
 		$this->statementProfiler->resetProfiles();
@@ -109,8 +109,8 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	public function testDuplicateStatementsWithDifferentParamsAllowed()
 	{
 		$this->statementProfiler->setActive(true);
-		$this->statementProfiler->addProfile(5, 'aa', 'bb', array('cc' => 'dd'));
-		$this->statementProfiler->addProfile(5, 'aa', 'bb', array('ee' => 'ff'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('ee' => 'ff'));
 		$this->assertCount(2, $this->statementProfiler->getProfiles());
 	}
 
@@ -157,7 +157,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$profiler = new StatementProfiler($io->reveal());
 
 		$profiler->setActive(true);
-		$profiler->addProfile(5, 'aa', 'bb', array('cc' => 'dd'));
+		$profiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 		$this->assertCount(1, $profiler->getProfiles());
 	}
 

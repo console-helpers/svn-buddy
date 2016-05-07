@@ -134,13 +134,13 @@ class StatementProfiler implements ProfilerInterface
 			return;
 		}
 
-		$normalized_statement = preg_replace('/\s+/', ' ', $statement);
+		$normalized_statement = $this->normalizeStatement($statement);
 
 		if ( in_array($normalized_statement, $this->ignoreStatements) ) {
 			return;
 		}
 
-		$profile_key = md5('statement:' . $normalized_statement . ';bind_values:' . serialize($bind_values));
+		$profile_key = $this->createProfileKey($normalized_statement, $bind_values);
 
 		if ( $this->trackDuplicates && isset($this->profiles[$profile_key]) ) {
 			$error_msg = 'Duplicate statement:' . PHP_EOL . $normalized_statement;
@@ -166,6 +166,30 @@ class StatementProfiler implements ProfilerInterface
 	}
 
 	/**
+	 * Normalizes statement.
+	 *
+	 * @param string $statement The SQL query statement.
+	 *
+	 * @return string
+	 */
+	protected function normalizeStatement($statement)
+	{
+		return preg_replace('/\s+/', ' ', $statement);
+	}
+
+	/**
+	 * Creates profile key.
+	 *
+	 * @param string $normalized_statement The normalized SQL query statement.
+	 * @param array  $bind_values          The values bound to the statement.
+	 *
+	 * @return string
+	 */
+	protected function createProfileKey($normalized_statement, array $bind_values = array())
+	{
+		return md5('statement:' . $normalized_statement . ';bind_values:' . serialize($bind_values));
+	}
+
 	 * Returns all the profile entries.
 	 *
 	 * @return array
