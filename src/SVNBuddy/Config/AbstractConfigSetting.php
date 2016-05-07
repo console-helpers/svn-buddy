@@ -174,7 +174,6 @@ abstract class AbstractConfigSetting
 	 * @param integer $scope_bit Scope bit.
 	 *
 	 * @return void
-	 * @throws \LogicException When no matching scope was found.
 	 */
 	public function setValue($value, $scope_bit = null)
 	{
