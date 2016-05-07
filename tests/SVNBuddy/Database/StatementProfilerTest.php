@@ -56,6 +56,16 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEmpty($this->statementProfiler->getProfiles());
 	}
 
+	public function testNoProfileIsRemovedWhenProfilerIsDisabled()
+	{
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->addProfile(0, 'perform', 'bb');
+		$this->statementProfiler->setActive(false);
+		$this->statementProfiler->removeProfile('bb');
+
+		$this->assertCount(1, $this->statementProfiler->getProfiles());
+	}
+
 	/**
 	 * @dataProvider profileAddingIgnoredDataProvider
 	 */
@@ -130,6 +140,17 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->statementProfiler->setActive(true);
 		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+
+		$this->assertTrue(true);
+	}
+
+	public function testDuplicateStatementRemoval()
+	{
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->trackDuplicates(true);
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->removeProfile('bb', array('cc' => 'dd'));
 		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 
 		$this->assertTrue(true);

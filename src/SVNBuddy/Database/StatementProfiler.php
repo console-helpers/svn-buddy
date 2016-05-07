@@ -166,6 +166,24 @@ class StatementProfiler implements ProfilerInterface
 	}
 
 	/**
+	 * Removes a profile entry.
+	 *
+	 * @param string $statement   The SQL query statement.
+	 * @param array  $bind_values The values bound to the statement.
+	 *
+	 * @return void
+	 */
+	public function removeProfile($statement, array $bind_values = array())
+	{
+		if ( !$this->isActive() ) {
+			return;
+		}
+
+		$normalized_statement = $this->normalizeStatement($statement);
+		unset($this->profiles[$this->createProfileKey($normalized_statement, $bind_values)]);
+	}
+
+	/**
 	 * Normalizes statement.
 	 *
 	 * @param string $statement The SQL query statement.
