@@ -49,7 +49,9 @@ class DatabaseCache
 	 */
 	public function cacheTable($table)
 	{
-		$this->_cache[$table] = array();
+		if ( !isset($this->_cache[$table]) ) {
+			$this->_cache[$table] = array();
+		}
 	}
 
 	/**

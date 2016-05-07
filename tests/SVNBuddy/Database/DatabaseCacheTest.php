@@ -102,6 +102,15 @@ class DatabaseCacheTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
+	public function testReinitializationWontDropExistingCache()
+	{
+		$this->databaseCache->cacheTable('Tests');
+		$this->databaseCache->setIntoCache('Tests', 'key', array('param' => 'value'));
+
+		$this->databaseCache->cacheTable('Tests');
+		$this->assertEquals(array('param' => 'value'), $this->databaseCache->getFromCache('Tests', 'key'));
+	}
+
 	public function testClear()
 	{
 		$this->databaseCache->cacheTable('Tests');
