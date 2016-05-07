@@ -256,6 +256,7 @@ class Connector
 	 * @param string $path Path to a file.
 	 *
 	 * @return string|boolean
+	 * @see    getProjectUrl
 	 */
 	public function getRefByPath($path)
 	{
@@ -352,6 +353,7 @@ class Connector
 	 * @param string $repository_url Repository url.
 	 *
 	 * @return string
+	 * @see    getRefByPath
 	 */
 	public function getProjectUrl($repository_url)
 	{
@@ -359,6 +361,7 @@ class Connector
 			return $regs[1];
 		}
 
+		// When known folder structure not detected consider, that project url was already given.
 		return $repository_url;
 	}
 
