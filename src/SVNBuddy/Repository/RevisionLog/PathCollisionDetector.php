@@ -63,7 +63,7 @@ class PathCollisionDetector
 			$this->_longestPathLength = current($this->_expandedPaths);
 		}
 		else {
-			$this->_longestPathLength = 0;
+			$this->_longestPathLength = 0; // @codeCoverageIgnore
 		}
 	}
 
