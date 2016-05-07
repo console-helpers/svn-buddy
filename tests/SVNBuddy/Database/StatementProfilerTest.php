@@ -84,6 +84,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 			'the empty statement' => array('perform', '', array(), 0),
 			'ignored statement 1' => array('perform', 'SELECT LastRevision FROM PluginData WHERE Name = :name', array(), 0),
 			'ignored statement 2' => array('perform', 'SELECT Id FROM Projects WHERE Path = :path', array(), 0),
+			'ignored statement 3' => array('perform', 'SELECT Path, Id AS PathId, RevisionAdded, RevisionDeleted, RevisionLastSeen FROM Paths WHERE PathHash IN (:path_hashes)', array(), 0),
 		);
 	}
 
@@ -160,12 +161,17 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	{
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
-		$io->writeln(array('', '<debug>[db, 5s]: bb</debug>'))->shouldBeCalled();
+		$io->writeln(array('', '<debug>[db, 5s]: SELECT "PA" "PAR","AM"</debug>'))->shouldBeCalled();
 
 		$profiler = new StatementProfiler($io->reveal());
 
 		$profiler->setActive(true);
-		$profiler->addProfile(5, 'aa', 'bb', array('cc' => 'dd'));
+		$profiler->addProfile(
+			5,
+			'perform',
+			'SELECT :pa :param',
+			array('pa' => 'PA', 'param' => array('PAR', 'AM'))
+		);
 		$this->assertCount(1, $profiler->getProfiles());
 	}
 

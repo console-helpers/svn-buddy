@@ -158,9 +158,10 @@ class StatementProfiler implements ProfilerInterface
 
 		if ( $this->_debugMode ) {
 			$runtime = sprintf('%01.2f', $duration);
+			$substituted_normalized_statement = $this->substituteParameters($normalized_statement, $bind_values);
 			$this->_io->writeln(array(
 				'',
-				'<debug>[db, ' . round($runtime, 2) . 's]: ' . $normalized_statement . '</debug>',
+				'<debug>[db, ' . round($runtime, 2) . 's]: ' . $substituted_normalized_statement . '</debug>',
 			));
 		}
 	}
@@ -208,6 +209,33 @@ class StatementProfiler implements ProfilerInterface
 		return md5('statement:' . $normalized_statement . ';bind_values:' . serialize($bind_values));
 	}
 
+	/**
+	 * Substitutes parameters in the statement.
+	 *
+	 * @param string $normalized_statement The normalized SQL query statement.
+	 * @param array  $bind_values          The values bound to the statement.
+	 *
+	 * @return string
+	 */
+	protected function substituteParameters($normalized_statement, array $bind_values = array())
+	{
+		arsort($bind_values);
+
+		foreach ( $bind_values as $param_name => $param_value ) {
+			if ( is_array($param_value) ) {
+				$param_value = '"' . implode('","', $param_value) . '"';
+			}
+			else {
+				$param_value = '"' . $param_value . '"';
+			}
+
+			$normalized_statement = str_replace(':' . $param_name, $param_value, $normalized_statement);
+		}
+
+		return $normalized_statement;
+	}
+
+	/**
 	 * Returns all the profile entries.
 	 *
 	 * @return array
