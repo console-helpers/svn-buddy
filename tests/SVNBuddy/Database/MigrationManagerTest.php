@@ -11,8 +11,6 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 
-use Aura\Sql\ExtendedPdo;
-use Aura\Sql\ExtendedPdoInterface;
 use ConsoleHelpers\SVNBuddy\Database\MigrationManager;
 use ConsoleHelpers\SVNBuddy\Database\MigrationManagerContext;
 use Pimple\Container;
@@ -210,6 +208,17 @@ class MigrationManagerTest extends AbstractDatabaseAwareTestCase
 		$manager = $this->getMigrationManager('migrations-php-empty');
 
 		$manager->run($context);
+	}
+
+	public function testRunSetsContainerToContext()
+	{
+		$context = $this->prophesize('ConsoleHelpers\SVNBuddy\Database\MigrationManagerContext');
+		$context->setContainer($this->container)->shouldBeCalled();
+		$context->getDatabase()->willReturn($this->database)->shouldBeCalled();
+
+		$manager = $this->getMigrationManager('no-migrations');
+
+		$manager->run($context->reveal());
 	}
 
 	/**
