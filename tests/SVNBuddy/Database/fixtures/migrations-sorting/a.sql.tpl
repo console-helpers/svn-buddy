@@ -1,0 +1,3 @@
+CREATE TABLE SampleTable (
+	Title TEXT(255, 0) PRIMARY KEY NOT NULL
+);
