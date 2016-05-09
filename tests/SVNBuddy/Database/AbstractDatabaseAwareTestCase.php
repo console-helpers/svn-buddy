@@ -13,6 +13,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 use Aura\Sql\ExtendedPdo;
 use Aura\Sql\ExtendedPdoInterface;
+use ConsoleHelpers\SVNBuddy\Container;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 
 abstract class AbstractDatabaseAwareTestCase extends \PHPUnit_Framework_TestCase
@@ -123,11 +124,9 @@ abstract class AbstractDatabaseAwareTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	protected function createStatementProfiler()
 	{
-		$profiler = new StatementProfiler();
-		$profiler->setActive(true);
-		$profiler->trackDuplicates(true);
+		$container = new Container();
 
-		return $profiler;
+		return $container['statement_profiler'];
 	}
 
 }

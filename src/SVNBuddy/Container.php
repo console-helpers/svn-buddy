@@ -12,6 +12,8 @@ namespace ConsoleHelpers\SVNBuddy;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\Database\MigrationManager;
+use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
@@ -72,6 +74,33 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['cache_manager'] = function ($c) {
 			return new CacheManager($c['working_directory'], $c['size_helper'], $c['io']);
+		};
+
+		$this['statement_profiler'] = function () {
+			$statement_profiler = new StatementProfiler();
+
+			// The "AbstractPlugin::getLastRevision" method.
+			$statement_profiler->ignoreDuplicateStatement('SELECT LastRevision FROM PluginData WHERE Name = :name');
+
+			// The "AbstractPlugin::getProject" method.
+			$statement_profiler->ignoreDuplicateStatement('SELECT Id FROM Projects WHERE Path = :path');
+
+			// The "AbstractDatabaseCollectorPlugin::getProjects" method.
+			$statement_profiler->ignoreDuplicateStatement(
+				'SELECT Path, Id AS PathId, RevisionAdded, RevisionDeleted, RevisionLastSeen
+				FROM Paths
+				WHERE PathHash IN (:path_hashes)'
+			);
+
+			$statement_profiler->setActive(true);
+
+			return $statement_profiler;
+		};
+
+		$this['migration_manager'] = function ($c) {
+			$migrations_directory = dirname(dirname(__DIR__)) . '/migrations';
+
+			return new MigrationManager($migrations_directory, $c);
 		};
 
 		$this['revision_log_factory'] = function ($c) {

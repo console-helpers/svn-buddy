@@ -37,6 +37,8 @@ class ContainerTest extends BaseContainerTest
 			'merge_source_detector' => array('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\MergeSourceDetectorAggregator', 'merge_source_detector'),
 			'repository_url_resolver' => array('ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver', 'repository_url_resolver'),
 			'cache_manager' => array('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager', 'cache_manager'),
+			'statement_profiler' => array('ConsoleHelpers\SVNBuddy\Database\StatementProfiler', 'statement_profiler'),
+			'migration_manager' => array('ConsoleHelpers\SVNBuddy\Database\MigrationManager', 'migration_manager'),
 			'revision_log_factory' => array('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLogFactory', 'revision_log_factory'),
 			'log_message_parser_factory' => array('ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory', 'log_message_parser_factory'),
 			'revision_list_parser' => array('ConsoleHelpers\\SVNBuddy\\Repository\\Parser\\RevisionListParser', 'revision_list_parser'),
