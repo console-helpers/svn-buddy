@@ -11,8 +11,10 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 
+use Aura\Sql\Profiler;
 use ConsoleHelpers\SVNBuddy\Database\MigrationManager;
 use ConsoleHelpers\SVNBuddy\Database\MigrationManagerContext;
+use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use Pimple\Container;
 use Prophecy\Argument;
 
@@ -219,6 +221,34 @@ class MigrationManagerTest extends AbstractDatabaseAwareTestCase
 		$manager = $this->getMigrationManager('no-migrations');
 
 		$manager->run($context->reveal());
+	}
+
+	public function testRunResetsProfilerAfterCompletion()
+	{
+		$profiler = new Profiler();
+		$profiler->setActive(true);
+		$this->database->setProfiler($profiler);
+
+		$context = new MigrationManagerContext($this->database);
+		$manager = $this->getMigrationManager('migrations-executed-once');
+
+		$manager->run($context);
+
+		$this->assertEmpty($profiler->getProfiles());
+	}
+
+	public function testRunDuplicateStatementsAreAllowed()
+	{
+		$profiler = new StatementProfiler();
+		$profiler->setActive(true);
+		$this->database->setProfiler($profiler);
+
+		$context = new MigrationManagerContext($this->database);
+		$manager = $this->getMigrationManager('migrations-duplicate-statements');
+
+		$manager->run($context);
+
+		$this->assertEmpty($profiler->getProfiles());
 	}
 
 	/**

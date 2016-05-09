@@ -159,6 +159,12 @@ class MigrationManager
 		}
 
 		$db = $this->_context->getDatabase();
+		$profiler = $db->getProfiler();
+
+		// Allow duplicate statements during migration execution.
+		if ( $profiler instanceof StatementProfiler ) {
+			$profiler->trackDuplicates(false);
+		}
 
 		foreach ( $migrations as $migration ) {
 			$db->beginTransaction();
@@ -175,6 +181,15 @@ class MigrationManager
 					VALUES (:name, :executed_on)';
 			$db->perform($sql, array('name' => $migration, 'executed_on' => time()));
 			$db->commit();
+		}
+
+		// Doesn't allow duplicate statements after migration execution.
+		if ( $profiler instanceof StatementProfiler ) {
+			$profiler->trackDuplicates(true);
+		}
+
+		if ( is_object($profiler) ) {
+			$profiler->resetProfiles();
 		}
 	}
 
