@@ -36,23 +36,14 @@ class StatementProfiler implements ProfilerInterface
 	 *
 	 * @var boolean
 	 */
-	protected $trackDuplicates = false;
+	protected $trackDuplicates = true;
 
 	/**
-	 * Ignore statements.
+	 * Ignored duplicate statements.
 	 *
 	 * @var array
 	 */
-	protected $ignoreStatements = array(
-		// The "AbstractPlugin::getLastRevision" method.
-		'SELECT LastRevision FROM PluginData WHERE Name = :name',
-
-		// The "AbstractPlugin::getProject" method.
-		'SELECT Id FROM Projects WHERE Path = :path',
-
-		// The "AbstractDatabaseCollectorPlugin::getProjects" method.
-		'SELECT Path, Id AS PathId, RevisionAdded, RevisionDeleted, RevisionLastSeen FROM Paths WHERE PathHash IN (:path_hashes)',
-	);
+	protected $ignoredDuplicateStatements = array();
 
 	/**
 	 * Console IO.
@@ -69,14 +60,28 @@ class StatementProfiler implements ProfilerInterface
 	private $_debugMode = false;
 
 	/**
-	 * Creates statement profiler
+	 * Sets IO.
 	 *
 	 * @param ConsoleIO $io Console IO.
+	 *
+	 * @return void
 	 */
-	public function __construct(ConsoleIO $io = null)
+	public function setIO(ConsoleIO $io = null)
 	{
 		$this->_io = $io;
 		$this->_debugMode = isset($io) && $io->isVerbose();
+	}
+
+	/**
+	 * Adds statement to ignore list.
+	 *
+	 * @param string $statement The SQL query statement.
+	 *
+	 * @return void
+	 */
+	public function ignoreDuplicateStatement($statement)
+	{
+		$this->ignoredDuplicateStatements[] = $this->normalizeStatement($statement);
 	}
 
 	/**
@@ -135,14 +140,12 @@ class StatementProfiler implements ProfilerInterface
 		}
 
 		$normalized_statement = $this->normalizeStatement($statement);
-
-		if ( in_array($normalized_statement, $this->ignoreStatements) ) {
-			return;
-		}
-
 		$profile_key = $this->createProfileKey($normalized_statement, $bind_values);
 
-		if ( $this->trackDuplicates && isset($this->profiles[$profile_key]) ) {
+		if ( $this->trackDuplicates
+			&& !in_array($normalized_statement, $this->ignoredDuplicateStatements)
+			&& isset($this->profiles[$profile_key])
+		) {
 			$error_msg = 'Duplicate statement:' . PHP_EOL . $normalized_statement;
 			$error_msg .= PHP_EOL . 'Bind Values:' . PHP_EOL . print_r($bind_values, true);
 

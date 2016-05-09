@@ -69,10 +69,10 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @dataProvider profileAddingIgnoredDataProvider
 	 */
-	public function testProfileAddingIgnored($function, $statement, array $bind_values, $profile_count)
+	public function testProfileAddingIgnored($function, $statement, $profile_count)
 	{
 		$this->statementProfiler->setActive(true);
-		$this->statementProfiler->addProfile(0, $function, $statement, $bind_values);
+		$this->statementProfiler->addProfile(0, $function, $statement);
 
 		$this->assertCount($profile_count, $this->statementProfiler->getProfiles());
 	}
@@ -80,11 +80,8 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	public function profileAddingIgnoredDataProvider()
 	{
 		return array(
-			'the "prepare" method call' => array('prepare', 'stmt', array(), 0),
-			'the empty statement' => array('perform', '', array(), 0),
-			'ignored statement 1' => array('perform', 'SELECT LastRevision FROM PluginData WHERE Name = :name', array(), 0),
-			'ignored statement 2' => array('perform', 'SELECT Id FROM Projects WHERE Path = :path', array(), 0),
-			'ignored statement 3' => array('perform', 'SELECT Path, Id AS PathId, RevisionAdded, RevisionDeleted, RevisionLastSeen FROM Paths WHERE PathHash IN (:path_hashes)', array(), 0),
+			'the "prepare" method call' => array('prepare', 'stmt', 0),
+			'the empty statement' => array('perform', '', 0),
 		);
 	}
 
@@ -117,12 +114,24 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$this->assertEmpty($this->statementProfiler->getProfiles());
 	}
 
-	public function testDuplicateStatementsWithDifferentParamsAllowed()
+	public function testDuplicateStatementsTrackingRespectsBindParams()
 	{
 		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->trackDuplicates(true);
 		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('ee' => 'ff'));
 		$this->assertCount(2, $this->statementProfiler->getProfiles());
+	}
+
+	/**
+	 * @expectedException \PDOException
+	 * @expectedExceptionMessage Duplicate statement:
+	 */
+	public function testDuplicateStatementsTrackingEnabledByDefault()
+	{
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 	}
 
 	/**
@@ -140,10 +149,47 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	public function testDuplicateStatementsAreAllowed()
 	{
 		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->trackDuplicates(false);
 		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 
 		$this->assertTrue(true);
+	}
+
+	/**
+	 * @dataProvider ignoredDuplicateStatementsAreRespectedDataProvider
+	 */
+	public function testIgnoredDuplicateStatementsAreRespected($statement, array $bind_values)
+	{
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->trackDuplicates(true);
+		$this->statementProfiler->ignoreDuplicateStatement('IGNORE ' . PHP_EOL . ' ME');
+		$this->statementProfiler->addProfile(5, 'perform', $statement, $bind_values);
+		$this->statementProfiler->addProfile(5, 'perform', 'SELECT ...');
+
+		$this->assertCount(2, $this->statementProfiler->getProfiles());
+	}
+
+	public function ignoredDuplicateStatementsAreRespectedDataProvider()
+	{
+		return array(
+			'normalized statement' => array('IGNORE ME', array()),
+			'non-normalized statement' => array('IGNORE ME' . PHP_EOL, array()),
+			'statement with bind values' => array('IGNORE ME', array('cc' => 'dd')),
+		);
+	}
+
+	public function testIgnoredDuplicateStatementsAppearInVerboseOutput()
+	{
+		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
+		$io->isVerbose()->willReturn(true)->shouldBeCalled();
+		$io->writeln(array('', '<debug>[db, 5s]: IGNORE ME "bb"</debug>'))->shouldBeCalled();
+		$this->statementProfiler->setIO($io->reveal());
+
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->trackDuplicates(true);
+		$this->statementProfiler->ignoreDuplicateStatement('IGNORE ME :aa');
+		$this->statementProfiler->addProfile(5, 'perform', 'IGNORE ME :aa', array('aa' => 'bb'));
 	}
 
 	public function testDuplicateStatementRemoval()
@@ -162,17 +208,16 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 		$io->writeln(array('', '<debug>[db, 5s]: SELECT "PA" "PAR","AM"</debug>'))->shouldBeCalled();
+		$this->statementProfiler->setIO($io->reveal());
 
-		$profiler = new StatementProfiler($io->reveal());
-
-		$profiler->setActive(true);
-		$profiler->addProfile(
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->addProfile(
 			5,
 			'perform',
 			'SELECT :pa :param',
 			array('pa' => 'PA', 'param' => array('PAR', 'AM'))
 		);
-		$this->assertCount(1, $profiler->getProfiles());
+		$this->assertCount(1, $this->statementProfiler->getProfiles());
 	}
 
 	public function testNonVerboseOutput()
@@ -180,12 +225,11 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(false)->shouldBeCalled();
 		$io->writeln(Argument::cetera())->shouldNotBeCalled();
+		$this->statementProfiler->setIO($io->reveal());
 
-		$profiler = new StatementProfiler($io->reveal());
-
-		$profiler->setActive(true);
-		$profiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
-		$this->assertCount(1, $profiler->getProfiles());
+		$this->statementProfiler->setActive(true);
+		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->assertCount(1, $this->statementProfiler->getProfiles());
 	}
 
 }
