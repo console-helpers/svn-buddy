@@ -12,7 +12,6 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 
 use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
-use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class DatabaseCacheTest extends \PHPUnit_Framework_TestCase

@@ -13,7 +13,6 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
-use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\RegExToken;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
