@@ -20,6 +20,7 @@ use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
 use ConsoleHelpers\SVNBuddy\Command\ConfigCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
 use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
+use ConsoleHelpers\SVNBuddy\Command\MigrationCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\RevertCommand;
 use ConsoleHelpers\SVNBuddy\Command\UpdateCommand;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
@@ -82,7 +83,21 @@ class Application extends BaseApplication
 		$default_commands[] = new CompletionCommand();
 		$default_commands[] = new ConfigCommand();
 
+		if ( !$this->isPharFile() ) {
+			$default_commands[] = new MigrationCreateCommand();
+		}
+
 		return $default_commands;
+	}
+
+	/**
+	 * Detects, when we're inside PHAR file.
+	 *
+	 * @return boolean
+	 */
+	protected function isPharFile()
+	{
+		return strpos(__DIR__, 'phar://') === 0;
 	}
 
 }

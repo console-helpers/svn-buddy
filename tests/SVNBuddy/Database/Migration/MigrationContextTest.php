@@ -8,15 +8,13 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Database;
+namespace Tests\ConsoleHelpers\SVNBuddy\Database\Migration;
 
 
 use Aura\Sql\ExtendedPdoInterface;
-use ConsoleHelpers\SVNBuddy\Database\MigrationManagerContext;
-use Pimple\Container;
-use Prophecy\Argument;
+use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext;
 
-class MigrationManagerContextTest extends \PHPUnit_Framework_TestCase
+class MigrationContextTest extends \PHPUnit_Framework_TestCase
 {
 
 	/**
@@ -29,14 +27,14 @@ class MigrationManagerContextTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Container.
 	 *
-	 * @var Container
+	 * @var \ArrayAccess
 	 */
 	protected $container;
 
 	/**
 	 * Context.
 	 *
-	 * @var MigrationManagerContext
+	 * @var MigrationContext
 	 */
 	protected $context;
 
@@ -45,9 +43,9 @@ class MigrationManagerContextTest extends \PHPUnit_Framework_TestCase
 		parent::setUp();
 
 		$this->database = $this->prophesize('Aura\Sql\ExtendedPdoInterface')->reveal();
-		$this->container = $this->prophesize('Pimple\Container')->reveal();
+		$this->container = $this->prophesize('ArrayAccess')->reveal();
 
-		$this->context = new MigrationManagerContext($this->database);
+		$this->context = new MigrationContext($this->database);
 	}
 
 	public function testNoContainerInitially()

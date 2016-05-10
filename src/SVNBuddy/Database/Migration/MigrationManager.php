@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Database;
+namespace ConsoleHelpers\SVNBuddy\Database\Migration;
 
 
-use Pimple\Container;
+use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 
 class MigrationManager
 {
@@ -26,26 +26,33 @@ class MigrationManager
 	/**
 	 * Container.
 	 *
-	 * @var Container
+	 * @var \ArrayAccess
 	 */
 	private $_container;
 
 	/**
 	 * Migration manager context.
 	 *
-	 * @var MigrationManagerContext
+	 * @var MigrationContext
 	 */
 	private $_context;
 
 	/**
+	 * Migration runners.
+	 *
+	 * @var AbstractMigrationRunner[]
+	 */
+	private $_migrationRunners = array();
+
+	/**
 	 * Creates migration manager instance.
 	 *
-	 * @param string    $migrations_directory Migrations directory.
-	 * @param Container $container            Container.
+	 * @param string       $migrations_directory Migrations directory.
+	 * @param \ArrayAccess $container            Container.
 	 *
 	 * @throws \InvalidArgumentException When migrations directory does not exist.
 	 */
-	public function __construct($migrations_directory, Container $container)
+	public function __construct($migrations_directory, \ArrayAccess $container)
 	{
 		if ( !file_exists($migrations_directory) || !is_dir($migrations_directory) ) {
 			throw new \InvalidArgumentException(
@@ -58,13 +65,75 @@ class MigrationManager
 	}
 
 	/**
-	 * Executes outstanding migrations.
+	 * Registers a migration runner.
 	 *
-	 * @param MigrationManagerContext $context Context.
+	 * @param AbstractMigrationRunner $migration_runner Migration runner.
 	 *
 	 * @return void
 	 */
-	public function run(MigrationManagerContext $context)
+	public function registerMigrationRunner(AbstractMigrationRunner $migration_runner)
+	{
+		$this->_migrationRunners[$migration_runner->getFileExtension()] = $migration_runner;
+	}
+
+	/**
+	 * Creates new migration.
+	 *
+	 * @param string $name           Migration name.
+	 * @param string $file_extension Migration file extension.
+	 *
+	 * @return string
+	 * @throws \InvalidArgumentException When migration name/file extension is invalid.
+	 * @throws \LogicException When new migration already exists.
+	 */
+	public function createMigration($name, $file_extension)
+	{
+		if ( preg_replace('/[a-z\d\._]/', '', $name) ) {
+			throw new \InvalidArgumentException(
+				'The migration name can consist only from alpha-numeric characters, as well as dots and underscores.'
+			);
+		}
+
+		if ( !in_array($file_extension, $this->getMigrationFileExtensions()) ) {
+			throw new \InvalidArgumentException(
+				'The migration runner for "' . $file_extension . '" file extension is not registered.'
+			);
+		}
+
+		$migration_file = $this->_migrationsDirectory . '/' . date('Ymd_Hi') . '_' . $name . '.' . $file_extension;
+
+		if ( file_exists($migration_file) ) {
+			throw new \LogicException('The migration file "' . basename($migration_file) . '" already exists.');
+		}
+
+		file_put_contents($migration_file, $this->_migrationRunners[$file_extension]->getTemplate());
+
+		return basename($migration_file);
+	}
+
+	/**
+	 * Returns supported migration file extensions.
+	 *
+	 * @return array
+	 * @throws \LogicException When no migration runners added.
+	 */
+	public function getMigrationFileExtensions()
+	{
+		if ( !$this->_migrationRunners ) {
+			throw new \LogicException('No migrations runners registered.');
+		}
+
+		return array_keys($this->_migrationRunners);
+	}
+
+	/**
+	 * Executes outstanding migrations.
+	 *
+	 * @param MigrationContext $context Context.
+	 *
+	 * @return void
+	 */
+	public function run(MigrationContext $context)
 	{
 		$this->setContext($context);
 		$this->createMigrationsTable();
@@ -82,11 +151,11 @@ class MigrationManager
 	/**
 	 * Sets current context.
 	 *
-	 * @param MigrationManagerContext $context Context.
+	 * @param MigrationContext $context Context.
 	 *
 	 * @return void
 	 */
-	protected function setContext(MigrationManagerContext $context)
+	protected function setContext(MigrationContext $context)
 	{
 		$this->_context = $context;
 		$this->_context->setContainer($this->_container);
@@ -125,9 +194,10 @@ class MigrationManager
 	 */
 	protected function getAllMigrations()
 	{
-		$migrations = glob($this->_migrationsDirectory . '/*.{sql,php}', GLOB_BRACE | GLOB_NOSORT);
+		$file_extensions = implode(',', $this->getMigrationFileExtensions());
+		$migrations = glob($this->_migrationsDirectory . '/*.{' . $file_extensions . '}', GLOB_BRACE | GLOB_NOSORT);
 		$migrations = array_map('basename', $migrations);
-		sort($migrations);
+		sort($migrations); // This sorting is better, then one offered by "glob" function.
 
 		return $migrations;
 	}
@@ -170,12 +240,10 @@ class MigrationManager
 			$db->beginTransaction();
 			$migration_type = pathinfo($migration, PATHINFO_EXTENSION);
 
-			if ( $migration_type === 'sql' ) {
-				$this->executeSQLMigration($migration);
-			}
-			elseif ( $migration_type === 'php' ) {
-				$this->executePHPMigration($migration);
-			}
+			$this->_migrationRunners[$migration_type]->run(
+				$this->_migrationsDirectory . '/' . $migration,
+				$this->_context
+			);
 
 			$sql = 'INSERT INTO Migrations (Name, ExecutedOn)
 					VALUES (:name, :executed_on)';
@@ -191,49 +259,6 @@ class MigrationManager
 		if ( is_object($profiler) ) {
 			$profiler->resetProfiles();
 		}
-	}
-
-	/**
-	 * Executes SQL migration.
-	 *
-	 * @param string $migration Migration.
-	 *
-	 * @return void
-	 * @throws \LogicException When an empty migration is discovered.
-	 */
-	protected function executeSQLMigration($migration)
-	{
-		$sqls = file_get_contents($this->_migrationsDirectory . '/' . $migration);
-		$sqls = array_filter(preg_split('/;\s+/', $sqls));
-
-		if ( !$sqls ) {
-			throw new \LogicException('The "' . $migration . '" migration contains no SQL statements.');
-		}
-
-		$db = $this->_context->getDatabase();
-
-		foreach ( $sqls as $sql ) {
-			$db->perform($sql);
-		}
-	}
-
-	/**
-	 * Executes PHP migration.
-	 *
-	 * @param string $migration Migration.
-	 *
-	 * @return void
-	 * @throws \LogicException When migration doesn't contain a closure.
-	 */
-	protected function executePHPMigration($migration)
-	{
-		$closure = require $this->_migrationsDirectory . '/' . $migration;
-
-		if ( !is_callable($closure) ) {
-			throw new \LogicException('The "' . $migration . '" migration doesn\'t return a closure.');
-		}
-
-		call_user_func($closure, $this->_context);
 	}
 
 	/**

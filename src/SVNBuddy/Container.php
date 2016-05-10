@@ -12,7 +12,9 @@ namespace ConsoleHelpers\SVNBuddy;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
-use ConsoleHelpers\SVNBuddy\Database\MigrationManager;
+use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationManager;
+use ConsoleHelpers\SVNBuddy\Database\Migration\PhpMigrationRunner;
+use ConsoleHelpers\SVNBuddy\Database\Migration\SqlMigrationRunner;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
@@ -99,8 +101,11 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['migration_manager'] = function ($c) {
 			$migrations_directory = dirname(dirname(__DIR__)) . '/migrations';
+			$migration_manager = new MigrationManager($migrations_directory, $c);
+			$migration_manager->registerMigrationRunner(new SqlMigrationRunner());
+			$migration_manager->registerMigrationRunner(new PhpMigrationRunner());
 
-			return new MigrationManager($migrations_directory, $c);
+			return $migration_manager;
 		};
 
 		$this['revision_log_factory'] = function ($c) {

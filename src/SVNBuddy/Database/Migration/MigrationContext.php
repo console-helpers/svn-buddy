@@ -8,13 +8,12 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Database;
+namespace ConsoleHelpers\SVNBuddy\Database\Migration;
 
 
 use Aura\Sql\ExtendedPdoInterface;
-use Pimple\Container;
 
-class MigrationManagerContext
+class MigrationContext
 {
 
 	/**
@@ -27,7 +26,7 @@ class MigrationManagerContext
 	/**
 	 * Container.
 	 *
-	 * @var Container
+	 * @var \ArrayAccess
 	 */
 	private $_container;
 
@@ -44,11 +43,11 @@ class MigrationManagerContext
 	/**
 	 * Sets container.
 	 *
-	 * @param Container $container Container.
+	 * @param \ArrayAccess $container Container.
 	 *
 	 * @return void
 	 */
-	public function setContainer(Container $container)
+	public function setContainer(\ArrayAccess $container)
 	{
 		$this->_container = $container;
 	}
@@ -56,7 +55,7 @@ class MigrationManagerContext
 	/**
 	 * Returns container.
 	 *
-	 * @return Container
+	 * @return \ArrayAccess
 	 */
 	public function getContainer()
 	{
