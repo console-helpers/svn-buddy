@@ -162,7 +162,7 @@ class RepositoryFiller
 		$this->database->perform($sql, array(
 			'path' => $path,
 			'path_nesting_level' => substr_count($path, '/') - 1,
-			'path_hash' => crc32($path),
+			'path_hash' => sprintf('%u', crc32($path)),
 			'ref' => $ref,
 			'project_path' => $project_path,
 			'revision' => $revision,
@@ -216,7 +216,7 @@ class RepositoryFiller
 			throw new \InvalidArgumentException('The "$fields_hash" variable can\'t be empty.');
 		}
 
-		$path_hash = crc32($path);
+		$path_hash = sprintf('%u', crc32($path));
 		$to_update = $this->propagateRevisionLastSeen($path, $revision);
 		$to_update[$path_hash] = $fields_hash;
 
@@ -248,7 +248,7 @@ class RepositoryFiller
 		$update_sql = 'UPDATE Paths SET RevisionLastSeen = :revision WHERE PathHash = :path_hash';
 
 		while ( ($update_path = dirname($update_path) . '/') !== '//' ) {
-			$update_path_hash = crc32($update_path);
+			$update_path_hash = sprintf('%u', crc32($update_path));
 
 			$fields_hash = $this->databaseCache->getFromCache(
 				'Paths',
