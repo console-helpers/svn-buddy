@@ -252,7 +252,7 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 			$sorted_paths[(string)$path_node] = $path_node;
 		}
 
-		ksort($sorted_paths, SORT_NATURAL);
+		ksort($sorted_paths, defined('SORT_NATURAL') ? SORT_NATURAL : SORT_STRING);
 
 		return $sorted_paths;
 	}
