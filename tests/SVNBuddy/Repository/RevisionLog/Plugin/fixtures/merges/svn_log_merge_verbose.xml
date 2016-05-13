@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<log>
+	<logentry revision="100">
+		<author>user</author>
+		<date>2016-04-22T18:45:40.582622Z</date>
+		<paths>
+			<path kind="file" action="M">/path/to/project/tags/stable/file1.txt</path>
+			<path kind="file" action="M">/path/to/project/tags/stable/file2.txt</path>
+		</paths>
+		<msg>message</msg>
+		<logentry revision="50">
+			<author>user</author>
+			<date>2016-04-22T17:31:45.786815Z</date>
+			<paths>
+				<path kind="file" action="M">/path/to/project/trunk/file1.txt</path>
+			</paths>
+			<msg>message</msg>
+		</logentry>
+		<logentry revision="60">
+			<author>user</author>
+			<date>2016-04-22T16:18:42.357413Z</date>
+			<paths>
+				<path kind="file" action="M">/path/to/project/trunk/file2.txt</path>
+			</paths>
+			<msg>message</msg>
+		</logentry>
+	</logentry>
+</log>

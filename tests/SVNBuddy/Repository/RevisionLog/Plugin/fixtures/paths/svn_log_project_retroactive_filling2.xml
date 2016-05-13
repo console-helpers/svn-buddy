@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<log>
+	<logentry revision="100">
+		<author>user</author>
+		<date>2015-10-13T13:30:16.473960Z</date>
+		<paths>
+			<path action="A" kind="dir">/path/to/project</path>
+			<path action="A" kind="dir">/path/to/project/trunk</path>
+			<path action="A" kind="dir">/path/to/project/branches</path>
+			<path action="A" kind="dir">/path/to/project/branches/branch-name</path>
+		</paths>
+		<msg>message</msg>
+	</logentry>
+</log>

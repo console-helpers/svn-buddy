@@ -14,30 +14,31 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Prophecy\Argument;
 
-class RevisionLogFactoryTest extends \PHPUnit_Framework_TestCase
+class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 {
 
 	public function testGetRevisionLog()
 	{
 		$repository_connector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
 
-		$repository_connector->withCache('1 year')->willReturn($repository_connector)->shouldBeCalled();
-		$repository_connector->getProperty('bugtraq:logregex', 'svn://localhost/trunk')->willReturn('')->shouldBeCalled();
+		$repository_connector->getLastRevision('svn://localhost')->willReturn(0)->shouldBeCalled();
 
-		$repository_connector->getFirstRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
-		$repository_connector->getLastRevision('svn://localhost')->willReturn(1)->shouldBeCalled();
+		$repository_connector->getRootUrl('svn://localhost/projects/project-name/trunk')->willReturn('svn://localhost')->shouldBeCalled();
+		$repository_connector->getRelativePath('svn://localhost/projects/project-name/trunk')->willReturn('/projects/project-name/trunk')->shouldBeCalled();
+		$repository_connector->getProjectUrl('/projects/project-name/trunk')->willReturn('/projects/project-name')->shouldBeCalled();
+		$repository_connector->getRefByPath('/projects/project-name/trunk')->willReturn('trunk')->shouldBeCalled();
 
-		$repository_connector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
+		$database_manager = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager');
+		$database_manager->getDatabase('svn://localhost', null)->willReturn($this->database);
+		$database_manager->runMigrations(Argument::type('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\MigrationContext'))->shouldBeCalled();
 
-		$cache_manager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
-		$cache_manager->getCache('localhost/log:svn://localhost', Argument::containingString('main:'))->shouldBeCalled();
+		$log_message_parser_factory = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory');
 
-		$io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
-
-		$factory = new RevisionLogFactory($repository_connector->reveal(), $cache_manager->reveal());
-		$revision_log = $factory->getRevisionLog('svn://localhost/trunk', $io->reveal());
-
-		$this->assertInstanceOf('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLog', $revision_log);
+		$factory = new RevisionLogFactory($repository_connector->reveal(), $database_manager->reveal(), $log_message_parser_factory->reveal());
+		$this->assertInstanceOf(
+			'ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLog',
+			$factory->getRevisionLog('svn://localhost/projects/project-name/trunk')
+		);
 	}
 
 }

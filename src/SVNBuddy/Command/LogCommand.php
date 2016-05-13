@@ -228,15 +228,8 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$merged_by = $this->getList($this->io->getOption('merged-by'));
 
 		if ( $merged_by ) {
-			// Exclude revisions, that were merged outside of project root folder in repository.
 			$merged_by = $this->_revisionListParser->expandRanges($merged_by);
-			$revisions_by_path = $this->_revisionLog->find(
-				'paths',
-				$this->repositoryConnector->getProjectUrl(
-					$this->repositoryConnector->getRelativePath($this->getWorkingCopyPath())
-				)
-			);
-			$revisions_by_path = array_intersect($revisions_by_path, $this->_revisionLog->find('merges', $merged_by));
+			$revisions_by_path = $this->_revisionLog->find('merges', $merged_by);
 		}
 
 		if ( $this->io->getOption('merges') ) {
@@ -276,19 +269,42 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 
 		if ( $revisions_by_path_with_limit_count === $revisions_by_path_count ) {
 			$this->io->writeln(sprintf(
-				' * Showing <info>%d</info> revision(-s):',
-				$revisions_by_path_with_limit_count
+				' * Showing <info>%d</info> revision(-s) in %s:',
+				$revisions_by_path_with_limit_count,
+				$this->getRevisionLogIdentifier()
 			));
 		}
 		else {
 			$this->io->writeln(sprintf(
-				' * Showing <info>%d</info> of <info>%d</info> revision(-s):',
+				' * Showing <info>%d</info> of <info>%d</info> revision(-s) in %s:',
 				$revisions_by_path_with_limit_count,
-				$revisions_by_path_count
+				$revisions_by_path_count,
+				$this->getRevisionLogIdentifier()
 			));
 		}
 
 		$this->printRevisions($revisions_by_path_with_limit, (boolean)$this->io->getOption('with-details'));
+	}
+
+	/**
+	 * Returns revision log identifier.
+	 *
+	 * @return string
+	 */
+	protected function getRevisionLogIdentifier()
+	{
+		$ret = '<info>' . $this->_revisionLog->getProjectPath() . '</info> project';
+
+		$ref_name = $this->_revisionLog->getRefName();
+
+		if ( $ref_name ) {
+			$ret .= ' (ref: <info>' . $ref_name . '</info>)';
+		}
+		else {
+			$ret .= ' (all refs)';
+		}
+
+		return $ret;
 	}
 
 	/**
@@ -322,13 +338,13 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	protected function getRevisionsByPath()
 	{
 		$refs = $this->getList($this->io->getOption('refs'));
-		$relative_path = $this->repositoryConnector->getRelativePath($this->getWorkingCopyPath());
+		$relative_path = $this->repositoryConnector->getRelativePath($this->getWorkingCopyPath()) . '/';
 
 		if ( !$refs ) {
 			$ref = $this->repositoryConnector->getRefByPath($relative_path);
 
 			// Use search by ref, when working copy represents ref root folder.
-			if ( $ref !== false && preg_match('/' . preg_quote($ref, '/') . '$/', $relative_path) ) {
+			if ( $ref !== false && preg_match('#' . preg_quote($ref, '#') . '/$#', $relative_path) ) {
 				return $this->_revisionLog->find('refs', $ref);
 			}
 		}
@@ -670,13 +686,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 */
 	private function _getRelativeLogPath(array $path_data, $path_key, $path_cut_off_regexp)
 	{
-		$ret = $path_data[$path_key];
-
-		if ( $path_data['kind'] == 'dir' ) {
-			$ret .= '/';
-		}
-
-		$ret = preg_replace($path_cut_off_regexp, '', $ret, 1);
+		$ret = preg_replace($path_cut_off_regexp, '', $path_data[$path_key], 1);
 
 		if ( $ret === '' ) {
 			$ret = '.';

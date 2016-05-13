@@ -12,20 +12,38 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
-use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin;
 
 class RevisionLog
 {
 
-	const CACHE_FORMAT_VERSION = 1;
+	const FLAG_VERBOSE = 1;
+
+	const FLAG_MERGE_HISTORY = 2;
 
 	/**
 	 * Repository path.
 	 *
 	 * @var string
 	 */
-	private $_repositoryUrl;
+	private $_repositoryRootUrl;
+
+	/**
+	 * Project path.
+	 *
+	 * @var string
+	 */
+	private $_projectPath;
+
+	/**
+	 * Ref name.
+	 *
+	 * @var string
+	 */
+	private $_refName;
 
 	/**
 	 * Repository connector.
@@ -33,13 +51,6 @@ class RevisionLog
 	 * @var Connector
 	 */
 	private $_repositoryConnector;
-
-	/**
-	 * Cache manager.
-	 *
-	 * @var CacheManager
-	 */
-	private $_cacheManager;
 
 	/**
 	 * Console IO.
@@ -51,114 +62,96 @@ class RevisionLog
 	/**
 	 * Installed plugins.
 	 *
-	 * @var IRevisionLogPlugin[]
+	 * @var IPlugin[]
 	 */
 	private $_plugins = array();
 
 	/**
 	 * Create revision log.
 	 *
-	 * @param string       $repository_url       Repository url.
-	 * @param Connector    $repository_connector Repository connector.
-	 * @param CacheManager $cache_manager        Cache.
-	 * @param ConsoleIO    $io                   Console IO.
+	 * @param string    $repository_url       Repository url.
+	 * @param Connector $repository_connector Repository connector.
+	 * @param ConsoleIO $io                   Console IO.
 	 */
 	public function __construct(
 		$repository_url,
 		Connector $repository_connector,
-		CacheManager $cache_manager,
 		ConsoleIO $io = null
 	) {
-		$this->_repositoryUrl = $repository_url;
-		$this->_repositoryConnector = $repository_connector;
-		$this->_cacheManager = $cache_manager;
 		$this->_io = $io;
+		$this->_repositoryConnector = $repository_connector;
+
+		$this->_repositoryRootUrl = $repository_connector->getRootUrl($repository_url);
+
+		$relative_path = $repository_connector->getRelativePath($repository_url);
+		$this->_projectPath = $repository_connector->getProjectUrl($relative_path) . '/';
+		$this->_refName = $repository_connector->getRefByPath($relative_path);
 	}
 
 	/**
 	 * Queries missing revisions.
 	 *
+	 * @param boolean $is_migration Is migration.
+	 *
 	 * @return void
 	 * @throws \LogicException When no plugins are registered.
 	 */
-	public function refresh()
+	public function refresh($is_migration)
 	{
 		if ( !$this->_plugins ) {
 			throw new \LogicException('Please register at least one revision log plugin.');
 		}
 
-		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
+		$this->_databaseReady();
 
-		if ( preg_match(Connector::URL_REGEXP, $project_url, $regs) ) {
-			$cache_key = $regs[2] . $regs[3] . $regs[4] . '/log:' . $project_url;
+		if ( $is_migration ) {
+			// Import missing data for imported commits only.
+			$from_revision = 0;
+			$to_revision = $this->_getAggregateRevision('max');
 		}
 		else {
-			$cache_key = 'misc/log:' . $project_url;
+			// Import all data for new commits only.
+			$from_revision = $this->_getAggregateRevision('min');
+			$to_revision = $this->_repositoryConnector->getLastRevision($this->_repositoryRootUrl);
 		}
-
-		// Initialize plugins with data from cache.
-		$cache = $this->_cacheManager->getCache($cache_key, $this->_getCacheInvalidator());
-
-		if ( is_array($cache) ) {
-			foreach ( $this->_plugins as $plugin_name => $plugin ) {
-				$plugin->setCollectedData($cache[$plugin_name]);
-			}
-		}
-
-		$from_revision = $this->_getLastRevision();
-		$to_revision = $this->_repositoryConnector->getLastRevision($project_url);
 
 		if ( $to_revision > $from_revision ) {
 			$this->_queryRevisionData($from_revision, $to_revision);
-
-			// Collect and cache plugin data.
-			$cache = array();
-
-			foreach ( $this->_plugins as $plugin_name => $plugin ) {
-				$cache[$plugin_name] = $plugin->getCollectedData();
-			}
-
-			$this->_cacheManager->setCache($cache_key, $cache, $this->_getCacheInvalidator());
 		}
 	}
 
 	/**
-	 * Returns format version.
+	 * Reports to each plugin, that database is ready for usage.
 	 *
-	 * @return mixed
+	 * @return void
 	 */
-	private function _getCacheInvalidator()
+	private function _databaseReady()
 	{
-		$invalidators = array('main' => 'main:' . self::CACHE_FORMAT_VERSION);
-
-		foreach ( $this->_plugins as $plugin_name => $plugin ) {
-			$invalidator_key = 'plugin(' . $plugin_name . ')';
-			$invalidators[$invalidator_key] = $invalidator_key . ':' . $plugin->getCacheInvalidator();
+		foreach ( $this->_plugins as $plugin ) {
+			$plugin->whenDatabaseReady();
 		}
-
-		ksort($invalidators);
-
-		return implode(';', $invalidators);
 	}
 
 	/**
-	 * Returns last known revision.
+	 * Returns aggregated revision from all plugins.
+	 *
+	 * @param string $function Aggregate function.
 	 *
 	 * @return integer
 	 */
-	private function _getLastRevision()
+	private function _getAggregateRevision($function)
 	{
-		/** @var IRevisionLogPlugin $plugin */
-		$plugin = reset($this->_plugins);
-		$last_revision = $plugin->getLastRevision();
+		$last_revisions = array();
 
-		if ( $last_revision === null ) {
-			return $this->_repositoryConnector->getFirstRevision(
-				$this->_repositoryConnector->getProjectUrl($this->_repositoryUrl)
-			);
+		foreach ( $this->_plugins as $plugin ) {
+			$last_revisions[] = $plugin->getLastRevision();
 		}
 
-		return $last_revision;
+		if ( count($last_revisions) > 1 ) {
+			return call_user_func_array($function, $last_revisions);
+		}
+
+		return current($last_revisions);
 	}
 
 	/**
@@ -172,27 +165,33 @@ class RevisionLog
 	private function _queryRevisionData($from_revision, $to_revision)
 	{
 		$range_start = $from_revision;
-		$project_url = $this->_repositoryConnector->getProjectUrl($this->_repositoryUrl);
 
 		// The "io" isn't set during autocomplete.
 		if ( isset($this->_io) ) {
-			$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 200));
+			// Create progress bar for repository plugins, where data amount is known upfront.
+			$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 200) + 1);
+			$progress_bar->setMessage(' * Reading missing revisions:');
 			$progress_bar->setFormat(
-				' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%'
+				'%message% %current%/%max% [%bar%] <info>%percent:3s%%</info> %elapsed:6s%/%estimated:-6s% <info>%memory:-10s%</info>'
 			);
 			$progress_bar->start();
 		}
+
+		$log_command_arguments = $this->_getLogCommandArguments();
+		$is_verbose = isset($this->_io) && $this->_io->isVerbose();
 
 		while ( $range_start <= $to_revision ) {
 			$range_end = min($range_start + 199, $to_revision);
 
 			$command = $this->_repositoryConnector->getCommand(
 				'log',
-				'-r ' . $range_start . ':' . $range_end . ' --xml --verbose --use-merge-history {' . $project_url . '}'
+				sprintf($log_command_arguments, $range_start, $range_end, $this->_repositoryRootUrl)
 			);
 			$command->setCacheDuration('10 years');
+			$svn_log = $command->run();
 
-			$this->_parseLog($command->run());
+			$this->_parseLog($svn_log);
+
 			$range_start = $range_end + 1;
 
 			if ( isset($progress_bar) ) {
@@ -201,9 +200,74 @@ class RevisionLog
 		}
 
 		if ( isset($progress_bar) ) {
+			// Remove progress bar of repository plugins.
+			$progress_bar->clear();
+			unset($progress_bar);
+
+			// Create progress bar for database plugins, where data amount isn't known upfront.
+			$progress_bar = $this->_io->createProgressBar();
+			$progress_bar->setMessage(' * Reading missing revisions:');
+			$progress_bar->setFormat('%message% %current% [%bar%] %elapsed:6s% <info>%memory:-10s%</info>');
+			$progress_bar->start();
+
+			foreach ( $this->getDatabaseCollectorPlugins() as $plugin ) {
+				$plugin->process($from_revision, $to_revision, $progress_bar);
+			}
+		}
+		else {
+			foreach ( $this->getDatabaseCollectorPlugins() as $plugin ) {
+				$plugin->process($from_revision, $to_revision);
+			}
+		}
+
+		if ( isset($progress_bar) ) {
 			$progress_bar->finish();
 			$this->_io->writeln('');
 		}
+
+		if ( $is_verbose ) {
+			$this->_displayPluginActivityStatistics();
+		}
+	}
+
+	/**
+	 * Returns arguments for "log" command.
+	 *
+	 * @return string
+	 */
+	private function _getLogCommandArguments()
+	{
+		$query_flags = $this->_getRevisionQueryFlags();
+
+		$ret = '-r %d:%d --xml';
+
+		if ( in_array(self::FLAG_VERBOSE, $query_flags) ) {
+			$ret .= ' --verbose';
+		}
+
+		if ( in_array(self::FLAG_MERGE_HISTORY, $query_flags) ) {
+			$ret .= ' --use-merge-history';
+		}
+
+		$ret .= ' {%s}';
+
+		return $ret;
+	}
+
+	/**
+	 * Returns revision query flags.
+	 *
+	 * @return array
+	 */
+	private function _getRevisionQueryFlags()
+	{
+		$ret = array();
+
+		foreach ( $this->getRepositoryCollectorPlugins() as $plugin ) {
+			$ret = array_merge($ret, $plugin->getRevisionQueryFlags());
+		}
+
+		return array_unique($ret);
 	}
 
 	/**
@@ -215,20 +279,42 @@ class RevisionLog
 	 */
 	private function _parseLog(\SimpleXMLElement $log)
 	{
-		foreach ( $this->_plugins as $plugin ) {
+		foreach ( $this->getRepositoryCollectorPlugins() as $plugin ) {
 			$plugin->parse($log);
+		}
+	}
+
+	/**
+	 * Displays plugin activity statistics.
+	 *
+	 * @return void
+	 */
+	private function _displayPluginActivityStatistics()
+	{
+		$statistics = array();
+
+		// Combine statistics from all plugins.
+		foreach ( $this->_plugins as $plugin ) {
+			$statistics = array_merge($statistics, array_filter($plugin->getStatistics()));
+		}
+
+		// Show statistics.
+		$this->_io->writeln('<debug>Combined Plugin Statistics:</debug>');
+
+		foreach ( $statistics as $statistic_type => $occurrences ) {
+			$this->_io->writeln('<debug> * ' . $statistic_type . ': ' . $occurrences . '</debug>');
 		}
 	}
 
 	/**
 	 * Registers a plugin.
 	 *
-	 * @param IRevisionLogPlugin $plugin Plugin.
+	 * @param IPlugin $plugin Plugin.
 	 *
 	 * @return void
 	 * @throws \LogicException When plugin is registered several times.
 	 */
-	public function registerPlugin(IRevisionLogPlugin $plugin)
+	public function registerPlugin(IPlugin $plugin)
 	{
 		$plugin_name = $plugin->getName();
 
@@ -254,7 +340,7 @@ class RevisionLog
 			throw new \InvalidArgumentException('The "' . $plugin_name . '" revision log plugin is unknown.');
 		}
 
-		return $this->_plugins[$plugin_name]->find((array)$criteria);
+		return $this->_plugins[$plugin_name]->find((array)$criteria, $this->_projectPath);
 	}
 
 	/**
@@ -308,6 +394,70 @@ class RevisionLog
 		}
 
 		return array_keys($bugs);
+	}
+
+	/**
+	 * Returns repository collector plugins.
+	 *
+	 * @return IRepositoryCollectorPlugin[]
+	 */
+	protected function getRepositoryCollectorPlugins()
+	{
+		return $this->getPluginsByInterface(
+			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin'
+		);
+	}
+
+	/**
+	 * Returns database collector plugins.
+	 *
+	 * @return IDatabaseCollectorPlugin[]
+	 */
+	protected function getDatabaseCollectorPlugins()
+	{
+		return $this->getPluginsByInterface(
+			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin'
+		);
+	}
+
+	/**
+	 * Returns plugin list filtered by interface.
+	 *
+	 * @param string $interface Interface name.
+	 *
+	 * @return IPlugin[]
+	 */
+	protected function getPluginsByInterface($interface)
+	{
+		$ret = array();
+
+		foreach ( $this->_plugins as $plugin ) {
+			if ( $plugin instanceof $interface ) {
+				$ret[] = $plugin;
+			}
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Returns project path.
+	 *
+	 * @return string
+	 */
+	public function getProjectPath()
+	{
+		return $this->_projectPath;
+	}
+
+	/**
+	 * Returns ref name.
+	 *
+	 * @return string
+	 */
+	public function getRefName()
+	{
+		return $this->_refName;
 	}
 
 }

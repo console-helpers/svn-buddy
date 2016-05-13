@@ -26,6 +26,7 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,7 +52,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			'repository-connector.last-revision-cache-duration' => '10 minutes',
 		);
 
-		$this->extend('output', function ($output, $c) {
+		$this->extend('output', function ($output) {
 			/** @var OutputInterface $output */
 			$output->getFormatter()->setStyle('debug', new OutputFormatterStyle('white', 'magenta'));
 
@@ -108,8 +109,16 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			return $migration_manager;
 		};
 
+		$this['db_manager'] = function ($c) {
+			return new DatabaseManager($c['working_directory'], $c['migration_manager'], $c['statement_profiler']);
+		};
+
 		$this['revision_log_factory'] = function ($c) {
-			return new RevisionLogFactory($c['repository_connector'], $c['cache_manager']);
+			return new RevisionLogFactory(
+				$c['repository_connector'],
+				$c['db_manager'],
+				$c['log_message_parser_factory']
+			);
 		};
 
 		$this['log_message_parser_factory'] = function () {

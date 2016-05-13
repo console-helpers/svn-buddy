@@ -239,7 +239,6 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 * @param string $wc_path Working copy path.
 	 *
 	 * @return void
-	 * @throws CommandException When working copy is out of date.
 	 */
 	protected function ensureLatestWorkingCopy($wc_path)
 	{
@@ -273,7 +272,6 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 * @param string $wc_path Working copy path.
 	 *
 	 * @return void
-	 * @throws CommandException When unable to perform an update.
 	 */
 	protected function updateWorkingCopy($wc_path)
 	{

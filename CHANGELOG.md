@@ -11,6 +11,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--with-refs` option for `log` command to show refs, that revision belongs to in revision list.
 - The `revert` command now not also reverts changes to paths, that are committed, but also deletes added paths.
 - The `--verbose` option now also shows names of accessed cache files.
+- Support for doing merges from one project into another one within same repository.
+- The `log` command now displays project and ref name above displayed revision list.
 
 ### Changed
 - The `config` command now shows working copy url instead of path to stress fact, that settings are stored based on working copy url and not path.
@@ -25,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Improved revision path absolute-to-relative transformer and now: the project path is always cut off; the ref is cut off only for single-ref revisions.
 - Wrap list of associated revision next to conflicted paths to "4 per row" to avoid too wide table creation.
 - Name format of per-working copy config setting is changed, which will result in all data being lost unless migrated by hand in "~/.svn-buddy/config.json" file (old "path-settings.wc_url_hash.setting_name", new: "path-settings[wc_url].setting_name").
+- Major under the hood revision information storage changes.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.

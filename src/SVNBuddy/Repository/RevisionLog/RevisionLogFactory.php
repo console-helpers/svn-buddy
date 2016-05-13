@@ -12,9 +12,15 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
-use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\MergesPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\PathsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\ProjectsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RefsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\SummaryPlugin;
 
 class RevisionLogFactory
 {
@@ -27,24 +33,34 @@ class RevisionLogFactory
 	private $_repositoryConnector;
 
 	/**
-	 * Cache manager.
+	 * Database manager.
 	 *
-	 * @var CacheManager
+	 * @var DatabaseManager
 	 */
-	private $_cacheManager;
+	private $_databaseManager;
+
+	/**
+	 * Log message parser factory
+	 *
+	 * @var LogMessageParserFactory
+	 */
+	private $_logMessageParserFactory;
 
 	/**
 	 * Create revision log.
 	 *
-	 * @param Connector    $repository_connector Repository connector.
-	 * @param CacheManager $cache_manager        Cache manager.
+	 * @param Connector               $repository_connector       Repository connector.
+	 * @param DatabaseManager         $database_manager           Database manager.
+	 * @param LogMessageParserFactory $log_message_parser_factory Log message parser factory.
 	 */
 	public function __construct(
 		Connector $repository_connector,
-		CacheManager $cache_manager
+		DatabaseManager $database_manager,
+		LogMessageParserFactory $log_message_parser_factory
 	) {
 		$this->_repositoryConnector = $repository_connector;
-		$this->_cacheManager = $cache_manager;
+		$this->_databaseManager = $database_manager;
+		$this->_logMessageParserFactory = $log_message_parser_factory;
 	}
 
 	/**
@@ -57,24 +73,42 @@ class RevisionLogFactory
 	 */
 	public function getRevisionLog($repository_url, ConsoleIO $io = null)
 	{
-		$bugtraq_logregex = $this->_repositoryConnector->withCache('1 year')->getProperty(
-			'bugtraq:logregex',
-			$repository_url
-		);
+		// Gets database for given repository url.
+		$root_url = $this->_repositoryConnector->getRootUrl($repository_url);
+		$database = $this->_databaseManager->getDatabase($root_url, $io);
 
-		$revision_log = new RevisionLog(
-			$repository_url,
+		// Create dependencies.
+		$database_cache = new DatabaseCache($database);
+		$repository_filler = new RepositoryFiller($database, $database_cache);
+
+		// Create blank revision log.
+		$revision_log = new RevisionLog($repository_url, $this->_repositoryConnector, $io);
+
+		// Add plugins to revision log.
+		$revision_log->registerPlugin(new SummaryPlugin($database, $repository_filler));
+		$revision_log->registerPlugin(new PathsPlugin(
+			$database,
+			$repository_filler,
+			$database_cache,
 			$this->_repositoryConnector,
-			$this->_cacheManager,
-			$io
-		);
+			new PathCollisionDetector()
+		));
+		$revision_log->registerPlugin(new ProjectsPlugin($database, $repository_filler));
+		$revision_log->registerPlugin(new BugsPlugin(
+			$database,
+			$repository_filler,
+			$root_url,
+			$this->_repositoryConnector,
+			$this->_logMessageParserFactory
+		));
+		$revision_log->registerPlugin(new MergesPlugin($database, $repository_filler));
+		$revision_log->registerPlugin(new RefsPlugin($database, $repository_filler));
 
-		$revision_log->registerPlugin(new SummaryRevisionLogPlugin());
-		$revision_log->registerPlugin(new PathsRevisionLogPlugin());
-		$revision_log->registerPlugin(new BugsRevisionLogPlugin(new LogMessageParser($bugtraq_logregex)));
-		$revision_log->registerPlugin(new MergesRevisionLogPlugin());
-		$revision_log->registerPlugin(new RefsRevisionLogPlugin($this->_repositoryConnector));
-		$revision_log->refresh();
+		// Run migrations (includes initial schema creation).
+		$context = new MigrationContext($database, clone $revision_log);
+		$this->_databaseManager->runMigrations($context);
+
+		$revision_log->refresh(false);
 
 		return $revision_log;
 	}

@@ -14,7 +14,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use Prophecy\Prophecy\ObjectProphecy;
-use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\RegExToken;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
 
 class RevisionLogTest extends \PHPUnit_Framework_TestCase
@@ -28,13 +28,6 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	protected $repositoryConnector;
 
 	/**
-	 * Cache manager.
-	 *
-	 * @var ObjectProphecy
-	 */
-	protected $cacheManager;
-
-	/**
 	 * Console IO.
 	 *
 	 * @var ObjectProphecy
@@ -46,7 +39,6 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		parent::setUp();
 
 		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
-		$this->cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
 		$this->io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 	}
 
@@ -56,16 +48,16 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRefreshWithoutPlugins()
 	{
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
-		$revision_log->refresh();
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+		$revision_log->refresh(false);
 	}
 
 	public function testPluginRegistrationSuccess()
 	{
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
 		$this->assertFalse($revision_log->pluginRegistered('mocked'), 'The "mocked" plugin is not registered.');
 		$revision_log->registerPlugin($plugin->reveal());
@@ -78,10 +70,10 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testPluginRegistrationFailure()
 	{
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
 		$revision_log->registerPlugin($plugin->reveal());
 		$revision_log->registerPlugin($plugin->reveal());
@@ -89,11 +81,11 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindCriterionSuccess()
 	{
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->find(array('criterion'))->willReturn('OK')->shouldBeCalled();
+		$plugin->find(array('criterion'), '/projects/project-name/')->willReturn('OK')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals('OK', $revision_log->find('mocked', 'criterion'));
@@ -101,11 +93,11 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindCriteriaSuccess()
 	{
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->find(array('criterion1', 'criterion2'))->willReturn('OK')->shouldBeCalled();
+		$plugin->find(array('criterion1', 'criterion2'), '/projects/project-name/')->willReturn('OK')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals('OK', $revision_log->find('mocked', array('criterion1', 'criterion2')));
@@ -117,17 +109,17 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testFindFailure()
 	{
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->find('mocked', '');
 	}
 
 	public function testGetRevisionsDataSuccess()
 	{
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 		$plugin->getRevisionsData(array(1))->willReturn('OK')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals('OK', $revision_log->getRevisionsData('mocked', array(1)));
@@ -139,13 +131,13 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testGetRevisionsDataFailure()
 	{
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->getRevisionsData('mocked', array(0));
 	}
 
 	public function testGetBugsFromRevisions()
 	{
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('bugs')->shouldBeCalled();
 		$plugin->getRevisionsData(array(1, 2))
 			->willReturn(array(
@@ -154,187 +146,146 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 			))
 			->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals(array('A', 'B', 'C'), $revision_log->getBugsFromRevisions(array(1, 2)));
 	}
 
-	public function testRefreshWithoutCacheWithOutput()
+	/**
+	 * @dataProvider refreshWithoutCacheWithOutputDataProvider
+	 */
+	public function testRefreshWithoutCacheWithOutput($is_verbose)
 	{
-		$new_collected_data = array(
-			'mocked' => array('NEW_COLLECTED'),
-		);
-		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
-
-		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(0)->shouldBeCalled();
-		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(400)->shouldBeCalled();
-		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
-
-		$this->cacheManager
-			->getCache('localhost/log:svn://localhost', $cache_invalidator)
-			->shouldBeCalled();
-		$this->cacheManager
-			->setCache('localhost/log:svn://localhost', $new_collected_data, $cache_invalidator)
-			->shouldBeCalled();
-
-		$progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
-		$progress_bar
+		// Create progress bar for repository.
+		$repository_progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
+		$repository_progress_bar->setMessage(' * Reading missing revisions:')->shouldBeCalled();
+		$repository_progress_bar
 			->setFormat(
-				' * Reading missing revisions: %current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s%'
+				'%message% %current%/%max% [%bar%] <info>%percent:3s%%</info> %elapsed:6s%/%estimated:-6s% <info>%memory:-10s%</info>'
 			)
 			->shouldBeCalled();
-		$progress_bar->start()->shouldBeCalled();
-		$progress_bar->advance()->shouldBeCalled();
-		$progress_bar->finish()->shouldBeCalled();
+		$repository_progress_bar->start()->shouldBeCalled();
+		$repository_progress_bar->advance()->shouldBeCalled();
+		$repository_progress_bar->clear()->shouldBeCalled();
 
-		$this->io->createProgressBar(2)->willReturn($progress_bar)->shouldBeCalled();
+		$this->io->createProgressBar(3)->willReturn($repository_progress_bar)->shouldBeCalled();
+
+		// Create progress bar for database.
+		$database_progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
+		$database_progress_bar->setMessage(' * Reading missing revisions:')->shouldBeCalled();
+		$database_progress_bar
+			->setFormat('%message% %current% [%bar%] %elapsed:6s% <info>%memory:-10s%</info>')
+			->shouldBeCalled();
+		$database_progress_bar->start()->shouldBeCalled();
+		$database_progress_bar->advance()->shouldBeCalled();
+		$database_progress_bar->finish()->shouldBeCalled();
+
+		$this->io->createProgressBar()->willReturn($database_progress_bar)->shouldBeCalled();
+
 		$this->io->writeln('')->shouldBeCalled();
+		$this->io->isVerbose()->willReturn($is_verbose);
 
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
-
-		$plugin->getLastRevision()->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(0, 199)))->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(200, 399)))->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(400, 400)))->shouldBeCalled();
-		$plugin->getCollectedData()->willReturn($new_collected_data['mocked'])->shouldBeCalled();
-
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk', $this->io->reveal());
-		$revision_log->registerPlugin($plugin->reveal());
-		$revision_log->refresh();
-	}
-
-	public function testRefreshWithoutCacheWithoutOutput()
-	{
-		$new_collected_data = array(
-			'mocked' => array('NEW_COLLECTED'),
-		);
-		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
-
-		$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(0)->shouldBeCalled();
-		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(400)->shouldBeCalled();
-		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn('svn://localhost')->shouldBeCalled();
-
-		$this->cacheManager
-			->getCache('localhost/log:svn://localhost', $cache_invalidator)
-			->shouldBeCalled();
-		$this->cacheManager
-			->setCache('localhost/log:svn://localhost', $new_collected_data, $cache_invalidator)
-			->shouldBeCalled();
-
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
-
-		$plugin->getLastRevision()->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(0, 199)))->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(200, 399)))->shouldBeCalled();
-		$plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(400, 400)))->shouldBeCalled();
-		$plugin->getCollectedData()->willReturn($new_collected_data['mocked'])->shouldBeCalled();
-
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
-		$revision_log->registerPlugin($plugin->reveal());
-		$revision_log->refresh();
-	}
-
-	/**
-	 * @dataProvider repositoryUrlDataProvider
-	 */
-	public function testRefreshWithCache($repository_url, $plugin_last_revision)
-	{
-		$collected_data = array(
-			'mocked' => array('OLD_COLLECTED'),
-		);
-
-		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
-
-		if ( !isset($plugin_last_revision) ) {
-			$this->repositoryConnector->getFirstRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
+		if ( $is_verbose ) {
+			$this->io->writeln('<debug>Combined Plugin Statistics:</debug>')->shouldBeCalled();
 		}
 
+		$this->testRefreshWithoutCacheWithoutOutput($this->io->reveal(), $database_progress_bar->reveal(), $is_verbose);
+	}
+
+	public function refreshWithoutCacheWithOutputDataProvider()
+	{
+		return array(
+			'verbose' => array(true),
+			'non-verbose' => array(false),
+		);
+	}
+
+	public function testRefreshWithoutCacheWithoutOutput(ConsoleIO $io = null, ProgressBar $database_progress_bar = null, $is_verbose = false)
+	{
+		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(400)->shouldBeCalled();
+
+		// Add repository collector plugin.
+		$repository_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IRepositoryCollectorPlugin');
+		$repository_collector_plugin->getName()->willReturn('mocked_repo')->shouldBeCalled();
+		$repository_collector_plugin->whenDatabaseReady()->shouldBeCalled();
+		$repository_collector_plugin->getLastRevision()->willReturn(0)->shouldBeCalled();
+
+		$repository_collector_plugin->getRevisionQueryFlags()
+			->willReturn(array(RevisionLog::FLAG_MERGE_HISTORY, RevisionLog::FLAG_VERBOSE))
+			->shouldBeCalled();
+
+		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(0, 199)))->shouldBeCalled();
+		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(200, 399)))->shouldBeCalled();
+		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(400, 400)))->shouldBeCalled();
+
+		if ( $is_verbose ) {
+			$repository_collector_plugin->getStatistics()->willReturn(array('rp1' => 10, 'rp2' => 20))->shouldBeCalled();
+			$this->io->writeln('<debug> * rp1: 10</debug>')->shouldBeCalled();
+			$this->io->writeln('<debug> * rp2: 20</debug>')->shouldBeCalled();
+		}
+
+		// Add database collector plugin.
+		$database_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IDatabaseCollectorPlugin');
+		$database_collector_plugin->getName()->willReturn('mocked_db')->shouldBeCalled();
+		$database_collector_plugin->whenDatabaseReady()->shouldBeCalled();
+		$database_collector_plugin->getLastRevision()->willReturn(0)->shouldBeCalled();
+		$database_collector_plugin
+			->process(0, 400, $database_progress_bar)
+			->will(function (array $args) {
+				if ( isset($args[2]) ) {
+					$args[2]->advance();
+				}
+			})
+			->shouldBeCalled();
+
+		if ( $is_verbose ) {
+			$database_collector_plugin->getStatistics()->willReturn(array('dp1' => 3, 'dp2' => 4))->shouldBeCalled();
+			$this->io->writeln('<debug> * dp1: 3</debug>')->shouldBeCalled();
+			$this->io->writeln('<debug> * dp2: 4</debug>')->shouldBeCalled();
+		}
+
+		// Create revision log.
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk', $io);
+		$revision_log->registerPlugin($repository_collector_plugin->reveal());
+		$revision_log->registerPlugin($database_collector_plugin->reveal());
+		$revision_log->refresh(false);
+	}
+
+	public function testRefreshWithCache()
+	{
 		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
-		$this->repositoryConnector->getProjectUrl($repository_url)->willReturn('svn://localhost')->shouldBeCalled();
 
-		$this->cacheManager
-			->getCache('localhost/log:svn://localhost', $cache_invalidator)
-			->willReturn($collected_data)
-			->shouldBeCalled();
+		// Add repository collector plugin.
+		$repository_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IRepositoryCollectorPlugin');
+		$repository_collector_plugin->getName()->willReturn('mocked_repo')->shouldBeCalled();
+		$repository_collector_plugin->whenDatabaseReady()->shouldBeCalled();
+		$repository_collector_plugin->getLastRevision()->willReturn(1000)->shouldBeCalled();
 
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
-		$plugin->setCollectedData($collected_data['mocked'])->shouldBeCalled();
+		// Add database collector plugin.
+		$database_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IDatabaseCollectorPlugin');
+		$database_collector_plugin->getName()->willReturn('mocked_db')->shouldBeCalled();
+		$database_collector_plugin->whenDatabaseReady()->shouldBeCalled();
+		$database_collector_plugin->getLastRevision()->willReturn(1000)->shouldBeCalled();
 
-		$plugin->getLastRevision()->willReturn($plugin_last_revision)->shouldBeCalled();
-
-		$revision_log = $this->createRevisionLog($repository_url);
-		$revision_log->registerPlugin($plugin->reveal());
-		$revision_log->refresh();
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+		$revision_log->registerPlugin($repository_collector_plugin->reveal());
+		$revision_log->registerPlugin($database_collector_plugin->reveal());
+		$revision_log->refresh(false);
 	}
 
-	public function repositoryUrlDataProvider()
+	public function testGetProjectPath()
 	{
-		return array(
-			array('svn://localhost', null),
-			array('svn://localhost/trunk', 1000),
-			array('svn://localhost/branches', 1000),
-			array('svn://localhost/branches/branch-name', 1000),
-			array('svn://localhost/tags', 1000),
-			array('svn://localhost/tags/tag-name', 1000),
-		);
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
+		$this->assertEquals('/projects/project-name/', $revision_log->getProjectPath());
 	}
 
-	/**
-	 * @dataProvider refreshCacheKeyFormingDataProvider
-	 */
-	public function testRefreshCacheKeyForming($project_url, $cache_namespace)
+	public function testGetRefName()
 	{
-		$cache_invalidator = new RegExToken('/^main:[\d]+;plugin\(mocked\):[\d]+$/');
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
-		$this->repositoryConnector->getFirstRevision($project_url)->willReturn(1)->shouldBeCalled();
-		$this->repositoryConnector->getLastRevision($project_url)->willReturn(1)->shouldBeCalled();
-		$this->repositoryConnector->getProjectUrl('svn://localhost/trunk')->willReturn($project_url)->shouldBeCalled();
-
-		$this->cacheManager
-			->getCache($cache_namespace . ':' . $project_url, $cache_invalidator)
-			->shouldBeCalled();
-
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\IRevisionLogPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->getCacheInvalidator()->willReturn(5)->shouldBeCalled();
-
-		$plugin->getLastRevision()->shouldBeCalled();
-
-		$revision_log = $this->createRevisionLog('svn://localhost/trunk');
-		$revision_log->registerPlugin($plugin->reveal());
-		$revision_log->refresh();
-	}
-
-	public function refreshCacheKeyFormingDataProvider()
-	{
-		return array(
-			'no path' => array('svn://domain.tld', 'domain.tld/log'),
-			'root path (trailing)' => array('svn://domain.tld/', 'domain.tld/log'),
-			'path (no trailing)' => array('svn://domain.tld/path', 'domain.tld/log'),
-			'path (trailing)' => array('svn://domain.tld/path/', 'domain.tld/log'),
-
-			'no path; user' => array('svn://user@domain.tld', 'user@domain.tld/log'),
-			'root path (trailing); user' => array('svn://user@domain.tld/', 'user@domain.tld/log'),
-			'path (no trailing); user' => array('svn://user@domain.tld/path', 'user@domain.tld/log'),
-			'path (trailing); user' => array('svn://user@domain.tld/path/', 'user@domain.tld/log'),
-
-			'no path; port' => array('svn://domain.tld:1234', 'domain.tld:1234/log'),
-			'root path (trailing); port' => array('svn://domain.tld:1234/', 'domain.tld:1234/log'),
-			'path (no trailing); port' => array('svn://domain.tld:1234/path', 'domain.tld:1234/log'),
-			'path (trailing); port' => array('svn://domain.tld:1234/path/', 'domain.tld:1234/log'),
-
-			'no path; user; port' => array('svn://user@domain.tld:1234', 'user@domain.tld:1234/log'),
-			'root path (trailing); user; port' => array('svn://user@domain.tld:1234/', 'user@domain.tld:1234/log'),
-			'path (no trailing); user; port' => array('svn://user@domain.tld:1234/path', 'user@domain.tld:1234/log'),
-			'path (trailing); user; port' => array('svn://user@domain.tld:1234/path/', 'user@domain.tld:1234/log'),
-		);
+		$this->assertEquals('trunk', $revision_log->getRefName());
 	}
 
 	/**
@@ -380,7 +331,6 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 </log>
 OUTPUT;
 
-
 		$this->expectRepositoryCommand(
 			'log',
 			'-r ' . $from_revision . ':' . $to_revision . ' --xml --verbose --use-merge-history {svn://localhost}',
@@ -422,10 +372,14 @@ OUTPUT;
 	 */
 	protected function createRevisionLog($repository_url, ConsoleIO $io = null)
 	{
+		$this->repositoryConnector->getRootUrl($repository_url)->willReturn('svn://localhost')->shouldBeCalled();
+		$this->repositoryConnector->getRelativePath($repository_url)->willReturn('/projects/project-name/trunk')->shouldBeCalled();
+		$this->repositoryConnector->getProjectUrl('/projects/project-name/trunk')->willReturn('/projects/project-name')->shouldBeCalled();
+		$this->repositoryConnector->getRefByPath('/projects/project-name/trunk')->willReturn('trunk')->shouldBeCalled();
+
 		$revision_log = new RevisionLog(
 			$repository_url,
 			$this->repositoryConnector->reveal(),
-			$this->cacheManager->reveal(),
 			$io
 		);
 
