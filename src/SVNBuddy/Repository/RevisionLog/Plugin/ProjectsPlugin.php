@@ -81,11 +81,9 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 	/**
 	 * Creates one project per repository and moves all commits into it.
 	 *
-	 * @param integer $revision Revision.
-	 *
 	 * @return void
 	 */
-	protected function createRepositoryWideProject($revision)
+	protected function createRepositoryWideProject()
 	{
 		$select_sql = 'SELECT Id FROM Paths WHERE ProjectPath = :project_path LIMIT 100';
 
