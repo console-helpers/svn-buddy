@@ -123,27 +123,23 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$this->assertCount(2, $this->statementProfiler->getProfiles());
 	}
 
-	/**
-	 * @expectedException \PDOException
-	 * @expectedExceptionMessage Duplicate statement:
-	 */
 	public function testDuplicateStatementsTrackingEnabledByDefault()
 	{
+		$this->setExpectedException('PDOException', 'Duplicate statement:' . PHP_EOL . 'bb "dd"');
+
 		$this->statementProfiler->setActive(true);
-		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
-		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb :cc', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb :cc', array('cc' => 'dd'));
 	}
 
-	/**
-	 * @expectedException \PDOException
-	 * @expectedExceptionMessage Duplicate statement:
-	 */
 	public function testDuplicateStatementsAreNotAllowed()
 	{
+		$this->setExpectedException('PDOException', 'Duplicate statement:' . PHP_EOL . 'bb "dd"');
+
 		$this->statementProfiler->setActive(true);
 		$this->statementProfiler->trackDuplicates(true);
-		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
-		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb :cc', array('cc' => 'dd'));
+		$this->statementProfiler->addProfile(5, 'perform', 'bb :cc', array('cc' => 'dd'));
 	}
 
 	public function testDuplicateStatementsAreAllowed()

@@ -146,8 +146,8 @@ class StatementProfiler implements ProfilerInterface
 			&& !in_array($normalized_statement, $this->ignoredDuplicateStatements)
 			&& isset($this->profiles[$profile_key])
 		) {
-			$error_msg = 'Duplicate statement:' . PHP_EOL . $normalized_statement;
-			$error_msg .= PHP_EOL . 'Bind Values:' . PHP_EOL . print_r($bind_values, true);
+			$substituted_normalized_statement = $this->substituteParameters($normalized_statement, $bind_values);
+			$error_msg = 'Duplicate statement:' . PHP_EOL . $substituted_normalized_statement;
 
 			throw new \PDOException($error_msg);
 		}
