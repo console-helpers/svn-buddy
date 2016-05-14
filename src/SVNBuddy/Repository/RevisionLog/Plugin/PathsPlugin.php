@@ -269,7 +269,7 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 	 */
 	protected function processPath($path, $revision, $action, $is_usage = true)
 	{
-		$path_hash = sprintf('%u', crc32($path));
+		$path_hash = $this->repositoryFiller->getPathChecksum($path);
 
 		$sql = 'SELECT Id, ProjectPath, RefName, RevisionAdded, RevisionDeleted, RevisionLastSeen
 				FROM Paths
@@ -559,7 +559,7 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 							WHERE cpr.ProjectId = :project_id AND p.PathHash = :path_hash';
 					$tmp_revisions = $this->database->fetchCol($sql, array(
 						'project_id' => $project_id,
-						'path_hash' => sprintf('%u', crc32($path)),
+						'path_hash' => $this->repositoryFiller->getPathChecksum($path),
 					));
 				}
 

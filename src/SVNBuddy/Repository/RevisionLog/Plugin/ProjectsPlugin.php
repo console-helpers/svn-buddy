@@ -65,11 +65,11 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 		foreach ( $projects as $project_data ) {
 			$is_deleted = $project_data['IsDeleted'];
 
-			if ( $is_deleted && !$project_data['RevisionDeleted'] ) {
+			if ( $is_deleted && !is_numeric($project_data['RevisionDeleted']) ) {
 				$this->repositoryFiller->setProjectStatus($project_data['Id'], 0);
 				$this->recordStatistic(self::STATISTIC_PROJECT_RESTORED);
 			}
-			elseif ( !$is_deleted && $project_data['RevisionDeleted'] ) {
+			elseif ( !$is_deleted && is_numeric($project_data['RevisionDeleted']) ) {
 				$this->repositoryFiller->setProjectStatus($project_data['Id'], 1);
 				$this->recordStatistic(self::STATISTIC_PROJECT_DELETED);
 			}

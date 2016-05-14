@@ -137,7 +137,7 @@ class CommitBuilder
 							WHERE Id = :id';
 					$touch_path_data = $this->_databaseCache->getFromCache(
 						'Paths',
-						sprintf('%u', crc32($path)) . '/' . __METHOD__,
+						$this->_repositoryFiller->getPathChecksum($path) . '/' . __METHOD__,
 						$sql,
 						array('id' => $this->_pathsMap[$path])
 					);

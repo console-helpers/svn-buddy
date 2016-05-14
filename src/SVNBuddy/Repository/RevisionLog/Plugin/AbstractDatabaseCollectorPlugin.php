@@ -87,7 +87,10 @@ abstract class AbstractDatabaseCollectorPlugin extends AbstractPlugin implements
 			return array();
 		}
 
-		$path_hashes = array_map('crc32', $this->getField('Path', $projects));
+		$path_hashes = array_map(
+			array($this->repositoryFiller, 'getPathChecksum'),
+			$this->getField('Path', $projects)
+		);
 
 		$sql = 'SELECT Path, Id AS PathId, RevisionAdded, RevisionDeleted, RevisionLastSeen
 				FROM Paths
