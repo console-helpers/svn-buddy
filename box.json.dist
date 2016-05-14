@@ -2,6 +2,9 @@
     "alias": "svn-buddy.phar",
     "chmod": "0755",
     "directories": ["migrations", "src", "bin"],
+    "files": [
+        "LICENSE"
+    ],
     "finder": [
         {
             "name": "*.php",
