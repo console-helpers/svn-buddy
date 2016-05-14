@@ -1,6 +1,5 @@
 # SVN-Buddy
 
-<!--
 [![Build Status](https://travis-ci.org/console-helpers/svn-buddy.svg?branch=master)](https://travis-ci.org/console-helpers/svn-buddy)
 [![Coverage Status](https://coveralls.io/repos/console-helpers/svn-buddy/badge.svg?branch=master&service=github)](https://coveralls.io/github/console-helpers/svn-buddy?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/?branch=master)
@@ -9,12 +8,11 @@
 [![Latest Stable Version](https://poser.pugx.org/console-helpers/svn-buddy/v/stable)](https://packagist.org/packages/console-helpers/svn-buddy)
 [![Total Downloads](https://poser.pugx.org/console-helpers/svn-buddy/downloads)](https://packagist.org/packages/console-helpers/svn-buddy)
 [![License](https://poser.pugx.org/console-helpers/svn-buddy/license)](https://packagist.org/packages/console-helpers/svn-buddy)
--->
 
 SVN-Buddy is a command-line tool, that was created to drastically simplify Subversion-related development tasks performed on a daily basis from command line.
 
 The Git users will also feel right at home, because used terminology (commands/options/arguments) was inspired by Git.
- 
+
 ## Usage
 
 Almost each of commands described below accepts `path` argument to specify working copy path. This allows to work with several working copies without the need to `cd` to each of them.
@@ -23,7 +21,7 @@ Almost each of commands described below accepts `path` argument to specify worki
 
 This command allows to change configuration settings, that are used by other commands.
 
-Some of the commands (`merge`, `log` and `aggregate`) also use central data store (located in `~/.svn-buddy/config.json` file) to store information about a working copy. 
+Some of the commands (`merge`, `log` and `aggregate`) also use central data store (located in `~/.svn-buddy/config.json` file) to store information about a working copy.
 
 * If nothing is stored for a given working copy, then a global default would be used.
 * If global default is missing, then built-in default would be used.
@@ -39,7 +37,7 @@ The association between setting values and a working copy is done using working 
  * `-e`, `--edit=SETTING` - Change setting value in the Interactive Editor
  * `-d`, `--delete=SETTING` - Delete setting
  * `-g`, `--global` - Operate on global instead of working copy-specific settings
-  
+
 #### Examples
 
 Feel free to add `--global` option to any of examples below to operate on global settings instead of working copy ones.
@@ -72,7 +70,7 @@ svn-buddy.phar config --delete merge.source-url
 
 Delete a `merge.source-url` setting.
 
-### The "log" command         
+### The "log" command
 
 This command shows the log messages for a set of revisions.
 
@@ -358,7 +356,7 @@ svn-buddy.phar merge --with-summary
 
 Thanks to `log` command being used behind the scenes to display non-merged revisions it's possible to forward `--with-summary` option to it to see totals for paths affected by each non-merged revision.
 
-### The "commit" (alias "ci") command 
+### The "commit" (alias "ci") command
 
 The command sends changes from your working copy to the repository.
 
@@ -406,7 +404,7 @@ Description:
 * `Stable` is folder name of merge target (working copy)
 * `22758` and `22796` are merged revisions
 * `message line ...` are lines from commit message of merged revisions
-  
+
 ### The "cleanup" command
 
 Recursively clean up the working copy, removing locks, resuming unfinished operations, etc.
@@ -424,7 +422,7 @@ svn-buddy.phar cleanup
 ### The "revert" command
 
 Restore pristine working copy file (undo most local edits).
-  
+
 #### Arguments
 
 * `path` - Working copy path [default: "`.`"]
@@ -435,7 +433,7 @@ Restore pristine working copy file (undo most local edits).
 svn-buddy.phar revert
 ```
 
-### The "update" (alias "up") command 
+### The "update" (alias "up") command
 
 Bring changes from the repository into the working copy.
 
@@ -464,7 +462,7 @@ Runs other command sequentially on every working copy on a path.
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--ignore-add=IGNORE-ADD` - Adds path to ignored directory list
 * `--ignore-remove=IGNORE-REMOVE` - Removes path to ignored directory list
-* `--ignore-show` - Show ignored directory list  
+* `--ignore-show` - Show ignored directory list
 
 #### Examples
 
@@ -509,7 +507,7 @@ Displays help for a command.
 ## Requirements
 
 * working Subversion command-line client (was tested on v1.6, v1.7, v1.8)
-* a Subversion working copy (almost all `svn-buddy.phar` commands operate inside a working copy) 
+* a Subversion working copy (almost all `svn-buddy.phar` commands operate inside a working copy)
 
 ## Contributing
 
