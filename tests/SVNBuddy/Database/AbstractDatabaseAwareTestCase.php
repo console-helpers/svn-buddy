@@ -85,25 +85,51 @@ abstract class AbstractDatabaseAwareTestCase extends \PHPUnit_Framework_TestCase
 	 */
 	private function _dumpTable($table_name)
 	{
-		return $this->database->fetchAll('SELECT * FROM ' . $table_name);
+		$profiler = $this->database->getProfiler();
+
+		if ( is_object($profiler) ) {
+			$profiler->setActive(false);
+		}
+
+		$sql = 'SELECT *
+				FROM ' . $table_name;
+		$table_content = $this->database->fetchAll($sql);
+
+		if ( is_object($profiler) ) {
+			$profiler->setActive(true);
+		}
+
+		return $table_content;
 	}
 
 	/**
 	 * Checks, that database table contains given number of records.
 	 *
-	 * @param string  $table_name   Table name.
-	 * @param integer $record_count Record count.
+	 * @param string  $table_name            Table name.
+	 * @param integer $expected_record_count Expected record count.
 	 *
 	 * @return void
 	 */
-	protected function assertTableCount($table_name, $record_count)
+	protected function assertTableCount($table_name, $expected_record_count)
 	{
+		$profiler = $this->database->getProfiler();
+
+		if ( is_object($profiler) ) {
+			$profiler->setActive(false);
+		}
+
 		$sql = 'SELECT COUNT(*)
 				FROM ' . $table_name;
+		$actual_record_count = $this->database->fetchValue($sql);
+
+		if ( is_object($profiler) ) {
+			$profiler->setActive(true);
+		}
+
 		$this->assertEquals(
-			$record_count,
-			$this->database->fetchValue($sql),
-			'The "' . $table_name . '" table contains ' . $record_count . ' records'
+			$expected_record_count,
+			$actual_record_count,
+			'The "' . $table_name . '" table contains ' . $expected_record_count . ' records'
 		);
 	}
 
