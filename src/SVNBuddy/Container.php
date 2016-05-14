@@ -95,6 +95,11 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 				WHERE PathHash IN (:path_hashes)'
 			);
 
+			// The "ProjectsPlugin::createRepositoryWideProject" method.
+			$statement_profiler->ignoreDuplicateStatement(
+				'SELECT Id FROM Paths WHERE ProjectPath = :project_path LIMIT 100'
+			);
+
 			$statement_profiler->setActive(true);
 
 			return $statement_profiler;

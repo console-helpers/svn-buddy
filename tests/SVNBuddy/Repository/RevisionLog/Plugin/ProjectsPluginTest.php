@@ -27,6 +27,114 @@ class ProjectsPluginTest extends AbstractPluginTestCase
 		$this->markTestSkipped('The "' . $this->plugin->getName() . '" doesn\'t check given project existence.');
 	}
 
+	public function testProcessNoRepositoryWideProjectCreated()
+	{
+		$this->commitBuilder
+			->addCommit(10, 'user', 0, 'message')
+			->addPath('A', '/path/', '', '')
+			->addPath('A', '/path/file.txt', '', '');
+
+		$this->commitBuilder->build();
+
+		$this->plugin->process(0, 10);
+
+		$this->assertTableEmpty('Projects');
+	}
+
+	public function testProcessRepositoryWideProjectCreated()
+	{
+		$this->commitBuilder
+			->addCommit(10, 'user', 0, 'message')
+			->addPath('A', '/path/', '', '')
+			->addPath('A', '/path/file1.txt', '', '');
+
+		$this->commitBuilder
+			->addCommit(20, 'user', 0, 'message')
+			->addPath('A', '/path/file2.txt', '', '');
+
+		$this->commitBuilder->build();
+
+		$this->plugin->process(0, 20);
+
+		$this->assertTableContent(
+			'Paths',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/path/',
+					'PathNestingLevel' => '1',
+					'PathHash' => '1753053843',
+					'RefName' => '',
+					'ProjectPath' => '/',
+					'RevisionAdded' => '10',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '20',
+				),
+				array(
+					'Id' => '2',
+					'Path' => '/path/file1.txt',
+					'PathNestingLevel' => '1',
+					'PathHash' => '2326916987',
+					'RefName' => '',
+					'ProjectPath' => '/',
+					'RevisionAdded' => '10',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '10',
+				),
+				array(
+					'Id' => '3',
+					'Path' => '/path/file2.txt',
+					'PathNestingLevel' => '1',
+					'PathHash' => '3440481707',
+					'RefName' => '',
+					'ProjectPath' => '/',
+					'RevisionAdded' => '20',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '20',
+				),
+				array(
+					'Id' => '4',
+					'Path' => '/',
+					'PathNestingLevel' => '0',
+					'PathHash' => '2043925204',
+					'RefName' => '',
+					'ProjectPath' => '/',
+					'RevisionAdded' => '0',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '0',
+				),
+			)
+		);
+
+		$this->assertTableContent(
+			'Projects',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/',
+					'BugRegExp' => null,
+					'IsDeleted' => '0',
+				),
+			)
+		);
+
+		$this->assertTableContent(
+			'CommitProjects',
+			array(
+				array(
+					'Revision' => '10',
+					'ProjectId' => '1',
+				),
+				array(
+					'Revision' => '20',
+					'ProjectId' => '1',
+				),
+			)
+		);
+
+		$this->assertTablesEmpty(array('ProjectRefs', 'CommitRefs'));
+	}
+
 	public function testProcessProjectRemoved()
 	{
 		$this->commitBuilder

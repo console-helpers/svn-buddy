@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
+use Aura\Sql\Iterator\ColIterator;
+
 class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 {
 
@@ -54,10 +56,10 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 		$projects = $this->getProjects();
 		$this->setLastRevision($to_revision);
 
-		if ( !$projects ) {
-			$this->advanceProgressBar();
-
-			return;
+		// When no projects exists and there 20+ commits, then consider repository
+		// having single project without known structure (trunk/branches/tags) only.
+		if ( !$projects && $to_revision >= 20 ) {
+			$this->createRepositoryWideProject($to_revision);
 		}
 
 		foreach ( $projects as $project_data ) {
@@ -74,6 +76,38 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 		}
 
 		$this->advanceProgressBar();
+	}
+
+	/**
+	 * Creates one project per repository and moves all commits into it.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return void
+	 */
+	protected function createRepositoryWideProject($revision)
+	{
+		$select_sql = 'SELECT Id FROM Paths WHERE ProjectPath = :project_path LIMIT 100';
+
+		while ( true ) {
+			$path_ids = $this->database->fetchCol($select_sql, array('project_path' => ''));
+
+			if ( !$path_ids ) {
+				break;
+			}
+
+			$this->repositoryFiller->movePathsIntoProject($path_ids, '/');
+		}
+
+		$project_id = $this->repositoryFiller->addProject('/');
+
+		$sql = 'SELECT Revision
+				FROM Commits';
+		$all_commits = new ColIterator($this->database->perform($sql));
+
+		foreach ( $all_commits as $revision ) {
+			$this->repositoryFiller->addCommitToProject($revision, $project_id);
+		}
 	}
 
 	/**

@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `--verbose` option now also shows names of accessed cache files.
 - Support for doing merges from one project into another one within same repository.
 - The `log` command now displays project and ref name above displayed revision list.
+- Added support for repositories where only 1 project exists and no "trunk", "branches", "tags" folders are present.
 
 ### Changed
 - The `config` command now shows working copy url instead of path to stress fact, that settings are stored based on working copy url and not path.
