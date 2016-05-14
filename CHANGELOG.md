@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+## [0.2.0] - 2016-05-14
+### Added
 - When conflicts were detected during merge, then conflicted paths would be listed in auto-generated commit message.
 - The `--source-url` option of `merge` command can be specified in short form (e.g. `trunk`, `branches/branch-name`, `tags/tag-name`, `name` (for branch-to-branch or tag-to-tag merges).
 - Added `--refs` option (with auto-complete) for `log` command to show revisions from ref instead of current working copy path.
@@ -126,7 +136,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release.
 - Adding `aggregate`, `cleanup`, `commit`, `log`, `merge` and `revert` commands.
 
-[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.0.4...HEAD
+[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/console-helpers/svn-buddy/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/console-helpers/svn-buddy/compare/v0.0.4...v0.1.0
 [0.0.4]: https://github.com/console-helpers/svn-buddy/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/console-helpers/svn-buddy/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/console-helpers/svn-buddy/compare/v0.0.1...v0.0.2
