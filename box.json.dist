@@ -10,8 +10,6 @@
             "name": "*.php",
             "exclude": [
                 "tests",
-                "mockery",
-				"hamcrest",
                 "*Test.php",
                 "test",
                 "Tests",
@@ -21,7 +19,7 @@
             "in": "vendor"
         }
     ],
-	"blacklist": ["vendor/aik099/coding-standard"],
+    "blacklist": ["vendor/aik099/coding-standard"],
     "main": "bin/svn-buddy",
     "git-version": "git-version",
     "output": "build/svn-buddy.phar",
