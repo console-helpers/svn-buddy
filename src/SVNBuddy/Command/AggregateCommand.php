@@ -37,7 +37,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 			)
 			->addArgument(
 				'sub-command',
-				InputArgument::REQUIRED,
+				InputArgument::OPTIONAL,
 				'Command to execute on each found working copy'
 			)
 			->addArgument(
@@ -122,16 +122,20 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		if ( $this->processIgnoreAdd() || $this->processIgnoreRemove() || $this->processIgnoreShow() ) {
+			return;
+		}
+
 		$sub_command = $this->io->getArgument('sub-command');
+
+		if ( $sub_command === null ) {
+			throw new \RuntimeException('Not enough arguments (missing: "sub-command").');
+		}
 
 		if ( !in_array($sub_command, $this->getSubCommands()) ) {
 			throw new \RuntimeException(
 				'The "' . $sub_command . '" sub-command is unknown or doesn\'t support aggregation.'
 			);
-		}
-
-		if ( $this->processIgnoreAdd() || $this->processIgnoreRemove() || $this->processIgnoreShow() ) {
-			return;
 		}
 
 		$this->runSubCommand($sub_command);

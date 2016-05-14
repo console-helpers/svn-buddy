@@ -39,6 +39,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Wrap list of associated revision next to conflicted paths to "4 per row" to avoid too wide table creation.
 - Name format of per-working copy config setting is changed, which will result in all data being lost unless migrated by hand in "~/.svn-buddy/config.json" file (old "path-settings.wc_url_hash.setting_name", new: "path-settings[wc_url].setting_name").
 - Major under the hood revision information storage changes.
+- The `aggregate` command no longer requires specifying `sub-command` argument, when `--ignore-*` options are used.
 
 ### Fixed
 - The Subversion repositories hosted on https://unfuddle.com/ were not usable from `log` and `merge` commands.
