@@ -49,6 +49,8 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 				),
 			)
 		);
+
+		$this->assertTableEmpty('Paths');
 	}
 
 	public function addProjectDataProvider()
@@ -57,6 +59,28 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 			array('0', null),
 			array('0', ''),
 			array('1', ''),
+		);
+	}
+
+	public function testAddRepositoryWideProject()
+	{
+		$this->repositoryFiller->addProject('/');
+
+		$this->assertTableContent(
+			'Paths',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/',
+					'PathNestingLevel' => '0',
+					'PathHash' => '2043925204',
+					'RefName' => '',
+					'ProjectPath' => '/',
+					'RevisionAdded' => '0',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '0',
+				),
+			)
 		);
 	}
 

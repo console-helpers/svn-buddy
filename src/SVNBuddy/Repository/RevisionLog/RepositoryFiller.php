@@ -65,7 +65,14 @@ class RepositoryFiller
 			'bug_regexp' => $bug_regexp,
 		));
 
-		return $this->database->lastInsertId();
+		$project_id = $this->database->lastInsertId();
+
+		// There are no "0" revision in repository, but we need to bind project path to some revision.
+		if ( $path === '/' ) {
+			$this->addPath($path, '', $path, 0);
+		}
+
+		return $project_id;
 	}
 
 	/**
