@@ -464,6 +464,10 @@ Runs other command sequentially on every working copy on a path.
 * `--ignore-remove=IGNORE-REMOVE` - Removes path to ignored directory list
 * `--ignore-show` - Show ignored directory list
 
+#### Configuration settings
+
+* `aggregate.ignore` - list of paths ignored by `aggregate` command, when searching for working copies
+
 #### Examples
 
 ```
