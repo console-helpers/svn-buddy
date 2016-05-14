@@ -1,7 +1,7 @@
 {
     "alias": "svn-buddy.phar",
     "chmod": "0755",
-    "directories": ["src", "bin"],
+    "directories": ["migrations", "src", "bin"],
     "finder": [
         {
             "name": "*.php",
