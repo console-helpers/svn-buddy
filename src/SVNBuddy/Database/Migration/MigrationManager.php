@@ -194,10 +194,19 @@ class MigrationManager
 	 */
 	protected function getAllMigrations()
 	{
-		$file_extensions = implode(',', $this->getMigrationFileExtensions());
-		$migrations = glob($this->_migrationsDirectory . '/*.{' . $file_extensions . '}', GLOB_BRACE | GLOB_NOSORT);
-		$migrations = array_map('basename', $migrations);
-		sort($migrations); // This sorting is better, then one offered by "glob" function.
+		$migrations = array();
+		$file_extensions = $this->getMigrationFileExtensions();
+
+		// Use "DirectoryIterator" instead of "glob", because it works within PHAR files as well.
+		$directory_iterator = new \DirectoryIterator($this->_migrationsDirectory);
+
+		foreach ( $directory_iterator as $file ) {
+			if ( $file->isFile() && in_array($file->getExtension(), $file_extensions) ) {
+				$migrations[] = $file->getBasename();
+			}
+		}
+
+		sort($migrations);
 
 		return $migrations;
 	}
