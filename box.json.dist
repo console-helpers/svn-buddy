@@ -9,6 +9,7 @@
         {
             "name": "*.php",
             "exclude": [
+                "docs",
                 "tests",
                 "*Test.php",
                 "test",

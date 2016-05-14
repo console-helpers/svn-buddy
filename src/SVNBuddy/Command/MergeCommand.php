@@ -85,7 +85,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	{
 		$this
 			->setName('merge')
-			->setDescription('Merge changes from another refs within same project into a working copy')
+			->setDescription('Merge changes from another project or ref within same project into a working copy')
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,
