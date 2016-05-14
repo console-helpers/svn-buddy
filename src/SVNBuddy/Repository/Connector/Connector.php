@@ -390,7 +390,14 @@ class Connector
 		$svn_info = $this->withCache($cache_duration)->getCommand('info', '--xml {' . $path_or_url . '}')->run();
 
 		// When getting remote "svn info", then path is last folder only.
-		if ( basename($this->_getSvnInfoEntryPath($svn_info->entry)) != basename($path_or_url) ) {
+		$svn_info_path = $this->_getSvnInfoEntryPath($svn_info->entry);
+
+		// In SVN 1.7+, when doing "svn info" on repository root url.
+		if ( $svn_info_path === '.' ) {
+			$svn_info_path = $path_or_url;
+		}
+
+		if ( basename($svn_info_path) != basename($path_or_url) ) {
 			throw new \LogicException('The directory "' . $path_or_url . '" not found in "svn info" command results.');
 		}
 
