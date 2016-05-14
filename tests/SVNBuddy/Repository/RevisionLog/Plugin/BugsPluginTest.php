@@ -39,8 +39,6 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->logMessageParserFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Parser\\LogMessageParserFactory');
 
 		parent::setUp();
-
-		$this->database->getProfiler()->trackDuplicates(false); // For debugging.
 	}
 
 	public function testGetName()
