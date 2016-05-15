@@ -122,19 +122,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				's',
 				InputOption::VALUE_NONE,
 				'Shows number of added/changed/removed paths in the revision'
-			)
-			/*->addOption(
-				'rollback',
-				null,
-				InputOption::VALUE_NONE,
-				'Do a rollback merge'
-			)
-			->addOption(
-				'record-only',
-				null,
-				InputOption::VALUE_NONE,
-				'Only mark revisions as merged'
-			)*/;
+			);
 
 		parent::configure();
 	}
