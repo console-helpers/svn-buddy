@@ -17,6 +17,7 @@ use ConsoleHelpers\SVNBuddy\Database\Migration\PhpMigrationRunner;
 use ConsoleHelpers\SVNBuddy\Database\Migration\SqlMigrationRunner;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
+use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
 use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
@@ -144,6 +145,10 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['size_helper'] = function () {
 			return new SizeHelper();
+		};
+
+		$this['output_helper'] = function () {
+			return new OutputHelper();
 		};
 
 		$this['editor'] = function () {
