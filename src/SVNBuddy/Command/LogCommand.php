@@ -206,6 +206,10 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws \RuntimeException When both "--bugs" and "--revisions" options were specified.
+	 * @throws CommandException When specified revisions are not present in current project.
+	 * @throws CommandException When project contains no associated revisions.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{

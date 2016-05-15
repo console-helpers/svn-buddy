@@ -119,6 +119,9 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws \RuntimeException When "sub-command" argument not specified.
+	 * @throws \RuntimeException When specified sub-command doesn't support aggregation.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{

@@ -75,6 +75,10 @@ class CommitCommand extends AbstractCommand
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws CommandException When conflicts are detected.
+	 * @throws CommandException Working copy has no changes.
+	 * @throws CommandException User decides not to perform a commit.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{

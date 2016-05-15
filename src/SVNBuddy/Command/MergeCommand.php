@@ -152,6 +152,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws \RuntimeException When both "--bugs" and "--revisions" options were specified.
+	 * @throws CommandException When everything is merged.
+	 * @throws CommandException When manually specified revisions are already merged.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
