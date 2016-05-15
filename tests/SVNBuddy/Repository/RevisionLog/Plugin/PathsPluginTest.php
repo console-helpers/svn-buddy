@@ -506,8 +506,8 @@ class PathsPluginTest extends AbstractPluginTestCase
 			'Projects', 'ProjectRefs', 'CommitProjects', 'CommitRefs',
 		));
 
-		$this->assertTableCount('Paths', 2);
-		$this->assertTableCount('CommitPaths', 2);
+		$this->assertTableCount('Paths', 3);
+		$this->assertTableCount('CommitPaths', 3);
 
 		$this->assertTableContent(
 			'Paths',
@@ -528,6 +528,17 @@ class PathsPluginTest extends AbstractPluginTestCase
 					'Path' => '/path/to/project/file2.txt',
 					'PathNestingLevel' => '3',
 					'PathHash' => '3350728658',
+					'RefName' => '',
+					'ProjectPath' => '',
+					'RevisionAdded' => '200',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '200',
+				),
+				array(
+					'Id' => '3',
+					'Path' => '/path/to/project/file3.txt',
+					'PathNestingLevel' => '3',
+					'PathHash' => '4208469602',
 					'RefName' => '',
 					'ProjectPath' => '',
 					'RevisionAdded' => '200',
@@ -556,11 +567,19 @@ class PathsPluginTest extends AbstractPluginTestCase
 					'CopyRevision' => '100',
 					'CopyPathId' => '1',
 				),
+				array(
+					'Revision' => '200',
+					'Action' => 'M',
+					'Kind' => 'file',
+					'PathId' => '3',
+					'CopyRevision' => null,
+					'CopyPathId' => null,
+				),
 			)
 		);
 
 		$this->assertStatistics(array(
-			PathsPlugin::STATISTIC_PATH_ADDED => 2,
+			PathsPlugin::STATISTIC_PATH_ADDED => 3,
 			PathsPlugin::STATISTIC_PATH_FOUND => 1,
 		));
 	}

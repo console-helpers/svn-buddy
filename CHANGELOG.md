@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- The path `copy-from-` information wasn't stored incorrectly resulting in path shown as copied, while they weren't.
 
 ## [0.2.0] - 2016-05-14
 ### Added

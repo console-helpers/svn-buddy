@@ -209,6 +209,10 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 				$copy_path = $this->adaptPathToKind((string)$path_node['copyfrom-path'], $kind);
 				$copy_path_id = $this->processPath($copy_path, $copy_revision, '', false);
 			}
+			else {
+				$copy_revision = null;
+				$copy_path_id = null;
+			}
 
 			$this->repositoryFiller->addPathToCommit(
 				$revision,
