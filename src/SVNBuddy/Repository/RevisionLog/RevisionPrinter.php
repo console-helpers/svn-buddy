@@ -256,7 +256,7 @@ class RevisionPrinter
 
 				$table->addRow(new TableSeparator());
 				$table->addRow(array(
-					new TableCell($details, array('colspan' => 5)),
+					new TableCell($details, array('colspan' => count($headers))),
 				));
 
 				if ( $revision != $last_revision ) {
