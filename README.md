@@ -99,6 +99,8 @@ Bugs, associated with each revision, are determined by parsing [bugtraq:logregex
 * `--merged` - Shows only revisions, that were merged at least once
 * `--not-merged` - Print only not merged revisions
 * `--merged-by=MERGED-BY` - Show revisions merged by list of revision(-s) and/or revision range(-s)
+* `--action=ACTION` - Show revisions, whose paths were affected by specified action, e.g. `A`, `M`, `R`, `D`
+* `--kind=KIND` - Show revisions, whose paths match specified kind, e.g. `dir` or `file`
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--with-refs` -  Shows revision refs
@@ -157,6 +159,24 @@ Displays revisions retrieved from `branches/5.2.x` and `releases/5.2.1` refs. Th
 * `branches/branch-name`
 * `tags/tag-name`
 * `releases/release-name`
+
+```
+svn-buddy.phar log --action D
+```
+
+Displays revisions, where at least one path (directory or file) was deleted.
+
+```
+svn-buddy.phar log --kind dir
+```
+
+Displays revisions, where at least one affected path was a directory.
+
+```
+svn-buddy.phar log --action D --kind dir
+```
+
+Displays revisions, where at least one affected path was a directory at least one path (directory or file) was deleted, but this isn't guaranteed to be the same path.
 
 ```
 svn-buddy.phar log --merges

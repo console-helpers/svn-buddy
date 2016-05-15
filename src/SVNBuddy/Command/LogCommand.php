@@ -136,6 +136,18 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				'Show revisions merged by list of revision(-s) and/or revision range(-s)'
 			)
 			->addOption(
+				'action',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Show revisions, whose paths were affected by specified action, e.g. <info>A</info>, <info>M</info>, <info>R</info>, <info>D</info>'
+			)
+			->addOption(
+				'kind',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Show revisions, whose paths match specified kind, e.g. <info>dir</info> or <info>file</info>'
+			)
+			->addOption(
 				'with-details',
 				'd',
 				InputOption::VALUE_NONE,
@@ -189,6 +201,12 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 
 		if ( $optionName === 'refs' ) {
 			return $this->getAllRefs();
+		}
+		elseif ( $optionName === 'action' ) {
+			return $this->getAllActions();
+		}
+		elseif ( $optionName === 'kind' ) {
+			return $this->getAllKinds();
 		}
 
 		return $ret;
@@ -255,6 +273,32 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			$revisions_by_path = array_diff($revisions_by_path, $this->_revisionLog->find('merges', 'all_merged'));
 		}
 
+		$action = $this->io->getOption('action');
+
+		if ( $action ) {
+			if ( !in_array($action, $this->getAllActions()) ) {
+				throw new CommandException('The "' . $action . '" action is unknown.');
+			}
+
+			$revisions_by_path = array_intersect(
+				$revisions_by_path,
+				$this->_revisionLog->find('paths', 'action:' . $action)
+			);
+		}
+
+		$kind = $this->io->getOption('kind');
+
+		if ( $kind ) {
+			if ( !in_array($kind, $this->getAllKinds()) ) {
+				throw new CommandException('The "' . $kind . '" kind is unknown.');
+			}
+
+			$revisions_by_path = array_intersect(
+				$revisions_by_path,
+				$this->_revisionLog->find('paths', 'kind:' . $kind)
+			);
+		}
+
 		if ( $missing_revisions ) {
 			throw new CommandException($this->getMissingRevisionsErrorMessage($missing_revisions));
 		}
@@ -293,6 +337,26 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		}
 
 		$this->printRevisions($revisions_by_path_with_limit);
+	}
+
+	/**
+	 * Returns all actions.
+	 *
+	 * @return array
+	 */
+	protected function getAllActions()
+	{
+		return array('A', 'M', 'R', 'D');
+	}
+
+	/**
+	 * Returns all actions.
+	 *
+	 * @return array
+	 */
+	protected function getAllKinds()
+	{
+		return array('dir', 'file');
 	}
 
 	/**

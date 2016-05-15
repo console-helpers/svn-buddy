@@ -4,7 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- Added `--action` option to `log` command, that allows to search revisions by action (`A`, `M`, `R`, `D`) on a path within a revision.
+- Added `--kind` option to `log` command, that allows to search revisions by kind (`dir` or `file`) of a path within a revision.
 
 ### Changed
 ...
