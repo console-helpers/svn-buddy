@@ -45,6 +45,7 @@ class ContainerTest extends BaseContainerTest
 			'revision_printer' => array('ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter', 'revision_printer'),
 			'repository_connector' => array('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector', 'repository_connector'),
 			'date_helper' => array('ConsoleHelpers\\SVNBuddy\\Helper\\DateHelper', 'date_helper'),
+			'size_helper' => array('ConsoleHelpers\SVNBuddy\Helper\SizeHelper', 'size_helper'),
 			'output_helper' => array('ConsoleHelpers\SVNBuddy\Helper\OutputHelper', 'output_helper'),
 			'editor' => array('ConsoleHelpers\\SVNBuddy\\InteractiveEditor', 'editor'),
 		);
