@@ -1252,6 +1252,69 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 	}
 
+	public function testFindByAction()
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, '')
+			->addPath('A', '/path/to/project-a/folder/file.php', '', '/path/to/project-a/');
+
+		$this->commitBuilder
+			->addCommit(200, 'user', 0, '')
+			->addPath('M', '/path/to/project-a/folder/file.php', '', '/path/to/project-a/');
+
+		$this->commitBuilder
+			->addCommit(300, 'user', 0, '')
+			->addPath('M', '/path/to/project-b/folder/file2.php', '', '/path/to/project-b/');
+
+		$this->commitBuilder->build();
+
+		$this->assertEquals(
+			array(200),
+			$this->plugin->find(array('action:M'), '/path/to/project-a/')
+		);
+
+		$this->assertEmpty($this->plugin->find(array('action:D'), '/path/to/project-a/'));
+	}
+
+	public function testFindByKind()
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, '')
+			->addPath('A', '/path/to/project-a/folder/file.php', '', '/path/to/project-a/');
+
+		$this->commitBuilder
+			->addCommit(200, 'user', 0, '')
+			->addPath('M', '/path/to/project-a/folder/file.php', '', '/path/to/project-a/');
+
+		$this->commitBuilder
+			->addCommit(300, 'user', 0, '')
+			->addPath('M', '/path/to/project-b/folder/file2.php', '', '/path/to/project-b/');
+
+		$this->commitBuilder->build();
+
+		$this->assertEquals(
+			array(100, 200),
+			$this->plugin->find(array('kind:file'), '/path/to/project-a/')
+		);
+
+		$this->assertEmpty($this->plugin->find(array('action:dir'), '/path/to/project-a/'));
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage Searching by "field" is not supported by "paths" plugin.
+	 */
+	public function testFindUnsupportedField()
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, '')
+			->addPath('A', '/path/to/project/folder/file.php', '', '/path/to/project/');
+
+		$this->commitBuilder->build();
+
+		$this->plugin->find(array('field:keyword'), '/path/to/project/');
+	}
+
 	public function testGetRevisionsDataSuccess()
 	{
 		$this->createFixture();

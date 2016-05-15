@@ -537,30 +537,62 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 			// Include revisions from given sub-path only.
 			$path_revisions = array();
 
-			foreach ( $criteria as $path ) {
-				if ( substr($path, -1, 1) === '/' ) {
-					// Folder given > search also in it's sub-folders.
-					$sql = 'SELECT cpa.Revision
+			foreach ( $criteria as $criterion ) {
+				if ( strpos($criterion, ':') !== false ) {
+					list ($field, $value) = explode(':', $criterion, 2);
+
+					if ( $field === 'action' ) {
+						$sql = 'SELECT cpa.Revision
+								FROM CommitPaths cpa
+								JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
+								WHERE cpr.ProjectId = :project_id AND cpa.Action LIKE :action';
+						$tmp_revisions = $this->database->fetchCol($sql, array(
+							'project_id' => $project_id,
+							'action' => $value,
+						));
+					}
+					elseif ( $field === 'kind' ) {
+						$sql = 'SELECT cpa.Revision
+								FROM CommitPaths cpa
+								JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
+								WHERE cpr.ProjectId = :project_id AND cpa.Kind LIKE :kind';
+						$tmp_revisions = $this->database->fetchCol($sql, array(
+							'project_id' => $project_id,
+							'kind' => $value,
+						));
+					}
+					else {
+						$error_msg = 'Searching by "%s" is not supported by "%s" plugin.';
+						throw new \InvalidArgumentException(sprintf($error_msg, $field, $this->getName()));
+					}
+				}
+				else {
+					$path = $criterion;
+
+					if ( substr($path, -1, 1) === '/' ) {
+						// Folder given > search also in it's sub-folders.
+						$sql = 'SELECT cpa.Revision
 							FROM CommitPaths cpa
 							JOIN Paths p ON p.Id = cpa.PathId
 							JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
 							WHERE cpr.ProjectId = :project_id AND p.Path LIKE :path';
-					$tmp_revisions = $this->database->fetchCol($sql, array(
-						'project_id' => $project_id,
-						'path' => $path . '%',
-					));
-				}
-				else {
-					// File given > search for that file specifically.
-					$sql = 'SELECT cpa.Revision
+						$tmp_revisions = $this->database->fetchCol($sql, array(
+							'project_id' => $project_id,
+							'path' => $path . '%',
+						));
+					}
+					else {
+						// File given > search for that file specifically.
+						$sql = 'SELECT cpa.Revision
 							FROM CommitPaths cpa
 							JOIN Paths p ON p.Id = cpa.PathId
 							JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
 							WHERE cpr.ProjectId = :project_id AND p.PathHash = :path_hash';
-					$tmp_revisions = $this->database->fetchCol($sql, array(
-						'project_id' => $project_id,
-						'path_hash' => $this->repositoryFiller->getPathChecksum($path),
-					));
+						$tmp_revisions = $this->database->fetchCol($sql, array(
+							'project_id' => $project_id,
+							'path_hash' => $this->repositoryFiller->getPathChecksum($path),
+						));
+					}
 				}
 
 				foreach ( $tmp_revisions as $revision ) {
