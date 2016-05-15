@@ -15,6 +15,7 @@ use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
@@ -515,6 +516,9 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		$revision_log = $this->getRevisionLog($source_url);
 		$source_path = $this->repositoryConnector->getRelativePath($source_url) . '/';
 
+		/** @var OutputHelper $output_helper */
+		$output_helper = $this->getHelper('output');
+
 		foreach ( $conflicts as $conflict_path ) {
 			$path_revisions = $revision_log->find('paths', $source_path . $conflict_path);
 			$path_revisions = array_intersect($this->_unmergedRevisions, $path_revisions);
@@ -525,7 +529,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 			$table->addRow(array(
 				$conflict_path,
-				$path_revisions ? $this->formatArray($path_revisions, 4) : '-',
+				$path_revisions ? $output_helper->formatArray($path_revisions, 4) : '-',
 			));
 		}
 

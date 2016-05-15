@@ -29,6 +29,7 @@ use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -133,6 +134,10 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['revision_list_parser'] = function () {
 			return new RevisionListParser();
+		};
+
+		$this['revision_printer'] = function ($c) {
+			return new RevisionPrinter($c['date_helper'], $c['output_helper']);
 		};
 
 		$this['repository_connector'] = function ($c) {

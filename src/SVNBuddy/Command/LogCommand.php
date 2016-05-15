@@ -18,6 +18,7 @@ use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
@@ -51,6 +52,13 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	private $_revisionLog;
 
 	/**
+	 * Revision printer.
+	 *
+	 * @var RevisionPrinter
+	 */
+	private $_revisionPrinter;
+
+	/**
 	 * Prepare dependencies.
 	 *
 	 * @return void
@@ -62,6 +70,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$container = $this->getContainer();
 
 		$this->_revisionListParser = $container['revision_list_parser'];
+		$this->_revisionPrinter = $container['revision_printer'];
 	}
 
 	/**
@@ -283,7 +292,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			));
 		}
 
-		$this->printRevisions($revisions_by_path_with_limit, (boolean)$this->io->getOption('with-details'));
+		$this->printRevisions($revisions_by_path_with_limit);
 	}
 
 	/**
@@ -383,339 +392,30 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	/**
 	 * Prints revisions.
 	 *
-	 * @param array   $revisions    Revisions.
-	 * @param boolean $with_details Print extended revision details (e.g. paths changed).
+	 * @param array $revisions Revisions.
 	 *
 	 * @return void
 	 */
-	protected function printRevisions(array $revisions, $with_details = false)
+	protected function printRevisions(array $revisions)
 	{
-		$table = new Table($this->io->getOutput());
-		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
+		$column_mapping = array(
+			'with-details' => RevisionPrinter::COLUMN_DETAILS,
+			'with-summary' => RevisionPrinter::COLUMN_SUMMARY,
+			'with-refs' => RevisionPrinter::COLUMN_REFS,
+			'with-merge-oracle' => RevisionPrinter::COLUMN_MERGE_ORACLE,
+			'with-merge-status' => RevisionPrinter::COLUMN_MERGE_STATUS,
+		);
 
-		// Add "Summary" header.
-		$with_summary = $this->io->getOption('with-summary');
-
-		if ( $with_summary ) {
-			$headers[] = 'Summary';
-		}
-
-		// Add "Refs" header.
-		$with_refs = $this->io->getOption('with-refs');
-
-		if ( $with_refs ) {
-			$headers[] = 'Refs';
-		}
-
-		$with_merge_oracle = $this->io->getOption('with-merge-oracle');
-
-		// Add "M.O." header.
-		if ( $with_merge_oracle ) {
-			$headers[] = 'M.O.';
-			$merge_conflict_regexps = $this->getMergeConflictRegExps();
-		}
-
-		// Add "Merged Via" header.
-		$with_merge_status = $this->io->getOption('with-merge-status');
-
-		if ( $with_merge_status ) {
-			$headers[] = 'Merged Via';
-		}
-
-		$table->setHeaders($headers);
-
-		/** @var DateHelper $date_helper */
-		$date_helper = $this->getHelper('date');
-
-		$prev_bugs = null;
-		$last_color = 'yellow';
-		$last_revision = end($revisions);
-
-		$relative_wc_path = $this->repositoryConnector->getRelativePath(
-			$this->getWorkingCopyPath()
-		) . '/';
-		$project_path = $this->repositoryConnector->getProjectUrl($relative_wc_path) . '/';
-
-		$log_message_limit = $this->getSetting(self::SETTING_LOG_MESSAGE_LIMIT);
-		$bugs_per_row = $with_details ? 1 : 3;
-
-		$revisions_data = $this->_revisionLog->getRevisionsData('summary', $revisions);
-		$revisions_paths = $this->_revisionLog->getRevisionsData('paths', $revisions);
-		$revisions_bugs = $this->_revisionLog->getRevisionsData('bugs', $revisions);
-		$revisions_refs = $this->_revisionLog->getRevisionsData('refs', $revisions);
-
-		if ( $with_merge_status ) {
-			$revisions_merged_via = $this->_revisionLog->getRevisionsData('merges', $revisions);
-			$revisions_merged_via_refs = $this->_revisionLog->getRevisionsData(
-				'refs',
-				call_user_func_array('array_merge', $revisions_merged_via)
-			);
-		}
-
-		foreach ( $revisions as $revision ) {
-			$revision_data = $revisions_data[$revision];
-
-			if ( $with_details ) {
-				// When details requested don't transform commit message except for word wrapping.
-				$log_message = wordwrap($revision_data['msg'], $log_message_limit); // FIXME: Not UTF-8 safe solution.
-			}
-			else {
-				// When details not requested only operate on first line of commit message.
-				list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
-				$log_message = preg_replace('/^\[fixes:.*?\]/s', "\xE2\x9C\x94", $log_message);
-
-				if ( strpos($revision_data['msg'], PHP_EOL) !== false
-					|| mb_strlen($log_message) > $log_message_limit
-				) {
-					$log_message = mb_substr($log_message, 0, $log_message_limit - 3) . '...';
-				}
-			}
-
-			$new_bugs = $revisions_bugs[$revision];
-
-			if ( isset($prev_bugs) && $new_bugs !== $prev_bugs ) {
-				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
-			}
-
-			$row = array(
-				$revision,
-				$revision_data['author'],
-				$date_helper->getAgoTime($revision_data['date']),
-				$this->formatArray($new_bugs, $bugs_per_row, $last_color),
-				$log_message,
-			);
-
-			$revision_paths = $revisions_paths[$revision];
-
-			// Add "Summary" column.
-			if ( $with_summary ) {
-				$row[] = $this->generateChangeSummary($revision_paths);
-			}
-
-			// Add "Refs" column.
-			if ( $with_refs ) {
-				$row[] = $this->formatArray(
-					$revisions_refs[$revision],
-					1
-				);
-			}
-
-			// Add "M.O." column.
-			if ( $with_merge_oracle ) {
-				$merge_conflict_predication = $this->getMergeConflictPrediction(
-					$revision_paths,
-					$merge_conflict_regexps
-				);
-				$row[] = $merge_conflict_predication ? '<error>' . count($merge_conflict_predication) . '</error>' : '';
-			}
-			else {
-				$merge_conflict_predication = array();
-			}
-
-			// Add "Merged Via" column.
-			if ( $with_merge_status ) {
-				$row[] = $this->generateMergedVia($revisions_merged_via[$revision], $revisions_merged_via_refs);
-			}
-
-			$table->addRow($row);
-
-			if ( $with_details ) {
-				$details = '<fg=white;options=bold>Changed Paths:</>';
-				$path_cut_off_regexp = $this->getPathCutOffRegExp($project_path, $revisions_refs[$revision]);
-
-				foreach ( $revision_paths as $path_data ) {
-					$path_action = $path_data['action'];
-					$relative_path = $this->_getRelativeLogPath($path_data, 'path', $path_cut_off_regexp);
-
-					$details .= PHP_EOL . ' * ';
-
-					if ( $path_action == 'A' ) {
-						$color_format = 'fg=green';
-					}
-					elseif ( $path_action == 'D' ) {
-						$color_format = 'fg=red';
-					}
-					else {
-						$color_format = in_array($path_data['path'], $merge_conflict_predication) ? 'error' : '';
-					}
-
-					$to_colorize = array($path_action . '    ' . $relative_path);
-
-					if ( isset($path_data['copyfrom-path']) ) {
-						// TODO: When copy happened from different ref/project, then relative path = absolute path.
-						$copy_from_rev = $path_data['copyfrom-rev'];
-						$copy_from_path = $this->_getRelativeLogPath($path_data, 'copyfrom-path', $path_cut_off_regexp);
-						$to_colorize[] = '        (from ' . $copy_from_path . ':' . $copy_from_rev . ')';
-					}
-
-					if ( $color_format ) {
-						$details .= '<' . $color_format . '>';
-						$details .= implode('</>' . PHP_EOL . '<' . $color_format . '>', $to_colorize);
-						$details .= '</>';
-					}
-					else {
-						$details .= implode(PHP_EOL, $to_colorize);
-					}
-				}
-
-				$table->addRow(new TableSeparator());
-				$table->addRow(array(new TableCell($details, array('colspan' => 5))));
-
-				if ( $revision != $last_revision ) {
-					$table->addRow(new TableSeparator());
-				}
-			}
-
-			$prev_bugs = $new_bugs;
-		}
-
-		$table->render();
-	}
-
-	/**
-	 * Generates change summary for a revision.
-	 *
-	 * @param array $revision_paths Revision paths.
-	 *
-	 * @return string
-	 */
-	protected function generateChangeSummary(array $revision_paths)
-	{
-		$summary = array('added' => 0, 'changed' => 0, 'removed' => 0);
-
-		foreach ( $revision_paths as $path_data ) {
-			$path_action = $path_data['action'];
-
-			if ( $path_action == 'A' ) {
-				$summary['added']++;
-			}
-			elseif ( $path_action == 'D' ) {
-				$summary['removed']++;
-			}
-			else {
-				$summary['changed']++;
+		foreach ( $column_mapping as $option_name => $column ) {
+			if ( $this->io->getOption($option_name) ) {
+				$this->_revisionPrinter->withColumn($column);
 			}
 		}
 
-		if ( $summary['added'] ) {
-			$summary['added'] = '<fg=green>+' . $summary['added'] . '</>';
-		}
+		$this->_revisionPrinter->setMergeConflictRegExps($this->getSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS));
+		$this->_revisionPrinter->setLogMessageLimit($this->getSetting(self::SETTING_LOG_MESSAGE_LIMIT));
 
-		if ( $summary['removed'] ) {
-			$summary['removed'] = '<fg=red>-' . $summary['removed'] . '</>';
-		}
-
-		return implode(' ', array_filter($summary));
-	}
-
-	/**
-	 * Generates content for "Merged Via" cell content.
-	 *
-	 * @param array $merged_via                Merged Via.
-	 * @param array $revisions_merged_via_refs Merged Via Refs.
-	 *
-	 * @return string
-	 */
-	protected function generateMergedVia(array $merged_via, array $revisions_merged_via_refs)
-	{
-		if ( !$merged_via ) {
-			return '';
-		}
-
-		$merged_via_enhanced = array();
-
-		foreach ( $merged_via as $merged_via_revision ) {
-			$merged_via_revision_refs = $revisions_merged_via_refs[$merged_via_revision];
-
-			if ( $merged_via_revision_refs ) {
-				$merged_via_enhanced[] = $merged_via_revision . ' (' . implode(',', $merged_via_revision_refs) . ')';
-			}
-			else {
-				$merged_via_enhanced[] = $merged_via_revision;
-			}
-		}
-
-		return $this->formatArray($merged_via_enhanced, 1);
-	}
-
-	/**
-	 * Returns merge conflict path predictions.
-	 *
-	 * @param array $revision_paths         Revision paths.
-	 * @param array $merge_conflict_regexps Merge conflict paths.
-	 *
-	 * @return array
-	 */
-	protected function getMergeConflictPrediction(array $revision_paths, array $merge_conflict_regexps)
-	{
-		if ( !$merge_conflict_regexps ) {
-			return array();
-		}
-
-		$conflict_paths = array();
-
-		foreach ( $revision_paths as $revision_path ) {
-			foreach ( $merge_conflict_regexps as $merge_conflict_regexp ) {
-				if ( preg_match($merge_conflict_regexp, $revision_path['path']) ) {
-					$conflict_paths[] = $revision_path['path'];
-				}
-			}
-		}
-
-		return $conflict_paths;
-	}
-
-	/**
-	 * Returns merge conflict regexps.
-	 *
-	 * @return array
-	 */
-	protected function getMergeConflictRegExps()
-	{
-		return $this->getSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS);
-	}
-
-	/**
-	 * Returns relative path to "svn log" returned path.
-	 *
-	 * @param array  $path_data           Path data.
-	 * @param string $path_key            Path key.
-	 * @param string $path_cut_off_regexp Path cut off regexp.
-	 *
-	 * @return string
-	 */
-	private function _getRelativeLogPath(array $path_data, $path_key, $path_cut_off_regexp)
-	{
-		$ret = preg_replace($path_cut_off_regexp, '', $path_data[$path_key], 1);
-
-		if ( $ret === '' ) {
-			$ret = '.';
-		}
-
-		return $ret;
-	}
-
-	/**
-	 * Returns path cut off regexp.
-	 *
-	 * @param string $project_path Project path.
-	 * @param array  $refs         Refs.
-	 *
-	 * @return string
-	 */
-	protected function getPathCutOffRegExp($project_path, array $refs)
-	{
-		$ret = array();
-
-		// Remove ref from path only for single-ref revision.
-		if ( count($refs) === 1 ) {
-			$ret[] = $project_path . reset($refs) . '/';
-		}
-
-		// Always remove project path.
-		$ret[] = $project_path;
-
-		return '#^(' . implode('|', array_map('preg_quote', $ret)) . ')#';
+		$this->_revisionPrinter->printRevisions($this->_revisionLog, $revisions, $this->io->getOutput());
 	}
 
 	/**
