@@ -410,8 +410,29 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 */
 	protected function getRevisionsByPath()
 	{
+		$path = $this->io->getArgument('path');
+		$wc_path = $this->getWorkingCopyPath(); // When "$path" represents deleted path will be parent folder.
+
 		$refs = $this->getList($this->io->getOption('refs'));
-		$relative_path = $this->repositoryConnector->getRelativePath($this->getWorkingCopyPath()) . '/';
+		$relative_path = $this->repositoryConnector->getRelativePath($wc_path);
+
+		if ( !$this->repositoryConnector->isUrl($wc_path) ) {
+			$relative_path .= $this->_getPathDifference($wc_path, $path);
+		}
+
+		if ( file_exists($wc_path) ) {
+			// This is existing directory - show history recursively.
+			if ( is_dir($path) ) {
+				$relative_path .= '/';
+			}
+		}
+		else {
+			// This is deleted path - show history recursively only,
+			// when it doesn't contain extension (maybe a folder).
+			if ( !pathinfo($path, PATHINFO_EXTENSION) ) {
+				$relative_path .= '/';
+			}
+		}
 
 		if ( !$refs ) {
 			$ref = $this->repositoryConnector->getRefByPath($relative_path);
@@ -435,6 +456,36 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		}
 
 		return $this->_revisionLog->find('paths', $relative_path);
+	}
+
+	/**
+	 * Returns difference between 2 paths.
+	 *
+	 * @param string $main_path Main path.
+	 * @param string $sub_path  Sub path.
+	 *
+	 * @return string
+	 */
+	private function _getPathDifference($main_path, $sub_path)
+	{
+		$adapted_sub_path = $sub_path;
+
+		do {
+			$sub_path_pos = strpos($main_path, $adapted_sub_path);
+
+			if ( $sub_path_pos !== false ) {
+				break;
+			}
+
+			$adapted_sub_path = dirname($adapted_sub_path);
+		} while ( strlen($adapted_sub_path) );
+
+		// No sub-matches.
+		if ( !strlen($adapted_sub_path) ) {
+			return '';
+		}
+
+		return str_replace($adapted_sub_path, '', $sub_path);
 	}
 
 	/**

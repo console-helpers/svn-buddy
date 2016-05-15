@@ -12,6 +12,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - The path `copy-from-` information wasn't stored incorrectly resulting in path shown as copied, while they weren't.
+- When, in `log` command, attempting to see revisions of a particular file, that currently exists, nothing was shown.
+- When, in `log` command, attempting to see revisions of a particular file, that is currently deleted, nothing was shown.
 
 ## [0.2.0] - 2016-05-14
 ### Added

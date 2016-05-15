@@ -280,6 +280,10 @@ abstract class AbstractCommand extends BaseCommand
 		}
 
 		if ( !$this->repositoryConnector->isUrl($path) ) {
+			if ( !file_exists($path) && file_exists(dirname($path)) ) {
+				$path = dirname($path);
+			}
+
 			$path = realpath($path);
 		}
 		else {
