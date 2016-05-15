@@ -59,7 +59,7 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 		// When no projects exists and there 20+ commits, then consider repository
 		// having single project without known structure (trunk/branches/tags) only.
 		if ( !$projects && $to_revision >= 20 ) {
-			$this->createRepositoryWideProject($to_revision);
+			$this->createRepositoryWideProject();
 		}
 
 		foreach ( $projects as $project_data ) {
