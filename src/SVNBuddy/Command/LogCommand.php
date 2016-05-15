@@ -139,13 +139,13 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				'action',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Show revisions, whose paths were affected by specified action, e.g. <info>A</info>, <info>M</info>, <info>R</info>, <info>D</info>'
+				'Show revisions, whose paths were affected by specified action, e.g. <comment>A</comment>, <comment>M</comment>, <comment>R</comment>, <comment>D</comment>'
 			)
 			->addOption(
 				'kind',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'Show revisions, whose paths match specified kind, e.g. <info>dir</info> or <info>file</info>'
+				'Show revisions, whose paths match specified kind, e.g. <comment>dir</comment> or <comment>file</comment>'
 			)
 			->addOption(
 				'with-details',
