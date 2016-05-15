@@ -74,7 +74,6 @@ class Application extends BaseApplication
 		$default_commands = parent::getDefaultCommands();
 
 		$default_commands[] = new MergeCommand();
-		// $default_commands[] = new ResolveCommand();
 		$default_commands[] = new CleanupCommand();
 		$default_commands[] = new RevertCommand();
 		$default_commands[] = new LogCommand();
