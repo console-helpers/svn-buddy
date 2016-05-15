@@ -201,7 +201,7 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.5",
+            "version": "v2.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
@@ -320,7 +320,7 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.5",
+            "version": "v2.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
@@ -375,12 +375,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aik099/CodingStandard.git",
-                "reference": "c7ef78c8ad44b8d00275b223a94d7781a1eeb808"
+                "reference": "ad304638904e8fa709ca20f037dbf3d1bc7141dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/c7ef78c8ad44b8d00275b223a94d7781a1eeb808",
-                "reference": "c7ef78c8ad44b8d00275b223a94d7781a1eeb808",
+                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/ad304638904e8fa709ca20f037dbf3d1bc7141dd",
+                "reference": "ad304638904e8fa709ca20f037dbf3d1bc7141dd",
                 "shasum": ""
             },
             "require-dev": {
@@ -407,7 +407,7 @@
                 "PHP_CodeSniffer",
                 "codesniffer"
             ],
-            "time": "2016-03-30 10:51:46"
+            "time": "2016-05-15 13:40:45"
         }
     ],
     "aliases": [],
