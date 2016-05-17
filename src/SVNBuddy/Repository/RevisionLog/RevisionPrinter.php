@@ -470,9 +470,9 @@ class RevisionPrinter
 		$ret = array();
 
 		// Remove ref from path only for single-ref revision.
-		if ( count($refs) === 1 ) {
+		/*if ( count($refs) === 1 ) {
 			$ret[] = $project_path . reset($refs) . '/';
-		}
+		}*/
 
 		// Always remove project path.
 		$ret[] = $project_path;

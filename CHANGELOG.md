@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--kind` option to `log` command, that allows to search revisions by kind (`dir` or `file`) of a path within a revision.
 
 ### Changed
-...
+- Don't remove ref from path, when showing revision paths in `log` commands's detail view.
 
 ### Fixed
 - The path `copy-from-` information wasn't stored incorrectly resulting in path shown as copied, while they weren't.
