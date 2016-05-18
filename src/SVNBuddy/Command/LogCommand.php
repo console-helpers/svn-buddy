@@ -468,6 +468,10 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 */
 	private function _getPathDifference($main_path, $sub_path)
 	{
+		if ( strpos($sub_path, '.') !== false ) {
+			$sub_path = realpath($sub_path);
+		}
+
 		$adapted_sub_path = $sub_path;
 
 		do {
