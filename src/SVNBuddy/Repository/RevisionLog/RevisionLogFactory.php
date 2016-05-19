@@ -13,6 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
+use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
@@ -108,7 +109,17 @@ class RevisionLogFactory
 		$context = new MigrationContext($database, clone $revision_log);
 		$this->_databaseManager->runMigrations($context);
 
+		$profiler = $database->getProfiler();
+
+		if ( $profiler instanceof StatementProfiler ) {
+			$profiler->trackDuplicates(true);
+		}
+
 		$revision_log->refresh(false);
+
+		if ( $profiler instanceof StatementProfiler ) {
+			$profiler->trackDuplicates(false);
+		}
 
 		return $revision_log;
 	}

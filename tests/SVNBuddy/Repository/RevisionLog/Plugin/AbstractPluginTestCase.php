@@ -45,7 +45,9 @@ abstract class AbstractPluginTestCase extends AbstractDatabaseAwareTestCase
 	{
 		parent::setUp();
 
-		$this->database->setProfiler($this->createStatementProfiler());
+		if ( strpos($this->getName(false), 'testProcess') === 0 ) {
+			$this->database->setProfiler($this->createStatementProfiler());
+		}
 
 		$database_cache = new DatabaseCache($this->database);
 		$this->filler = new RepositoryFiller($this->database, $database_cache);

@@ -103,6 +103,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			);
 
 			$statement_profiler->setActive(true);
+			$statement_profiler->trackDuplicates(false);
 
 			return $statement_profiler;
 		};

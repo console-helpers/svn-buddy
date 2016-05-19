@@ -34,7 +34,11 @@ class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 
 		$log_message_parser_factory = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory');
 
-		$factory = new RevisionLogFactory($repository_connector->reveal(), $database_manager->reveal(), $log_message_parser_factory->reveal());
+		$factory = new RevisionLogFactory(
+			$repository_connector->reveal(),
+			$database_manager->reveal(),
+			$log_message_parser_factory->reveal()
+		);
 		$this->assertInstanceOf(
 			'ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLog',
 			$factory->getRevisionLog('svn://localhost/projects/project-name/trunk')

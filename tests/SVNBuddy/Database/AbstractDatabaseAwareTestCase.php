@@ -152,7 +152,11 @@ abstract class AbstractDatabaseAwareTestCase extends \PHPUnit_Framework_TestCase
 	{
 		$container = new Container();
 
-		return $container['statement_profiler'];
+		/** @var StatementProfiler $statement_profiler */
+		$statement_profiler = clone $container['statement_profiler'];
+		$statement_profiler->trackDuplicates(true); // Enable manually, because it's disabled in container.
+
+		return $statement_profiler;
 	}
 
 }
