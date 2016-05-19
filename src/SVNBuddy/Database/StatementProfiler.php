@@ -60,6 +60,21 @@ class StatementProfiler implements ProfilerInterface
 	private $_debugMode = false;
 
 	/**
+	 * Debug backtrace options.
+	 *
+	 * @var integer
+	 */
+	private $_backtraceOptions;
+
+	/**
+	 * Creates statement profiler instance.
+	 */
+	public function __construct()
+	{
+		$this->_backtraceOptions = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? DEBUG_BACKTRACE_IGNORE_ARGS : 0;
+	}
+
+	/**
 	 * Sets IO.
 	 *
 	 * @param ConsoleIO $io Console IO.
@@ -160,11 +175,19 @@ class StatementProfiler implements ProfilerInterface
 		);
 
 		if ( $this->_debugMode ) {
+			$trace = debug_backtrace($this->_backtraceOptions);
+
+			do {
+				$trace_line = array_shift($trace);
+			} while ( $trace && strpos($trace_line['file'], 'aura/sql') !== false );
+
 			$runtime = sprintf('%01.2f', $duration);
 			$substituted_normalized_statement = $this->substituteParameters($normalized_statement, $bind_values);
+			$trace_file = substr($trace_line['file'], strpos($trace_line['file'], '/src/')) . ':' . $trace_line['line'];
 			$this->_io->writeln(array(
 				'',
 				'<debug>[db, ' . round($runtime, 2) . 's]: ' . $substituted_normalized_statement . '</debug>',
+				'<debug>[db origin]: ' . $trace_file . '</debug>',
 			));
 		}
 	}

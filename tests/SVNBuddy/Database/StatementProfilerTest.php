@@ -179,7 +179,13 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	{
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
-		$io->writeln(array('', '<debug>[db, 5s]: IGNORE ME "bb"</debug>'))->shouldBeCalled();
+		$io
+			->writeln(array(
+				'',
+				'<debug>[db, 5s]: IGNORE ME "bb"</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':194</debug>',
+				))
+			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
 
 		$this->statementProfiler->setActive(true);
@@ -203,7 +209,13 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	{
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
-		$io->writeln(array('', '<debug>[db, 5s]: SELECT "PA" "PAR","AM"</debug>'))->shouldBeCalled();
+		$io
+			->writeln(array(
+				'',
+				'<debug>[db, 5s]: SELECT "PA" "PAR","AM"</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':227</debug>',
+			))
+			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
 
 		$this->statementProfiler->setActive(true);
