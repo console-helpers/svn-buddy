@@ -132,9 +132,9 @@ class BugsPluginTest extends AbstractPluginTestCase
 	 */
 	public function testProcessDetectsMissingBugRegexps($project_deleted)
 	{
-		$this->repositoryConnector->getRefByPath('/path/to/project/trunk/')->willReturn('trunk')->shouldBeCalled();
-		$this->repositoryConnector->getRefByPath('/path/to/project/branches/branch-name/')->willReturn('branches/branch-name')->shouldBeCalled();
-		$this->repositoryConnector->getRefByPath(Argument::any())->willReturn(false)->shouldBeCalled();
+		$this->repositoryConnector->isRefRoot('/path/to/project/trunk/')->willReturn(true)->shouldBeCalled();
+		$this->repositoryConnector->isRefRoot('/path/to/project/branches/branch-name/')->willReturn(true)->shouldBeCalled();
+		$this->repositoryConnector->isRefRoot(Argument::any())->willReturn(false)->shouldBeCalled();
 
 		$this->repositoryConnector->withCache('1 year')->willReturn($this->repositoryConnector);
 

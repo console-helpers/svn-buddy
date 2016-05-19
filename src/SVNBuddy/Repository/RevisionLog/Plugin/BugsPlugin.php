@@ -217,14 +217,7 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 			return false;
 		}
 
-		$ref = $this->_repositoryConnector->getRefByPath($path);
-
-		// Not a ref.
-		if ( $ref === false ) {
-			return false;
-		}
-
-		return preg_match('/\/' . preg_quote($ref, '/') . '\/$/', $path) > 0;
+		return $this->_repositoryConnector->isRefRoot($path);
 	}
 
 	/**
