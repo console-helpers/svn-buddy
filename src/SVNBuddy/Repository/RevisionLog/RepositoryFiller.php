@@ -266,9 +266,11 @@ class RepositoryFiller
 
 			// Missing parent path. Can happen for example, when repository was created via "cvs2svn".
 			if ( $fields_hash === false ) {
-				/** @var StatementProfiler $profiler */
 				$profiler = $this->database->getProfiler();
-				$profiler->removeProfile($select_sql, array('path_hash' => $update_path_hash));
+
+				if ( $profiler instanceof StatementProfiler ) {
+					$profiler->removeProfile($select_sql, array('path_hash' => $update_path_hash));
+				}
 				break;
 			}
 
