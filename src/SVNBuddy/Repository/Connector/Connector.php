@@ -251,6 +251,24 @@ class Connector
 	}
 
 	/**
+	 * Determines if path is a root of the ref.
+	 *
+	 * @param string $path Path to a file.
+	 *
+	 * @return boolean
+	 */
+	public function isRefRoot($path)
+	{
+		$ref = $this->getRefByPath($path);
+
+		if ( $ref === false ) {
+			return false;
+		}
+
+		return preg_match('#/' . preg_quote($ref, '#') . '/$#', $path) > 0;
+	}
+
+	/**
 	 * Detects ref from given path.
 	 *
 	 * @param string $path Path to a file.

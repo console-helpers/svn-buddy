@@ -385,6 +385,33 @@ MESSAGE;
 	}
 
 	/**
+	 * @dataProvider isRefRootDataProvider
+	 */
+	public function testIsRefRoot($path, $result)
+	{
+		$this->assertSame($result, $this->_repositoryConnector->isRefRoot($path));
+	}
+
+	public function isRefRootDataProvider()
+	{
+		return array(
+			array('/projects/project_a/trunk/', true),
+			array('/projects/project_a/trunk/sub-folder/file.tpl', false),
+			array('/projects/project_a/trunk/sub-folder', false),
+			array('/projects/project_a/branches/branch-name/', true),
+			array('/projects/project_a/branches/branch-name/another_file.php', false),
+			array('/projects/project_a/branches/', false),
+			array('/projects/project_a/tags/tag-name/', true),
+			array('/projects/project_a/tags/tag-name/another_file.php', false),
+			array('/projects/project_a/tags/', false),
+			array('/projects/project_a/unknowns/unknown-name/another_file.php', false),
+			array('/projects/project_a/releases/release-name/', true),
+			array('/projects/project_a/releases/release-name/another_file.php', false),
+			array('/projects/project_a/releases/', false),
+		);
+	}
+
+	/**
 	 * @dataProvider getRefByPathDataProvider
 	 */
 	public function testGetRefByPath($path, $ref)
