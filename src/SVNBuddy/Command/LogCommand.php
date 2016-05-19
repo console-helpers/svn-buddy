@@ -415,8 +415,9 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 */
 	protected function getRevisionsByPath()
 	{
+		// When "$path" points to deleted path the "$wc_path" will be parent folder of it (hopefully existing folder).
 		$path = $this->io->getArgument('path');
-		$wc_path = $this->getWorkingCopyPath(); // When "$path" represents deleted path will be parent folder.
+		$wc_path = $this->getWorkingCopyPath();
 
 		$refs = $this->getList($this->io->getOption('refs'));
 		$relative_path = $this->repositoryConnector->getRelativePath($wc_path);
@@ -473,7 +474,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 */
 	private function _getPathDifference($main_path, $sub_path)
 	{
-		if ( strpos($sub_path, '.') !== false ) {
+		if ( $sub_path === '.' || strpos($sub_path, '../') !== false ) {
 			$sub_path = realpath($sub_path);
 		}
 
@@ -487,7 +488,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			}
 
 			$adapted_sub_path = dirname($adapted_sub_path);
-		} while ( strlen($adapted_sub_path) );
+		} while ( $adapted_sub_path !== '.' );
 
 		// No sub-matches.
 		if ( !strlen($adapted_sub_path) ) {
