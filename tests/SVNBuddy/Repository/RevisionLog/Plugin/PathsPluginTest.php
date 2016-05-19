@@ -240,9 +240,11 @@ class PathsPluginTest extends AbstractPluginTestCase
 
 			$this->commitBuilder->build();
 
-			/** @var StatementProfiler $profiler */
 			$profiler = $this->database->getProfiler();
-			$profiler->removeProfile('SELECT Path FROM Projects');
+
+			if ( $profiler instanceof StatementProfiler ) {
+				$profiler->removeProfile('SELECT Path FROM Projects');
+			}
 
 			// Recreate plugin for it to pickup commit added to db above.
 			$this->plugin = $this->createPlugin();
