@@ -497,11 +497,11 @@ class PathsPluginTest extends AbstractPluginTestCase
 		));
 	}
 
-	public function testParsePathCopyOperation()
+	public function testParsePathCopyExistingSource()
 	{
 		$this->repositoryConnector->getRefByPath(Argument::any())->willReturn(false)->shouldBeCalled();
 
-		$this->plugin->parse($this->getFixture('svn_log_copy_operation.xml'));
+		$this->plugin->parse($this->getFixture('svn_log_copy_existing_source.xml'));
 		$this->assertLastRevision(200);
 
 		$this->assertTablesEmpty(array(
@@ -583,6 +583,156 @@ class PathsPluginTest extends AbstractPluginTestCase
 		$this->assertStatistics(array(
 			PathsPlugin::STATISTIC_PATH_ADDED => 3,
 			PathsPlugin::STATISTIC_PATH_FOUND => 1,
+		));
+	}
+
+	public function testParsePathCopyMissingSource()
+	{
+		$this->repositoryConnector->getRefByPath(new RegExToken('/trunk/'))->willReturn('trunk')->shouldBeCalled();
+
+		$this->plugin->parse($this->getFixture('svn_log_copy_missing_source.xml'));
+		$this->assertLastRevision(200);
+
+		$this->assertTableContent(
+			'Projects',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/path/to/project/',
+					'BugRegExp' => null,
+					'IsDeleted' => '0',
+				),
+			)
+		);
+
+		$this->assertTableContent(
+			'ProjectRefs',
+			array(
+				array(
+					'Id' => '1',
+					'ProjectId' => '1',
+					'Name' => 'trunk',
+				),
+			)
+		);
+
+		$this->assertTableContent(
+			'CommitProjects',
+			array(
+				array(
+					'Revision' => '100',
+					'ProjectId' => '1',
+				),
+				array(
+					'Revision' => '200',
+					'ProjectId' => '1',
+				),
+			)
+		);
+
+		$this->assertTableContent(
+			'CommitRefs',
+			array(
+				array(
+					'Revision' => '100',
+					'RefId' => '1',
+				),
+				array(
+					'Revision' => '200',
+					'RefId' => '1',
+				),
+			)
+		);
+
+		$this->assertTableContent(
+			'Paths',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/path/to/project/trunk/file1.txt',
+					'PathNestingLevel' => '4',
+					'PathHash' => '1256725620',
+					'RefName' => 'trunk',
+					'ProjectPath' => '/path/to/project/',
+					'RevisionAdded' => '100',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '100',
+				),
+				array(
+					'Id' => '2',
+					'Path' => '/path/to/another-project/trunk/file1.txt',
+					'PathNestingLevel' => '4',
+					'PathHash' => '2183467823',
+					'RefName' => 'trunk',
+					'ProjectPath' => '/path/to/another-project/',
+					'RevisionAdded' => '100',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '100',
+				),
+				array(
+					'Id' => '3',
+					'Path' => '/path/to/project/trunk/file2.txt',
+					'PathNestingLevel' => '4',
+					'PathHash' => '222848676',
+					'RefName' => 'trunk',
+					'ProjectPath' => '/path/to/project/',
+					'RevisionAdded' => '200',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '200',
+				),
+				array(
+					'Id' => '4',
+					'Path' => '/path/to/project/trunk/file3.txt',
+					'PathNestingLevel' => '4',
+					'PathHash' => '807948052',
+					'RefName' => 'trunk',
+					'ProjectPath' => '/path/to/project/',
+					'RevisionAdded' => '200',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '200',
+				),
+			)
+		);
+
+		// One less commit path, then paths, because missing copy source paths aren't associated with commits.
+		$this->assertTableContent(
+			'CommitPaths',
+			array(
+				array(
+					'Revision' => '100',
+					'Action' => 'A',
+					'Kind' => 'file',
+					'PathId' => '1',
+					'CopyRevision' => null,
+					'CopyPathId' => null,
+				),
+				array(
+					'Revision' => '200',
+					'Action' => 'M',
+					'Kind' => 'file',
+					'PathId' => '3',
+					'CopyRevision' => '100',
+					'CopyPathId' => '2',
+				),
+				array(
+					'Revision' => '200',
+					'Action' => 'M',
+					'Kind' => 'file',
+					'PathId' => '4',
+					'CopyRevision' => null,
+					'CopyPathId' => null,
+				),
+			)
+		);
+
+		$this->assertStatistics(array(
+			PathsPlugin::STATISTIC_PATH_ADDED => 4,
+			PathsPlugin::STATISTIC_PROJECT_ADDED => 1,
+			PathsPlugin::STATISTIC_REF_ADDED => 1,
+			PathsPlugin::STATISTIC_REF_FOUND => 2,
+			PathsPlugin::STATISTIC_COMMIT_ADDED_TO_PROJECT => 2,
+			PathsPlugin::STATISTIC_COMMIT_ADDED_TO_REF => 2,
+			PathsPlugin::STATISTIC_PROJECT_FOUND => 2,
 		));
 	}
 

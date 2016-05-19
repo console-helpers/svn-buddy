@@ -302,7 +302,11 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 
 			if ( $path_data['ProjectPath'] && $path_data['RefName'] ) {
 				$project_id = $this->processProject($path_data['ProjectPath'], $is_usage);
-				$this->processRef($project_id, $path_data['RefName'], $is_usage);
+
+				// There is no project for missing copy source paths.
+				if ( $project_id ) {
+					$this->processRef($project_id, $path_data['RefName'], $is_usage);
+				}
 			}
 
 			$this->recordStatistic(self::STATISTIC_PATH_FOUND);
@@ -336,7 +340,11 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 
 		if ( $project_path && $ref ) {
 			$project_id = $this->processProject($project_path, $is_usage);
-			$this->processRef($project_id, $ref, $is_usage);
+
+			// There is no project for missing copy source paths.
+			if ( $project_id ) {
+				$this->processRef($project_id, $ref, $is_usage);
+			}
 		}
 
 		$this->recordStatistic(self::STATISTIC_PATH_ADDED);
@@ -391,6 +399,11 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 			}
 
 			return $project_id;
+		}
+
+		// Ignore fact, that project of non-used (copied) path doesn't exist.
+		if ( !$is_usage ) {
+			return null;
 		}
 
 		$project_id = $this->repositoryFiller->addProject($project_path);
