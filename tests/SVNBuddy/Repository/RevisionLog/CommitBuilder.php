@@ -123,48 +123,13 @@ class CommitBuilder
 				$project_path = $path_data['project_path'];
 
 				// Create missing path.
-				if ( !isset($this->_pathsMap[$path]) ) {
-					$this->_pathsMap[$path] = $this->_repositoryFiller->addPath(
-						$path,
-						$ref_name,
-						$project_path,
-						$revision
-					);
-				}
-				else {
-					$sql = 'SELECT RevisionAdded, RevisionDeleted, RevisionLastSeen
-							FROM Paths
-							WHERE Id = :id';
-					$touch_path_data = $this->_databaseCache->getFromCache(
-						'Paths',
-						$this->_repositoryFiller->getPathChecksum($path) . '/' . __METHOD__,
-						$sql,
-						array('id' => $this->_pathsMap[$path])
-					);
-
-					$touched_paths = $this->_repositoryFiller->touchPath(
-						$path,
-						$revision,
-						$this->_repositoryFiller->getPathTouchFields($path_data['action'], $revision, $touch_path_data)
-					);
-
-					foreach ( $touched_paths as $touched_path_hash => $touched_path_fields_hash ) {
-						if ( $this->_databaseCache->getFromCache('Paths', $touched_path_hash . '/' . __METHOD__) !== false ) {
-							$this->_databaseCache->setIntoCache('Paths', $touched_path_hash . '/' . __METHOD__, $touched_path_fields_hash);
-						}
-					}
-				}
+				$this->createMissingPath($path, $ref_name, $project_path, $revision, $path_data['action']);
 
 				$copy_from_path = $path_data['copy_from_path'];
 				$copy_from_revision = $path_data['copy_from_revision'];
 
 				if ( $copy_from_path ) {
-					$copy_from_path_id = $this->_repositoryFiller->addPath(
-						$copy_from_path,
-						'',
-						'',
-						$copy_from_revision
-					);
+					$copy_from_path_id = $this->createMissingPath($copy_from_path, '', '', $copy_from_revision, 'A');
 				}
 
 				// Add path to commit.
@@ -210,6 +175,60 @@ class CommitBuilder
 		}
 
 		$this->_commits = array();
+	}
+
+	/**
+	 * Creates missing path.
+	 *
+	 * @param string  $path         Path.
+	 * @param string  $ref_name     Ref name.
+	 * @param string  $project_path Project path.
+	 * @param integer $revision     Revision.
+	 * @param string  $action       Action.
+	 *
+	 * @return integer
+	 */
+	protected function createMissingPath($path, $ref_name, $project_path, $revision, $action)
+	{
+		if ( !isset($this->_pathsMap[$path]) ) {
+			$this->_pathsMap[$path] = $this->_repositoryFiller->addPath(
+				$path,
+				$ref_name,
+				$project_path,
+				$revision
+			);
+		}
+		else {
+			$sql = 'SELECT RevisionAdded, RevisionDeleted, RevisionLastSeen
+					FROM Paths
+					WHERE Id = :id';
+			$touch_path_data = $this->_databaseCache->getFromCache(
+				'Paths',
+				$this->_repositoryFiller->getPathChecksum($path) . '/' . __METHOD__,
+				$sql,
+				array('id' => $this->_pathsMap[$path])
+			);
+
+			$touch_fields = $this->_repositoryFiller->getPathTouchFields($action, $revision, $touch_path_data);
+
+			if ( $touch_fields ) {
+				$touched_paths = $this->_repositoryFiller->touchPath($path, $revision, $touch_fields);
+
+				foreach ( $touched_paths as $touched_path_hash => $touched_path_fields_hash ) {
+					$path_data = $this->_databaseCache->getFromCache('Paths', $touched_path_hash . '/' . __METHOD__);
+
+					if ( $path_data !== false ) {
+						$this->_databaseCache->setIntoCache(
+							'Paths',
+							$touched_path_hash . '/' . __METHOD__,
+							$touched_path_fields_hash
+						);
+					}
+				}
+			}
+		}
+
+		return $this->_pathsMap[$path];
 	}
 
 }
