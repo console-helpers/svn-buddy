@@ -1350,13 +1350,13 @@ class PathsPluginTest extends AbstractPluginTestCase
 		$this->createFixture();
 
 		$this->assertEquals(
-			array(100),
+			array(20, 100),
 			$this->plugin->find(
 				array(
-					'/path/to/project/folder/file1.php',
-					'/path/to/project/folder/file2.php',
+					'/project/folder/file1.php',
+					'/project/folder/file2.php',
 				),
-				'/path/to/project/'
+				'/project/'
 			)
 		);
 	}
@@ -1366,8 +1366,8 @@ class PathsPluginTest extends AbstractPluginTestCase
 		$this->createFixture();
 
 		$this->assertEquals(
-			array(100),
-			$this->plugin->find(array('/path/to/project/folder/'), '/path/to/project/')
+			array(20, 100),
+			$this->plugin->find(array('/project/folder/'), '/project/')
 		);
 	}
 
@@ -1494,18 +1494,18 @@ class PathsPluginTest extends AbstractPluginTestCase
 			array(
 				100 => array(
 					array(
-						'path' => '/path/to/project/folder/file1.php',
+						'path' => '/project/folder/file1.php',
 						'kind' => 'file',
 						'action' => 'M',
 						'copyfrom-path' => null,
 						'copyfrom-rev' => null,
 					),
 					array(
-						'path' => '/path/to/project/folder/file2.php',
+						'path' => '/project/folder/file2.php',
 						'kind' => 'file',
-						'action' => 'M',
-						'copyfrom-path' => '/path/to/file.php',
-						'copyfrom-rev' => 50,
+						'action' => 'R',
+						'copyfrom-path' => '/project/folder/file1.php',
+						'copyfrom-rev' => 20,
 					),
 				),
 			),
@@ -1530,9 +1530,19 @@ class PathsPluginTest extends AbstractPluginTestCase
 	protected function createFixture()
 	{
 		$this->commitBuilder
+			->addCommit(10, 'user', 0, '')
+			->addPath('A', '/project/', '', '/project/');
+
+		$this->commitBuilder
+			->addCommit(20, 'user', 0, '')
+			->addPath('A', '/project/folder/', '', '/project/')
+			->addPath('A', '/project/folder/file1.php', '', '/project/')
+			->addPath('A', '/project/folder/file2.php', '', '/project/');
+
+		$this->commitBuilder
 			->addCommit(100, 'user', 0, '')
-			->addPath('M', '/path/to/project/folder/file1.php', '', '/path/to/project/')
-			->addPath('M', '/path/to/project/folder/file2.php', '', '/path/to/project/', '/path/to/file.php', 50);
+			->addPath('M', '/project/folder/file1.php', '', '/project/')
+			->addPath('R', '/project/folder/file2.php', '', '/project/', '/project/folder/file1.php', 20);
 
 		$this->commitBuilder->build();
 	}
