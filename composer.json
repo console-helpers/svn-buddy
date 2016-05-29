@@ -13,7 +13,7 @@
 		"symfony/process": ">=2.7",
 		"console-helpers/console-kit": "^0.1",
 		"aura/sql": "^2.5",
-		"padraic/phar-updater": "^1.0",
+		"padraic/phar-updater": "dev-use-curl",
 		"padraic/humbug_get_contents": "^1.0"
 	},
 	"require-dev": {
@@ -34,5 +34,11 @@
 			"dev-master": "0.1.x-dev"
 		}
 	},
-	"bin": ["bin/svn-buddy"]
+	"bin": ["bin/svn-buddy"],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/console-helpers/phar-updater"
+		}
+	]
 }
