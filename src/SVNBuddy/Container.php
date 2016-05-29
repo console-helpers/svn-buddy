@@ -52,6 +52,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			'repository-connector.username' => '',
 			'repository-connector.password' => '',
 			'repository-connector.last-revision-cache-duration' => '10 minutes',
+			'update-channel' => 'stable',
 		);
 
 		$this->extend('output', function ($output) {
