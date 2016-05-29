@@ -55,6 +55,12 @@ class SelfUpdateCommand extends AbstractCommand
 				'Updates application to most recent version in a given stability channel'
 			)
 			->addOption(
+				'rollback',
+				'r',
+				InputOption::VALUE_NONE,
+				'Revert to an older installation of application'
+			)
+			->addOption(
 				'stable',
 				null,
 				InputOption::VALUE_NONE,
@@ -94,16 +100,11 @@ class SelfUpdateCommand extends AbstractCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$updater = new Updater(null, false);
-		$updater->setStrategyObject($this->getUpdateStrategy());
-
-		$result = $updater->update();
-
-		if ( !$result ) {
-			$this->io->writeln('Already using latest version ("' . $this->getUpdateChannel() . '" update channel).');
+		if ( $this->io->getOption('rollback') ) {
+			$this->processRollback();
 		}
 		else {
-			$this->io->writeln('Updated to latest version ("' . $this->getUpdateChannel() . '" update channel).');
+			$this->processUpdate();
 		}
 	}
 
@@ -158,6 +159,41 @@ class SelfUpdateCommand extends AbstractCommand
 		}
 
 		return $this->_configEditor->get('update-channel');
+	}
+
+	/**
+	 * Processes rollback.
+	 *
+	 * @return void
+	 * @throws CommandException When rollback failed.
+	 */
+	protected function processRollback()
+	{
+		$updater = new Updater(null, false);
+
+		if ( !$updater->rollback() ) {
+			throw new CommandException('Failed to restore previous version.');
+		}
+
+		$this->io->writeln('Previous version restored.');
+	}
+
+	/**
+	 * Processes update.
+	 *
+	 * @return void
+	 */
+	protected function processUpdate()
+	{
+		$updater = new Updater(null, false);
+		$updater->setStrategyObject($this->getUpdateStrategy());
+
+		if ( !$updater->update() ) {
+			$this->io->writeln('Already using latest version ("' . $this->getUpdateChannel() . '" channel).');
+		}
+		else {
+			$this->io->writeln('Updated to latest version ("' . $this->getUpdateChannel() . '" channel).');
+		}
 	}
 
 }
