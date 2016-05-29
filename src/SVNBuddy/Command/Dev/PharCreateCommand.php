@@ -49,6 +49,16 @@ class PharCreateCommand extends AbstractCommand
 		$build_dir = realpath($this->io->getOption('build-dir'));
 		$repository_path = realpath(__DIR__ . '/../../../../');
 
+		$this->_shellCommand(
+			'composer',
+			array(
+				'install',
+				'--no-interaction',
+				'--no-dev',
+			),
+			$repository_path
+		);
+
 		$box_config = json_decode(file_get_contents($repository_path . '/box.json.dist'), true);
 
 		$phar_file = $build_dir . '/' . basename($box_config['output']);
@@ -67,6 +77,15 @@ class PharCreateCommand extends AbstractCommand
 		file_put_contents(
 			$signature_file,
 			$this->_shellCommand('sha1sum', array(basename($phar_file)), dirname($phar_file))
+		);
+
+		$this->_shellCommand(
+			'composer',
+			array(
+				'install',
+				'--no-interaction',
+			),
+			$repository_path
 		);
 
 		$this->io->writeln('Phar created successfully.');
