@@ -12,7 +12,9 @@
 	"require": {
 		"symfony/process": ">=2.7",
 		"console-helpers/console-kit": "^0.1",
-		"aura/sql": "^2.5"
+		"aura/sql": "^2.5",
+		"padraic/phar-updater": "^1.0",
+		"padraic/humbug_get_contents": "^1.0"
 	},
 	"require-dev": {
 		"aik099/coding-standard": "dev-master"
