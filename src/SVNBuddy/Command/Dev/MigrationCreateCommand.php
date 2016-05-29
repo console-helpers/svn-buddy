@@ -8,9 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Command;
+namespace ConsoleHelpers\SVNBuddy\Command\Dev;
 
 
+use ConsoleHelpers\SVNBuddy\Command\AbstractCommand;
 use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationManager;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,7 +19,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MigrationCreateCommand extends AbstractCommand implements IAggregatorAwareCommand
+class MigrationCreateCommand extends AbstractCommand
 {
 
 	/**
@@ -34,7 +35,7 @@ class MigrationCreateCommand extends AbstractCommand implements IAggregatorAware
 	protected function configure()
 	{
 		$this
-			->setName('migration:create')
+			->setName('dev:migration-create')
 			->setDescription(
 				'Creates new database migration'
 			)
