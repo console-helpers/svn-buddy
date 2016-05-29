@@ -491,19 +491,19 @@ Runs other command sequentially on every working copy on a path.
 #### Examples
 
 ```
-svn-buddy.phar --ignore-add some-path
+svn-buddy.phar aggregate --ignore-add some-path
 ```
 
 Adds `some-path` path (can be relative or absolute) to ignored path list.
 
 ```
-svn-buddy.phar --ignore-remove some-path
+svn-buddy.phar aggregate --ignore-remove some-path
 ```
 
 Removes `some-path` path (can be relative or absolute) from ignored path list.
 
 ```
-svn-buddy.phar --ignore-show
+svn-buddy.phar aggregate --ignore-show
 ```
 
 Shows list of ignored paths.
