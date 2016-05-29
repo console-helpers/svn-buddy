@@ -45,13 +45,13 @@ class SelfUpdateCommand extends AbstractCommand
 		$this
 			->setName('self-update')
 			->setDescription(
-				'Updates application to most recent version in a given stability channel'
+				'Update application to most recent version'
 			)
 			->addOption(
 				'rollback',
 				'r',
 				InputOption::VALUE_NONE,
-				'Revert to an older installation of application'
+				'Revert to an older version of the application'
 			)
 			->addOption(
 				'stable',
@@ -177,10 +177,14 @@ class SelfUpdateCommand extends AbstractCommand
 		$updater->setStrategyObject($this->getUpdateStrategy());
 
 		if ( !$updater->update() ) {
-			$this->io->writeln('Already using latest version ("' . $this->getUpdateChannel() . '" channel).');
+			$this->io->writeln(
+				'Already at latest version (<info>' . $this->getUpdateChannel() . '</info> channel).'
+			);
 		}
 		else {
-			$this->io->writeln('Updated to latest version ("' . $this->getUpdateChannel() . '" channel).');
+			$this->io->writeln(
+				'Updated to latest version (<info>' . $this->getUpdateChannel() . '</info> channel).'
+			);
 		}
 	}
 

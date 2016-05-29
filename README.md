@@ -508,6 +508,42 @@ svn-buddy.phar aggregate --ignore-show
 
 Shows list of ignored paths.
 
+### The "self-update" command
+
+Updates application to most recent version.
+
+#### Options
+
+* `-r`, `--rollback` - Revert to an older version of the application
+* `--stable` - Force an update to the stable channel
+* `--snapshot` - Force an update to the snapshot channel
+
+#### Examples
+
+```
+svn-buddy.phar self-update
+```
+
+Updates to most recent version on current update channel. By default update would happen from `stable` channel.
+
+```
+svn-buddy.phar self-update --rollback
+```
+
+In case if update was done previously allows to undo the update.
+
+```
+svn-buddy.phar self-update --stable
+```
+
+Change current update channel to `stable` and immediately performs the update.
+
+```
+svn-buddy.phar self-update --snapshot
+```
+
+Change current update channel to `snapshot` and immediately performs the update.
+
 ### The "list" command
 
 Displays available commands. The version of Subversion binary is also displayed next to application version.
