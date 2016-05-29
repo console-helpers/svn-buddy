@@ -19,6 +19,7 @@ use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
 use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
 use ConsoleHelpers\SVNBuddy\Command\ConfigCommand;
 use ConsoleHelpers\SVNBuddy\Command\Dev\MigrationCreateCommand;
+use ConsoleHelpers\SVNBuddy\Command\Dev\PharCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
 use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
 use ConsoleHelpers\SVNBuddy\Command\RevertCommand;
@@ -85,6 +86,7 @@ class Application extends BaseApplication
 
 		if ( !$this->isPharFile() ) {
 			$default_commands[] = new MigrationCreateCommand();
+			$default_commands[] = new PharCreateCommand();
 		}
 
 		return $default_commands;
