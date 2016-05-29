@@ -49,10 +49,11 @@ class PharCreateCommand extends AbstractCommand
 		$build_dir = realpath($this->io->getOption('build-dir'));
 		$repository_path = realpath(__DIR__ . '/../../../../');
 
-		$phar_file = $build_dir . '/svn-buddy.phar';
+		$box_config = json_decode(file_get_contents($repository_path . '/box.json.dist'), true);
+
+		$phar_file = $build_dir . '/' . basename($box_config['output']);
 		$signature_file = $phar_file . '.sig';
 
-		$box_config = json_decode(file_get_contents($repository_path . '/box.json.dist'), true);
 		$box_config['output'] = $phar_file;
 
 		file_put_contents(
