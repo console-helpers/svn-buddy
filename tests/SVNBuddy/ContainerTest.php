@@ -29,6 +29,7 @@ class ContainerTest extends BaseContainerTest
 					'repository-connector.username' => '',
 					'repository-connector.password' => '',
 					'repository-connector.last-revision-cache-duration' => '10 minutes',
+					'update-channel' => 'stable',
 				),
 				'config_defaults',
 			),
