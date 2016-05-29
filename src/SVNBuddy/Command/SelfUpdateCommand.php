@@ -38,13 +38,6 @@ class SelfUpdateCommand extends AbstractCommand
 	private $_configEditor;
 
 	/**
-	 * Path, where to store backups.
-	 *
-	 * @var string
-	 */
-	private $_backupsPath;
-
-	/**
 	 * {@inheritdoc}
 	 */
 	protected function configure()
@@ -88,11 +81,6 @@ class SelfUpdateCommand extends AbstractCommand
 		$container = $this->getContainer();
 
 		$this->_configEditor = $container['config_editor'];
-		$this->_backupsPath = $container['working_directory'] . '/backups';
-
-		if ( !file_exists($this->_backupsPath) ) {
-			mkdir($this->_backupsPath, 0777, true);
-		}
 	}
 
 	/**
