@@ -561,8 +561,12 @@ Displays help for a command.
 
 ## Installation
 
-1. download `svn-buddy.phar` file from https://github.com/console-helpers/svn-buddy/releases/latest page.
-2. setup auto-completion by placing `eval $(/path/to/svn-buddy.phar _completion --generate-hook -p svn-buddy.phar)` in `~/.bashrc`
+1. stable release:
+ * go to [https://github.com/console-helpers/svn-buddy/releases/latest](https://github.com/console-helpers/svn-buddy/releases/latest) page
+ * download `svn-buddy.phar` file
+2. snapshot release:
+ * use [this link](http://svn-buddy-updater.herokuapp.com/download/snapshot/svn-buddy.phar)
+3. setup auto-completion by placing `eval $(/path/to/svn-buddy.phar _completion --generate-hook -p svn-buddy.phar)` in `~/.bashrc`
 
 ## Requirements
 
