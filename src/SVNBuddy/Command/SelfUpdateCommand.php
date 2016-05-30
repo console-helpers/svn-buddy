@@ -24,6 +24,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SelfUpdateCommand extends AbstractCommand
 {
 
+	const UPDATE_CHANNEL_PREVIEW = 'preview';
+
 	const UPDATE_CHANNEL_SNAPSHOT = 'snapshot';
 
 	const UPDATE_CHANNEL_STABLE = 'stable';
@@ -64,6 +66,12 @@ class SelfUpdateCommand extends AbstractCommand
 				null,
 				InputOption::VALUE_NONE,
 				'Force an update to the snapshot channel'
+			)
+			->addOption(
+				'preview',
+				null,
+				InputOption::VALUE_NONE,
+				'Force an update to the preview channel'
 			);
 
 		parent::configure();
@@ -144,6 +152,10 @@ class SelfUpdateCommand extends AbstractCommand
 
 		if ( $this->io->getOption('snapshot') ) {
 			$this->_configEditor->set('update-channel', self::UPDATE_CHANNEL_SNAPSHOT);
+		}
+
+		if ( $this->io->getOption('preview') ) {
+			$this->_configEditor->set('update-channel', self::UPDATE_CHANNEL_PREVIEW);
 		}
 
 		return $this->_configEditor->get('update-channel');

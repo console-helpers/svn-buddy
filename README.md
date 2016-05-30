@@ -517,6 +517,7 @@ Updates application to most recent version.
 * `-r`, `--rollback` - Revert to an older version of the application
 * `--stable` - Force an update to the stable channel
 * `--snapshot` - Force an update to the snapshot channel
+* `--preview` - Force an update to the preview channel
 
 #### Examples
 
@@ -543,6 +544,12 @@ svn-buddy.phar self-update --snapshot
 ```
 
 Change current update channel to `snapshot` and immediately performs the update.
+
+```
+svn-buddy.phar self-update --preview
+```
+
+Change current update channel to `preview` and immediately performs the update.
 
 ### The "list" command
 
