@@ -510,7 +510,13 @@ Shows list of ignored paths.
 
 ### The "self-update" command
 
-Updates application to most recent version.
+Updates application to most recent version. Following update channels are available:
+
+* `stable` (default) - new version available eventually
+* `snapshot` - new version available on monday (only, when something was changed)
+* `preview` - new version available once per day (only, when something was changed)
+
+Special options exist (see examples below) to switch between update channels.
 
 #### Options
 
