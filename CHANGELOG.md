@@ -10,12 +10,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Don't remove ref from path, when showing revision paths in `log` commands's detail view.
+- Attempt to view revisions of path, that never existed in a project now will exactly say that in thrown exception.
 
 ### Fixed
 - The path `copy-from-` information wasn't stored incorrectly resulting in path shown as copied, while they weren't.
 - When, in `log` command, attempting to see revisions of a particular file, that currently exists, nothing was shown.
 - When, in `log` command, attempting to see revisions of a particular file, that is currently deleted, nothing was shown.
 - The copied paths (during initial revision data import) where not properly associated to their projects.
+- Fixed notice about "file_exists" function and "svn://" protocol, when using `merge` command or `log` command with URL instead of path.
 
 ## [0.2.0] - 2016-05-14
 ### Added

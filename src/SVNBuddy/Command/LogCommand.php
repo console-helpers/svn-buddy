@@ -411,6 +411,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 * Returns list of revisions by path.
 	 *
 	 * @return array
+	 * @throws CommandException When given path doesn't exist.
 	 * @throws CommandException When given refs doesn't exist.
 	 */
 	protected function getRevisionsByPath()
@@ -426,27 +427,12 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			$relative_path .= $this->_getPathDifference($wc_path, $path);
 		}
 
-		if ( file_exists($wc_path) ) {
-			// This is existing directory - show history recursively.
-			if ( is_dir($path) ) {
-				$relative_path .= '/';
-			}
-		}
-		else {
-			// This is deleted path - show history recursively only,
-			// when it doesn't contain extension (maybe a folder).
-			if ( !pathinfo($path, PATHINFO_EXTENSION) ) {
-				$relative_path .= '/';
-			}
-		}
+		$relative_path = $this->_crossReferencePathFromRepository($relative_path);
 
-		if ( !$refs ) {
-			$ref = $this->repositoryConnector->getRefByPath($relative_path);
-
-			// Use search by ref, when working copy represents ref root folder.
-			if ( $ref !== false && preg_match('#' . preg_quote($ref, '#') . '/$#', $relative_path) ) {
-				return $this->_revisionLog->find('refs', $ref);
-			}
+		if ( $relative_path === null ) {
+			throw new CommandException(
+				'The "' . $path . '" path not found in "' . $this->_revisionLog->getProjectPath() . '" project.'
+			);
 		}
 
 		if ( $refs ) {
@@ -496,6 +482,27 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		}
 
 		return str_replace($adapted_sub_path, '', $sub_path);
+	}
+
+	/**
+	 * Determines path kind from repository.
+	 *
+	 * @param string $path Path.
+	 *
+	 * @return string|null
+	 */
+	private function _crossReferencePathFromRepository($path)
+	{
+		$path = rtrim($path, '/');
+		$try_paths = array($path, $path . '/');
+
+		foreach ( $try_paths as $try_path ) {
+			if ( $this->_revisionLog->find('paths', 'exact:' . $try_path) ) {
+				return $try_path;
+			}
+		}
+
+		return null;
 	}
 
 	/**
