@@ -205,7 +205,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 		elseif ( $this->_unmergedRevisions ) {
 			$this->runOtherCommand('log', array(
-				'path' => $this->repositoryConnector->getProjectUrl($source_url),
+				'path' => $source_url,
 				'--revisions' => implode(',', $this->_unmergedRevisions),
 				'--with-details' => $this->io->getOption('with-details'),
 				'--with-summary' => $this->io->getOption('with-summary'),
