@@ -544,73 +544,24 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 
 		if ( reset($criteria) === '' ) {
 			// Include revisions from all paths.
-			$sql = 'SELECT cpa.Revision
-					FROM CommitPaths cpa
-					JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
-					WHERE cpr.ProjectId = :project_id';
-			$path_revisions = array_flip($this->database->fetchCol($sql, array('project_id' => $project_id)));
+			$path_revisions = $this->findAllRevisions($project_id);
 		}
 		else {
 			// Include revisions from given sub-path only.
 			$path_revisions = array();
 
 			foreach ( $criteria as $criterion ) {
-				if ( strpos($criterion, ':') !== false ) {
-					list ($field, $value) = explode(':', $criterion, 2);
-
-					if ( $field === 'action' ) {
-						$sql = 'SELECT cpa.Revision
-								FROM CommitPaths cpa
-								JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
-								WHERE cpr.ProjectId = :project_id AND cpa.Action LIKE :action';
-						$tmp_revisions = $this->database->fetchCol($sql, array(
-							'project_id' => $project_id,
-							'action' => $value,
-						));
-					}
-					elseif ( $field === 'kind' ) {
-						$sql = 'SELECT cpa.Revision
-								FROM CommitPaths cpa
-								JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
-								WHERE cpr.ProjectId = :project_id AND cpa.Kind LIKE :kind';
-						$tmp_revisions = $this->database->fetchCol($sql, array(
-							'project_id' => $project_id,
-							'kind' => $value,
-						));
-					}
-					else {
-						$error_msg = 'Searching by "%s" is not supported by "%s" plugin.';
-						throw new \InvalidArgumentException(sprintf($error_msg, $field, $this->getName()));
-					}
+				if ( strpos($criterion, ':') === false ) {
+					// Guess $field based on path itself.
+					$field = substr($criterion, -1, 1) === '/' ? 'sub-match' : 'exact';
+					$value = $criterion;
 				}
 				else {
-					$path = $criterion;
-
-					if ( substr($path, -1, 1) === '/' ) {
-						// Folder given > search also in it's sub-folders.
-						$sql = 'SELECT cpa.Revision
-							FROM CommitPaths cpa
-							JOIN Paths p ON p.Id = cpa.PathId
-							JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
-							WHERE cpr.ProjectId = :project_id AND p.Path LIKE :path';
-						$tmp_revisions = $this->database->fetchCol($sql, array(
-							'project_id' => $project_id,
-							'path' => $path . '%',
-						));
-					}
-					else {
-						// File given > search for that file specifically.
-						$sql = 'SELECT cpa.Revision
-							FROM CommitPaths cpa
-							JOIN Paths p ON p.Id = cpa.PathId
-							JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
-							WHERE cpr.ProjectId = :project_id AND p.PathHash = :path_hash';
-						$tmp_revisions = $this->database->fetchCol($sql, array(
-							'project_id' => $project_id,
-							'path_hash' => $this->repositoryFiller->getPathChecksum($path),
-						));
-					}
+					// Use $field, that is given.
+					list ($field, $value) = explode(':', $criterion, 2);
 				}
+
+				$tmp_revisions = $this->processFieldCriterion($project_id, $field, $value);
 
 				foreach ( $tmp_revisions as $revision ) {
 					$path_revisions[$revision] = true;
@@ -622,6 +573,313 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 		sort($path_revisions, SORT_NUMERIC);
 
 		return $path_revisions;
+	}
+
+	/**
+	 * Finds all revisions in a project.
+	 *
+	 * @param integer $project_id Project ID.
+	 *
+	 * @return array
+	 */
+	protected function findAllRevisions($project_id)
+	{
+		// Same as getting all revisions from "projects" plugin.
+		$sql = 'SELECT Revision
+				FROM CommitProjects
+				WHERE ProjectId = :project_id';
+
+		return array_flip($this->database->fetchCol($sql, array('project_id' => $project_id)));
+	}
+
+	/**
+	 * Processes search request, when field is specified in criterion.
+	 *
+	 * @param integer $project_id Project ID.
+	 * @param string  $field      Field.
+	 * @param mixed   $value      Value.
+	 *
+	 * @return array
+	 * @throws \InvalidArgumentException When non-supported search field is given.
+	 */
+	protected function processFieldCriterion($project_id, $field, $value)
+	{
+		if ( $field === 'action' ) {
+			return $this->findByAction($project_id, $value);
+		}
+
+		if ( $field === 'kind' ) {
+			return $this->findByKind($project_id, $value);
+		}
+
+		if ( $field === 'exact' ) {
+			return $this->findByExactMatch($project_id, $value);
+		}
+
+		if ( $field === 'sub-match' ) {
+			return $this->findBySubMatch($project_id, $value);
+		}
+
+		$error_msg = 'Searching by "%s" is not supported by "%s" plugin.';
+		throw new \InvalidArgumentException(sprintf($error_msg, $field, $this->getName()));
+	}
+
+	/**
+	 * Finds revisions by action.
+	 *
+	 * @param integer $project_id Project id.
+	 * @param string  $action     Action.
+	 *
+	 * @return array
+	 */
+	protected function findByAction($project_id, $action)
+	{
+		$sql = 'SELECT DISTINCT cpr.Revision
+				FROM CommitPaths cpa
+				JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
+				WHERE cpr.ProjectId = :project_id AND cpa.Action LIKE :action';
+		$tmp_revisions = $this->database->fetchCol($sql, array(
+			'project_id' => $project_id,
+			'action' => $action,
+		));
+
+		return $tmp_revisions;
+	}
+
+	/**
+	 * Finds revisions by kind.
+	 *
+	 * @param integer $project_id Project ID.
+	 * @param string  $kind       Kind.
+	 *
+	 * @return array
+	 */
+	protected function findByKind($project_id, $kind)
+	{
+		$sql = 'SELECT DISTINCT cpr.Revision
+				FROM CommitPaths cpa
+				JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
+				WHERE cpr.ProjectId = :project_id AND cpa.Kind LIKE :kind';
+		$tmp_revisions = $this->database->fetchCol($sql, array(
+			'project_id' => $project_id,
+			'kind' => $kind,
+		));
+
+		return $tmp_revisions;
+	}
+
+	/**
+	 * Finds revisions by sub-match.
+	 *
+	 * @param integer      $project_id   Project ID.
+	 * @param string       $path         Path.
+	 * @param integer|null $max_revision Max revision.
+	 *
+	 * @return array
+	 */
+	protected function findBySubMatch($project_id, $path, $max_revision = null)
+	{
+		$path_id = $this->getPathId($path);
+
+		if ( $path_id === false ) {
+			return array();
+		}
+
+		$sql = 'SELECT Revision, CopyPathId
+				FROM CommitPaths
+				WHERE PathId = :path_id AND CopyPathId IS NOT NULL
+				ORDER BY Revision DESC
+				LIMIT 1';
+		$copy_data = $this->database->fetchOne($sql, array(
+			'path_id' => $path_id,
+		));
+
+		if ( $this->_repositoryConnector->isRefRoot($path) ) {
+			$where_clause = array(
+				'RefId = :ref_id',
+			);
+
+			$bind_params = array(
+				'ref_id' => $this->getRefId($project_id, $this->_repositoryConnector->getRefByPath($path)),
+			);
+
+			// Revisions, made after copy revision.
+			if ( $copy_data ) {
+				$where_clause[] = 'Revision >= :min_revision';
+				$bind_params['min_revision'] = $copy_data['Revision'];
+			}
+
+			// Revisions made before copy revision.
+			if ( isset($max_revision) ) {
+				$where_clause[] = 'Revision < :max_revision';
+				$bind_params['max_revision'] = $max_revision;
+			}
+
+			$sql = 'SELECT DISTINCT Revision
+					FROM CommitRefs
+					WHERE (' . implode(') AND (', $where_clause) . ')';
+			$results = $this->database->fetchCol($sql, $bind_params);
+		}
+		else {
+			$where_clause = array(
+				'cpr.ProjectId = :project_id',
+				'p.Path LIKE :path',
+			);
+
+			$bind_params = array(
+				'project_id' => $project_id,
+				'path' => $path . '%',
+			);
+
+			// Revisions, made after copy revision.
+			if ( $copy_data ) {
+				$where_clause[] = 'cpr.Revision >= :min_revision';
+				$bind_params['min_revision'] = $copy_data['Revision'];
+			}
+
+			// Revisions made before copy revision.
+			if ( isset($max_revision) ) {
+				$where_clause[] = 'cpr.Revision < :max_revision';
+				$bind_params['max_revision'] = $max_revision;
+			}
+
+			$sql = 'SELECT DISTINCT cpr.Revision
+					FROM CommitProjects cpr
+					JOIN CommitPaths cpa ON cpa.Revision = cpr.Revision
+					JOIN Paths p ON p.Id = cpa.PathId
+					WHERE (' . implode(') AND (', $where_clause) . ')';
+			$results = $this->database->fetchCol($sql, $bind_params);
+		}
+
+		if ( !$copy_data ) {
+			return $results;
+		}
+
+		return array_merge(
+			$results,
+			$this->findBySubMatch($project_id, $this->getPathFromId($copy_data['CopyPathId']), $copy_data['Revision'])
+		);
+	}
+
+	/**
+	 * Returns ref ID.
+	 *
+	 * @param integer $project_id Project ID.
+	 * @param string  $ref_name   Ref name.
+	 *
+	 * @return integer
+	 */
+	protected function getRefId($project_id, $ref_name)
+	{
+		$sql = 'SELECT Id
+				FROM ProjectRefs
+				WHERE ProjectId = :project_id AND Name = :ref_name';
+
+		return $this->database->fetchValue($sql, array(
+			'project_id' => $project_id,
+			'ref_name' => $ref_name,
+		));
+	}
+
+	/**
+	 * Finds revisions by exact match.
+	 *
+	 * @param integer      $project_id   Project ID.
+	 * @param string       $path         Path.
+	 * @param integer|null $max_revision Max revision.
+	 *
+	 * @return array
+	 */
+	protected function findByExactMatch($project_id, $path, $max_revision = null)
+	{
+		$path_id = $this->getPathId($path);
+
+		if ( $path_id === false ) {
+			return array();
+		}
+
+		$sql = 'SELECT Revision, CopyPathId
+				FROM CommitPaths
+				WHERE PathId = :path_id AND CopyPathId IS NOT NULL
+				ORDER BY Revision DESC
+				LIMIT 1';
+		$copy_data = $this->database->fetchOne($sql, array(
+			'path_id' => $path_id,
+		));
+
+		$where_clause = array(
+			'cpr.ProjectId = :project_id',
+			'p.PathHash = :path_hash',
+		);
+
+		$bind_params = array(
+			'project_id' => $project_id,
+			'path_hash' => $this->repositoryFiller->getPathChecksum($path),
+		);
+
+		// Revisions, made after copy revision.
+		if ( $copy_data ) {
+			$where_clause[] = 'cpr.Revision >= :min_revision';
+			$bind_params['min_revision'] = $copy_data['Revision'];
+		}
+
+		// Revisions made before copy revision.
+		if ( isset($max_revision) ) {
+			$where_clause[] = 'cpr.Revision < :max_revision';
+			$bind_params['max_revision'] = $max_revision;
+		}
+
+		$sql = 'SELECT DISTINCT cpr.Revision
+				FROM CommitProjects cpr
+				JOIN CommitPaths cpa ON cpa.Revision = cpr.Revision
+				JOIN Paths p ON p.Id = cpa.PathId
+				WHERE (' . implode(') AND (', $where_clause) . ')';
+		$results = $this->database->fetchCol($sql, $bind_params);
+
+		if ( !$copy_data ) {
+			return $results;
+		}
+
+		return array_merge(
+			$results,
+			$this->findByExactMatch($project_id, $this->getPathFromId($copy_data['CopyPathId']), $copy_data['Revision'])
+		);
+	}
+
+	/**
+	 * Returns path id.
+	 *
+	 * @param string $path Path.
+	 *
+	 * @return integer
+	 */
+	protected function getPathId($path)
+	{
+		$sql = 'SELECT Id
+				FROM Paths
+				WHERE PathHash = :path_hash';
+
+		return $this->database->fetchValue($sql, array(
+			'path_hash' => $this->repositoryFiller->getPathChecksum($path),
+		));
+	}
+
+	/**
+	 * Returns path by id.
+	 *
+	 * @param integer $path_id Path ID.
+	 *
+	 * @return string
+	 */
+	protected function getPathFromId($path_id)
+	{
+		$sql = 'SELECT Path
+				FROM Paths
+				WHERE Id = :path_id';
+
+		return $this->database->fetchValue($sql, array(
+			'path_id' => $path_id,
+		));
 	}
 
 	/**

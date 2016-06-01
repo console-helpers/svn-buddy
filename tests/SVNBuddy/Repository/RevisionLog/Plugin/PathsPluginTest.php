@@ -1340,6 +1340,31 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 	}
 
+	/**
+	 * @dataProvider findFindMissingPathsDataProvider
+	 */
+	public function testFindMissingPaths($criteria)
+	{
+		$this->createFixture();
+
+		$this->assertEmpty(
+			$this->plugin->find(
+				array($criteria),
+				'/projects/project/'
+			)
+		);
+	}
+
+	public function findFindMissingPathsDataProvider()
+	{
+		return array(
+			'guess sub-match' => array('/projects/project/trunk2/'),
+			'guess exact' => array('/projects/project/trunk/missing-file.txt'),
+			'manual sub-match' => array('sub-match:/projects/project/trunk/missing-file.txt'),
+			'manual exact' => array('exact:/projects/project/trunk/missing-file.txt'),
+		);
+	}
+
 	public function testFindWithEmptyCriteria()
 	{
 		$this->assertEmpty($this->plugin->find(array(), '/path/to/project/'), 'No revisions were found.');
@@ -1350,24 +1375,58 @@ class PathsPluginTest extends AbstractPluginTestCase
 		$this->createFixture();
 
 		$this->assertEquals(
-			array(20, 100),
+			array(3, 4),
 			$this->plugin->find(
 				array(
-					'/project/folder/file1.php',
-					'/project/folder/file2.php',
+					'/projects/project/trunk/file1.txt',
+					'/projects/project/trunk/file2.txt',
 				),
-				'/project/'
+				'/projects/project/'
 			)
 		);
 	}
 
-	public function testFindNoDuplicatesOnSubMatch()
+	public function testFindByExactExistingPath()
 	{
 		$this->createFixture();
 
 		$this->assertEquals(
-			array(20, 100),
-			$this->plugin->find(array('/project/folder/'), '/project/')
+			array(2, 20),
+			$this->plugin->find(
+				array('exact:/projects/project/tags/stable/'),
+				'/projects/project/'
+			)
+		);
+	}
+
+	/**
+	 * @dataProvider findBySubMatchDataProvider
+	 */
+	public function testFindNoDuplicatesOnSubMatch($is_ref, $criteria)
+	{
+		$this->createFixture();
+
+		$this->repositoryConnector->isRefRoot('/projects/project/tags/stable/')->willReturn($is_ref);
+		$this->repositoryConnector->isRefRoot('/projects/project/trunk/')->willReturn($is_ref);
+
+		if ( $is_ref ) {
+			$this->repositoryConnector->getRefByPath('/projects/project/tags/stable/')->willReturn('tags/stable');
+			$this->repositoryConnector->getRefByPath('/projects/project/trunk/')->willReturn('trunk');
+		}
+
+		$this->assertEquals(
+			array(2, 3, 4, 5, 20, 21),
+			$this->plugin->find(array($criteria), '/projects/project/')
+		);
+	}
+
+	public function findBySubMatchDataProvider()
+	{
+		return array(
+			'is ref, guess field' => array(true, '/projects/project/tags/stable/'),
+			'is not ref, guess field' => array(false, '/projects/project/tags/stable/'),
+			'is ref, manual field' => array(true, 'sub-match:/projects/project/tags/stable/'),
+			'is not ref, manual field' => array(false, 'sub-match:/projects/project/tags/stable/'),
 		);
 	}
 
@@ -1492,24 +1551,24 @@ class PathsPluginTest extends AbstractPluginTestCase
 
 		$this->assertEquals(
 			array(
-				100 => array(
+				4 => array(
 					array(
-						'path' => '/project/folder/file1.php',
+						'path' => '/projects/project/trunk/file1.txt',
 						'kind' => 'file',
 						'action' => 'M',
 						'copyfrom-path' => null,
 						'copyfrom-rev' => null,
 					),
 					array(
-						'path' => '/project/folder/file2.php',
+						'path' => '/projects/project/trunk/file2.txt',
 						'kind' => 'file',
 						'action' => 'R',
-						'copyfrom-path' => '/project/folder/file1.php',
-						'copyfrom-rev' => 20,
+						'copyfrom-path' => '/projects/project/trunk/file1.txt',
+						'copyfrom-rev' => 3,
 					),
 				),
 			),
-			$this->plugin->getRevisionsData(array(100))
+			$this->plugin->getRevisionsData(array(4))
 		);
 	}
 
@@ -1530,19 +1589,38 @@ class PathsPluginTest extends AbstractPluginTestCase
 	protected function createFixture()
 	{
 		$this->commitBuilder
-			->addCommit(10, 'user', 0, '')
-			->addPath('A', '/project/', '', '/project/');
+			->addCommit(1, 'user', 0, 'create repo structure')
+			->addPath('A', '/projects/', '', '');
 
 		$this->commitBuilder
-			->addCommit(20, 'user', 0, '')
-			->addPath('A', '/project/folder/', '', '/project/')
-			->addPath('A', '/project/folder/file1.php', '', '/project/')
-			->addPath('A', '/project/folder/file2.php', '', '/project/');
+			->addCommit(2, 'user', 0, 'add project')
+			->addPath('A', '/projects/project/', '', '/projects/project/')
+			->addPath('A', '/projects/project/trunk/', 'trunk', '/projects/project/')
+			->addPath('A', '/projects/project/branches/', '', '/projects/project/')
+			->addPath('A', '/projects/project/tags/', '', '/projects/project/');
 
 		$this->commitBuilder
-			->addCommit(100, 'user', 0, '')
-			->addPath('M', '/project/folder/file1.php', '', '/project/')
-			->addPath('R', '/project/folder/file2.php', '', '/project/', '/project/folder/file1.php', 20);
+			->addCommit(3, 'user', 0, 'trunk commit 1 (before tags/stable created)')
+			->addPath('A', '/projects/project/trunk/file1.txt', 'trunk', '/projects/project/')
+			->addPath('A', '/projects/project/trunk/file2.txt', 'trunk', '/projects/project/');
+
+		$this->commitBuilder
+			->addCommit(4, 'user', 0, 'trunk commit 2 (before tags/stable created)')
+			->addPath('M', '/projects/project/trunk/file1.txt', 'trunk', '/projects/project/')
+			->addPath('R', '/projects/project/trunk/file2.txt', 'trunk', '/projects/project/', '/projects/project/trunk/file1.txt', 3);
+
+		$this->commitBuilder
+			->addCommit(5, 'user', 0, 'trunk commit 2 (after tags/stable created)')
+			->addPath('A', '/projects/project/trunk/file.php', 'trunk', '/projects/project/');
+
+		$this->commitBuilder
+			->addCommit(20, 'user', 0, 'copy trunk into stable')
+			->addPath('A', '/projects/project/tags/stable/', 'tags/stable', '/projects/project/', '/projects/project/trunk/', 4);
+
+		$this->commitBuilder
+			->addCommit(21, 'user', 0, 'tags/stable commit 1')
+			->addPath('M', '/projects/project/tags/stable/file1.txt', 'tags/stable', '/projects/project/')
+			->addPath('M', '/projects/project/tags/stable/file2.txt', 'tags/stable', '/projects/project/');
 
 		$this->commitBuilder->build();
 	}
