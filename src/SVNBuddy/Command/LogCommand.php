@@ -231,7 +231,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$profiling_start = microtime(true);
+		$searching_start = microtime(true);
 		$bugs = $this->getList($this->io->getOption('bugs'));
 		$revisions = $this->getList($this->io->getOption('revisions'));
 
@@ -337,10 +337,20 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			));
 		}
 
+		$searching_duration = microtime(true) - $searching_start;
+
+		$printing_start = microtime(true);
 		$this->printRevisions($revisions_by_path_with_limit);
+		$printing_duration = microtime(true) - $printing_start;
+
+		$debug_info = 'Generation Time: <info>' . round($searching_duration + $printing_duration, 2) . 's</info>';
+		$debug_info .= ' (';
+		$debug_info .= 'searching: <info>' . round($searching_duration, 2) . 's</info>;';
+		$debug_info .= ' printing: <info>' . round($printing_duration, 2) . 's</info>';
+		$debug_info .= ').';
 
 		$this->io->writeln(
-			'Results prepared in <info>' . round(microtime(true) - $profiling_start, 2) . 's</info>.'
+			$debug_info
 		);
 	}
 
