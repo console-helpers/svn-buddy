@@ -19,6 +19,9 @@ use ConsoleHelpers\SVNBuddy\Updater\VersionUpdateStrategy;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\ProcessBuilder;
 
 class SelfUpdateCommand extends AbstractCommand
 {
@@ -127,11 +130,39 @@ class SelfUpdateCommand extends AbstractCommand
 	{
 		$updater = new Updater(null, false);
 
+		// To get all needed classes autoloaded before phar gets overwritten.
+		$this->getFreshVersion();
+
 		if ( !$updater->rollback() ) {
 			throw new CommandException('Failed to restore previous version.');
 		}
 
-		$this->io->writeln('Rolling back to version <info>' . $this->getApplication()->getVersion() . '</info>.');
+		$this->io->writeln(
+			'Rolling back to version <info>' . $this->getFreshVersion() . '</info>.'
+		);
+	}
+
+	/**
+	 * Returns fresh application version.
+	 *
+	 * @return string
+	 * @throws \RuntimeException When PHP executable can't be found.
+	 */
+	protected function getFreshVersion()
+	{
+		$php_executable_finder = new PhpExecutableFinder();
+		$php_executable = $php_executable_finder->find();
+
+		if ( !$php_executable ) {
+			throw new \RuntimeException('The PHP executable cannot be found.');
+		}
+
+		$arguments = array($php_executable, $_SERVER['argv'][0], 'list', '--format=xml');
+		$output = ProcessBuilder::create($arguments)->getProcess()->mustRun()->getOutput();
+
+		$xml = new \SimpleXMLElement($output);
+
+		return (string)$xml['version'];
 	}
 
 	/**
