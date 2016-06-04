@@ -203,7 +203,11 @@ class PharCreateCommand extends AbstractCommand
 	 */
 	private function _getGitVersion()
 	{
-		return trim($this->_shellCommand('git', array('describe', 'HEAD', '--tags')));
+		return trim($this->_shellCommand(
+			'git',
+			array('describe', 'HEAD', '--tags'),
+			$this->_projectRootFolder
+		));
 	}
 
 	/**
