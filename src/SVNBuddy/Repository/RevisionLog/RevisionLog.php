@@ -322,6 +322,7 @@ class RevisionLog
 			throw new \LogicException('The "' . $plugin_name . '" revision log plugin is already registered.');
 		}
 
+		$plugin->setRevisionLog($this);
 		$this->_plugins[$plugin_name] = $plugin;
 	}
 

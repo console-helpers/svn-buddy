@@ -11,6 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+
 interface IPlugin
 {
 
@@ -67,5 +69,14 @@ interface IPlugin
 	 * @return integer
 	 */
 	public function getLastRevision();
+
+	/**
+	 * Sets reference to revision log.
+	 *
+	 * @param RevisionLog $revision_log Revision log.
+	 *
+	 * @return void
+	 */
+	public function setRevisionLog(RevisionLog $revision_log);
 
 }

@@ -13,6 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 use Aura\Sql\ExtendedPdoInterface;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RepositoryFiller;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 
 abstract class AbstractPlugin implements IPlugin
 {
@@ -30,6 +31,13 @@ abstract class AbstractPlugin implements IPlugin
 	 * @var RepositoryFiller
 	 */
 	protected $repositoryFiller;
+
+	/**
+	 * Revision log.
+	 *
+	 * @var RevisionLog
+	 */
+	protected $revisionLog;
 
 	/**
 	 * Parsing statistics.
@@ -234,6 +242,18 @@ abstract class AbstractPlugin implements IPlugin
 		if ( is_object($profiler) && $profiler->isActive() ) {
 			$profiler->resetProfiles();
 		}
+	}
+
+	/**
+	 * Sets reference to revision log.
+	 *
+	 * @param RevisionLog $revision_log Revision log.
+	 *
+	 * @return void
+	 */
+	public function setRevisionLog(RevisionLog $revision_log)
+	{
+		$this->revisionLog = $revision_log;
 	}
 
 }

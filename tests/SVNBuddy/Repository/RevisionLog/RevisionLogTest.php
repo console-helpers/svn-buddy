@@ -54,10 +54,11 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testPluginRegistrationSuccess()
 	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 
 		$this->assertFalse($revision_log->pluginRegistered('mocked'), 'The "mocked" plugin is not registered.');
 		$revision_log->registerPlugin($plugin->reveal());
@@ -70,10 +71,11 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testPluginRegistrationFailure()
 	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 
 		$revision_log->registerPlugin($plugin->reveal());
 		$revision_log->registerPlugin($plugin->reveal());
@@ -81,11 +83,13 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindCriterionSuccess()
 	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
+		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$plugin->find(array('criterion'), '/projects/project-name/')->willReturn('OK')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals('OK', $revision_log->find('mocked', 'criterion'));
@@ -93,11 +97,13 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testFindCriteriaSuccess()
 	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
+		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$plugin->find(array('criterion1', 'criterion2'), '/projects/project-name/')->willReturn('OK')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals('OK', $revision_log->find('mocked', array('criterion1', 'criterion2')));
@@ -115,11 +121,13 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetRevisionsDataSuccess()
 	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
+		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$plugin->getRevisionsData(array(1))->willReturn('OK')->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals('OK', $revision_log->getRevisionsData('mocked', array(1)));
@@ -137,8 +145,11 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 
 	public function testGetBugsFromRevisions()
 	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
 		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
 		$plugin->getName()->willReturn('bugs')->shouldBeCalled();
+		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$plugin->getRevisionsData(array(1, 2))
 			->willReturn(array(
 				1 => array('A', 'B'),
@@ -146,7 +157,6 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 			))
 			->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($plugin->reveal());
 
 		$this->assertEquals(array('A', 'B', 'C'), $revision_log->getBugsFromRevisions(array(1, 2)));
@@ -205,9 +215,13 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(400)->shouldBeCalled();
 
+		// Create revision log (part 1).
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk', $io);
+
 		// Add repository collector plugin.
 		$repository_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IRepositoryCollectorPlugin');
 		$repository_collector_plugin->getName()->willReturn('mocked_repo')->shouldBeCalled();
+		$repository_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$repository_collector_plugin->whenDatabaseReady()->shouldBeCalled();
 		$repository_collector_plugin->getLastRevision()->willReturn(0)->shouldBeCalled();
 
@@ -228,6 +242,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 		// Add database collector plugin.
 		$database_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IDatabaseCollectorPlugin');
 		$database_collector_plugin->getName()->willReturn('mocked_db')->shouldBeCalled();
+		$database_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$database_collector_plugin->whenDatabaseReady()->shouldBeCalled();
 		$database_collector_plugin->getLastRevision()->willReturn(0)->shouldBeCalled();
 		$database_collector_plugin
@@ -245,8 +260,7 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 			$this->io->writeln('<debug> * dp2: 4</debug>')->shouldBeCalled();
 		}
 
-		// Create revision log.
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk', $io);
+		// Create revision log (part 2).
 		$revision_log->registerPlugin($repository_collector_plugin->reveal());
 		$revision_log->registerPlugin($database_collector_plugin->reveal());
 		$revision_log->refresh(false);
@@ -256,19 +270,22 @@ class RevisionLogTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
 
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
 		// Add repository collector plugin.
 		$repository_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IRepositoryCollectorPlugin');
 		$repository_collector_plugin->getName()->willReturn('mocked_repo')->shouldBeCalled();
+		$repository_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$repository_collector_plugin->whenDatabaseReady()->shouldBeCalled();
 		$repository_collector_plugin->getLastRevision()->willReturn(1000)->shouldBeCalled();
 
 		// Add database collector plugin.
 		$database_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IDatabaseCollectorPlugin');
 		$database_collector_plugin->getName()->willReturn('mocked_db')->shouldBeCalled();
+		$database_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$database_collector_plugin->whenDatabaseReady()->shouldBeCalled();
 		$database_collector_plugin->getLastRevision()->willReturn(1000)->shouldBeCalled();
 
-		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->registerPlugin($repository_collector_plugin->reveal());
 		$revision_log->registerPlugin($database_collector_plugin->reveal());
 		$revision_log->refresh(false);
