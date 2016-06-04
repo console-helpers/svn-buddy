@@ -51,8 +51,7 @@ class PharCreateCommand extends AbstractCommand
 				'stability',
 				's',
 				InputOption::VALUE_REQUIRED,
-				'Stability of the build (<comment>stable</comment>, <comment>snapshot</comment>, <comment>preview</comment>)',
-				Stability::STABLE
+				'Stability of the build (<comment>stable</comment>, <comment>snapshot</comment>, <comment>preview</comment>)'
 			);
 
 		parent::configure();
@@ -100,7 +99,7 @@ class PharCreateCommand extends AbstractCommand
 	{
 		$stability = $this->_getStability();
 
-		if ( !in_array($stability, $this->_getStabilities()) ) {
+		if ( $stability && !in_array($stability, $this->_getStabilities()) ) {
 			throw new \RuntimeException('The "' . $stability . '" is unknown.');
 		}
 
@@ -188,8 +187,13 @@ class PharCreateCommand extends AbstractCommand
 	{
 		$stability = $this->_getStability();
 		$git_version = $this->_getGitVersion();
+		$is_unstable = preg_match('/^.*-[\d]+-g.{7}$/', $git_version);
 
-		if ( preg_match('/^.*-[\d]+-g.{7}$/', $git_version) && $stability === Stability::STABLE ) {
+		if ( !$stability ) {
+			$stability = $is_unstable ? Stability::PREVIEW : Stability::STABLE;
+		}
+
+		if ( $is_unstable && $stability === Stability::STABLE ) {
 			throw new CommandException('The "' . $git_version . '" version can\'t be used with "stable" stability.');
 		}
 
