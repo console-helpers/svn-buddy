@@ -66,22 +66,61 @@ class RefsPlugin extends AbstractDatabaseCollectorPlugin
 		$project_id = $this->getProject($project_path);
 
 		if ( reset($criteria) === 'all_refs' ) {
-			$sql = 'SELECT DISTINCT Name
-					FROM ProjectRefs
-					WHERE ProjectId = :project_id';
-
-			return $this->database->fetchCol($sql, array('project_id' => $project_id));
+			return $this->getProjectRefs($project_id);
 		}
 
-		$sql = 'SELECT DISTINCT cr.Revision
-				FROM ProjectRefs pr
-				JOIN CommitRefs cr ON cr.RefId = pr.Id
-				WHERE pr.ProjectId = :project_id AND pr.Name IN (:names)';
-		$ref_revisions = $this->database->fetchCol($sql, array('project_id' => $project_id, 'names' => $criteria));
+		$ref_revisions = $this->findRevisionsByRef($project_id, $criteria);
 
 		sort($ref_revisions, SORT_NUMERIC);
 
 		return $ref_revisions;
+	}
+
+	/**
+	 * Returns names of all refs in a project.
+	 *
+	 * @param integer $project_id Project ID.
+	 *
+	 * @return array
+	 */
+	protected function getProjectRefs($project_id)
+	{
+		$sql = 'SELECT DISTINCT Name
+				FROM ProjectRefs
+				WHERE ProjectId = :project_id';
+
+		return $this->database->fetchCol($sql, array('project_id' => $project_id));
+	}
+
+	/**
+	 * Finds revisions by ref.
+	 *
+	 * @param integer $project_id Project ID.
+	 * @param array   $refs       Refs.
+	 *
+	 * @return array
+	 */
+	protected function findRevisionsByRef($project_id, array $refs)
+	{
+		$sql = 'SELECT Path
+				FROM Projects
+				WHERE Id = :project_id';
+		$project_path = $this->database->fetchValue($sql, array(
+			'project_id' => $project_id,
+		));
+
+		$ref_revisions = array();
+
+		foreach ( $refs as $ref ) {
+			$tmp_revisions = $this->revisionLog->find('paths', $project_path . $ref . '/');
+
+			// Add revisions from refs.
+			foreach ( $tmp_revisions as $revision ) {
+				$ref_revisions[$revision] = true;
+			}
+		}
+
+		return array_keys($ref_revisions);
 	}
 
 	/**

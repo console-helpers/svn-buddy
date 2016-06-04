@@ -43,29 +43,30 @@ class RefsPluginTest extends AbstractPluginTestCase
 		$this->assertLastRevision(100);
 	}
 
-	public function testFindNoMatch()
+	public function testFind()
 	{
-		$this->createFixture();
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, '')
+			->addPath('A', '/project/branches/branch-name/', 'branches/branch-name', '/project/')
+			->addPath('A', '/project/tags/tag-name/', 'tags/tag-name', '/project/');
 
-		$this->assertEmpty($this->plugin->find(array('branches/new-branch'), '/path/to/project-a/'));
+		$this->commitBuilder->build();
 
-		// Confirm search is bound to project.
-		$this->assertEmpty($this->plugin->find(array('tags/tag-name'), '/path/to/project-b/'));
+		$revision_log = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog');
+		$revision_log->find('paths', '/project/branches/branch-name/')->willReturn(array(1, 2))->shouldBeCalled();
+		$revision_log->find('paths', '/project/tags/tag-name/')->willReturn(array(2, 3))->shouldBeCalled();
+		$this->plugin->setRevisionLog($revision_log->reveal());
+
+
+		$this->assertEquals(
+			array(1, 2, 3),
+			$this->plugin->find(array('branches/branch-name', 'tags/tag-name'), '/project/')
+		);
 	}
 
 	public function testFindWithEmptyCriteria()
 	{
 		$this->assertEmpty($this->plugin->find(array(), '/path/to/project/'), 'No revisions were found.');
-	}
-
-	public function testFindNoDuplicates()
-	{
-		$this->createFixture();
-
-		$this->assertEquals(
-			array(100),
-			$this->plugin->find(array('branches/branch-name', 'tags/tag-name'), '/path/to/project-a/')
-		);
 	}
 
 	public function testFindAllRefs()
@@ -75,34 +76,6 @@ class RefsPluginTest extends AbstractPluginTestCase
 		$this->assertEquals(
 			array('branches/branch-name', 'tags/tag-name'),
 			$this->plugin->find(array('all_refs'), '/path/to/project-a/')
-		);
-	}
-
-	public function testFindSorting()
-	{
-		$this->commitBuilder
-			->addCommit(100, 'user', 0, '')
-			->addPath('A', '/path/to/project-a/branches/branch-name/', 'branches/branch-name', '/path/to/project-a/');
-
-		$this->commitBuilder
-			->addCommit(200, 'user', 0, '')
-			->addPath('A', '/path/to/project-a/tags/tag-name/', 'tags/tag-name', '/path/to/project-a/');
-
-		$this->commitBuilder
-			->addCommit(300, 'user', 0, '')
-			->addPath('A', '/path/to/project-b/branches/branch-name/', 'branches/branch-name', '/path/to/project-b/');
-
-		$this->commitBuilder->build();
-
-		$this->assertEquals(
-			array(100, 200),
-			$this->plugin->find(
-				array(
-					'tags/tag-name',
-					'branches/branch-name',
-				),
-				'/path/to/project-a/'
-			)
 		);
 	}
 
