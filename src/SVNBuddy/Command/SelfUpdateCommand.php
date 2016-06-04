@@ -13,6 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Updater\Stability;
 use Humbug\SelfUpdate\Strategy\GithubStrategy;
 use Humbug\SelfUpdate\Strategy\ShaStrategy;
 use Humbug\SelfUpdate\Strategy\StrategyInterface;
@@ -23,12 +24,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SelfUpdateCommand extends AbstractCommand
 {
-
-	const UPDATE_CHANNEL_PREVIEW = 'preview';
-
-	const UPDATE_CHANNEL_SNAPSHOT = 'snapshot';
-
-	const UPDATE_CHANNEL_STABLE = 'stable';
 
 	const UPDATE_SERVER_URL = 'https://svn-buddy-updater.herokuapp.com';
 
@@ -114,7 +109,7 @@ class SelfUpdateCommand extends AbstractCommand
 	{
 		$update_channel = $this->getUpdateChannel();
 
-		if ( $update_channel === self::UPDATE_CHANNEL_STABLE ) {
+		if ( $update_channel === Stability::STABLE ) {
 			$update_strategy = new GithubStrategy();
 			$update_strategy->setPackageName('console-helpers/svn-buddy');
 			$update_strategy->setPharName('svn-buddy.phar');
@@ -147,15 +142,15 @@ class SelfUpdateCommand extends AbstractCommand
 	protected function getUpdateChannel()
 	{
 		if ( $this->io->getOption('stable') ) {
-			$this->_configEditor->set('update-channel', self::UPDATE_CHANNEL_STABLE);
+			$this->_configEditor->set('update-channel', Stability::STABLE);
 		}
 
 		if ( $this->io->getOption('snapshot') ) {
-			$this->_configEditor->set('update-channel', self::UPDATE_CHANNEL_SNAPSHOT);
+			$this->_configEditor->set('update-channel', Stability::SNAPSHOT);
 		}
 
 		if ( $this->io->getOption('preview') ) {
-			$this->_configEditor->set('update-channel', self::UPDATE_CHANNEL_PREVIEW);
+			$this->_configEditor->set('update-channel', Stability::PREVIEW);
 		}
 
 		return $this->_configEditor->get('update-channel');
