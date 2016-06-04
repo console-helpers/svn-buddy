@@ -109,8 +109,12 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			return $statement_profiler;
 		};
 
+		$this['project_root_folder'] = function () {
+			return dirname(dirname(__DIR__));
+		};
+
 		$this['migration_manager'] = function ($c) {
-			$migrations_directory = dirname(dirname(__DIR__)) . '/migrations';
+			$migrations_directory = $c['project_root_folder'] . '/migrations';
 			$migration_manager = new MigrationManager($migrations_directory, $c);
 			$migration_manager->registerMigrationRunner(new SqlMigrationRunner());
 			$migration_manager->registerMigrationRunner(new PhpMigrationRunner());

@@ -21,6 +21,13 @@ class PharCreateCommand extends AbstractCommand
 {
 
 	/**
+	 * Root folder of the project.
+	 *
+	 * @var string
+	 */
+	private $_projectRootFolder;
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected function configure()
@@ -42,12 +49,25 @@ class PharCreateCommand extends AbstractCommand
 	}
 
 	/**
+	 * Prepare dependencies.
+	 *
+	 * @return void
+	 */
+	protected function prepareDependencies()
+	{
+		parent::prepareDependencies();
+
+		$container = $this->getContainer();
+
+		$this->_projectRootFolder = $container['project_root_folder'];
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$build_dir = realpath($this->io->getOption('build-dir'));
-		$repository_path = realpath(__DIR__ . '/../../../../');
 
 		$this->_shellCommand(
 			'composer',
@@ -56,10 +76,10 @@ class PharCreateCommand extends AbstractCommand
 				'--no-interaction',
 				'--no-dev',
 			),
-			$repository_path
+			$this->_projectRootFolder
 		);
 
-		$box_config = json_decode(file_get_contents($repository_path . '/box.json.dist'), true);
+		$box_config = json_decode(file_get_contents($this->_projectRootFolder . '/box.json.dist'), true);
 
 		$phar_file = $build_dir . '/' . basename($box_config['output']);
 		$signature_file = $phar_file . '.sig';
@@ -67,12 +87,12 @@ class PharCreateCommand extends AbstractCommand
 		$box_config['output'] = $phar_file;
 
 		file_put_contents(
-			$repository_path . '/box.json',
+			$this->_projectRootFolder . '/box.json',
 			json_encode($box_config, defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 0)
 		);
 
 		$box_cli = trim($this->_shellCommand('which', array('box')));
-		$this->_shellCommand('php', array('-d', 'phar.readonly=0', $box_cli, 'build'), $repository_path);
+		$this->_shellCommand('php', array('-d', 'phar.readonly=0', $box_cli, 'build'), $this->_projectRootFolder);
 
 		file_put_contents(
 			$signature_file,
@@ -85,7 +105,7 @@ class PharCreateCommand extends AbstractCommand
 				'install',
 				'--no-interaction',
 			),
-			$repository_path
+			$this->_projectRootFolder
 		);
 
 		$this->io->writeln('Phar created successfully.');
