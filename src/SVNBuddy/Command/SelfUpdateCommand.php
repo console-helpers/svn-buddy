@@ -131,7 +131,7 @@ class SelfUpdateCommand extends AbstractCommand
 			throw new CommandException('Failed to restore previous version.');
 		}
 
-		$this->io->writeln('Rolling back to version <info>2016-05-10_15-21-19-1.1.0</info>.');
+		$this->io->writeln('Rolling back to version <info>' . $this->getApplication()->getVersion() . '</info>.');
 	}
 
 	/**
