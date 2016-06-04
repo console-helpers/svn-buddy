@@ -14,18 +14,14 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Updater\Stability;
-use Humbug\SelfUpdate\Strategy\GithubStrategy;
-use Humbug\SelfUpdate\Strategy\ShaStrategy;
-use Humbug\SelfUpdate\Strategy\StrategyInterface;
-use Humbug\SelfUpdate\Updater;
+use ConsoleHelpers\SVNBuddy\Updater\Updater;
+use ConsoleHelpers\SVNBuddy\Updater\VersionUpdateStrategy;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SelfUpdateCommand extends AbstractCommand
 {
-
-	const UPDATE_SERVER_URL = 'https://svn-buddy-updater.herokuapp.com';
 
 	/**
 	 * Config editor.
@@ -100,41 +96,6 @@ class SelfUpdateCommand extends AbstractCommand
 	}
 
 	/**
-	 * Returns update strategy.
-	 *
-	 * @return StrategyInterface
-	 * @throws CommandException When update channel cannot be found.
-	 */
-	protected function getUpdateStrategy()
-	{
-		$update_channel = $this->getUpdateChannel();
-
-		if ( $update_channel === Stability::STABLE ) {
-			$update_strategy = new GithubStrategy();
-			$update_strategy->setPackageName('console-helpers/svn-buddy');
-			$update_strategy->setPharName('svn-buddy.phar');
-			$update_strategy->setCurrentLocalVersion($this->getApplication()->getVersion());
-
-			return $update_strategy;
-		}
-
-		$versions = json_decode(
-			humbug_get_contents(self::UPDATE_SERVER_URL . '/versions'),
-			true
-		);
-
-		if ( !isset($versions[$update_channel]) ) {
-			throw new CommandException('The "' . $update_channel . '" update channel not found.');
-		}
-
-		$update_strategy = new ShaStrategy();
-		$update_strategy->setPharUrl(self::UPDATE_SERVER_URL . $versions[$update_channel]['path']);
-		$update_strategy->setVersionUrl(self::UPDATE_SERVER_URL . $versions[$update_channel]['path'] . '.sig');
-
-		return $update_strategy;
-	}
-
-	/**
 	 * Returns update channel.
 	 *
 	 * @return string
@@ -170,7 +131,7 @@ class SelfUpdateCommand extends AbstractCommand
 			throw new CommandException('Failed to restore previous version.');
 		}
 
-		$this->io->writeln('Previous version restored.');
+		$this->io->writeln('Rolling back to version <info>2016-05-10_15-21-19-1.1.0</info>.');
 	}
 
 	/**
@@ -180,19 +141,37 @@ class SelfUpdateCommand extends AbstractCommand
 	 */
 	protected function processUpdate()
 	{
-		$updater = new Updater(null, false);
-		$updater->setStrategyObject($this->getUpdateStrategy());
+		$update_strategy = new VersionUpdateStrategy();
+		$update_channel = $this->getUpdateChannel();
+		$update_strategy->setStability($update_channel);
+		$update_strategy->setCurrentLocalVersion($this->getApplication()->getVersion());
 
-		if ( !$updater->update() ) {
-			$this->io->writeln(
-				'Already at latest version (<info>' . $this->getUpdateChannel() . '</info> channel).'
-			);
+		$updater = new Updater(null, false);
+		$updater->setStrategyObject($update_strategy);
+
+		if ( !$updater->hasUpdate() ) {
+			$this->io->writeln(sprintf(
+				'<info>You are already using version %s (%s channel).</info>',
+				$updater->getNewVersion(),
+				$update_channel
+			));
+
+			return;
 		}
-		else {
-			$this->io->writeln(
-				'Updated to latest version (<info>' . $this->getUpdateChannel() . '</info> channel).'
-			);
-		}
+
+		$this->io->write(
+			'Updating to version <info>' . $updater->getNewVersion() . '</info> (' . $update_channel . ' channel) ... '
+		);
+
+		$updater->update();
+
+		$this->io->writeln('done.');
+
+		$this->io->writeln(sprintf(
+			'Use <info>%s self-update --rollback</info> to return to version %s',
+			$_SERVER['argv'][0],
+			$updater->getOldVersion()
+		));
 	}
 
 }
