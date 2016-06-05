@@ -67,6 +67,13 @@ class RevisionPrinter
 	private $_logMessageLimit = 68;
 
 	/**
+	 * Current revision (e.g. in a working copy).
+	 *
+	 * @var integer|null
+	 */
+	private $_currentRevision;
+
+	/**
 	 * Creates instance of revision printer.
 	 *
 	 * @param DateHelper   $date_helper   Date helper.
@@ -128,6 +135,18 @@ class RevisionPrinter
 	public function setLogMessageLimit($log_message_limit)
 	{
 		$this->_logMessageLimit = $log_message_limit;
+	}
+
+	/**
+	 * Sets current revision.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return void
+	 */
+	public function setCurrentRevision($revision)
+	{
+		$this->_currentRevision = $revision;
 	}
 
 	/**
@@ -241,6 +260,12 @@ class RevisionPrinter
 			// Add "Merged Via" column.
 			if ( $with_merge_status ) {
 				$row[] = $this->_generateMergedViaColumn($revisions_merged_via[$revision], $revisions_merged_via_refs);
+			}
+
+			if ( $revision === $this->_currentRevision ) {
+				foreach ( $row as $index => $cell ) {
+					$row[$index] = sprintf('<fg=white;options=bold>%s</>', $cell);
+				}
 			}
 
 			$table->addRow($row);

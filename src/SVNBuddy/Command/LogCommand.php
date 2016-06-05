@@ -572,6 +572,14 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$this->_revisionPrinter->setMergeConflictRegExps($this->getSetting(self::SETTING_LOG_MERGE_CONFLICT_REGEXPS));
 		$this->_revisionPrinter->setLogMessageLimit($this->getSetting(self::SETTING_LOG_MESSAGE_LIMIT));
 
+		$wc_path = $this->getWorkingCopyPath();
+
+		if ( !$this->repositoryConnector->isUrl($wc_path) ) {
+			$this->_revisionPrinter->setCurrentRevision(
+				$this->repositoryConnector->getLastRevision($wc_path)
+			);
+		}
+
 		$this->_revisionPrinter->printRevisions($this->_revisionLog, $revisions, $this->io->getOutput());
 	}
 

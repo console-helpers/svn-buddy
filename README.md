@@ -78,12 +78,14 @@ What makes this command really shine (compared to `svn log` command) is:
 
 * speed - the revision information from repository is cached locally and therefore it's accessed blazingly fast
 * revision search - revisions can not only be found by path and number, but also using ref (e.g. `trunk` or `tags/stable`) and a bug number
-* revision filtering - when found revisions can be filtered further by their merge status (merged, not merged, is merge revision by itself)
+* revision filtering - when found, revisions can be filtered further by their merge status (merged, not merged, is merge revision by itself)
 * detailed revision information - different information about revision is available and can be shown using set of built-in views: compact view, summary view, detailed view, merge conflict prediction view, merge status view
 
 The revision is considered merged only, when associated merge revision can be found. Unfortunately Subversion doesn't create merge revisions on direct path operations (e.g. replacing `tags/stable` with `trunk`) and therefore affected revisions won't be considered as merged when using this command.
 
 Bugs, associated with each revision, are determined by parsing [bugtraq:logregex](https://tortoisesvn.net/docs/release/TortoiseSVN_sk/tsvn-dug-bugtracker.html) Subversion property at the root folder of last changed ref in a project. The assumption is made, that Subversion project won't move to a different issue tracker and therefore value of `bugtraq:logregex` Subversion property is cached forever.
+
+The working copy revision row is highlighted in bold in revision list to ease identifying of outdated working copies.
 
 #### Arguments
 

@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--kind` option to `log` command, that allows to search revisions by kind (`dir` or `file`) of a path within a revision.
 - Added ability to update application via new "self-update" command.
 - Added `all` value to `--refs` option of `log` command to display revision from all refs in a project.
+- Current working copy revision in `log` command results is now highlighted in bold.
 
 ### Changed
 - Don't remove ref from path, when showing revision paths in `log` commands's detail view.
