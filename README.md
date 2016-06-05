@@ -93,7 +93,7 @@ Bugs, associated with each revision, are determined by parsing [bugtraq:logregex
 
 * `-r`, `--revisions=REVISIONS` - List of revision(-s) and/or revision range(-s), e.g. `53324`, `1224-4433`
 * `-b`, `--bugs=BUGS` - List of bug(-s), e.g. `JRA-1234`, `43644`
-* `--refs=REFS` - List of refs, e.g. `trunk`, `branches/branch-name`, `tags/tag-name`
+* `--refs=REFS` - List of refs, e.g. `trunk`, `branches/branch-name`, `tags/tag-name` or `all` for all refs
 * `--merges` - Show merge revisions only
 * `--no-merges` - Hide merge revisions
 * `--merged` - Shows only revisions, that were merged at least once
@@ -159,6 +159,12 @@ Displays revisions retrieved from `branches/5.2.x` and `releases/5.2.1` refs. Th
 * `branches/branch-name`
 * `tags/tag-name`
 * `releases/release-name`
+
+```
+svn-buddy.phar log --refs all
+```
+
+Displays revisions retrieved from all refs in a project.
 
 ```
 svn-buddy.phar log --action D

@@ -33,6 +33,8 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 
 	const SETTING_LOG_MERGE_CONFLICT_REGEXPS = 'log.merge-conflict-regexps';
 
+	const ALL_REFS = 'all';
+
 	/**
 	 * Revision list parser.
 	 *
@@ -103,7 +105,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				'refs',
 				null,
 				InputOption::VALUE_REQUIRED,
-				'List of refs, e.g. <comment>trunk</comment>, <comment>branches/branch-name</comment>, <comment>tags/tag-name</comment>'
+				'List of refs, e.g. <comment>trunk</comment>, <comment>branches/branch-name</comment>, <comment>tags/tag-name</comment> or <comment>all</comment> for all refs'
 			)
 			->addOption(
 				'merges',
@@ -352,6 +354,19 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$this->io->writeln(
 			$debug_info
 		);
+	}
+
+	/**
+	 * Returns all refs.
+	 *
+	 * @return array
+	 */
+	protected function getAllRefs()
+	{
+		$ret = parent::getAllRefs();
+		$ret[] = self::ALL_REFS;
+
+		return $ret;
 	}
 
 	/**
