@@ -58,7 +58,7 @@ abstract class AbstractCommand extends BaseCommand
 	/**
 	 * Working copy paths.
 	 *
-	 * @var string
+	 * @var array
 	 */
 	private $_workingCopyPaths = array();
 
