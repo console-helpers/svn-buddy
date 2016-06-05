@@ -177,10 +177,13 @@ class SelfUpdateCommand extends AbstractCommand
 		$update_strategy->setStability($update_channel);
 		$update_strategy->setCurrentLocalVersion($this->getApplication()->getVersion());
 
+		$this->io->write('Checking for updates ... ');
 		$updater = new Updater(null, false);
 		$updater->setStrategyObject($update_strategy);
+		$has_update = $updater->hasUpdate();
+		$this->io->writeln('done');
 
-		if ( !$updater->hasUpdate() ) {
+		if ( !$has_update ) {
 			$this->io->writeln(sprintf(
 				'<info>You are already using version %s (%s channel).</info>',
 				$updater->getNewVersion(),
