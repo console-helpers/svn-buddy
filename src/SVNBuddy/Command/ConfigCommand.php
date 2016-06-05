@@ -14,6 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
@@ -177,7 +178,19 @@ class ConfigCommand extends AbstractCommand implements IAggregatorAwareCommand
 		do {
 			try {
 				$retry = false;
-				$value = $this->openEditor($value);
+
+				if ( $config_setting instanceof ChoiceConfigSetting ) {
+					$value = $this->io->choose(
+						'Please choose value for "' . $setting_name . '" config setting [' . $value . ']:',
+						$config_setting->getChoices(),
+						(string)$value,
+						'Option value "%s" is invalid.'
+					);
+				}
+				else {
+					$value = $this->openEditor($value);
+				}
+
 				$config_setting->setValue($value, $this->getScopeFilter());
 				$this->io->writeln('Setting <info>' . $setting_name . '</info> was edited.');
 			}
