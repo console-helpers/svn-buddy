@@ -322,7 +322,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		$this->assertSame($normalized_value, $config_setting->getValue());
 	}
 
-	abstract public function normalizationValueDataProvider($test_name, $a_value = null, $b_value = null);
+	abstract public function normalizationValueDataProvider($test_name, $value = null, $normalized_value = null);
 
 	public function scopeBitDataProvider()
 	{
@@ -333,6 +333,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @todo         Extremely mystical test case
 	 * @dataProvider setValueWithInheritanceDataProvider
 	 */
 	public function testSetValueWithInheritance($scope_bit, array $defaults)
@@ -375,7 +376,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		}
 	}
 
-	abstract public function setValueWithInheritanceDataProvider($test_name, $a_value = null, $b_value = null);
+	abstract public function setValueWithInheritanceDataProvider($test_name, $wc_value = null, $global_value = null);
 
 	/**
 	 * @dataProvider storageDataProvider
@@ -391,6 +392,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	}
 
 	/**
+	 * @todo         Name doesn't mean to any but array config setting. Think of better name.
 	 * @dataProvider storageDataProvider
 	 */
 	public function testDefaultValueIsConvertedToScalar($default_value, $stored_value)
@@ -404,7 +406,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		$config_setting->getValue(AbstractConfigSetting::SCOPE_GLOBAL);
 	}
 
-	abstract public function storageDataProvider($test_name, $a_value = null, $b_value = null);
+	abstract public function storageDataProvider($test_name, $default_value = null, $stored_value = null);
 
 	/**
 	 * Creates config setting.
@@ -442,7 +444,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param mixed $scope_bit Scope bit.
+	 * @param mixed   $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

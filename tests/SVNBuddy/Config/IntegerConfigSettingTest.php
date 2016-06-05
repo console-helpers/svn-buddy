@@ -29,19 +29,19 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 		parent::setUp();
 	}
 
-	public function normalizationValueDataProvider($test_name, $a_value = 1, $b_value = 0)
+	public function normalizationValueDataProvider($test_name, $value = 1, $normalized_value = 0)
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$value = $this->getSampleValue($value, true);
+		$normalized_value = $this->getSampleValue($normalized_value, true);
 
 		return array(
 			'integer' => array(
-				$a_value,
-				$a_value,
+				$value,
+				$value,
 			),
 			'integer zero' => array(
-				$b_value,
-				$b_value,
+				$normalized_value,
+				$normalized_value,
 			),
 		);
 	}
@@ -84,30 +84,30 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider($test_name, $a_value = 2, $b_value = 1)
+	public function setValueWithInheritanceDataProvider($test_name, $wc_value = 2, $global_value = 1)
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$wc_value = $this->getSampleValue($wc_value, true);
+		$global_value = $this->getSampleValue($global_value, true);
 
 		return array(
 			'global, integer' => array(
 				AbstractConfigSetting::SCOPE_GLOBAL,
-				array($a_value, $b_value),
+				array($wc_value, $global_value),
 			),
 			'working copy, integer' => array(
 				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array($a_value, $b_value),
+				array($wc_value, $global_value),
 			),
 		);
 	}
 
-	public function storageDataProvider($test_name, $a_value = 1, $b_value = 1)
+	public function storageDataProvider($test_name, $default_value = 1, $stored_value = 1)
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$default_value = $this->getSampleValue($default_value, true);
+		$stored_value = $this->getSampleValue($stored_value, true);
 
 		return array(
-			'integer' => array($a_value, $a_value),
+			'integer' => array($default_value, $default_value),
 		);
 	}
 

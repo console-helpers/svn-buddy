@@ -29,10 +29,10 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		parent::setUp();
 	}
 
-	public function normalizationValueDataProvider($test_name, $a_value = 'a', $b_value = 'b')
+	public function normalizationValueDataProvider($test_name, $value = 'a', $normalized_value = 'b')
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$value = $this->getSampleValue($value, true);
+		$normalized_value = $this->getSampleValue($normalized_value, true);
 
 		return array(
 			'empty string' => array(
@@ -40,20 +40,20 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 				'',
 			),
 			'one line string' => array(
-				$a_value,
-				$a_value,
+				$value,
+				$value,
 			),
 			'one line string trimmed' => array(
-				' ' . $a_value . ' ',
-				$a_value,
+				' ' . $value . ' ',
+				$value,
 			),
 			'multi-line string' => array(
-				$a_value . PHP_EOL . $b_value,
-				$a_value . PHP_EOL . $b_value,
+				$value . PHP_EOL . $normalized_value,
+				$value . PHP_EOL . $normalized_value,
 			),
 			'multi-line string trimmed' => array(
-				' ' . $a_value . PHP_EOL . $b_value . ' ',
-				$a_value . PHP_EOL . $b_value,
+				' ' . $value . PHP_EOL . $normalized_value . ' ',
+				$value . PHP_EOL . $normalized_value,
 			),
 		);
 	}
@@ -77,30 +77,30 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider($test_name, $a_value = 'global_value', $b_value = 'default')
+	public function setValueWithInheritanceDataProvider($test_name, $wc_value = 'global_value', $global_value = 'default')
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$wc_value = $this->getSampleValue($wc_value, true);
+		$global_value = $this->getSampleValue($global_value, true);
 
 		return array(
 			'global, string' => array(
 				AbstractConfigSetting::SCOPE_GLOBAL,
-				array($a_value, $b_value),
+				array($wc_value, $global_value),
 			),
 			'working copy, string' => array(
 				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array($a_value, $b_value),
+				array($wc_value, $global_value),
 			),
 		);
 	}
 
-	public function storageDataProvider($test_name, $a_value = 'a', $b_value = 'b')
+	public function storageDataProvider($test_name, $default_value = 'a', $stored_value = 'b')
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$default_value = $this->getSampleValue($default_value, true);
+		$stored_value = $this->getSampleValue($stored_value, true);
 
 		return array(
-			'string' => array($a_value, $a_value),
+			'string' => array($default_value, $default_value),
 		);
 	}
 

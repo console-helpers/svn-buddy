@@ -29,10 +29,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		parent::setUp();
 	}
 
-	public function normalizationValueDataProvider($test_name, $a_value = array('a'), $b_value = array('b'))
+	public function normalizationValueDataProvider($test_name, $value = array('a'), $normalized_value = array('b'))
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$value = $this->getSampleValue($value, true);
+		$normalized_value = $this->getSampleValue($normalized_value, true);
 
 		return array(
 			'empty array' => array(
@@ -44,57 +44,57 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 				array(),
 			),
 			'array' => array(
-				array($a_value, $b_value),
-				array($a_value, $b_value),
+				array($value, $normalized_value),
+				array($value, $normalized_value),
 			),
 			'array as scalar' => array(
-				$a_value . PHP_EOL . $b_value,
-				array($a_value, $b_value),
+				$value . PHP_EOL . $normalized_value,
+				array($value, $normalized_value),
 			),
 			'array with empty value' => array(
-				array($a_value, '', $b_value, ''),
-				array($a_value, $b_value),
+				array($value, '', $normalized_value, ''),
+				array($value, $normalized_value),
 			),
 			'array with empty value as scalar' => array(
-				$a_value . PHP_EOL . PHP_EOL . $b_value . PHP_EOL,
-				array($a_value, $b_value),
+				$value . PHP_EOL . PHP_EOL . $normalized_value . PHP_EOL,
+				array($value, $normalized_value),
 			),
 			'array each element trimmed' => array(
-				array(' ' . $a_value . ' ', ' ' . $b_value . ' '),
-				array($a_value, $b_value),
+				array(' ' . $value . ' ', ' ' . $normalized_value . ' '),
+				array($value, $normalized_value),
 			),
 			'array each element trimmed as scalar' => array(
-				' ' . $a_value . ' ' . PHP_EOL . ' ' . $b_value . ' ',
-				array($a_value, $b_value),
+				' ' . $value . ' ' . PHP_EOL . ' ' . $normalized_value . ' ',
+				array($value, $normalized_value),
 			),
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider($test_name, $a_value = array('global_value'), $b_value = array('default'))
+	public function setValueWithInheritanceDataProvider($test_name, $wc_value = array('global_value'), $global_value = array('default'))
 	{
-		$a_value = $this->getSampleValue($a_value);
-		$b_value = $this->getSampleValue($b_value);
+		$wc_value = $this->getSampleValue($wc_value);
+		$global_value = $this->getSampleValue($global_value);
 
 		return array(
 			'global, array' => array(
 				AbstractConfigSetting::SCOPE_GLOBAL,
-				array($a_value, $b_value),
+				array($wc_value, $global_value),
 			),
 			'working copy, array' => array(
 				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array($a_value, $b_value),
+				array($wc_value, $global_value),
 			),
 		);
 	}
 
-	public function storageDataProvider($test_name, $a_value = array('a'), $b_value = array('b'))
+	public function storageDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
 	{
-		$a_value = $this->getSampleValue($a_value, true);
-		$b_value = $this->getSampleValue($b_value, true);
+		$default_value = $this->getSampleValue($default_value, true);
+		$stored_value = $this->getSampleValue($stored_value, true);
 
 		return array(
-			'array into string' => array(array($a_value, $b_value), $a_value . PHP_EOL . $b_value),
-			'array as string' => array($a_value . PHP_EOL . $b_value, $a_value . PHP_EOL . $b_value),
+			'array into string' => array(array($default_value, $stored_value), $default_value . PHP_EOL . $stored_value),
+			'array as string' => array($default_value . PHP_EOL . $stored_value, $default_value . PHP_EOL . $stored_value),
 		);
 	}
 
