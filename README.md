@@ -290,11 +290,13 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `-b`, `--bugs=BUGS` - List of bug(-s) to merge, e.g. `JRA-1234`, `43644`
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
+* `--auto-commit=AUTO-COMMIT` - Automatically perform commit on successful merge, e.g. `yes` or `no`
 
 #### Configuration settings
 
 * `merge.source-url` - the default url to merge changes from
 * `merge.recent-conflicts` - list of conflicted paths (maintained automatically)
+* `merge.auto-commit` - whatever to automatically perform a commit on successful merge (used, when `--auto-commit` option not specified)
 
 #### Examples
 
@@ -370,6 +372,18 @@ Will merge all revisions, that are associated with `JRA-4343` and `3453` bugs. T
 * bug consists of multiple revisions created on different days
 
 Can't be used together with `--revisions` option.
+
+```
+svn-buddy.phar merge --auto-commit yes
+```
+
+Will automatically run `svn-buddy.phar commit` command on successful merge. Overrides value from `merge.auto-commit` config setting.
+
+```
+svn-buddy.phar merge --auto-commit no
+```
+
+Don't automatically run `svn-buddy.phar commit` command, when merge was successful. Overrides value from `merge.auto-commit` config setting.
 
 ```
 svn-buddy.phar merge --with-details

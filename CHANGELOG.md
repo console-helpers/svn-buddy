@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added ability to update application via new "self-update" command.
 - Added `all` value to `--refs` option of `log` command to display revision from all refs in a project.
 - Current working copy revision in `log` command results is now highlighted in bold.
+- Added `merge.auto-commit` config setting (enabled by default), that allows to tell if commit should happen after merge.
+- Added `--auto-commit` option to `merge` command to allow overriding behavior imposed by `merge.auto-commit` config setting.
 
 ### Changed
 - Don't remove ref from path, when showing revision paths in `log` commands's detail view.

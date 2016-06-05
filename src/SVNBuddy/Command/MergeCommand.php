@@ -13,6 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
@@ -32,6 +33,8 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	const SETTING_MERGE_SOURCE_URL = 'merge.source-url';
 
 	const SETTING_MERGE_RECENT_CONFLICTS = 'merge.recent-conflicts';
+
+	const SETTING_MERGE_AUTO_COMMIT = 'merge.auto-commit';
 
 	const REVISION_ALL = 'all';
 
@@ -122,6 +125,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				's',
 				InputOption::VALUE_NONE,
 				'Shows number of added/changed/removed paths in the revision'
+			)
+			->addOption(
+				'auto-commit',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Automatically perform commit on successful merge, e.g. <comment>yes</comment> or <comment>no</comment>'
 			);
 
 		parent::configure();
@@ -145,6 +154,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 		if ( $optionName == 'source-url' ) {
 			return $this->getAllRefs();
+		}
+
+		if ( $optionName === 'auto-commit' ) {
+			return array('yes', 'no');
 		}
 
 		return $ret;
@@ -463,6 +476,8 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$this->_unmergedRevisions = array_diff($this->_unmergedRevisions, array($revision));
 			$this->ensureWorkingCopyWithoutConflicts($source_url, $wc_path, $revision);
 		}
+
+		$this->performCommit();
 	}
 
 	/**
@@ -567,6 +582,28 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	}
 
 	/**
+	 * Performs commit unless user doesn't want it.
+	 *
+	 * @return void
+	 */
+	protected function performCommit()
+	{
+		$auto_commit = $this->io->getOption('auto-commit');
+
+		if ( $auto_commit !== null ) {
+			$auto_commit = $auto_commit === 'yes';
+		}
+		else {
+			$auto_commit = (boolean)$this->getSetting(self::SETTING_MERGE_AUTO_COMMIT);
+		}
+
+		if ( $auto_commit ) {
+			$this->io->writeln(array('', 'Commencing automatic commit after merge ...'));
+			$this->runOtherCommand('commit');
+		}
+	}
+
+	/**
 	 * Returns list of config settings.
 	 *
 	 * @return AbstractConfigSetting[]
@@ -576,6 +613,11 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		return array(
 			new StringConfigSetting(self::SETTING_MERGE_SOURCE_URL, ''),
 			new ArrayConfigSetting(self::SETTING_MERGE_RECENT_CONFLICTS, array()),
+			new ChoiceConfigSetting(
+				self::SETTING_MERGE_AUTO_COMMIT,
+				array(1 => 'Yes', 0 => 'No'),
+				1
+			),
 		);
 	}
 
