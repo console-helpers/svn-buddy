@@ -23,6 +23,13 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 {
 
 	/**
+	 * Process factory.
+	 *
+	 * @var ObjectProphecy
+	 */
+	private $_processFactory;
+
+	/**
 	 * Process.
 	 *
 	 * @var ObjectProphecy
@@ -54,11 +61,10 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
+		$this->_processFactory = $this->prophesize('ConsoleHelpers\SVNBuddy\Process\IProcessFactory');
 		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
-
-		$this->_command = $this->_createCommand();
 	}
 
 	/**
@@ -75,10 +81,10 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
+		$this->_command = $this->_createCommand($command_line);
+
 		$callback_output = null;
 		$callback = $this->createRunCallback($use_callback, $callback_output);
-
-		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 
 		$this->_process
 			->mustRun($callback)
@@ -126,10 +132,10 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
+		$this->_command = $this->_createCommand($command_line);
+
 		$callback_output = null;
 		$callback = $this->createRunCallback($use_callback, $callback_output);
-
-		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 
 		$this->_process
 			->mustRun($callback)
@@ -182,10 +188,11 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 			$process_output = 'OK';
 		}
 
+		$this->_command = $this->_createCommand($command_line, false);
+
 		$callback_output = null;
 		$callback = $this->createRunCallback($use_callback, $callback_output);
 
-		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
 		$this->_process->mustRun($callback)->shouldNotBeCalled();
 
 		$this->_cacheManager
@@ -276,7 +283,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
 	public function testVerboseOutput()
 	{
-		$this->_process->getCommandLine()->willReturn('svn log')->shouldBeCalled();
+		$this->_command = $this->_createCommand('svn log');
+
 		$this->_process->mustRun(null)->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
 
@@ -293,7 +301,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
 	public function testDebugOutput()
 	{
-		$this->_process->getCommandLine()->willReturn('svn log')->shouldBeCalled();
+		$this->_command = $this->_createCommand('svn log');
+
 		$this->_process->mustRun(null)->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
 
@@ -313,7 +322,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testRunLive($output_type, $expected_output)
 	{
-		$this->_process->getCommandLine()->willReturn('svn log')->shouldBeCalled();
+		$this->_command = $this->_createCommand('svn log');
+
 		$this->_process
 			->mustRun(Argument::type('callable'))
 			->will(function (array $args) use ($output_type) {
@@ -341,12 +351,12 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 
 	public function testRunError()
 	{
+		$this->_command = $this->_createCommand('svn log');
+
 		/** @var ProcessFailedException $exception */
 		$exception = $this->prophesize('Symfony\\Component\\Process\\Exception\\ProcessFailedException');
-		$exception->getProcess()->willReturn($this->_process)->shouldBeCalled();
 
 		$this->_process->mustRun(null)->willThrow($exception->reveal())->shouldBeCalled();
-		$this->_process->getCommandLine()->willReturn('svn log')->shouldBeCalled();
 		$this->_process->getErrorOutput()->willReturn('error output')->shouldBeCalled();
 
 		$this->_process->getOutput()->shouldNotBeCalled();
@@ -391,7 +401,8 @@ MSG;
 		$command_line = 'svn log ' . escapeshellarg($repository_url) . ' ' . escapeshellarg($repository_url);
 		$process_output = 'OK';
 
-		$this->_process->getCommandLine()->willReturn($command_line)->shouldBeCalled();
+		$this->_command = $this->_createCommand($command_line, false);
+
 		$this->_process->mustRun(null)->shouldNotBeCalled();
 
 		$this->_cacheManager
@@ -435,11 +446,23 @@ MSG;
 	/**
 	 * Creates command.
 	 *
+	 * @param string  $command_line Command line.
+	 * @param boolean $use_process  Use process.
+	 *
 	 * @return Command
 	 */
-	private function _createCommand()
+	private function _createCommand($command_line, $use_process = true)
 	{
-		return new Command($this->_process->reveal(), $this->_io->reveal(), $this->_cacheManager->reveal());
+		if ( $use_process ) {
+			$this->_processFactory->createProcess($command_line, 1200)->willReturn($this->_process)->shouldBeCalled();
+		}
+
+		return new Command(
+			$command_line,
+			$this->_io->reveal(),
+			$this->_cacheManager->reveal(),
+			$this->_processFactory->reveal()
+		);
 	}
 
 }

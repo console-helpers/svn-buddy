@@ -581,7 +581,6 @@ MESSAGE;
 	private function _expectCommand($command, $output, $error_msg = null, $error_code = 0)
 	{
 		$process = $this->prophesize('Symfony\\Component\\Process\\Process');
-		$process->getCommandLine()->willReturn($command)->shouldBeCalled();
 
 		$expectation = $process
 			->mustRun(strpos($command, 'upgrade') !== false ? Argument::type('callable') : null)

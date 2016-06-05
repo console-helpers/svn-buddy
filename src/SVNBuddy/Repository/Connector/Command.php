@@ -14,6 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\Connector;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
+use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -22,11 +23,18 @@ class Command
 {
 
 	/**
-	 * Process.
+	 * Process factory.
 	 *
-	 * @var Process
+	 * @var IProcessFactory
 	 */
-	private $_process;
+	private $_processFactory;
+
+	/**
+	 * Command line.
+	 *
+	 * @var string
+	 */
+	private $_commandLine;
 
 	/**
 	 * Console IO.
@@ -59,15 +67,21 @@ class Command
 	/**
 	 * Creates a command instance.
 	 *
-	 * @param Process      $process       Process.
-	 * @param ConsoleIO    $io            Console IO.
-	 * @param CacheManager $cache_manager Cache manager.
+	 * @param string          $command_line    Command line.
+	 * @param ConsoleIO       $io              Console IO.
+	 * @param CacheManager    $cache_manager   Cache manager.
+	 * @param IProcessFactory $process_factory Process factory.
 	 */
-	public function __construct(Process $process, ConsoleIO $io, CacheManager $cache_manager)
-	{
-		$this->_process = $process;
+	public function __construct(
+		$command_line,
+		ConsoleIO $io,
+		CacheManager $cache_manager,
+		IProcessFactory $process_factory
+	) {
+		$this->_commandLine = $command_line;
 		$this->_io = $io;
 		$this->_cacheManager = $cache_manager;
+		$this->_processFactory = $process_factory;
 	}
 
 	/**
@@ -107,7 +121,6 @@ class Command
 	 */
 	public function run($callback = null)
 	{
-		$command_line = $this->_process->getCommandLine();
 		$cache_key = $this->_getCacheKey();
 
 		if ( $cache_key ) {
@@ -126,7 +139,7 @@ class Command
 			}
 		}
 
-		if ( strpos($command_line, '--xml') !== false ) {
+		if ( strpos($this->_commandLine, '--xml') !== false ) {
 			return simplexml_load_string($output);
 		}
 
@@ -141,13 +154,11 @@ class Command
 	private function _getCacheKey()
 	{
 		if ( $this->_cacheInvalidator || $this->_cacheDuration ) {
-			$command_line = $this->_process->getCommandLine();
-
-			if ( preg_match(Connector::URL_REGEXP, $command_line, $regs) ) {
-				return $regs[2] . $regs[3] . $regs[4] . '/command:' . $command_line;
+			if ( preg_match(Connector::URL_REGEXP, $this->_commandLine, $regs) ) {
+				return $regs[2] . $regs[3] . $regs[4] . '/command:' . $this->_commandLine;
 			}
 
-			return 'misc/command:' . $command_line;
+			return 'misc/command:' . $this->_commandLine;
 		}
 
 		return '';
@@ -163,34 +174,33 @@ class Command
 	 */
 	private function _doRun($callback = null)
 	{
+		$process = $this->_processFactory->createProcess($this->_commandLine, 1200);
+
 		try {
 			$start = microtime(true);
-			$this->_process->mustRun($callback);
+			$process->mustRun($callback);
 
 			if ( $this->_io->isVerbose() ) {
 				$runtime = sprintf('%01.2f', microtime(true) - $start);
-				$command_line = $this->_process->getCommandLine();
 				$this->_io->writeln(
-					array('', '<debug>[svn, ' . round($runtime, 2) . 's]: ' . $command_line . '</debug>')
+					array('', '<debug>[svn, ' . round($runtime, 2) . 's]: ' . $this->_commandLine . '</debug>')
 				);
 			}
+
+			$output = (string)$process->getOutput();
+
+			if ( $this->_io->isDebug() ) {
+				$this->_io->writeln($output, OutputInterface::OUTPUT_RAW);
+			}
+
+			return $output;
 		}
 		catch ( ProcessFailedException $e ) {
-			$process = $e->getProcess();
-
 			throw new RepositoryCommandException(
-				$process->getCommandLine(),
+				$this->_commandLine,
 				$process->getErrorOutput()
 			);
 		}
-
-		$output = (string)$this->_process->getOutput();
-
-		if ( $this->_io->isDebug() ) {
-			$this->_io->writeln($output, OutputInterface::OUTPUT_RAW);
-		}
-
-		return $output;
 	}
 
 	/**

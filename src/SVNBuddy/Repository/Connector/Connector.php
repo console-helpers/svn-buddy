@@ -142,9 +142,10 @@ class Connector
 		$command_line = $this->buildCommand($sub_command, $param_string);
 
 		$command = new Command(
-			$this->_processFactory->createProcess($command_line, 1200),
+			$command_line,
 			$this->_io,
-			$this->_cacheManager
+			$this->_cacheManager,
+			$this->_processFactory
 		);
 
 		if ( isset($this->_nextCommandCacheDuration) ) {
