@@ -63,6 +63,20 @@ abstract class AbstractCommand extends BaseCommand
 	private $_workingCopyPaths = array();
 
 	/**
+	 * Mapping between working copy paths and their urls.
+	 *
+	 * @var array
+	 */
+	private $_workingCopyUrlMapping = array();
+
+	/**
+	 * Mapping between path to working copy specified by user to one, that is actually used.
+	 *
+	 * @var array
+	 */
+	private $_resolvedPathMapping = array();
+
+	/**
 	 * Revision log factory.
 	 *
 	 * @var RevisionLogFactory
@@ -175,6 +189,7 @@ abstract class AbstractCommand extends BaseCommand
 	 * @param boolean $is_global Return global setting prefix.
 	 *
 	 * @return string
+	 * @todo   Possibly not in use.
 	 */
 	protected function getConfigScope($is_global)
 	{
@@ -224,7 +239,13 @@ abstract class AbstractCommand extends BaseCommand
 	 */
 	protected function getWorkingCopyUrl()
 	{
-		return $this->repositoryConnector->getWorkingCopyUrl($this->getWorkingCopyPath());
+		$wc_path = $this->getWorkingCopyPath();
+
+		if ( !isset($this->_workingCopyUrlMapping[$wc_path]) ) {
+			$this->_workingCopyUrlMapping[$wc_path] = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+		}
+
+		return $this->_workingCopyUrlMapping[$wc_path];
 	}
 
 	/**
@@ -279,22 +300,24 @@ abstract class AbstractCommand extends BaseCommand
 			$path = $this->io->getArgument('path');
 		}
 
-		if ( !$this->repositoryConnector->isUrl($path) ) {
-			if ( !file_exists($path) && file_exists(dirname($path)) ) {
-				$path = dirname($path);
+		if ( !isset($this->_resolvedPathMapping[$path]) ) {
+			if ( !$this->repositoryConnector->isUrl($path) ) {
+				if ( !file_exists($path) && file_exists(dirname($path)) ) {
+					$path = dirname($path);
+				}
+
+				$this->_resolvedPathMapping[$path] = realpath($path);
 			}
+			else {
+				if ( !$this->pathAcceptsUrl ) {
+					throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
+				}
 
-			$path = realpath($path);
-		}
-		else {
-			if ( !$this->pathAcceptsUrl ) {
-				throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
+				$this->_resolvedPathMapping[$path] = $this->repositoryConnector->removeCredentials($path);
 			}
-
-			$path = $this->repositoryConnector->removeCredentials($path);
 		}
 
-		return $path;
+		return $this->_resolvedPathMapping[$path];
 	}
 
 }
