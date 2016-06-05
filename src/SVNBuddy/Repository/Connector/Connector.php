@@ -27,6 +27,8 @@ class Connector
 
 	const URL_REGEXP = '#([\w]*)://([^/@\s\']+@)?([^/@:\s\']+)(:\d+)?([^@\s\']*)?#';
 
+	const SVN_INFO_CACHE_DURATION = '1 year';
+
 	/**
 	 * Reference to configuration.
 	 *
@@ -232,10 +234,14 @@ class Connector
 	 */
 	public function getRelativePath($path_or_url)
 	{
-		$repository_root_url = $this->getRootUrl($path_or_url);
-		$wc_url = (string)$this->_getSvnInfoEntry($path_or_url)->url;
+		$svn_info_entry = $this->_getSvnInfoEntry($path_or_url, self::SVN_INFO_CACHE_DURATION);
 
-		return preg_replace('/^' . preg_quote($repository_root_url, '/') . '/', '', $wc_url, 1);
+		return preg_replace(
+			'/^' . preg_quote($svn_info_entry->repository->root, '/') . '/',
+			'',
+			(string)$svn_info_entry->url,
+			1
+		);
 	}
 
 	/**
@@ -247,7 +253,7 @@ class Connector
 	 */
 	public function getRootUrl($path_or_url)
 	{
-		return (string)$this->_getSvnInfoEntry($path_or_url)->repository->root;
+		return (string)$this->_getSvnInfoEntry($path_or_url, self::SVN_INFO_CACHE_DURATION)->repository->root;
 	}
 
 	/**
@@ -300,7 +306,7 @@ class Connector
 		}
 
 		try {
-			$wc_url = (string)$this->_getSvnInfoEntry($wc_path)->url;
+			$wc_url = (string)$this->_getSvnInfoEntry($wc_path, self::SVN_INFO_CACHE_DURATION)->url;
 		}
 		catch ( RepositoryCommandException $e ) {
 			if ( $e->getCode() == RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED ) {
@@ -396,7 +402,7 @@ class Connector
 	{
 		// Cache "svn info" commands to remote urls, not the working copy.
 		if ( !isset($cache_duration) && $this->isUrl($path_or_url) ) {
-			$cache_duration = '1 year';
+			$cache_duration = self::SVN_INFO_CACHE_DURATION;
 		}
 
 		// Remove credentials from url, because "svn info" fails, when used on repository root.

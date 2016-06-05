@@ -186,11 +186,19 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @dataProvider svnInfoDataProvider
 	 */
-	public function testGetWorkingCopyUrlFromPath($svn_info)
+	public function testGetWorkingCopyUrlFromPath($raw_command_output)
 	{
-		$this->_expectCommand("svn --non-interactive info --xml '/path/to/working-copy'", $svn_info);
+		$path = '/path/to/working-copy';
+		$raw_command = "svn --non-interactive info --xml '" . $path . "'";
 
-		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
+		$this->_cacheManager->getCache('misc/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
+			->shouldBeCalled();
+
+		$this->_expectCommand($raw_command, $raw_command_output);
+
+		$actual = $this->_repositoryConnector->getWorkingCopyUrl($path);
 		$this->assertEquals(self::DUMMY_REPO, $actual);
 	}
 
@@ -307,7 +315,7 @@ MESSAGE;
 	/**
 	 * @dataProvider svnInfoBasedMethodDataProvider
 	 */
-	public function testGetRelativePathWithAutomaticCaching($given_repository_url, $used_repository_url)
+	public function testGetRelativePathAutomaticCachingForUrls($given_repository_url, $used_repository_url)
 	{
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
@@ -319,27 +327,25 @@ MESSAGE;
 
 		$repository_connector = $this->_createRepositoryConnector('a', 'b');
 
-		$this->_expectCommand(
-			$raw_command,
-			$raw_command_output
-		);
+		$this->_expectCommand($raw_command, $raw_command_output);
 
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($given_repository_url));
 	}
 
-	public function testGetRelativePathNoAutomaticCachingForPaths()
+	public function testGetRelativePathAutomaticCachingForPaths()
 	{
 		$path = '/path/to/working-copy';
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
+		$raw_command_output = $this->getFixture('svn_info_16.xml');
 
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
+		$this->_cacheManager->getCache('misc/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
+			->shouldBeCalled();
 
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+		$repository_connector = $this->_createRepositoryConnector('a', 'b');
 
-		$this->_expectCommand(
-			$raw_command,
-			$this->getFixture('svn_info_16.xml')
-		);
+		$this->_expectCommand($raw_command, $raw_command_output);
 
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path));
 	}
@@ -347,7 +353,7 @@ MESSAGE;
 	/**
 	 * @dataProvider svnInfoBasedMethodDataProvider
 	 */
-	public function testGetRootUrlWithAutomaticCaching($given_repository_url, $used_repository_url)
+	public function testGetRootUrlAutomaticCachingForUrls($given_repository_url, $used_repository_url)
 	{
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
@@ -359,27 +365,25 @@ MESSAGE;
 
 		$repository_connector = $this->_createRepositoryConnector('a', 'b');
 
-		$this->_expectCommand(
-			$raw_command,
-			$raw_command_output
-		);
+		$this->_expectCommand($raw_command, $raw_command_output);
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($given_repository_url));
 	}
 
-	public function testGetRootUrlNoAutomaticCachingForPaths()
+	public function testGetRootUrlAutomaticCachingForPaths()
 	{
 		$path = '/path/to/working-copy';
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
+		$raw_command_output = $this->getFixture('svn_info_16.xml');
 
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
+		$this->_cacheManager->getCache('misc/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
+			->shouldBeCalled();
 
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+		$repository_connector = $this->_createRepositoryConnector('a', 'b');
 
-		$this->_expectCommand(
-			$raw_command,
-			$this->getFixture('svn_info_16.xml')
-		);
+		$this->_expectCommand($raw_command, $raw_command_output);
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($path));
 	}
