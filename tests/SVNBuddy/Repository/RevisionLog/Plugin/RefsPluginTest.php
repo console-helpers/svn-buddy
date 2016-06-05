@@ -43,6 +43,26 @@ class RefsPluginTest extends AbstractPluginTestCase
 		$this->assertLastRevision(100);
 	}
 
+	public function testFindAll()
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, '')
+			->addPath('A', '/project/branches/branch-name/', 'branches/branch-name', '/project/')
+			->addPath('A', '/project/tags/tag-name/', 'tags/tag-name', '/project/');
+
+		$this->commitBuilder->build();
+
+		$revision_log = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog');
+		$revision_log->find('paths', '/project/')->willReturn(array(1, 2, 3))->shouldBeCalled();
+		$this->plugin->setRevisionLog($revision_log->reveal());
+
+
+		$this->assertEquals(
+			array(1, 2, 3),
+			$this->plugin->find(array('all'), '/project/')
+		);
+	}
+
 	public function testFind()
 	{
 		$this->commitBuilder

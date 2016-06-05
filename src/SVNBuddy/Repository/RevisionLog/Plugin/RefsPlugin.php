@@ -68,8 +68,11 @@ class RefsPlugin extends AbstractDatabaseCollectorPlugin
 		if ( reset($criteria) === 'all_refs' ) {
 			return $this->getProjectRefs($project_id);
 		}
+		elseif ( reset($criteria) === 'all' ) {
+			return $this->revisionLog->find('paths', $project_path);
+		}
 
-		$ref_revisions = $this->findRevisionsByRef($project_id, $criteria);
+		$ref_revisions = $this->findRevisionsByRef($project_path, $criteria);
 
 		sort($ref_revisions, SORT_NUMERIC);
 
@@ -95,20 +98,13 @@ class RefsPlugin extends AbstractDatabaseCollectorPlugin
 	/**
 	 * Finds revisions by ref.
 	 *
-	 * @param integer $project_id Project ID.
-	 * @param array   $refs       Refs.
+	 * @param string $project_path Project path.
+	 * @param array  $refs         Refs.
 	 *
 	 * @return array
 	 */
-	protected function findRevisionsByRef($project_id, array $refs)
+	protected function findRevisionsByRef($project_path, array $refs)
 	{
-		$sql = 'SELECT Path
-				FROM Projects
-				WHERE Id = :project_id';
-		$project_path = $this->database->fetchValue($sql, array(
-			'project_id' => $project_id,
-		));
-
 		$ref_revisions = array();
 
 		foreach ( $refs as $ref ) {
