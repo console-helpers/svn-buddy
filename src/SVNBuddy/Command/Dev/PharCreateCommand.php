@@ -113,6 +113,7 @@ class PharCreateCommand extends AbstractCommand
 				'install',
 				'--no-interaction',
 				'--no-dev',
+				'--optimize-autoloader',
 			),
 			$this->_projectRootFolder
 		);
@@ -149,6 +150,7 @@ class PharCreateCommand extends AbstractCommand
 			array(
 				'install',
 				'--no-interaction',
+				'--optimize-autoloader',
 			),
 			$this->_projectRootFolder
 		);
