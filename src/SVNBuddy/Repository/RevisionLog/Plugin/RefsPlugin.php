@@ -106,9 +106,14 @@ class RefsPlugin extends AbstractDatabaseCollectorPlugin
 	protected function findRevisionsByRef($project_path, array $refs)
 	{
 		$ref_revisions = array();
+		$ref_count = count($refs);
 
 		foreach ( $refs as $ref ) {
 			$tmp_revisions = $this->revisionLog->find('paths', $project_path . $ref . '/');
+
+			if ( $ref_count === 1 ) {
+				return $tmp_revisions;
+			}
 
 			// Add revisions from refs.
 			foreach ( $tmp_revisions as $revision ) {
