@@ -83,14 +83,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		$global_value = $this->getSampleValue($global_value, true);
 
 		return array(
-			'global, string' => array(
-				AbstractConfigSetting::SCOPE_GLOBAL,
-				array($wc_value, $global_value),
-			),
-			'working copy, string' => array(
-				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array($wc_value, $global_value),
-			),
+			array($wc_value, $global_value),
 		);
 	}
 

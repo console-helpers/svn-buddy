@@ -12,7 +12,6 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\ConfigStorageNameToken;
 
 class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 {
@@ -45,25 +44,12 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 
 	/**
 	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "name" config setting value must be one of "1", "2".
+	 * @expectedExceptionMessage The "name" config setting value must be one of "1", "2", "3".
 	 */
 	public function testSetValueUnknownChoice()
 	{
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 		$config_setting->setValue(5);
-	}
-
-	/**
-	 * @todo Should be part of "testStorage" test, but I have no idea hot to fit it into it's data provider.
-	 */
-	public function testSetValueFromChoiceName()
-	{
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL), $this->convertToStorage(2))
-			->shouldBeCalled();
-
-		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
-		$config_setting->setValue('two');
 	}
 
 	public function setValueWithInheritanceDataProvider($test_name, $wc_value = 2, $global_value = 1)
@@ -72,14 +58,7 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 		$global_value = $this->getSampleValue($global_value, true);
 
 		return array(
-			'global, integer' => array(
-				AbstractConfigSetting::SCOPE_GLOBAL,
-				array($wc_value, $global_value),
-			),
-			'working copy, integer' => array(
-				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array($wc_value, $global_value),
-			),
+			array($wc_value, $global_value),
 		);
 	}
 
@@ -90,6 +69,7 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 
 		return array(
 			'as is' => array($default_value, $stored_value),
+			'from option id' => array('two', 2),
 		);
 	}
 
@@ -97,7 +77,7 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 	{
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 
-		$this->assertEquals(array(1 => 'one', 2 => 'two'), $config_setting->getChoices());
+		$this->assertEquals(array(1 => 'one', 2 => 'two', 3 => 'three'), $config_setting->getChoices());
 	}
 
 	/**
@@ -120,10 +100,10 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 	protected function getSampleValue($scope_bit, $as_stored = false)
 	{
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
-			$ret = 1;
+			$ret = 2;
 		}
 		elseif ( $scope_bit === AbstractConfigSetting::SCOPE_GLOBAL ) {
-			$ret = 2;
+			$ret = 3;
 		}
 		else {
 			$ret = $scope_bit;
@@ -168,10 +148,10 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 		}
 
 		$class = $this->className;
-		$config_setting = new $class('name', array(1 => 'one', 2 => 'two'), $default_value, $scope_bit);
+		$config_setting = new $class('name', array(1 => 'one', 2 => 'two', 3 => 'three'), $default_value, $scope_bit);
 
 		if ( $with_editor ) {
-			$config_setting->setEditor($this->configEditor->reveal());
+			$config_setting->setEditor($this->configEditor);
 		}
 
 		return $config_setting;

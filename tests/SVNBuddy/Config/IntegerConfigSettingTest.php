@@ -90,14 +90,7 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 		$global_value = $this->getSampleValue($global_value, true);
 
 		return array(
-			'global, integer' => array(
-				AbstractConfigSetting::SCOPE_GLOBAL,
-				array($wc_value, $global_value),
-			),
-			'working copy, integer' => array(
-				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array($wc_value, $global_value),
-			),
+			array($wc_value, $global_value),
 		);
 	}
 

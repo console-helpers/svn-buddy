@@ -76,14 +76,28 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		$global_value = $this->getSampleValue($global_value);
 
 		return array(
-			'global, array' => array(
-				AbstractConfigSetting::SCOPE_GLOBAL,
-				array($wc_value, $global_value),
-			),
-			'working copy, array' => array(
-				AbstractConfigSetting::SCOPE_WORKING_COPY,
-				array($wc_value, $global_value),
-			),
+			array($wc_value, $global_value),
+		);
+	}
+
+	/**
+	 * @dataProvider defaultValueIsConvertedToScalarDataProvider
+	 */
+	public function testDefaultValueIsConvertedToScalar($default_value, $user_value)
+	{
+		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL, $default_value);
+
+		$this->assertSame($user_value, $config_setting->getValue(AbstractConfigSetting::SCOPE_GLOBAL));
+	}
+
+	public function defaultValueIsConvertedToScalarDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
+	{
+		$default_value = $this->getSampleValue($default_value, true);
+		$stored_value = $this->getSampleValue($stored_value, true);
+
+		return array(
+			'array into string' => array(array($default_value, $stored_value), array($default_value, $stored_value)),
+			'array as string' => array($default_value . PHP_EOL . $stored_value, array($default_value, $stored_value)),
 		);
 	}
 

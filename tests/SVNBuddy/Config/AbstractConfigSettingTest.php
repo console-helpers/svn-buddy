@@ -11,10 +11,9 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
-use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\ConfigStorageNameToken;
 
 abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +21,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * Config editor
 	 *
-	 * @var ObjectProphecy
+	 * @var ConfigEditor
 	 */
 	protected $configEditor;
 
@@ -44,7 +43,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
+		$this->configEditor = new ConfigEditor('php://memory');
 	}
 
 	/**
@@ -131,7 +130,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @dataProvider scopeBitDataProvider
 	 */
-	public function testGetValueWithCorrectScopeBit($scope_bit)
+	public function testGetValueWithCorrectScopeBit($scope_bit, $storage_setting_name)
 	{
 		$config_setting = $this->createConfigSetting();
 
@@ -139,21 +138,26 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 			$config_setting->setWorkingCopyUrl('url');
 		}
 
-		$this->configEditor
-			->get(
-				new ConfigStorageNameToken('name', $scope_bit),
-				$this->convertToStorage($this->defaultValue)
-			)
-			->willReturn($this->getSampleValue($scope_bit, true))
-			->shouldBeCalled();
+		$this->assertSame(
+			$this->defaultValue,
+			$config_setting->getValue($scope_bit),
+			'Default value is returned'
+		);
 
-		$this->assertEquals($this->getSampleValue($scope_bit), $config_setting->getValue($scope_bit));
+		$expected = $this->getSampleValue($scope_bit);
+		$this->configEditor->set($storage_setting_name, $expected);
+
+		$this->assertEquals(
+			$expected,
+			$config_setting->getValue($scope_bit),
+			'Stored value is returned'
+		);
 	}
 
 	/**
 	 * @dataProvider scopeBitDataProvider
 	 */
-	public function testGetValueFromWithoutFallback($scope_bit)
+	public function testGetValueFromWithoutFallback($scope_bit, $storage_setting_name)
 	{
 		$config_setting = $this->createConfigSetting($scope_bit);
 
@@ -161,12 +165,20 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 			$config_setting->setWorkingCopyUrl('url');
 		}
 
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', $scope_bit))
-			->willReturn($this->getSampleValue($scope_bit, true))
-			->shouldBeCalled();
+		$this->assertSame(
+			$this->defaultValue,
+			$config_setting->getValue(),
+			'Default value is returned'
+		);
 
-		$this->assertEquals($this->getSampleValue($scope_bit), $config_setting->getValue());
+		$expected = $this->getSampleValue($scope_bit);
+		$this->configEditor->set($storage_setting_name, $expected);
+
+		$this->assertEquals(
+			$expected,
+			$config_setting->getValue(),
+			'Stored value is returned'
+		);
 	}
 
 	public function testGetValueFromWorkingCopyWithFallbackToGlobal()
@@ -174,41 +186,20 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		$config_setting = $this->createConfigSetting();
 		$config_setting->setWorkingCopyUrl('url');
 
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_WORKING_COPY))
-			->shouldBeCalled();
+		$this->configEditor->set(
+			'global-settings.name',
+			$this->getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL, true)
+		);
 
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL))
-			->willReturn($this->getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL, true))
-			->shouldBeCalled();
-
-		$this->assertEquals($this->getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL), $config_setting->getValue());
+		$this->assertEquals(
+			$this->getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL),
+			$config_setting->getValue()
+		);
 	}
 
 	public function testGetValueFromGlobalWithFallbackToDefault()
 	{
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL))
-			->shouldBeCalled();
-
-		$this->assertEquals($this->defaultValue, $config_setting->getValue());
-	}
-
-	public function testGetValueFromWorkingCopyWithFallbackToDefault()
-	{
-		$config_setting = $this->createConfigSetting();
-		$config_setting->setWorkingCopyUrl('url');
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_WORKING_COPY))
-			->shouldBeCalled();
-
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL))
-			->shouldBeCalled();
 
 		$this->assertEquals($this->defaultValue, $config_setting->getValue());
 	}
@@ -228,61 +219,52 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testSetValueWithForbiddenScopeBit()
 	{
-		$this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL)->setValue('value', AbstractConfigSetting::SCOPE_WORKING_COPY);
+		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
+		$config_setting->setValue('value', AbstractConfigSetting::SCOPE_WORKING_COPY);
 	}
 
 	/**
 	 * @dataProvider scopeBitDataProvider
 	 */
-	public function testSetValueWithoutScopeBit($scope_bit)
+	public function testSetValueWithoutScopeBit($scope_bit, $storage_setting_name)
 	{
 		$config_setting = $this->createConfigSetting($scope_bit);
 
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$config_setting->setWorkingCopyUrl('url');
 
-			$this->configEditor
-				->get(
-					new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL),
-					$this->convertToStorage($this->defaultValue)
-				)
-				->shouldBeCalled();
+			$this->configEditor->set(
+				'global-settings.name',
+				$this->convertToStorage($this->defaultValue)
+			);
 		}
 
 		$expected_value = $this->getSampleValue($scope_bit);
+		$config_setting->setValue($expected_value);
 
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', $scope_bit), $this->convertToStorage($expected_value))
-			->shouldBeCalled();
-
-		$config_setting->setValue($this->getSampleValue($scope_bit));
+		$this->assertSame($this->convertToStorage($expected_value), $this->configEditor->get($storage_setting_name));
 	}
 
 	/**
 	 * @dataProvider scopeBitDataProvider
 	 */
-	public function testSetValueWithScopeBit($scope_bit)
+	public function testSetValueWithScopeBit($scope_bit, $storage_setting_name)
 	{
 		$config_setting = $this->createConfigSetting($scope_bit);
 
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$config_setting->setWorkingCopyUrl('url');
 
-			$this->configEditor
-				->get(
-					new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL),
-					$this->convertToStorage($this->defaultValue)
-				)
-				->shouldBeCalled();
+			$this->configEditor->set(
+				'global-settings.name',
+				$this->convertToStorage($this->defaultValue)
+			);
 		}
 
 		$expected_value = $this->getSampleValue($scope_bit);
+		$config_setting->setValue($expected_value, $scope_bit);
 
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', $scope_bit), $this->convertToStorage($expected_value))
-			->shouldBeCalled();
-
-		$config_setting->setValue($this->getSampleValue($scope_bit), $scope_bit);
+		$this->assertSame($this->convertToStorage($expected_value), $this->configEditor->get($storage_setting_name));
 	}
 
 	/**
@@ -310,13 +292,6 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	{
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL), Argument::any())
-			->will(function (array $args, $config_editor) {
-				$config_editor->get($args[0])->willReturn($args[1])->shouldBeCalled();
-			})
-			->shouldBeCalled();
-
 		$config_setting->setValue($value);
 
 		$this->assertSame($normalized_value, $config_setting->getValue());
@@ -327,53 +302,36 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	public function scopeBitDataProvider()
 	{
 		return array(
-			'working copy scope' => array(AbstractConfigSetting::SCOPE_WORKING_COPY),
-			'global scope' => array(AbstractConfigSetting::SCOPE_GLOBAL),
+			'working copy scope' => array(AbstractConfigSetting::SCOPE_WORKING_COPY, 'path-settings[url].name'),
+			'global scope' => array(AbstractConfigSetting::SCOPE_GLOBAL, 'global-settings.name'),
 		);
 	}
 
 	/**
-	 * @todo         Extremely mystical test case
 	 * @dataProvider setValueWithInheritanceDataProvider
 	 */
-	public function testSetValueWithInheritance($scope_bit, array $defaults)
+	public function testSetValueWithInheritanceFromGlobal($wc_value, $global_value)
 	{
-		$wc_value = $defaults[0];
-		$global_value = $defaults[1];
+		$this->configEditor->set('global-settings.name', $this->convertToStorage($wc_value));
 
-		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
-			$this->configEditor
-				->get(
-					new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL),
-					$this->convertToStorage($global_value)
-				)
-				->willReturn(
-					$this->convertToStorage($wc_value)
-				)
-				->shouldBeCalled();
+		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_WORKING_COPY, $global_value);
+		$config_setting->setWorkingCopyUrl('url');
 
-			$config_setting = $this->createConfigSetting($scope_bit, $global_value);
-			$config_setting->setWorkingCopyUrl('url');
+		$config_setting->setValue($wc_value);
 
-			$this->configEditor
-				->set(new ConfigStorageNameToken('name', $scope_bit), null)
-				->shouldBeCalled();
+		$this->assertNull($this->configEditor->get('path-settings[url].name'), 'Inherited value isn\'t stored');
+	}
 
-			$config_setting->setValue($wc_value);
-		}
-		else {
-			$this->configEditor
-				->get(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL), $global_value)
-				->shouldNotBeCalled();
+	/**
+	 * @dataProvider setValueWithInheritanceDataProvider
+	 */
+	public function testSetValueWithInheritanceFromDefault($wc_value, $global_value)
+	{
+		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL, $global_value);
 
-			$config_setting = $this->createConfigSetting($scope_bit, $global_value);
+		$config_setting->setValue($global_value);
 
-			$this->configEditor
-				->set(new ConfigStorageNameToken('name', $scope_bit), null)
-				->shouldBeCalled();
-
-			$config_setting->setValue($global_value);
-		}
+		$this->assertNull($this->configEditor->get('global-settings.name'), 'Inherited value isn\'t stored');
 	}
 
 	abstract public function setValueWithInheritanceDataProvider($test_name, $wc_value = null, $global_value = null);
@@ -383,27 +341,10 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 	 */
 	public function testStorage($user_value, $stored_value)
 	{
-		$this->configEditor
-			->set(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL), $stored_value)
-			->shouldBeCalled();
-
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 		$config_setting->setValue($user_value);
-	}
 
-	/**
-	 * @todo         Name doesn't mean to any but array config setting. Think of better name.
-	 * @dataProvider storageDataProvider
-	 */
-	public function testDefaultValueIsConvertedToScalar($default_value, $stored_value)
-	{
-		$this->configEditor
-			->get(new ConfigStorageNameToken('name', AbstractConfigSetting::SCOPE_GLOBAL), $stored_value)
-			->willReturn(null)
-			->shouldBeCalled();
-
-		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL, $default_value);
-		$config_setting->getValue(AbstractConfigSetting::SCOPE_GLOBAL);
+		$this->assertSame($stored_value, $this->configEditor->get('global-settings.name'));
 	}
 
 	abstract public function storageDataProvider($test_name, $default_value = null, $stored_value = null);
@@ -435,7 +376,7 @@ abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 		$config_setting = new $class('name', $default_value, $scope_bit);
 
 		if ( $with_editor ) {
-			$config_setting->setEditor($this->configEditor->reveal());
+			$config_setting->setEditor($this->configEditor);
 		}
 
 		return $config_setting;
