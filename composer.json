@@ -10,25 +10,24 @@
 		}
 	],
 	"require": {
-		"symfony/process": ">=2.7",
+		"symfony/process": "^2.7",
 		"console-helpers/console-kit": "^0.1",
 		"aura/sql": "^2.5",
 		"padraic/phar-updater": "dev-use-curl",
-		"padraic/humbug_get_contents": "^1.0"
+		"padraic/humbug_get_contents": "^1.0",
+		"console-helpers/db-migration": "^0.1.0"
 	},
 	"require-dev": {
 		"aik099/coding-standard": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
-			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/",
-			"ConsoleHelpers\\DatabaseMigration\\": "src/DatabaseMigration/"
+			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/",
-			"Tests\\ConsoleHelpers\\DatabaseMigration\\": "tests/DatabaseMigration/"
+			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/"
 		}
 	},
 	"extra": {

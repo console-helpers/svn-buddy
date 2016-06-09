@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "43d527ab4d0e2565f47b20c8b5671b70",
-    "content-hash": "a8b6a0d8277b0d185e9d77650652e30d",
+    "hash": "f6a60d76a73ca82719f743068b6f9118",
+    "content-hash": "daf8125c21e98e7999a20d83b5b5560d",
     "packages": [
         {
             "name": "aura/sql",
@@ -107,6 +107,56 @@
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
             "time": "2016-03-19 21:40:46"
+        },
+        {
+            "name": "console-helpers/db-migration",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/console-helpers/db-migration.git",
+                "reference": "8579ed3ea861bd4e49a4dbb4979fb1149cf2b370"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/console-helpers/db-migration/zipball/8579ed3ea861bd4e49a4dbb4979fb1149cf2b370",
+                "reference": "8579ed3ea861bd4e49a4dbb4979fb1149cf2b370",
+                "shasum": ""
+            },
+            "require": {
+                "aura/sql": "^2.5",
+                "php": ">=5.3.7"
+            },
+            "require-dev": {
+                "aik099/coding-standard": "dev-master"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ConsoleHelpers\\DatabaseMigration\\": "src/DatabaseMigration/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD 3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Alexander Obuhovich",
+                    "email": "aik.bold@gmail.com"
+                }
+            ],
+            "description": "Database migrations made simple",
+            "keywords": [
+                "database",
+                "migration",
+                "sqlite"
+            ],
+            "time": "2016-06-09 19:50:38"
         },
         {
             "name": "padraic/humbug_get_contents",
