@@ -11,10 +11,8 @@
 namespace Tests\ConsoleHelpers\DatabaseMigration;
 
 
-use Aura\Sql\Profiler;
 use ConsoleHelpers\DatabaseMigration\MigrationContext;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
-use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\Database\AbstractDatabaseAwareTestCase;
@@ -296,51 +294,6 @@ class MigrationManagerTest extends AbstractDatabaseAwareTestCase
 		$manager->registerMigrationRunner($this->createMigrationRunnerMock('one')->reveal());
 
 		$manager->run($context->reveal());
-	}
-
-	public function testRunResetsProfilerAfterCompletion()
-	{
-		$profiler = new Profiler();
-		$profiler->setActive(true);
-		$this->database->setProfiler($profiler);
-
-		$runner = $this->createMigrationRunnerMock('one');
-		$runner
-			->run(Argument::cetera())
-			->will(function (array $args) {
-				$args[1]->getDatabase()->perform('SELECT * FROM sqlite_master');
-			})
-			->shouldBeCalled();
-
-		$manager = $this->getMigrationManager('migrations-one-type');
-		$manager->registerMigrationRunner($runner->reveal());
-
-		$manager->run($this->context);
-
-		$this->assertEmpty($profiler->getProfiles());
-	}
-
-	public function testRunDuplicateStatementsAreAllowed()
-	{
-		$profiler = new StatementProfiler();
-		$profiler->setActive(true);
-		$this->database->setProfiler($profiler);
-
-		$runner = $this->createMigrationRunnerMock('one');
-		$runner
-			->run(Argument::cetera())
-			->will(function (array $args) {
-				$args[1]->getDatabase()->perform('SELECT * FROM sqlite_master');
-				$args[1]->getDatabase()->perform('SELECT * FROM sqlite_master');
-			})
-			->shouldBeCalled();
-
-		$manager = $this->getMigrationManager('migrations-one-type');
-		$manager->registerMigrationRunner($runner->reveal());
-
-		$manager->run($this->context);
-
-		$this->assertEmpty($profiler->getProfiles());
 	}
 
 	/**
