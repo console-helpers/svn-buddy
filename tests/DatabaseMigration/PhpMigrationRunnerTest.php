@@ -8,11 +8,11 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Database\Migration;
+namespace Tests\ConsoleHelpers\DatabaseMigration;
 
 
-use ConsoleHelpers\SVNBuddy\Database\Migration\AbstractMigrationRunner;
-use ConsoleHelpers\SVNBuddy\Database\Migration\PhpMigrationRunner;
+use ConsoleHelpers\DatabaseMigration\AbstractMigrationRunner;
+use ConsoleHelpers\DatabaseMigration\PhpMigrationRunner;
 
 class PhpMigrationRunnerTest extends AbstractMigrationRunnerTest
 {
@@ -42,7 +42,7 @@ class PhpMigrationRunnerTest extends AbstractMigrationRunnerTest
 	{
 		$expected = <<<EOT
 <?php
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationContext;
 
 return function (MigrationContext \$context) {
 	// Write PHP code here.

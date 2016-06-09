@@ -8,11 +8,11 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Database\Migration;
+namespace Tests\ConsoleHelpers\DatabaseMigration;
 
 
-use ConsoleHelpers\SVNBuddy\Database\Migration\AbstractMigrationRunner;
-use ConsoleHelpers\SVNBuddy\Database\Migration\SqlMigrationRunner;
+use ConsoleHelpers\DatabaseMigration\AbstractMigrationRunner;
+use ConsoleHelpers\DatabaseMigration\SqlMigrationRunner;
 use Prophecy\Argument;
 
 class SqlMigrationRunnerTest extends AbstractMigrationRunnerTest

@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Database\Migration;
+namespace ConsoleHelpers\DatabaseMigration;
 
 
 class SqlMigrationRunner extends AbstractMigrationRunner

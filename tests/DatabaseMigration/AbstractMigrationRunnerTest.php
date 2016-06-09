@@ -8,10 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Database\Migration;
+namespace Tests\ConsoleHelpers\DatabaseMigration;
 
 
-use ConsoleHelpers\SVNBuddy\Database\Migration\AbstractMigrationRunner;
+use ConsoleHelpers\DatabaseMigration\AbstractMigrationRunner;
 use Prophecy\Prophecy\ObjectProphecy;
 
 abstract class AbstractMigrationRunnerTest extends \PHPUnit_Framework_TestCase
@@ -44,7 +44,7 @@ abstract class AbstractMigrationRunnerTest extends \PHPUnit_Framework_TestCase
 
 		$this->database = $this->prophesize('Aura\Sql\ExtendedPdoInterface');
 
-		$this->context = $this->prophesize('ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext');
+		$this->context = $this->prophesize('ConsoleHelpers\DatabaseMigration\MigrationContext');
 		$this->context->getDatabase()->willReturn($this->database);
 
 		$this->runner = $this->createMigrationRunner();

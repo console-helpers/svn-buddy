@@ -8,11 +8,11 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Database\Migration;
+namespace Tests\ConsoleHelpers\DatabaseMigration;
 
 
 use Aura\Sql\ExtendedPdoInterface;
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationContext;
 
 class MigrationContextTest extends \PHPUnit_Framework_TestCase
 {

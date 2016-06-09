@@ -14,8 +14,8 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use Aura\Sql\ExtendedPdo;
 use Aura\Sql\ExtendedPdoInterface;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationManager;
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationManager;
+use ConsoleHelpers\DatabaseMigration\MigrationContext;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 
@@ -96,7 +96,7 @@ class DatabaseManager
 	/**
 	 * Runs outstanding migrations on the database.
 	 *
-	 * @param MigrationContext $context Context.
+	 * @param \ConsoleHelpers\DatabaseMigration\MigrationContext $context Context.
 	 *
 	 * @return void
 	 */

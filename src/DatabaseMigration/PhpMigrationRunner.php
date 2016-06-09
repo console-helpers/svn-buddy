@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Database\Migration;
+namespace ConsoleHelpers\DatabaseMigration;
 
 
 class PhpMigrationRunner extends AbstractMigrationRunner
@@ -53,7 +53,7 @@ class PhpMigrationRunner extends AbstractMigrationRunner
 	{
 		return <<<EOT
 <?php
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationContext;
 
 return function (MigrationContext \$context) {
 	// Write PHP code here.

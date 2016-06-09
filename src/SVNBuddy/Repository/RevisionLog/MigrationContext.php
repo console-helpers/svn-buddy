@@ -12,7 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use Aura\Sql\ExtendedPdoInterface;
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext as BaseMigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationContext as BaseMigrationContext;
 
 class MigrationContext extends BaseMigrationContext
 {

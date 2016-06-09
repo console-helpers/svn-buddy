@@ -8,12 +8,12 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Database\Migration;
+namespace Tests\ConsoleHelpers\DatabaseMigration;
 
 
 use Aura\Sql\Profiler;
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext;
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationManager;
+use ConsoleHelpers\DatabaseMigration\MigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -288,7 +288,7 @@ class MigrationManagerTest extends AbstractDatabaseAwareTestCase
 
 	public function testRunSetsContainerToContext()
 	{
-		$context = $this->prophesize('ConsoleHelpers\SVNBuddy\Database\Migration\MigrationContext');
+		$context = $this->prophesize('ConsoleHelpers\DatabaseMigration\MigrationContext');
 		$context->setContainer($this->container)->shouldBeCalled();
 		$context->getDatabase()->willReturn($this->database)->shouldBeCalled();
 
@@ -381,7 +381,7 @@ class MigrationManagerTest extends AbstractDatabaseAwareTestCase
 	 */
 	protected function createMigrationRunnerMock($file_extension)
 	{
-		$runner = $this->prophesize('ConsoleHelpers\SVNBuddy\Database\Migration\AbstractMigrationRunner');
+		$runner = $this->prophesize('ConsoleHelpers\DatabaseMigration\AbstractMigrationRunner');
 		$runner->getFileExtension()->willReturn($file_extension)->shouldBeCalled();
 
 		return $runner;

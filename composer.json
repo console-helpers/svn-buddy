@@ -21,12 +21,14 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/"
+			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/",
+			"ConsoleHelpers\\DatabaseMigration\\": "src/DatabaseMigration/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/"
+			"Tests\\ConsoleHelpers\\SVNBuddy\\": "tests/SVNBuddy/",
+			"Tests\\ConsoleHelpers\\DatabaseMigration\\": "tests/DatabaseMigration/"
 		}
 	},
 	"extra": {

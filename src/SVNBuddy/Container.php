@@ -12,9 +12,9 @@ namespace ConsoleHelpers\SVNBuddy;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
-use ConsoleHelpers\SVNBuddy\Database\Migration\MigrationManager;
-use ConsoleHelpers\SVNBuddy\Database\Migration\PhpMigrationRunner;
-use ConsoleHelpers\SVNBuddy\Database\Migration\SqlMigrationRunner;
+use ConsoleHelpers\DatabaseMigration\MigrationManager;
+use ConsoleHelpers\DatabaseMigration\PhpMigrationRunner;
+use ConsoleHelpers\DatabaseMigration\SqlMigrationRunner;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
@@ -59,7 +59,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			/** @var OutputInterface $output */
 			$output->getFormatter()->setStyle('debug', new OutputFormatterStyle('white', 'magenta'));
 
-		    return $output;
+			return $output;
 		});
 
 		$this['process_factory'] = function () {
