@@ -11,8 +11,6 @@
 namespace ConsoleHelpers\DatabaseMigration;
 
 
-use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
-
 class MigrationManager
 {
 
