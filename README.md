@@ -1,7 +1,7 @@
 # SVN-Buddy
 
 [![Build Status](https://travis-ci.org/console-helpers/svn-buddy.svg?branch=master)](https://travis-ci.org/console-helpers/svn-buddy)
-[![Coverage Status](https://coveralls.io/repos/console-helpers/svn-buddy/badge.svg?branch=master&service=github)](https://coveralls.io/github/console-helpers/svn-buddy?branch=master)
+[![codecov](https://codecov.io/gh/console-helpers/svn-buddy/branch/master/graph/badge.svg)](https://codecov.io/gh/console-helpers/svn-buddy)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/?branch=master)
 
 
