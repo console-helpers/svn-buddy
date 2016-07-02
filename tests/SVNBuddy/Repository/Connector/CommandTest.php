@@ -152,7 +152,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 
 		$this->_cacheManager
-			->getCache('misc/command:' . $command_line, $invalidator)
+			->getCache('misc/command:' . $command_line, $invalidator, $duration)
 			->willReturn(null)
 			->shouldBeCalled();
 		$this->_cacheManager
@@ -196,7 +196,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_process->mustRun($callback)->shouldNotBeCalled();
 
 		$this->_cacheManager
-			->getCache('misc/command:' . $command_line, $invalidator)
+			->getCache('misc/command:' . $command_line, $invalidator, $duration)
 			->willReturn($process_output)
 			->shouldBeCalled();
 		$this->_cacheManager->setCache(Argument::any())->shouldNotBeCalled();
@@ -406,7 +406,7 @@ MSG;
 		$this->_process->mustRun(null)->shouldNotBeCalled();
 
 		$this->_cacheManager
-			->getCache($cache_namespace . ':' . $command_line, null)
+			->getCache($cache_namespace . ':' . $command_line, null, '1 minute')
 			->willReturn($process_output)
 			->shouldBeCalled();
 		$this->_cacheManager->setCache(Argument::any())->shouldNotBeCalled();
