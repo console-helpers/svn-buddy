@@ -362,16 +362,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.7",
+            "version": "v2.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "5ac8bc9aa77bb2edf06af3a1bb6bc1020d23acd3"
+                "reference": "c392a6ec72f2122748032c2ad6870420561ffcfa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/5ac8bc9aa77bb2edf06af3a1bb6bc1020d23acd3",
-                "reference": "5ac8bc9aa77bb2edf06af3a1bb6bc1020d23acd3",
+                "url": "https://api.github.com/repos/symfony/console/zipball/c392a6ec72f2122748032c2ad6870420561ffcfa",
+                "reference": "c392a6ec72f2122748032c2ad6870420561ffcfa",
                 "shasum": ""
             },
             "require": {
@@ -418,7 +418,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-06 15:06:25"
+            "time": "2016-06-29 07:02:14"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -481,16 +481,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.7",
+            "version": "v2.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "115347d00c342198cdc52a7bd8bc15b5ab43500c"
+                "reference": "89f33c16796415ccfd8bb3cf8d520cbb79899bfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/115347d00c342198cdc52a7bd8bc15b5ab43500c",
-                "reference": "115347d00c342198cdc52a7bd8bc15b5ab43500c",
+                "url": "https://api.github.com/repos/symfony/process/zipball/89f33c16796415ccfd8bb3cf8d520cbb79899bfe",
+                "reference": "89f33c16796415ccfd8bb3cf8d520cbb79899bfe",
                 "shasum": ""
             },
             "require": {
@@ -526,7 +526,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-06 11:11:27"
+            "time": "2016-06-29 05:29:29"
         }
     ],
     "packages-dev": [
