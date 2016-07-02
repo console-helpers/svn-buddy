@@ -3,7 +3,7 @@ language: php
 
 cache:
     directories:
-        - $HOME/.composer/cache/files
+        - $HOME/.composer/cache
 
 matrix:
     allow_failures:
@@ -17,11 +17,8 @@ php:
     - hhvm
     - 7.0
 
-before_install:
-    - composer config -g github-oauth.github.com 8a184177873281ce443912bd9f8fc4a959f7e7bb
-
 install:
-    - composer update --prefer-dist --no-interaction
+    - composer install --prefer-dist --no-interaction
 
 before_script:
     - mkdir -p build/logs
