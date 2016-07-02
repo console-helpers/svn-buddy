@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - When, in `log` command, attempting to see revisions of a particular file, that is currently deleted, nothing was shown.
 - The copied paths (during initial revision data import) where not properly associated to their projects.
 - Fixed notice about "file_exists" function and "svn://" protocol, when using `merge` command or `log` command with URL instead of path.
+- Outdated working copy wasn't detected during `merge` command, when `log` command was used right before it.
 
 ## [0.2.0] - 2016-05-14
 ### Added

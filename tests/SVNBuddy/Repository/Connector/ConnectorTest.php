@@ -146,7 +146,7 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 	{
 		$this->_expectCommand('svn --non-interactive info', 'OK');
 
-		$this->_cacheManager->getCache('misc/command:svn --non-interactive info', null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('misc/command:svn --non-interactive info', null, 100)->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager->setCache('misc/command:svn --non-interactive info', 'OK', null, 100)->shouldBeCalled();
 
 		$this->_repositoryConnector->withCache(100)->getCommand('info')->run();
@@ -191,7 +191,7 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$path = '/path/to/working-copy';
 		$raw_command = "svn --non-interactive info --xml '" . $path . "'";
 
-		$this->_cacheManager->getCache('misc/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
 			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
 			->shouldBeCalled();
@@ -320,7 +320,7 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
-		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
 			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 year')
 			->shouldBeCalled();
@@ -338,7 +338,7 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
 		$raw_command_output = $this->getFixture('svn_info_16.xml');
 
-		$this->_cacheManager->getCache('misc/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
 			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
 			->shouldBeCalled();
@@ -358,7 +358,7 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
-		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
 			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 year')
 			->shouldBeCalled();
@@ -376,7 +376,7 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
 		$raw_command_output = $this->getFixture('svn_info_16.xml');
 
-		$this->_cacheManager->getCache('misc/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
 			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
 			->shouldBeCalled();
@@ -475,7 +475,7 @@ MESSAGE;
 		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
-		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 minute')->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
 			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 minute')
 			->shouldBeCalled();

@@ -64,15 +64,14 @@ class CacheManager
 	 */
 	public function setCache($name, $value, $invalidator = null, $duration = null)
 	{
-		if ( is_numeric($duration) ) {
-			$duration .= ' seconds';
-		}
+		$duration = $this->durationIntoSeconds($duration);
 
-		$storage = $this->_getStorage($name);
+		$storage = $this->_getStorage($name, $duration);
 		$storage->set(array(
 			'name' => $name,
 			'invalidator' => $invalidator,
-			'expiration' => $duration ? strtotime('+' . $duration) : null,
+			'duration' => $duration,
+			'expiration' => $duration ? time() + $duration : null,
 			'data' => $value,
 		));
 	}
@@ -80,14 +79,15 @@ class CacheManager
 	/**
 	 * Gets value from cache.
 	 *
-	 * @param string $name        Name.
-	 * @param mixed  $invalidator Invalidator.
+	 * @param string  $name        Name.
+	 * @param mixed   $invalidator Invalidator.
+	 * @param integer $duration    Duration in seconds.
 	 *
 	 * @return mixed
 	 */
-	public function getCache($name, $invalidator = null)
+	public function getCache($name, $invalidator = null, $duration = null)
 	{
-		$storage = $this->_getStorage($name);
+		$storage = $this->_getStorage($name, $this->durationIntoSeconds($duration));
 		$cache = $storage->get();
 
 		if ( !is_array($cache) || $cache['invalidator'] !== $invalidator ) {
@@ -106,23 +106,51 @@ class CacheManager
 	}
 
 	/**
+	 * Converts duration into seconds.
+	 *
+	 * @param integer $duration Duration in seconds.
+	 *
+	 * @return integer|null
+	 */
+	protected function durationIntoSeconds($duration = null)
+	{
+		if ( !isset($duration) ) {
+			return null;
+		}
+
+		if ( is_numeric($duration) ) {
+			$duration .= ' seconds';
+		}
+
+		$now = time();
+
+		return strtotime('+' . $duration, $now) - $now;
+	}
+
+	/**
 	 * Returns file-based cache storage.
 	 *
-	 * @param string $name Cache name.
+	 * @param string  $name     Cache name.
+	 * @param integer $duration Duration in seconds.
 	 *
 	 * @return ICacheStorage
 	 * @throws \InvalidArgumentException When namespace is missing in the name.
 	 */
-	private function _getStorage($name)
+	private function _getStorage($name, $duration = null)
 	{
-		$parts = explode(':', $name, 2);
+		$name_parts = explode(':', $name, 2);
 
-		if ( count($parts) != 2 ) {
+		if ( count($name_parts) != 2 ) {
 			throw new \InvalidArgumentException('The $name parameter must be in "namespace:name" format.');
 		}
 
-		$name_hash = substr(hash_hmac('sha1', $parts[1], 'svn-buddy'), 0, 8);
-		$cache_filename = $this->_workingDirectory . DIRECTORY_SEPARATOR . $parts[0] . '_' . $name_hash . '.cache';
+		$filename_parts = array(
+			$name_parts[0],
+			substr(hash_hmac('sha1', $name_parts[1], 'svn-buddy'), 0, 8),
+			'D' . (isset($duration) ? $duration : 'INF'),
+		);
+
+		$cache_filename = $this->_workingDirectory . DIRECTORY_SEPARATOR . implode('_', $filename_parts) . '.cache';
 
 		if ( isset($this->_io) && $this->_io->isVerbose() ) {
 			$message = $cache_filename;

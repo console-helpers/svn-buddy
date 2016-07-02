@@ -71,15 +71,26 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 	public function testSetWithDuration()
 	{
 		$this->cacheManager->setCache('namespace:name_int', 'value_int', null, 1);
-		$this->assertEquals('value_int', $this->cacheManager->getCache('namespace:name_int'));
+		$this->assertEquals('value_int', $this->cacheManager->getCache('namespace:name_int', null, 1));
 
 		$this->cacheManager->setCache('namespace:name_string', 'value_string', null, '1 second');
-		$this->assertEquals('value_string', $this->cacheManager->getCache('namespace:name_string'));
+		$this->assertEquals('value_string', $this->cacheManager->getCache('namespace:name_string', null, '1 second'));
 
 		sleep(2);
 
-		$this->assertNull($this->cacheManager->getCache('namespace:name_int'));
-		$this->assertNull($this->cacheManager->getCache('namespace:name_string'));
+		$this->assertNull($this->cacheManager->getCache('namespace:name_int', null, 1));
+		$this->assertNull($this->cacheManager->getCache('namespace:name_string', null, '1 second'));
+	}
+
+	public function testSetWithSameNameButDifferentDurations()
+	{
+		$this->cacheManager->setCache('namespace:name', 'shorter_life', null, '5 minute');
+		$this->cacheManager->setCache('namespace:name', 'longer_life', null, '10 minute');
+		$this->cacheManager->setCache('namespace:name', 'unlimited_life');
+
+		$this->assertEquals('shorter_life', $this->cacheManager->getCache('namespace:name', null, '5 minute'));
+		$this->assertEquals('longer_life', $this->cacheManager->getCache('namespace:name', null, '10 minute'));
+		$this->assertEquals('unlimited_life', $this->cacheManager->getCache('namespace:name'));
 	}
 
 	public function testSetWithInvalidatorSuccess()

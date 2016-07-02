@@ -124,7 +124,7 @@ class Command
 		$cache_key = $this->_getCacheKey();
 
 		if ( $cache_key ) {
-			$output = $this->_cacheManager->getCache($cache_key, $this->_cacheInvalidator);
+			$output = $this->_cacheManager->getCache($cache_key, $this->_cacheInvalidator, $this->_cacheDuration);
 
 			if ( isset($output) && is_callable($callback) ) {
 				call_user_func($callback, Process::OUT, $output);
