@@ -314,8 +314,9 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 
 		if ( !$source_url ) {
-			$error_msg = 'Unable to determine source url for merge.' . PHP_EOL;
-			$error_msg .= 'Please specify it manually using "--source-url" option';
+			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+			$error_msg = 'Unable to guess "--source-url" option value. Please specify it manually.' . PHP_EOL;
+			$error_msg .= 'Working Copy URL: ' . $wc_url . '.';
 			throw new CommandException($error_msg);
 		}
 
