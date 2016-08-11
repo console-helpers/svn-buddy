@@ -47,7 +47,32 @@ if ( !class_exists('Migration20160628_0223', false) ) {
 			}
 		}
 
-		protected function getDateDiff($from_timestamp, $to_timestamp, $is_fix = false)
+		protected function getDateDiff($from_timestamp, $to_timestamp)
+		{
+			$pairs = array(
+				array($from_timestamp, $to_timestamp),
+			);
+
+			for ( $i = 1; $i < 6; $i++ ) {
+				$pairs[] = array($from_timestamp, $to_timestamp + $i);
+				$pairs[] = array($from_timestamp, $to_timestamp - $i);
+			}
+
+			while ( $pairs ) {
+				$pair = array_shift($pairs);
+
+				try {
+					return $this->doGetDateDiff($pair[0], $pair[1]);
+				}
+				catch ( LogicException $e ) {
+					// Ignore exception.
+				}
+			}
+
+			throw $e;
+		}
+
+		protected function doGetDateDiff($from_timestamp, $to_timestamp)
 		{
 			static $duration_mapping = array(
 				'y' => 'years',
@@ -71,12 +96,7 @@ if ( !class_exists('Migration20160628_0223', false) ) {
 			}
 
 			if ( count($diff_string) !== 1 ) {
-				if ( $is_fix ) {
-					throw new LogicException('Cache duration is too complex. Unable to migrate.');
-				}
-				else {
-					return $this->getDateDiff($from_timestamp, $to_timestamp + 1, true);
-				}
+				throw new LogicException('Cache duration is too complex. Unable to migrate.');
 			}
 
 			$now = time();
