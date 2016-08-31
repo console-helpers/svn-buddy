@@ -575,39 +575,100 @@ class Connector
 	/**
 	 * Returns working copy status.
 	 *
-	 * @param string $wc_path Working copy path.
+	 * @param string      $wc_path    Working copy path.
+	 * @param string|null $changelist Changelist.
 	 *
 	 * @return array
+	 * @throws \InvalidArgumentException When changelist doens't exist.
 	 */
-	public function getWorkingCopyStatus($wc_path)
+	public function getWorkingCopyStatus($wc_path, $changelist = null)
 	{
 		$ret = array();
+
 		$status = $this->getCommand('status', '--xml {' . $wc_path . '}')->run();
 
-		foreach ( $status->target as $target ) {
-			if ( (string)$target['path'] !== $wc_path ) {
-				continue;
+		if ( !strlen($changelist) ) {
+			// Accept all entries from "target" and "changelist" nodes.
+			foreach ( $status->children() as $entries ) {
+				$child_name = $entries->getName();
+
+				if ( $child_name === 'target' || $child_name === 'changelist' ) {
+					$ret += $this->processStatusEntryNodes($wc_path, $entries);
+				}
 			}
 
-			foreach ( $target as $entry ) {
-				$path = (string)$entry['path'];
+			return $ret;
+		}
 
-				if ( $path === $wc_path ) {
-					$path = '.';
-				}
-				else {
-					$path = str_replace($wc_path . '/', '', $path);
-				}
+		// Accept all entries from "changelist" node and parent folders from "target" node.
+		foreach ( $status->changelist as $changelist_entries ) {
+			if ( (string)$changelist_entries['name'] === $changelist ) {
+				$ret += $this->processStatusEntryNodes($wc_path, $changelist_entries);
+			}
+		}
 
-				$ret[$path] = array(
-					'item' => (string)$entry->{'wc-status'}['item'],
-					'props' => (string)$entry->{'wc-status'}['props'],
-					'tree-conflicted' => (string)$entry->{'wc-status'}['tree-conflicted'] === 'true',
-				);
+		if ( !$ret ) {
+			throw new \InvalidArgumentException('The "' . $changelist . '" changelist doens\'t exist.');
+		}
+
+		$parent_paths = $this->getParentPaths(array_keys($ret));
+
+		foreach ( $status->target as $target_entries ) {
+			foreach ( $this->processStatusEntryNodes($wc_path, $target_entries) as $path => $path_data ) {
+				if ( in_array($path, $parent_paths) ) {
+					$ret[$path] = $path_data;
+				}
 			}
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Processes "entry" nodes from "svn status" command.
+	 *
+	 * @param string            $wc_path Working copy path.
+	 * @param \SimpleXMLElement $entries Entries.
+	 *
+	 * @return array
+	 */
+	protected function processStatusEntryNodes($wc_path, \SimpleXMLElement $entries)
+	{
+		$ret = array();
+
+		foreach ( $entries as $entry ) {
+			$path = (string)$entry['path'];
+			$path = $path === $wc_path ? '.' : str_replace($wc_path . '/', '', $path);
+
+			$ret[$path] = array(
+				'item' => (string)$entry->{'wc-status'}['item'],
+				'props' => (string)$entry->{'wc-status'}['props'],
+				'tree-conflicted' => (string)$entry->{'wc-status'}['tree-conflicted'] === 'true',
+			);
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Returns parent paths from given paths.
+	 *
+	 * @param array $paths Paths.
+	 *
+	 * @return array
+	 */
+	protected function getParentPaths(array $paths)
+	{
+		$ret = array();
+
+		foreach ( $paths as $path ) {
+			while ( $path !== '.' ) {
+				$path = dirname($path);
+				$ret[] = $path;
+			}
+		}
+
+		return array_unique($ret);
 	}
 
 	/**
