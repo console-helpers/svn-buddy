@@ -1,24 +1,32 @@
 <?xml version="1.0"?>
 <status>
-  <target path="/path/to/working-copy"></target>
-  <changelist name="cl two">
-    <entry path="/path/to/working-copy/admin/system_presets/simple/users_u.php">
-      <wc-status item="modified" props="normal" revision="873">
-        <commit revision="443">
-          <author>alex</author>
-          <date>2011-03-15T18:33:42.751219Z</date>
-        </commit>
-      </wc-status>
-    </entry>
-  </changelist>
-  <changelist name="cl one">
-    <entry path="/path/to/working-copy/admin/system_presets/simple/users_u.php">
-      <wc-status item="modified" props="normal" revision="873">
-        <commit revision="443">
-          <author>alex</author>
-          <date>2011-03-15T18:33:42.751219Z</date>
-        </commit>
-      </wc-status>
-    </entry>
-  </changelist>
+	<target path="/path/to/working-copy"></target>
+	<changelist name="cl two">
+		<entry path="/path/to/working-copy/admin/system_presets/simple/users_u.php">
+			<wc-status item="modified" props="normal" revision="873">
+				<commit revision="443">
+					<author>alex</author>
+					<date>2011-03-15T18:33:42.751219Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+	</changelist>
+	<changelist name="cl one">
+		<entry path="/path/to/working-copy/admin/system_presets/simple/users_u.php">
+			<wc-status item="modified" props="normal" revision="873">
+				<commit revision="443">
+					<author>alex</author>
+					<date>2011-03-15T18:33:42.751219Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="index.php">
+			<wc-status item="normal" props="normal" revision="916">
+				<commit revision="916">
+					<author>alex</author>
+					<date>2016-04-16T06:37:17.791649Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+	</changelist>
 </status>

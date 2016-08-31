@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The copied paths (during initial revision data import) where not properly associated to their projects.
 - Fixed notice about "file_exists" function and "svn://" protocol, when using `merge` command or `log` command with URL instead of path.
 - Outdated working copy wasn't detected during `merge` command, when `log` command was used right before it.
+- Paths added to changelists weren't taken into account by `commit` command.
 
 ## [0.2.0] - 2016-05-14
 ### Added

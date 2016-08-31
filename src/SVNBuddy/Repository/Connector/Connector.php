@@ -583,7 +583,7 @@ class Connector
 	 */
 	public function getWorkingCopyStatus($wc_path, $changelist = null)
 	{
-		$ret = array();
+		$all_paths = array();
 
 		$status = $this->getCommand('status', '--xml {' . $wc_path . '}')->run();
 
@@ -593,35 +593,43 @@ class Connector
 				$child_name = $entries->getName();
 
 				if ( $child_name === 'target' || $child_name === 'changelist' ) {
-					$ret += $this->processStatusEntryNodes($wc_path, $entries);
-				}
-			}
-
-			return $ret;
-		}
-
-		// Accept all entries from "changelist" node and parent folders from "target" node.
-		foreach ( $status->changelist as $changelist_entries ) {
-			if ( (string)$changelist_entries['name'] === $changelist ) {
-				$ret += $this->processStatusEntryNodes($wc_path, $changelist_entries);
-			}
-		}
-
-		if ( !$ret ) {
-			throw new \InvalidArgumentException('The "' . $changelist . '" changelist doens\'t exist.');
-		}
-
-		$parent_paths = $this->getParentPaths(array_keys($ret));
-
-		foreach ( $status->target as $target_entries ) {
-			foreach ( $this->processStatusEntryNodes($wc_path, $target_entries) as $path => $path_data ) {
-				if ( in_array($path, $parent_paths) ) {
-					$ret[$path] = $path_data;
+					$all_paths += $this->processStatusEntryNodes($wc_path, $entries);
 				}
 			}
 		}
+		else {
+			// Accept all entries from "changelist" node and parent folders from "target" node.
+			foreach ( $status->changelist as $changelist_entries ) {
+				if ( (string)$changelist_entries['name'] === $changelist ) {
+					$all_paths += $this->processStatusEntryNodes($wc_path, $changelist_entries);
+				}
+			}
 
-		return $ret;
+			if ( !$all_paths ) {
+				throw new \InvalidArgumentException('The "' . $changelist . '" changelist doens\'t exist.');
+			}
+
+			$parent_paths = $this->getParentPaths(array_keys($all_paths));
+
+			foreach ( $status->target as $target_entries ) {
+				foreach ( $this->processStatusEntryNodes($wc_path, $target_entries) as $path => $path_data ) {
+					if ( in_array($path, $parent_paths) ) {
+						$all_paths[$path] = $path_data;
+					}
+				}
+			}
+		}
+
+		// Exclude paths, that haven't changed (e.g. from changelists).
+		$changed_paths = array();
+
+		foreach ( $all_paths as $path => $status ) {
+			if ( $status['item'] !== 'normal' || $status['props'] !== 'normal' || $status['tree-conflicted'] ) {
+				$changed_paths[$path] = $status;
+			}
+		}
+
+		return $changed_paths;
 	}
 
 	/**
