@@ -672,6 +672,27 @@ class Connector
 	}
 
 	/**
+	 * Returns working copy changelists.
+	 *
+	 * @param string $wc_path Working copy path.
+	 *
+	 * @return array
+	 */
+	public function getWorkingCopyChangelists($wc_path)
+	{
+		$ret = array();
+		$status = $this->getCommand('status', '--xml {' . $wc_path . '}')->run();
+
+		foreach ( $status->changelist as $changelist ) {
+			$ret[] = (string)$changelist['name'];
+		}
+
+		sort($ret, SORT_STRING);
+
+		return $ret;
+	}
+
+	/**
 	 * Determines if working copy contains mixed revisions.
 	 *
 	 * @param string $wc_path Working copy path.

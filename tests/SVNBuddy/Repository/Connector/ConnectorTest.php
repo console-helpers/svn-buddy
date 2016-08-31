@@ -620,6 +620,30 @@ MESSAGE;
 	}
 
 	/**
+	 * @dataProvider getWorkingCopyChangelistsDataProvider
+	 */
+	public function testGetWorkingCopyChangelists($fixture, $expected)
+	{
+		$this->_expectCommand(
+			"svn --non-interactive status --xml '/path/to/working-copy'",
+			$this->getFixture($fixture)
+		);
+
+		$this->assertEquals(
+			$expected,
+			$this->_repositoryConnector->getWorkingCopyChangelists('/path/to/working-copy')
+		);
+	}
+
+	public function getWorkingCopyChangelistsDataProvider()
+	{
+		return array(
+			'with changelists' => array('svn_status_with_changelists_16.xml', array('cl one', 'cl two')),
+			'without changelists' => array('svn_status_without_changelists_16.xml', array()),
+		);
+	}
+
+	/**
 	 * Sets expectation for specific command.
 	 *
 	 * @param string       $command    Command.

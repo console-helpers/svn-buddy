@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<status>
+  <target path="/path/to/working-copy"></target>
+  <changelist name="cl two">
+    <entry path="/path/to/working-copy/admin/system_presets/simple/users_u.php">
+      <wc-status item="modified" props="normal" revision="873">
+        <commit revision="443">
+          <author>alex</author>
+          <date>2011-03-15T18:33:42.751219Z</date>
+        </commit>
+      </wc-status>
+    </entry>
+  </changelist>
+  <changelist name="cl one">
+    <entry path="/path/to/working-copy/admin/system_presets/simple/users_u.php">
+      <wc-status item="modified" props="normal" revision="873">
+        <commit revision="443">
+          <author>alex</author>
+          <date>2011-03-15T18:33:42.751219Z</date>
+        </commit>
+      </wc-status>
+    </entry>
+  </changelist>
+</status>
