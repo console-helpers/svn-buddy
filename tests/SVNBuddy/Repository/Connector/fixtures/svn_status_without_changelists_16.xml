@@ -25,5 +25,8 @@
 				</commit>
 			</wc-status>
 		</entry>
+		<entry path="new.txt">
+			<wc-status item="unversioned" props="none"/>
+		</entry>
 	</target>
 </status>

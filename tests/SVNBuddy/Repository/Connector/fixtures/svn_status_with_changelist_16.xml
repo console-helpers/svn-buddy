@@ -25,6 +25,9 @@
 				</commit>
 			</wc-status>
 		</entry>
+		<entry path="new.txt">
+			<wc-status item="unversioned" props="none"/>
+		</entry>
 	</target>
 	<changelist name="cl one">
 		<entry path="/path/to/working-copy/admin/system_presets/simple/users_u.php">

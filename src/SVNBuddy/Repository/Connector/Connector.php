@@ -23,7 +23,13 @@ use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 class Connector
 {
 
+	const STATUS_NORMAL = 'normal';
+
+	const STATUS_CONFLICTED = 'conflicted';
+
 	const STATUS_UNVERSIONED = 'unversioned';
+
+	const STATUS_NONE = 'none';
 
 	const URL_REGEXP = '#([\w]*)://([^/@\s\']+@)?([^/@:\s\']+)(:\d+)?([^@\s\']*)?#';
 
@@ -575,13 +581,14 @@ class Connector
 	/**
 	 * Returns working copy status.
 	 *
-	 * @param string      $wc_path    Working copy path.
-	 * @param string|null $changelist Changelist.
+	 * @param string      $wc_path          Working copy path.
+	 * @param string|null $changelist       Changelist.
+	 * @param boolean     $with_unversioned With unversioned.
 	 *
 	 * @return array
 	 * @throws \InvalidArgumentException When changelist doens't exist.
 	 */
-	public function getWorkingCopyStatus($wc_path, $changelist = null)
+	public function getWorkingCopyStatus($wc_path, $changelist = null, $with_unversioned = false)
 	{
 		$all_paths = array();
 
@@ -624,9 +631,15 @@ class Connector
 		$changed_paths = array();
 
 		foreach ( $all_paths as $path => $status ) {
-			if ( $status['item'] !== 'normal' || $status['props'] !== 'normal' || $status['tree-conflicted'] ) {
-				$changed_paths[$path] = $status;
+			if ( $this->isWorkingCopyPathStatus($status, self::STATUS_NORMAL) ) {
+				continue;
 			}
+
+			if ( !$with_unversioned && $this->isWorkingCopyPathStatus($status, self::STATUS_UNVERSIONED) ) {
+				continue;
+			}
+
+			$changed_paths[$path] = $status;
 		}
 
 		return $changed_paths;
@@ -656,6 +669,33 @@ class Connector
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Detects specific path status.
+	 *
+	 * @param array  $status      Path status.
+	 * @param string $path_status Expected path status.
+	 *
+	 * @return boolean
+	 */
+	protected function isWorkingCopyPathStatus(array $status, $path_status)
+	{
+		$tree_conflicted = $status['tree-conflicted'];
+
+		if ( $path_status === self::STATUS_NORMAL ) {
+			// Normal if all of 3 are normal.
+			return $status['item'] === $path_status && $status['props'] === $path_status && !$tree_conflicted;
+		}
+		elseif ( $path_status === self::STATUS_CONFLICTED ) {
+			// Conflict if any of 3 has conflict.
+			return $status['item'] === $path_status || $status['props'] === $path_status || $tree_conflicted;
+		}
+		elseif ( $path_status === self::STATUS_UNVERSIONED ) {
+			return $status['item'] === $path_status && $status['props'] === self::STATUS_NONE;
+		}
+
+		return $status['item'] == $path_status;
 	}
 
 	/**
