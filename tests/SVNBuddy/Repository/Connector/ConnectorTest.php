@@ -570,6 +570,30 @@ MESSAGE;
 		);
 	}
 
+	/**
+	 * @dataProvider getWorkingCopyConflictsDataProvider
+	 */
+	public function testGetWorkingCopyConflicts($fixture, $expected)
+	{
+		$this->_expectCommand(
+			"svn --non-interactive status --xml '/path/to/working-copy'",
+			$this->getFixture($fixture)
+		);
+
+		$this->assertEquals(
+			$expected,
+			$this->_repositoryConnector->getWorkingCopyConflicts('/path/to/working-copy')
+		);
+	}
+
+	public function getWorkingCopyConflictsDataProvider()
+	{
+		return array(
+			'with conflicts' => array('svn_status_with_conflicts_16.xml', array('.', 'admin', 'admin/index.php')),
+			'without conflicts' => array('svn_status_with_changelists_16.xml', array()),
+		);
+	}
+
 	public function testGetWorkingCopyStatusWithoutChangelist()
 	{
 		$this->_expectCommand(

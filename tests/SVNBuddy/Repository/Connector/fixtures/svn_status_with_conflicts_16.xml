@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<status>
+	<target path="/path/to/working-copy">
+		<entry path="/path/to/working-copy">
+			<wc-status item="conflicted" props="normal" revision="874">
+				<commit revision="874">
+					<author>alex</author>
+					<date>2015-08-12T12:35:59.481677Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="/path/to/working-copy/admin">
+			<wc-status item="normal" props="normal" revision="873" tree-conflicted="true">
+				<commit revision="856">
+					<author>alex</author>
+					<date>2015-01-16T19:41:46.359358Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="/path/to/working-copy/system_presets/.htaccess">
+			<wc-status item="modified" props="normal" revision="873">
+				<commit revision="856">
+					<author>alex</author>
+					<date>2015-01-16T19:41:46.359358Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="/path/to/working-copy/admin/index.php">
+			<wc-status item="normal" props="conflicted" revision="873">
+				<commit revision="856">
+					<author>alex</author>
+					<date>2015-01-16T19:41:46.359358Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="new.txt">
+			<wc-status item="unversioned" props="none"/>
+		</entry>
+	</target>
+</status>
