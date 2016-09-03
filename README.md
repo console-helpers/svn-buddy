@@ -455,7 +455,10 @@ Description:
 svn-buddy.phar commit --cl
 ```
 
-Same as above, but will also ask user to select changelist to use.
+Same as above, but will also:
+
+* ask user to select changelist
+* put changelist name in commit message
 
 ### The "cleanup" command
 

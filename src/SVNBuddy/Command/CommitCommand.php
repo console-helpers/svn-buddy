@@ -103,7 +103,7 @@ class CommitCommand extends AbstractCommand
 			throw new CommandException('Nothing to commit.');
 		}
 
-		$commit_message = $this->buildCommitMessage($wc_path);
+		$commit_message = $this->buildCommitMessage($wc_path, $changelist);
 		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $compact_working_copy_status;
 
 		$edited_commit_message = $this->_editor
@@ -180,11 +180,12 @@ class CommitCommand extends AbstractCommand
 	/**
 	 * Builds a commit message.
 	 *
-	 * @param string $wc_path Working copy path.
+	 * @param string      $wc_path    Working copy path.
+	 * @param string|null $changelist Changelist.
 	 *
 	 * @return string
 	 */
-	protected function buildCommitMessage($wc_path)
+	protected function buildCommitMessage($wc_path, $changelist)
 	{
 		/*
 		 * 3. if it's In-Portal project, then:
@@ -199,6 +200,11 @@ class CommitCommand extends AbstractCommand
 		 */
 
 		$commit_message = '';
+
+		if ( strlen($changelist) ) {
+			$commit_message .= $changelist . PHP_EOL;
+		}
+
 		$merged_revisions = $this->getFreshMergedRevisions($wc_path);
 
 		if ( $merged_revisions ) {

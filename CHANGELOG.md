@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `merge.auto-commit` config setting (enabled by default), that allows to tell if commit should happen after merge.
 - Added `--auto-commit` option to `merge` command to allow overriding behavior imposed by `merge.auto-commit` config setting.
 - Added `--cl` option to `commit` command to allow committing changes from specified changelist only.
+- Automatically put changelist name as 1st line in commit message (when `commit` command used with `--cl` option).
 
 ### Changed
 - Don't remove ref from path, when showing revision paths in `log` commands's detail view.
