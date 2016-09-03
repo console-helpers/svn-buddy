@@ -25,6 +25,8 @@ class Connector
 
 	const STATUS_NORMAL = 'normal';
 
+	const STATUS_ADDED = 'added';
+
 	const STATUS_CONFLICTED = 'conflicted';
 
 	const STATUS_UNVERSIONED = 'unversioned';

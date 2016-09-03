@@ -12,6 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -75,7 +76,7 @@ class RevertCommand extends AbstractCommand implements IAggregatorAwareCommand
 		$status = $this->repositoryConnector->getWorkingCopyStatus($wc_path);
 
 		foreach ( $status as $status_path => $status_path_data ) {
-			if ( $status_path_data['item'] === 'added' ) {
+			if ( $status_path_data['item'] === Connector::STATUS_ADDED ) {
 				$added_paths[] = $status_path;
 			}
 		}
