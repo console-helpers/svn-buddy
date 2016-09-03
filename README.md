@@ -420,17 +420,19 @@ The command workflow is following:
 
 1. abort automatically, when
  * non-resolved conflicts are present
- * if no paths are changed
+ * no paths are changed
 2. open an Interactive Editor for commit message entry
-3. when committing result of a merge the **commit message is auto-generated** from:
- * commit messages of all merged revisions
- * list of conflicted paths (if any)
+3. commit message is automatically generated, from:
+ * selected changelist name (when `--cl` option was used)
+ * commit messages of all merged revisions (when this is a merge commit)
+ * list of conflicted paths (if merge caused conflicts, that later were resolved)
 4. once user is done changing commit message a confirmation dialog is shown to ensure user really wants to perform commit
 5. when user agreed previously the commit is made
 
 The auto-generated commit message looks like this:
 
 ```
+Changelist Name
 Merging from Trunk to Stable
 * r22758: message line 1
 message line 2
