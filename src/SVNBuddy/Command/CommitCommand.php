@@ -16,6 +16,7 @@ use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CommitCommand extends AbstractCommand
@@ -53,6 +54,12 @@ class CommitCommand extends AbstractCommand
 				InputArgument::OPTIONAL,
 				'Working copy path',
 				'.'
+			)
+			->addOption(
+				'cl',
+				null,
+				InputOption::VALUE_NONE,
+				'Operate only on members of selected changelist'
 			);
 
 		parent::configure();
@@ -89,14 +96,15 @@ class CommitCommand extends AbstractCommand
 			throw new CommandException('Conflicts detected. Please resolve them before committing.');
 		}
 
-		$working_copy_status = $this->repositoryConnector->getCompactWorkingCopyStatus($wc_path, false);
+		$changelist = $this->getChangelist($wc_path);
+		$compact_working_copy_status = $this->repositoryConnector->getCompactWorkingCopyStatus($wc_path, $changelist);
 
-		if ( !$working_copy_status ) {
+		if ( !$compact_working_copy_status ) {
 			throw new CommandException('Nothing to commit.');
 		}
 
 		$commit_message = $this->buildCommitMessage($wc_path);
-		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $working_copy_status;
+		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $compact_working_copy_status;
 
 		$edited_commit_message = $this->_editor
 			->setDocumentName('commit_message')
@@ -118,11 +126,55 @@ class CommitCommand extends AbstractCommand
 		$tmp_file = tempnam(sys_get_temp_dir(), 'commit_message_');
 		file_put_contents($tmp_file, $edited_commit_message);
 
-		$this->repositoryConnector->getCommand('commit', '{' . $wc_path . '} -F {' . $tmp_file . '}')->runLive();
+		$arguments = array(
+			'-F {' . $tmp_file . '}',
+		);
+
+		if ( strlen($changelist) ) {
+			$arguments[] = '--depth empty';
+
+			// Relative path used to make command line shorter.
+			foreach ( array_keys($this->repositoryConnector->getWorkingCopyStatus($wc_path, $changelist)) as $path ) {
+				$arguments[] = '{' . $path . '}';
+			}
+		}
+		else {
+			$arguments[] = '{' . $wc_path . '}';
+		}
+
+		$this->repositoryConnector->getCommand('commit', implode(' ', $arguments))->runLive();
 		$this->setSetting(MergeCommand::SETTING_MERGE_RECENT_CONFLICTS, null, 'merge');
 		unlink($tmp_file);
 
 		$this->io->writeln('<info>Done</info>');
+	}
+
+	/**
+	 * Returns user selected changelist.
+	 *
+	 * @param string $wc_path Working copy path.
+	 *
+	 * @return string|null
+	 * @throws CommandException When no changelists found.
+	 */
+	protected function getChangelist($wc_path)
+	{
+		if ( !$this->io->getOption('cl') ) {
+			return null;
+		}
+
+		$changelists = $this->repositoryConnector->getWorkingCopyChangelists($wc_path);
+
+		if ( !$changelists ) {
+			throw new CommandException('No changelists detected.');
+		}
+
+		return $this->io->choose(
+			'Pick changelist by number [0]:',
+			$changelists,
+			0,
+			'Changelist "%s" is invalid.'
+		);
 	}
 
 	/**

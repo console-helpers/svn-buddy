@@ -406,6 +406,10 @@ The command sends changes from your working copy to the repository.
 
 * `path` - Working copy path [default: "`.`"]
 
+#### Options
+
+* `--cl` - Operate only on members of selected changelist
+
 #### Examples
 
 ```
@@ -446,6 +450,12 @@ Description:
 * `Stable` is folder name of merge target (working copy)
 * `22758` and `22796` are merged revisions
 * `message line ...` are lines from commit message of merged revisions
+
+```
+svn-buddy.phar commit --cl
+```
+
+Same as above, but will also ask user to select changelist to use.
 
 ### The "cleanup" command
 

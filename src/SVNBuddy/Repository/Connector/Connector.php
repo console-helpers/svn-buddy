@@ -499,20 +499,17 @@ class Connector
 	/**
 	 * Returns compact working copy status.
 	 *
-	 * @param string  $wc_path          Working copy path.
-	 * @param boolean $with_unversioned With unversioned.
+	 * @param string      $wc_path          Working copy path.
+	 * @param string|null $changelist       Changelist.
+	 * @param boolean     $with_unversioned With unversioned.
 	 *
 	 * @return string
 	 */
-	public function getCompactWorkingCopyStatus($wc_path, $with_unversioned = true)
+	public function getCompactWorkingCopyStatus($wc_path, $changelist = null, $with_unversioned = false)
 	{
 		$ret = array();
 
-		foreach ( $this->getWorkingCopyStatus($wc_path) as $path => $status ) {
-			if ( !$with_unversioned && $status['item'] == self::STATUS_UNVERSIONED ) {
-				continue;
-			}
-
+		foreach ( $this->getWorkingCopyStatus($wc_path, $changelist, $with_unversioned) as $path => $status ) {
 			$line = $this->getShortItemStatus($status['item']) . $this->getShortPropertiesStatus($status['props']);
 			$line .= '   ' . $path;
 
