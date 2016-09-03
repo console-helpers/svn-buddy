@@ -627,6 +627,8 @@ class Connector
 					}
 				}
 			}
+
+			ksort($all_paths, SORT_STRING);
 		}
 
 		// Exclude paths, that haven't changed (e.g. from changelists).

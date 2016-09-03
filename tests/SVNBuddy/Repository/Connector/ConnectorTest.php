@@ -601,7 +601,7 @@ MESSAGE;
 			$this->getFixture('svn_status_with_changelist_16.xml')
 		);
 
-		$this->assertEquals(
+		$this->assertSame(
 			array(
 				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
 				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true),
@@ -619,7 +619,7 @@ MESSAGE;
 			$this->getFixture('svn_status_with_changelist_16.xml')
 		);
 
-		$this->assertEquals(
+		$this->assertSame(
 			array(
 				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
 				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true),
