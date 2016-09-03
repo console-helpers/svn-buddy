@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Don't remove ref from path, when showing revision paths in `log` commands's detail view.
 - Attempt to view revisions of path, that never existed in a project now will exactly say that in thrown exception.
 - The 4x speed improvement of `log` command, when used on a working copy.
+- List of conflicts is included in commit message if they are present (before only worked for merge commits).
 
 ### Fixed
 - The path `copy-from-` information wasn't stored incorrectly resulting in path shown as copied, while they weren't.

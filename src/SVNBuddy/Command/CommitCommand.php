@@ -198,29 +198,27 @@ class CommitCommand extends AbstractCommand
 		 * 4. open interactive editor with auto-generated message
 		 */
 
+		$commit_message = '';
 		$merged_revisions = $this->getFreshMergedRevisions($wc_path);
 
-		if ( !$merged_revisions ) {
-			return '';
-		}
+		if ( $merged_revisions ) {
+			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+			$repository_url = $this->repositoryConnector->getRootUrl($wc_url);
 
-		$commit_message = '';
-		$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
-		$repository_url = $this->repositoryConnector->getRootUrl($wc_url);
+			foreach ( $merged_revisions as $path => $revisions ) {
+				$merged_messages = array();
+				$revision_log = $this->getRevisionLog($repository_url . $path);
+				$commit_message .= $this->getCommitMessageHeading($wc_url, $path) . PHP_EOL;
 
-		foreach ( $merged_revisions as $path => $revisions ) {
-			$merged_messages = array();
-			$revision_log = $this->getRevisionLog($repository_url . $path);
-			$commit_message .= $this->getCommitMessageHeading($wc_url, $path) . PHP_EOL;
+				$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
 
-			$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
+				foreach ( $revisions as $revision ) {
+					$merged_messages[] = ' * r' . $revision . ': ' . $revisions_data[$revision]['msg'];
+				}
 
-			foreach ( $revisions as $revision ) {
-				$merged_messages[] = ' * r' . $revision . ': ' . $revisions_data[$revision]['msg'];
+				$merged_messages = array_unique(array_map('trim', $merged_messages));
+				$commit_message .= implode(PHP_EOL, $merged_messages) . PHP_EOL;
 			}
-
-			$merged_messages = array_unique(array_map('trim', $merged_messages));
-			$commit_message .= implode(PHP_EOL, $merged_messages) . PHP_EOL;
 		}
 
 		$commit_message .= $this->getCommitMessageConflicts();
