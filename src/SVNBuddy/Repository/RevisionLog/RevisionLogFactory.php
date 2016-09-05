@@ -48,6 +48,13 @@ class RevisionLogFactory
 	private $_logMessageParserFactory;
 
 	/**
+	 * Revision logs by url
+	 *
+	 * @var RevisionLog[]
+	 */
+	private $_cache = array();
+
+	/**
 	 * Create revision log.
 	 *
 	 * @param Connector               $repository_connector       Repository connector.
@@ -73,6 +80,25 @@ class RevisionLogFactory
 	 * @return RevisionLog
 	 */
 	public function getRevisionLog($repository_url, ConsoleIO $io = null)
+	{
+		$repository_url = $this->_repositoryConnector->removeCredentials($repository_url);
+
+		if ( !isset($this->_cache[$repository_url]) ) {
+			$this->_cache[$repository_url] = $this->createRevisionLog($repository_url, $io);
+		}
+
+		return $this->_cache[$repository_url];
+	}
+
+	/**
+	 * Returns revision log for url.
+	 *
+	 * @param string    $repository_url Repository url.
+	 * @param ConsoleIO $io             Console IO.
+	 *
+	 * @return RevisionLog
+	 */
+	protected function createRevisionLog($repository_url, ConsoleIO $io = null)
 	{
 		// Gets database for given repository url.
 		$root_url = $this->_repositoryConnector->getRootUrl($repository_url);

@@ -21,6 +21,7 @@ class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 	{
 		$repository_connector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
 
+		$repository_connector->removeCredentials('svn://localhost/projects/project-name/trunk')->willReturnArgument(0)->shouldBeCalled();
 		$repository_connector->getLastRevision('svn://localhost')->willReturn(0)->shouldBeCalled();
 
 		$repository_connector->getRootUrl('svn://localhost/projects/project-name/trunk')->willReturn('svn://localhost')->shouldBeCalled();

@@ -49,13 +49,6 @@ abstract class AbstractCommand extends BaseCommand
 	protected $workingDirectory = null;
 
 	/**
-	 * Revision logs by url
-	 *
-	 * @var RevisionLog[]
-	 */
-	private $_revisionLogs = array();
-
-	/**
 	 * Working copy paths.
 	 *
 	 * @var array
@@ -209,14 +202,7 @@ abstract class AbstractCommand extends BaseCommand
 	 */
 	protected function getRevisionLog($repository_url)
 	{
-		if ( !isset($this->_revisionLogs[$repository_url]) ) {
-			$this->_revisionLogs[$repository_url] = $this->_revisionLogFactory->getRevisionLog(
-				$repository_url,
-				$this->io
-			);
-		}
-
-		return $this->_revisionLogs[$repository_url];
+		return $this->_revisionLogFactory->getRevisionLog($repository_url, $this->io);
 	}
 
 	/**
