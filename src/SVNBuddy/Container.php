@@ -23,6 +23,7 @@ use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessageBuilder;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
@@ -148,6 +149,14 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['repository_connector'] = function ($c) {
 			return new Connector($c['config_editor'], $c['process_factory'], $c['io'], $c['cache_manager']);
+		};
+
+		$this['commit_message_builder'] = function ($c) {
+			return new CommitMessageBuilder(
+				$c['repository_connector'],
+				$c['revision_list_parser'],
+				$c['revision_log_factory']
+			);
 		};
 
 		$this['date_helper'] = function () {
