@@ -65,7 +65,7 @@ class CommitMessageBuilder
 	 *
 	 * @return string
 	 */
-	public function build($wc_path, $changelist, array $recent_conflicts)
+	public function build($wc_path, $changelist = null, array $recent_conflicts = array())
 	{
 		/*
 		 * 3. if it's In-Portal project, then:
@@ -79,37 +79,53 @@ class CommitMessageBuilder
 		 * 4. open interactive editor with auto-generated message
 		 */
 
-		$commit_message = '';
+		$commit_message_parts = array();
 
 		if ( strlen($changelist) ) {
-			$commit_message .= $changelist . PHP_EOL;
+			$commit_message_parts[] = trim($changelist);
 		}
 
+		$commit_message_parts[] = $this->getFragmentForMergedRevisions($wc_path);
+		$commit_message_parts[] = $this->getFragmentForRecentConflicts($recent_conflicts);
+
+		return implode(PHP_EOL, array_filter($commit_message_parts));
+	}
+
+	/**
+	 * Returns commit message fragment for merged revisions.
+	 *
+	 * @param string $wc_path Working copy path.
+	 *
+	 * @return string
+	 */
+	protected function getFragmentForMergedRevisions($wc_path)
+	{
 		$merged_revisions = $this->getFreshMergedRevisions($wc_path);
 
-		if ( $merged_revisions ) {
-			$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
-			$repository_url = $this->repositoryConnector->getRootUrl($wc_url);
-
-			foreach ( $merged_revisions as $path => $revisions ) {
-				$merged_messages = array();
-				$revision_log = $this->revisionLogFactory->getRevisionLog($repository_url . $path);
-				$commit_message .= $this->getCommitMessageHeading($wc_url, $path) . PHP_EOL;
-
-				$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
-
-				foreach ( $revisions as $revision ) {
-					$merged_messages[] = ' * r' . $revision . ': ' . $revisions_data[$revision]['msg'];
-				}
-
-				$merged_messages = array_unique(array_map('trim', $merged_messages));
-				$commit_message .= implode(PHP_EOL, $merged_messages) . PHP_EOL;
-			}
+		if ( !$merged_revisions ) {
+			return '';
 		}
 
-		$commit_message .= $this->getCommitMessageConflicts($recent_conflicts);
+		$ret = '';
+		$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+		$repository_url = $this->repositoryConnector->getRootUrl($wc_url);
 
-		return rtrim($commit_message);
+		foreach ( $merged_revisions as $path => $revisions ) {
+			$merged_messages = array();
+			$revision_log = $this->revisionLogFactory->getRevisionLog($repository_url . $path);
+			$ret .= PHP_EOL . $this->getCommitMessageHeading($wc_url, $path) . PHP_EOL;
+
+			$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
+
+			foreach ( $revisions as $revision ) {
+				$merged_messages[] = ' * r' . $revision . ': ' . $revisions_data[$revision]['msg'];
+			}
+
+			$merged_messages = array_unique(array_map('trim', $merged_messages));
+			$ret .= implode(PHP_EOL, $merged_messages) . PHP_EOL;
+		}
+
+		return trim($ret);
 	}
 
 	/**
@@ -190,22 +206,23 @@ class CommitMessageBuilder
 	}
 
 	/**
-	 * Returns recent merge conflicts.
+	 * Returns commit message fragment for recent conflicts.
 	 *
 	 * @param array $recent_conflicts Recent conflicts.
 	 *
 	 * @return string
 	 */
-	protected function getCommitMessageConflicts(array $recent_conflicts)
+	protected function getFragmentForRecentConflicts(array $recent_conflicts)
 	{
 		if ( !$recent_conflicts ) {
 			return '';
 		}
 
-		$ret = PHP_EOL . 'Conflicts:' . PHP_EOL;
+		// Ensure empty line before.
+		$ret = PHP_EOL . 'Conflicts:';
 
 		foreach ( $recent_conflicts as $conflict_path ) {
-			$ret .= ' * ' . $conflict_path . PHP_EOL;
+			$ret .= PHP_EOL . ' * ' . $conflict_path;
 		}
 
 		return $ret;
