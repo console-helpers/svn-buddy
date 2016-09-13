@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f6a60d76a73ca82719f743068b6f9118",
-    "content-hash": "daf8125c21e98e7999a20d83b5b5560d",
+    "hash": "029c58f020db185a6b6bb670c8330954",
+    "content-hash": "0f4eef3773988687bd80471f1413ed6c",
     "packages": [
         {
             "name": "aura/sql",
@@ -62,16 +62,16 @@
         },
         {
             "name": "console-helpers/console-kit",
-            "version": "v0.1.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "147afbf8393af25c5122017235f32d7b74fc7c15"
+                "reference": "a967549be2ecc46d4dd44f865187fdad39d08602"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/147afbf8393af25c5122017235f32d7b74fc7c15",
-                "reference": "147afbf8393af25c5122017235f32d7b74fc7c15",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/a967549be2ecc46d4dd44f865187fdad39d08602",
+                "reference": "a967549be2ecc46d4dd44f865187fdad39d08602",
                 "shasum": ""
             },
             "require": {
@@ -106,7 +106,7 @@
                 }
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
-            "time": "2016-03-19 21:40:46"
+            "time": "2016-09-13 11:51:13"
         },
         {
             "name": "console-helpers/db-migration",
@@ -362,16 +362,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.8",
+            "version": "v2.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "c392a6ec72f2122748032c2ad6870420561ffcfa"
+                "reference": "3d3e4fa5f0614c8e45220e5de80332322e33bd90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/c392a6ec72f2122748032c2ad6870420561ffcfa",
-                "reference": "c392a6ec72f2122748032c2ad6870420561ffcfa",
+                "url": "https://api.github.com/repos/symfony/console/zipball/3d3e4fa5f0614c8e45220e5de80332322e33bd90",
+                "reference": "3d3e4fa5f0614c8e45220e5de80332322e33bd90",
                 "shasum": ""
             },
             "require": {
@@ -418,7 +418,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-29 07:02:14"
+            "time": "2016-09-06 10:55:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -481,16 +481,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.8",
+            "version": "v2.8.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "89f33c16796415ccfd8bb3cf8d520cbb79899bfe"
+                "reference": "05a03ed27073638658cab9405d99a67dd1014987"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/89f33c16796415ccfd8bb3cf8d520cbb79899bfe",
-                "reference": "89f33c16796415ccfd8bb3cf8d520cbb79899bfe",
+                "url": "https://api.github.com/repos/symfony/process/zipball/05a03ed27073638658cab9405d99a67dd1014987",
+                "reference": "05a03ed27073638658cab9405d99a67dd1014987",
                 "shasum": ""
             },
             "require": {
@@ -526,7 +526,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-29 05:29:29"
+            "time": "2016-09-06 10:55:00"
         }
     ],
     "packages-dev": [
@@ -536,12 +536,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aik099/CodingStandard.git",
-                "reference": "3455e4d487e2cdd6460d2414d946de5cfabcd69f"
+                "reference": "ce1586333f0e0851d006034beaed34a4b9438c92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/3455e4d487e2cdd6460d2414d946de5cfabcd69f",
-                "reference": "3455e4d487e2cdd6460d2414d946de5cfabcd69f",
+                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/ce1586333f0e0851d006034beaed34a4b9438c92",
+                "reference": "ce1586333f0e0851d006034beaed34a4b9438c92",
                 "shasum": ""
             },
             "require-dev": {
@@ -568,12 +568,13 @@
                 "PHP_CodeSniffer",
                 "codesniffer"
             ],
-            "time": "2016-05-21 12:59:53"
+            "time": "2016-08-07 11:47:06"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "console-helpers/console-kit": 20,
         "padraic/phar-updater": 20,
         "aik099/coding-standard": 20
     },

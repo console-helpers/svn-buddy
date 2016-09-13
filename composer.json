@@ -11,7 +11,7 @@
 	],
 	"require": {
 		"symfony/process": "^2.7",
-		"console-helpers/console-kit": "^0.1",
+		"console-helpers/console-kit": "^0.1@dev",
 		"aura/sql": "^2.5",
 		"padraic/phar-updater": "dev-use-curl",
 		"padraic/humbug_get_contents": "^1.0",
