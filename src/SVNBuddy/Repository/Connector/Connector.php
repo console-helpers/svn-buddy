@@ -696,7 +696,7 @@ class Connector
 			return $status['item'] === $path_status && $status['props'] === self::STATUS_NONE;
 		}
 
-		return $status['item'] == $path_status;
+		return $status['item'] === $path_status;
 	}
 
 	/**

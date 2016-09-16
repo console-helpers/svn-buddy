@@ -92,7 +92,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 	{
 		$ret = parent::completeArgumentValues($argumentName, $context);
 
-		if ( $argumentName == 'sub-command' ) {
+		if ( $argumentName === 'sub-command' ) {
 			return $this->getSubCommands();
 		}
 

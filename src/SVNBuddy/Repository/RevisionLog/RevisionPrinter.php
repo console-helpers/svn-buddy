@@ -222,7 +222,7 @@ class RevisionPrinter
 			$new_bugs = $revisions_bugs[$revision];
 
 			if ( isset($prev_bugs) && $new_bugs !== $prev_bugs ) {
-				$last_color = $last_color == 'yellow' ? 'magenta' : 'yellow';
+				$last_color = $last_color === 'yellow' ? 'magenta' : 'yellow';
 			}
 
 			$row = array(
@@ -345,10 +345,10 @@ class RevisionPrinter
 		foreach ( $revision_paths as $path_data ) {
 			$path_action = $path_data['action'];
 
-			if ( $path_action == 'A' ) {
+			if ( $path_action === 'A' ) {
 				$summary['added']++;
 			}
-			elseif ( $path_action == 'D' ) {
+			elseif ( $path_action === 'D' ) {
 				$summary['removed']++;
 			}
 			else {
@@ -450,10 +450,10 @@ class RevisionPrinter
 
 			$details .= PHP_EOL . ' * ';
 
-			if ( $path_action == 'A' ) {
+			if ( $path_action === 'A' ) {
 				$color_format = 'fg=green';
 			}
-			elseif ( $path_action == 'D' ) {
+			elseif ( $path_action === 'D' ) {
 				$color_format = 'fg=red';
 			}
 			else {

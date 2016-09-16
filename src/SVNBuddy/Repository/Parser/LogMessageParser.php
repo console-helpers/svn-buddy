@@ -70,11 +70,11 @@ class LogMessageParser
 	{
 		$bugtraq_logregex = array_filter(explode(PHP_EOL, $bugtraq_logregex));
 
-		if ( count($bugtraq_logregex) == 2 ) {
+		if ( count($bugtraq_logregex) === 2 ) {
 			$this->_preFilterRegExp = '/' . $bugtraq_logregex[0] . '/s';
 			$this->_filterRegExp = '/' . $bugtraq_logregex[1] . '/s';
 		}
-		elseif ( count($bugtraq_logregex) == 1 ) {
+		elseif ( count($bugtraq_logregex) === 1 ) {
 			$this->_preFilterRegExp = '';
 			$this->_filterRegExp = '/' . $bugtraq_logregex[0] . '/s';
 		}

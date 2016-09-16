@@ -152,7 +152,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			return array('all');
 		}
 
-		if ( $optionName == 'source-url' ) {
+		if ( $optionName === 'source-url' ) {
 			return $this->getAllRefs();
 		}
 
@@ -417,7 +417,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		foreach ( $merge_info as $merge_info_line ) {
 			list($path, $revisions) = explode(':', $merge_info_line, 2);
 
-			if ( $path == $source_path ) {
+			if ( $path === $source_path ) {
 				return $this->_revisionListParser->expandRanges(explode(',', $revisions));
 			}
 		}
