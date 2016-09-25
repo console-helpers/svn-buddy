@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- Invalid merge source url was guessed for `X.0.Z` branches (e.g. `5.0.x`).
 
 ## [0.3.0] - 2016-09-08
 ### Added

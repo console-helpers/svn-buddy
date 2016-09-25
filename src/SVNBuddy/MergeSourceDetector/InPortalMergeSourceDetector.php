@@ -24,7 +24,7 @@ class InPortalMergeSourceDetector extends AbstractMergeSourceDetector
 	public function detect($repository_url)
 	{
 		// Merging bug fixes branch (e.g. "5.2.x") into feature branch (e.g. "5.3.x") of In-Portal.
-		if ( preg_match('#^(.*/branches/[\d]+\.)([\d]+)\.x(/|$)#', $repository_url, $regs) ) {
+		if ( preg_match('#^(.*/branches/[\d]+\.)([\d]+)\.x(/|$)#', $repository_url, $regs) && $regs[2] > 0 ) {
 			return $regs[1] . ($regs[2] - 1) . '.x';
 		}
 

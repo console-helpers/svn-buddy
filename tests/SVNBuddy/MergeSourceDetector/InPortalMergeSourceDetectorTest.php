@@ -30,7 +30,9 @@ class InPortalMergeSourceDetectorTest extends AbstractMergeSourceDetectorTestCas
 			'version branch root folder' => array('svn://localhost/branches/1.1.1', null),
 			'version branch sub-folder' => array('svn://localhost/branches/1.1.1/folder', null),
 			'x-version branch root folder' => array('svn://localhost/branches/1.1.x', 'svn://localhost/branches/1.0.x'),
+			'first x-version branch root folder' => array('svn://localhost/branches/1.0.x', null),
 			'x-version branch sub-folder' => array('svn://localhost/branches/1.1.x/folder', 'svn://localhost/branches/1.0.x'),
+			'first x-version branch sub-folder' => array('svn://localhost/branches/1.0.x/folder', null),
 
 			'tags root folder' => array('svn://localhost/tags', null),
 			'tag root folder' => array('svn://localhost/tags/tag_name', null),
@@ -38,7 +40,9 @@ class InPortalMergeSourceDetectorTest extends AbstractMergeSourceDetectorTestCas
 			'version tag root folder' => array('svn://localhost/tags/1.1.1', null),
 			'version tag sub-folder' => array('svn://localhost/tags/1.1.1/folder', null),
 			'x-version tag root folder' => array('svn://localhost/tags/1.1.x', null),
+			'first x-version tag root folder' => array('svn://localhost/tags/1.0.x', null),
 			'x-version tag sub-folder' => array('svn://localhost/tags/1.1.x/folder', null),
+			'first x-version tag sub-folder' => array('svn://localhost/tags/1.0.x/folder', null),
 		);
 	}
 
