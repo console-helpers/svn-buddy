@@ -160,7 +160,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 		}
 
 		$ignored = $this->getIgnored();
-		$ignore_add = realpath($this->getPath() . '/' . $raw_ignore_add);
+		$ignore_add = realpath($this->getRawPath() . '/' . $raw_ignore_add);
 
 		if ( $ignore_add === false ) {
 			throw new CommandException('The "' . $raw_ignore_add . '" path does not exist.');
@@ -191,7 +191,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 		}
 
 		$ignored = $this->getIgnored();
-		$ignore_remove = realpath($this->getPath() . '/' . $raw_ignore_remove);
+		$ignore_remove = realpath($this->getRawPath() . '/' . $raw_ignore_remove);
 
 		if ( $ignore_remove === false ) {
 			throw new CommandException('The "' . $raw_ignore_remove . '" path does not exist.');
@@ -257,7 +257,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 	 */
 	protected function runSubCommand($sub_command)
 	{
-		$path = $this->getPath();
+		$path = realpath($this->getRawPath());
 
 		if ( $this->repositoryConnector->isWorkingCopy($path) ) {
 			throw new \RuntimeException('The "' . $path . '" must not be a working copy.');

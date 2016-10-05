@@ -17,6 +17,7 @@ use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,6 +27,13 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class AbstractCommand extends BaseCommand
 {
+
+	/**
+	 * Raw path.
+	 *
+	 * @var string
+	 */
+	private $_rawPath;
 
 	/**
 	 * Whatever "path" argument accepts repository urls.
@@ -49,25 +57,11 @@ abstract class AbstractCommand extends BaseCommand
 	protected $workingDirectory = null;
 
 	/**
-	 * Working copy paths.
+	 * Working copy resolver.
 	 *
-	 * @var array
+	 * @var WorkingCopyResolver
 	 */
-	private $_workingCopyPaths = array();
-
-	/**
-	 * Mapping between working copy paths and their urls.
-	 *
-	 * @var array
-	 */
-	private $_workingCopyUrlMapping = array();
-
-	/**
-	 * Mapping between path to working copy specified by user to one, that is actually used.
-	 *
-	 * @var array
-	 */
-	private $_resolvedPathMapping = array();
+	private $_workingCopyResolver = null;
 
 	/**
 	 * Revision log factory.
@@ -85,12 +79,19 @@ abstract class AbstractCommand extends BaseCommand
 
 	/**
 	 * {@inheritdoc}
+	 *
+	 * @throws \RuntimeException When url was given instead of path.
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
+		$this->_rawPath = null;
 		$output->getFormatter()->setStyle('debug', new OutputFormatterStyle('white', 'magenta'));
 
 		parent::initialize($input, $output);
+
+		if ( !$this->pathAcceptsUrl && $this->repositoryConnector->isUrl($this->getRawPath()) ) {
+			throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
+		}
 	}
 
 	/**
@@ -104,6 +105,7 @@ abstract class AbstractCommand extends BaseCommand
 
 		$container = $this->getContainer();
 
+		$this->_workingCopyResolver = $container['working_copy_resolver'];
 		$this->repositoryConnector = $container['repository_connector'];
 		$this->_revisionLogFactory = $container['revision_log_factory'];
 		$this->workingDirectory = $container['working_directory'];
@@ -225,36 +227,17 @@ abstract class AbstractCommand extends BaseCommand
 	 */
 	protected function getWorkingCopyUrl()
 	{
-		$wc_path = $this->getWorkingCopyPath();
-
-		if ( !isset($this->_workingCopyUrlMapping[$wc_path]) ) {
-			$this->_workingCopyUrlMapping[$wc_path] = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
-		}
-
-		return $this->_workingCopyUrlMapping[$wc_path];
+		return $this->_workingCopyResolver->getWorkingCopyUrl($this->getRawPath());
 	}
 
 	/**
 	 * Return working copy path.
 	 *
 	 * @return string
-	 * @throws \RuntimeException When folder isn't a working copy.
 	 */
 	protected function getWorkingCopyPath()
 	{
-		$path = $this->getPath();
-
-		if ( !in_array($path, $this->_workingCopyPaths) ) {
-			if ( !$this->repositoryConnector->isUrl($path)
-				&& !$this->repositoryConnector->isWorkingCopy($path)
-			) {
-				throw new \RuntimeException('The "' . $path . '" isn\'t a working copy.');
-			}
-
-			$this->_workingCopyPaths[] = $path;
-		}
-
-		return $path;
+		return $this->_workingCopyResolver->getWorkingCopyPath($this->getRawPath());
 	}
 
 	/**
@@ -271,39 +254,23 @@ abstract class AbstractCommand extends BaseCommand
 	}
 
 	/**
-	 * Return working copy path.
+	 * Returns working copy path as used specified it.
 	 *
 	 * @return string
-	 * @throws \RuntimeException When url was given instead of path.
 	 */
-	protected function getPath()
+	protected function getRawPath()
 	{
-		// During auto-complete the IO isn't set.
-		if ( !isset($this->io) ) {
-			$path = '.';
-		}
-		else {
-			$path = $this->io->getArgument('path');
-		}
-
-		if ( !isset($this->_resolvedPathMapping[$path]) ) {
-			if ( !$this->repositoryConnector->isUrl($path) ) {
-				if ( !file_exists($path) && file_exists(dirname($path)) ) {
-					$path = dirname($path);
-				}
-
-				$this->_resolvedPathMapping[$path] = realpath($path);
+		if ( !isset($this->_rawPath) ) {
+			// FIXME: During auto-complete working copy at CWD is used regardless of given path.
+			if ( !isset($this->io) ) {
+				$this->_rawPath = '.';
 			}
 			else {
-				if ( !$this->pathAcceptsUrl ) {
-					throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
-				}
-
-				$this->_resolvedPathMapping[$path] = $this->repositoryConnector->removeCredentials($path);
+				$this->_rawPath = $this->io->getArgument('path');
 			}
 		}
 
-		return $this->_resolvedPathMapping[$path];
+		return $this->_rawPath;
 	}
 
 }
