@@ -746,7 +746,7 @@ class Connector
 	 *
 	 * @param string $wc_path Working copy path.
 	 *
-	 * @return array
+	 * @return boolean
 	 */
 	public function isMixedRevisionWorkingCopy($wc_path)
 	{
