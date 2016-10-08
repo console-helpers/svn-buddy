@@ -94,14 +94,4 @@ class Application extends BaseApplication
 		return $default_commands;
 	}
 
-	/**
-	 * Detects, when we're inside PHAR file.
-	 *
-	 * @return boolean
-	 */
-	protected function isPharFile()
-	{
-		return strpos(__DIR__, 'phar://') === 0;
-	}
-
 }
