@@ -89,8 +89,11 @@ abstract class AbstractCommand extends BaseCommand
 
 		parent::initialize($input, $output);
 
-		if ( !$this->pathAcceptsUrl && $this->repositoryConnector->isUrl($this->getRawPath()) ) {
-			throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
+		// Only apply check for commands, that accept working copy path.
+		if ( $input->hasArgument('path') ) {
+			if ( !$this->pathAcceptsUrl && $this->repositoryConnector->isUrl($this->getRawPath()) ) {
+				throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
+			}
 		}
 	}
 
