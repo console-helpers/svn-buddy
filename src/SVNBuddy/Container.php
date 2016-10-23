@@ -15,6 +15,7 @@ use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\DatabaseMigration\PhpMigrationRunner;
 use ConsoleHelpers\DatabaseMigration\SqlMigrationRunner;
+use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
 use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
@@ -162,6 +163,10 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['working_copy_resolver'] = function ($c) {
 			return new WorkingCopyResolver($c['repository_connector']);
+		};
+
+		$this['command_config'] = function ($c) {
+			return new CommandConfig($c['config_editor'], $c['working_copy_resolver']);
 		};
 
 		$this['date_helper'] = function () {
