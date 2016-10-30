@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `conflicts` command for manually managing list of recorded conflicts in a working copy.
 
 ### Changed
-...
+- The `update` command now also tracks conflicts resulted from problematic update.
 
 ### Fixed
 - Invalid merge source url was guessed for `X.0.Z` branches (e.g. `5.0.x`).

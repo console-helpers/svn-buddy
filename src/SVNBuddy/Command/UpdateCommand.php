@@ -11,12 +11,34 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 {
+
+	/**
+	 * Working copy conflict tracker.
+	 *
+	 * @var WorkingCopyConflictTracker
+	 */
+	private $_workingCopyConflictTracker;
+
+	/**
+	 * Prepare dependencies.
+	 *
+	 * @return void
+	 */
+	protected function prepareDependencies()
+	{
+		parent::prepareDependencies();
+
+		$container = $this->getContainer();
+
+		$this->_workingCopyConflictTracker = $container['working_copy_conflict_tracker'];
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -49,6 +71,11 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 		$command->runLive(array(
 			$wc_path => '.',
 		));
+
+		if ( $this->_workingCopyConflictTracker->getNewConflicts($wc_path) ) {
+			$this->_workingCopyConflictTracker->add($wc_path);
+		}
+
 		$this->io->writeln('<info>Done</info>');
 	}
 
