@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- Added `conflicts` command for manually managing list of recorded conflicts in a working copy.
 
 ### Changed
 ...

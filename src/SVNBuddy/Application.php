@@ -18,6 +18,7 @@ use ConsoleHelpers\SVNBuddy\Command\CleanupCommand;
 use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
 use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
 use ConsoleHelpers\SVNBuddy\Command\ConfigCommand;
+use ConsoleHelpers\SVNBuddy\Command\ConflictsCommand;
 use ConsoleHelpers\SVNBuddy\Command\Dev\MigrationCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\Dev\PharCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
@@ -81,6 +82,7 @@ class Application extends BaseApplication
 		$default_commands[] = new LogCommand();
 		$default_commands[] = new UpdateCommand();
 		$default_commands[] = new CommitCommand();
+		$default_commands[] = new ConflictsCommand();
 		$default_commands[] = new AggregateCommand();
 		$default_commands[] = new CompletionCommand();
 		$default_commands[] = new ConfigCommand();

@@ -20,6 +20,7 @@ use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -67,6 +68,13 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	private $_urlResolver;
 
 	/**
+	 * Working copy conflict tracker.
+	 *
+	 * @var WorkingCopyConflictTracker
+	 */
+	private $_workingCopyConflictTracker;
+
+	/**
 	 * Prepare dependencies.
 	 *
 	 * @return void
@@ -80,6 +88,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		$this->_mergeSourceDetector = $container['merge_source_detector'];
 		$this->_revisionListParser = $container['revision_list_parser'];
 		$this->_urlResolver = $container['repository_url_resolver'];
+		$this->_workingCopyConflictTracker = $container['working_copy_conflict_tracker'];
 	}
 
 	/**
@@ -495,7 +504,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	{
 		$this->io->write(' * Previous Merge Status ... ');
 
-		$conflicts = $this->repositoryConnector->getWorkingCopyConflicts($wc_path);
+		$conflicts = $this->_workingCopyConflictTracker->getNewConflicts($wc_path);
 
 		if ( !$conflicts ) {
 			$this->io->writeln('<info>Successful</info>');
@@ -503,7 +512,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			return;
 		}
 
-		$this->rememberConflicts($conflicts);
+		$this->_workingCopyConflictTracker->add($wc_path);
 		$this->io->writeln('<error>' . count($conflicts) . ' conflict(-s)</error>');
 
 		$table = new Table($this->io->getOutput());
@@ -544,21 +553,6 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		$table->render();
 
 		throw new CommandException('Working copy contains unresolved merge conflicts.');
-	}
-
-	/**
-	 * Adds new conflicts to already remembered ones.
-	 *
-	 * @param array $conflicts Conflicts.
-	 *
-	 * @return void
-	 */
-	protected function rememberConflicts(array $conflicts)
-	{
-		$previous_conflicts = $this->getSetting(self::SETTING_MERGE_RECENT_CONFLICTS);
-		$new_conflicts = array_unique(array_merge($previous_conflicts, $conflicts));
-
-		$this->setSetting(self::SETTING_MERGE_RECENT_CONFLICTS, $new_conflicts);
 	}
 
 	/**

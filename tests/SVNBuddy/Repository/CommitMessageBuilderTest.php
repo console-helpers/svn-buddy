@@ -33,6 +33,13 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 	protected $revisionLogFactory;
 
 	/**
+	 * Working copy conflict tracker
+	 *
+	 * @var ObjectProphecy
+	 */
+	protected $workingCopyConflictTracker;
+
+	/**
 	 * Commit message builder.
 	 *
 	 * @var CommitMessageBuilder
@@ -52,10 +59,15 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory'
 		);
 
+		$this->workingCopyConflictTracker = $this->prophesize(
+			'ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker'
+		);
+
 		$this->commitMessageBuilder = new CommitMessageBuilder(
 			$this->connector->reveal(),
 			$revision_list_parser->reveal(),
-			$this->revisionLogFactory->reveal()
+			$this->revisionLogFactory->reveal(),
+			$this->workingCopyConflictTracker->reveal()
 		);
 	}
 
@@ -64,6 +76,7 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
 		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', 'BASE')->willReturn($merge_info);
 		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', null)->willReturn($merge_info);
+		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array());
 
 		$this->assertEmpty($this->commitMessageBuilder->build('/path/to/working-copy'));
 	}
@@ -73,6 +86,7 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
 		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', 'BASE')->willReturn($merge_info);
 		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', null)->willReturn($merge_info);
+		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array());
 
 		$this->assertEquals('cl name', $this->commitMessageBuilder->build('/path/to/working-copy', 'cl name'));
 	}
@@ -101,6 +115,10 @@ COMMIT_MSG;
 		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
 		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', 'BASE')->willReturn($merge_info);
 		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', null)->willReturn($merge_info);
+		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array(
+			'sub-folder/file1.txt',
+			'file2.ext',
+		));
 
 		$expected = <<<COMMIT_MSG
 
@@ -111,20 +129,18 @@ COMMIT_MSG;
 
 		$this->assertEquals(
 			$expected,
-			$this->commitMessageBuilder->build(
-				'/path/to/working-copy',
-				null,
-				array(
-					'sub-folder/file1.txt',
-					'file2.ext',
-				)
-			)
+			$this->commitMessageBuilder->build('/path/to/working-copy')
 		);
 	}
 
 	public function testBuildEverythingPresent()
 	{
 		$this->prepareMergeResult();
+
+		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array(
+			'sub-folder/file1.txt',
+			'file2.ext',
+		));
 
 		$expected = <<<COMMIT_MSG
 cl one
@@ -145,14 +161,7 @@ COMMIT_MSG;
 
 		$this->assertEquals(
 			$expected,
-			$this->commitMessageBuilder->build(
-				'/path/to/working-copy',
-				'cl one',
-				array(
-					'sub-folder/file1.txt',
-					'file2.ext',
-				)
-			)
+			$this->commitMessageBuilder->build('/path/to/working-copy', 'cl one')
 		);
 	}
 

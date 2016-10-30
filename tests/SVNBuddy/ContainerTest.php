@@ -47,6 +47,7 @@ class ContainerTest extends BaseContainerTest
 			'repository_connector' => array('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector', 'repository_connector'),
 			'commit_message_builder' => array('ConsoleHelpers\\SVNBuddy\\Repository\\CommitMessageBuilder', 'commit_message_builder'),
 			'working_copy_resolver' => array('ConsoleHelpers\\SVNBuddy\\Repository\\WorkingCopyResolver', 'working_copy_resolver'),
+			'working_copy_conflict_tracker' => array('ConsoleHelpers\\SVNBuddy\\Repository\\WorkingCopyConflictTracker', 'working_copy_conflict_tracker'),
 			'command_config' => array('ConsoleHelpers\\SVNBuddy\\Config\\CommandConfig', 'command_config'),
 			'date_helper' => array('ConsoleHelpers\\SVNBuddy\\Helper\\DateHelper', 'date_helper'),
 			'size_helper' => array('ConsoleHelpers\SVNBuddy\Helper\SizeHelper', 'size_helper'),

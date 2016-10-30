@@ -14,6 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessageBuilder;
+use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -37,6 +38,13 @@ class CommitCommand extends AbstractCommand
 	 * @var CommitMessageBuilder
 	 */
 	private $_commitMessageBuilder;
+
+	/**
+	 * Working copy conflict tracker.
+	 *
+	 * @var WorkingCopyConflictTracker
+	 */
+	private $_workingCopyConflictTracker;
 
 	/**
 	 * {@inheritdoc}
@@ -78,6 +86,7 @@ class CommitCommand extends AbstractCommand
 
 		$this->_editor = $container['editor'];
 		$this->_commitMessageBuilder = $container['commit_message_builder'];
+		$this->_workingCopyConflictTracker = $container['working_copy_conflict_tracker'];
 	}
 
 	/**
@@ -90,7 +99,7 @@ class CommitCommand extends AbstractCommand
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$wc_path = $this->getWorkingCopyPath();
-		$conflicts = $this->repositoryConnector->getWorkingCopyConflicts($wc_path);
+		$conflicts = $this->_workingCopyConflictTracker->getNewConflicts($wc_path);
 
 		if ( $conflicts ) {
 			throw new CommandException('Conflicts detected. Please resolve them before committing.');
@@ -103,11 +112,7 @@ class CommitCommand extends AbstractCommand
 			throw new CommandException('Nothing to commit.');
 		}
 
-		$commit_message = $this->_commitMessageBuilder->build(
-			$wc_path,
-			$changelist,
-			$this->getSetting(MergeCommand::SETTING_MERGE_RECENT_CONFLICTS, 'merge')
-		);
+		$commit_message = $this->_commitMessageBuilder->build($wc_path, $changelist);
 		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $compact_working_copy_status;
 
 		$edited_commit_message = $this->_editor
@@ -147,7 +152,7 @@ class CommitCommand extends AbstractCommand
 		}
 
 		$this->repositoryConnector->getCommand('commit', implode(' ', $arguments))->runLive();
-		$this->setSetting(MergeCommand::SETTING_MERGE_RECENT_CONFLICTS, null, 'merge');
+		$this->_workingCopyConflictTracker->erase($wc_path);
 		unlink($tmp_file);
 
 		$this->io->writeln('<info>Done</info>');

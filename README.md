@@ -295,7 +295,6 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 #### Configuration settings
 
 * `merge.source-url` - the default url to merge changes from
-* `merge.recent-conflicts` - list of conflicted paths (maintained automatically)
 * `merge.auto-commit` - whatever to automatically perform a commit on successful merge (used, when `--auto-commit` option not specified)
 
 #### Examples
@@ -342,7 +341,7 @@ The specified revisions to be merged are automatically sorted chronologically.
 Only 2 outcomes from above command execution are possible:
 
 * the merge was successful - nothing extra, except `svn merge` command output is displayed
-* the conflict happened during the merge or conflicting path existed prior the merge - the above shown error screen is displayed and conflicted paths are stored in `merge.recent-conflicts` configuration setting
+* the conflict happened during the merge or conflicting path existed prior the merge - the above shown error screen is displayed and conflicted paths are stored in `conflicts.recorded-conflicts` configuration setting
 
 The error screen shows:
 
@@ -503,6 +502,66 @@ Bring changes from the repository into the working copy.
 ```
 svn-buddy.phar update
 ```
+
+### The "conflicts" (alias "cf") command
+
+Manages recorded conflicts in a working copy.
+
+#### Arguments
+
+* `path` - Working copy path [default: "`.`"]
+
+#### Options
+
+* `-m`, `--mode=MODE` - Operation mode, e.g. `show`, `add`, `replace`, `erase` [default: "`show`"]
+
+#### Configuration settings
+
+* `conflicts.recorded-conflicts` - list of conflicted paths (maintained automatically)
+
+#### Examples
+
+```
+svn-buddy.phar conflicts
+```
+
+Shows list of recorded conflicts like this:
+
+```
+Conflicts:
+ * conflicted/path/one
+ * conflicted/path/tow
+```
+
+```
+svn-buddy.phar conflicts --mode show
+```
+
+Shows list of recorded conflicts like this:
+
+```
+Conflicts:
+ * conflicted/path/one
+ * conflicted/path/tow
+```
+
+```
+svn-buddy.phar conflicts --mode add
+```
+
+Adds current conflicted paths (e.g. after merge or update) to the list of recorded paths.
+
+```
+svn-buddy.phar conflicts --mode replace
+```
+
+Replaced list of recorded paths with current conflicted paths (e.g. after merge or update).
+
+```
+svn-buddy.phar conflicts --mode erase
+```
+
+Forgets all recorded conflicted paths.
 
 ### The "aggregate" command
 

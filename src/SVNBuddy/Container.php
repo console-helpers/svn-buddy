@@ -32,6 +32,7 @@ use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter;
+use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -157,12 +158,17 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			return new CommitMessageBuilder(
 				$c['repository_connector'],
 				$c['revision_list_parser'],
-				$c['revision_log_factory']
+				$c['revision_log_factory'],
+				$c['working_copy_conflict_tracker']
 			);
 		};
 
 		$this['working_copy_resolver'] = function ($c) {
 			return new WorkingCopyResolver($c['repository_connector']);
+		};
+
+		$this['working_copy_conflict_tracker'] = function ($c) {
+			return new WorkingCopyConflictTracker($c['repository_connector'], $c['command_config']);
 		};
 
 		$this['command_config'] = function ($c) {

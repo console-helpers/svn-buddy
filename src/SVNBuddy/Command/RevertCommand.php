@@ -13,12 +13,34 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class RevertCommand extends AbstractCommand implements IAggregatorAwareCommand
 {
+
+	/**
+	 * Working copy conflict tracker.
+	 *
+	 * @var WorkingCopyConflictTracker
+	 */
+	private $_workingCopyConflictTracker;
+
+	/**
+	 * Prepare dependencies.
+	 *
+	 * @return void
+	 */
+	protected function prepareDependencies()
+	{
+		parent::prepareDependencies();
+
+		$container = $this->getContainer();
+
+		$this->_workingCopyConflictTracker = $container['working_copy_conflict_tracker'];
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -59,7 +81,7 @@ class RevertCommand extends AbstractCommand implements IAggregatorAwareCommand
 
 		$this->deletePaths($added_paths);
 
-		$this->setSetting(MergeCommand::SETTING_MERGE_RECENT_CONFLICTS, null, 'merge');
+		$this->_workingCopyConflictTracker->erase($wc_path);
 		$this->io->writeln('<info>Done</info>');
 	}
 
