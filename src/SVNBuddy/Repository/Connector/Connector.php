@@ -792,6 +792,9 @@ class Connector
 			}
 		}
 
+		// The "-1" revision happens, when external is deleted.
+		unset($revisions[-1]);
+
 		return count($revisions) > 1;
 	}
 

@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Invalid merge source url was guessed for `X.0.Z` branches (e.g. `5.0.x`).
 - The `aggregate` command was ignoring command aliases (e.g. `up` for `update` command).
 - Externals in a working copy caused `Mixed revisions` error before merge resulting in immediate update.
+- Locally deleted files in a working copy caused `Mixed revisions` error before merge resulting in immediate update.
 
 ## [0.3.0] - 2016-09-08
 ### Added
