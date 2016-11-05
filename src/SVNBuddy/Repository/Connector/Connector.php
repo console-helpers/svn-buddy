@@ -31,6 +31,8 @@ class Connector
 
 	const STATUS_UNVERSIONED = 'unversioned';
 
+	const STATUS_EXTERNAL = 'external';
+
 	const STATUS_NONE = 'none';
 
 	const URL_REGEXP = '#([\w]*)://([^/@\s\']+@)?([^/@:\s\']+)(:\d+)?([^@\s\']*)?#';
@@ -761,7 +763,7 @@ class Connector
 			foreach ( $target as $entry ) {
 				$item_status = (string)$entry->{'wc-status'}['item'];
 
-				if ( $item_status !== self::STATUS_UNVERSIONED ) {
+				if ( $item_status !== self::STATUS_UNVERSIONED && $item_status !== self::STATUS_EXTERNAL ) {
 					$revision = (int)$entry->{'wc-status'}['revision'];
 					$revisions[$revision] = true;
 				}
