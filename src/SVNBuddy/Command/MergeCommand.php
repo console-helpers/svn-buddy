@@ -259,6 +259,13 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	{
 		$this->io->write(' * Working Copy Status ... ');
 
+		if ( $this->repositoryConnector->getWorkingCopyMissing($wc_path) ) {
+			$this->updateWorkingCopy($wc_path);
+			$this->io->writeln('<error>Locally deleted files found</error>');
+
+			return;
+		}
+
 		if ( $this->repositoryConnector->isMixedRevisionWorkingCopy($wc_path) ) {
 			$this->io->writeln('<error>Mixed revisions</error>');
 			$this->updateWorkingCopy($wc_path);
