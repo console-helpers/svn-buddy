@@ -33,6 +33,8 @@ class Connector
 
 	const STATUS_EXTERNAL = 'external';
 
+	const STATUS_MISSING = 'missing';
+
 	const STATUS_NONE = 'none';
 
 	const URL_REGEXP = '#([\w]*)://([^/@\s\']+@)?([^/@:\s\']+)(:\d+)?([^@\s\']*)?#';
@@ -491,6 +493,26 @@ class Connector
 
 		foreach ( $this->getWorkingCopyStatus($wc_path) as $path => $status ) {
 			if ( $this->isWorkingCopyPathStatus($status, self::STATUS_CONFLICTED) ) {
+				$ret[] = $path;
+			}
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Returns missing paths in working copy.
+	 *
+	 * @param string $wc_path Working copy path.
+	 *
+	 * @return array
+	 */
+	public function getWorkingCopyMissing($wc_path)
+	{
+		$ret = array();
+
+		foreach ( $this->getWorkingCopyStatus($wc_path) as $path => $status ) {
+			if ( $this->isWorkingCopyPathStatus($status, self::STATUS_MISSING) ) {
 				$ret[] = $path;
 			}
 		}

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<status>
+   <target path=".">
+      <entry path="xx.xml">
+         <wc-status item="unversioned" props="none"/>
+      </entry>
+      <entry path="themes">
+         <wc-status item="missing" props="none" revision="-1"/>
+      </entry>
+      <entry path="admin/README">
+         <wc-status item="missing" props="normal" revision="16388">
+            <commit revision="16195">
+               <author>alex</author>
+               <date>2015-05-19T15:58:57.687858Z</date>
+            </commit>
+         </wc-status>
+      </entry>
+   </target>
+</status>

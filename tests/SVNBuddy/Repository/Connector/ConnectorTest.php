@@ -594,6 +594,30 @@ MESSAGE;
 		);
 	}
 
+	/**
+	 * @dataProvider getWorkingCopyMissingDataProvider
+	 */
+	public function testGetWorkingCopyMissing($fixture, $expected)
+	{
+		$this->_expectCommand(
+			"svn --non-interactive status --xml '/path/to/working-copy'",
+			$this->getFixture($fixture)
+		);
+
+		$this->assertEquals(
+			$expected,
+			$this->_repositoryConnector->getWorkingCopyMissing('/path/to/working-copy')
+		);
+	}
+
+	public function getWorkingCopyMissingDataProvider()
+	{
+		return array(
+			'with conflicts' => array('svn_status_with_missing_16.xml', array('themes', 'admin/README')),
+			'without conflicts' => array('svn_info_16.xml', array()),
+		);
+	}
+
 	public function testGetWorkingCopyStatusWithoutChangelist()
 	{
 		$this->_expectCommand(
