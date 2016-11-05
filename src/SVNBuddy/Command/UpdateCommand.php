@@ -14,6 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
@@ -54,6 +55,12 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 				InputArgument::OPTIONAL,
 				'Working copy path',
 				'.'
+			)
+			->addOption(
+				'ignore-externals',
+				null,
+				InputOption::VALUE_NONE,
+				'Ignore externals definitions'
 			);
 
 		parent::configure();
@@ -67,7 +74,14 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 		$wc_path = $this->getWorkingCopyPath();
 
 		$this->io->writeln('Updating working copy ... ');
-		$command = $this->repositoryConnector->getCommand('update', '{' . $wc_path . '}');
+
+		$param_string = '{' . $wc_path . '}';
+
+		if ( $this->io->getOption('ignore-externals') ) {
+			$param_string .= ' --ignore-externals';
+		}
+
+		$command = $this->repositoryConnector->getCommand('update', $param_string);
 		$command->runLive(array(
 			$wc_path => '.',
 		));

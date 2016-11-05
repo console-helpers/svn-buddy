@@ -497,11 +497,23 @@ Bring changes from the repository into the working copy.
 
 * `path` - Working copy path [default: "`.`"]
 
+#### Options
+
+* `--ignore-externals` - Ignore externals definitions
+
 #### Examples
 
 ```
 svn-buddy.phar update
 ```
+
+Updates a working copy.
+
+```
+svn-buddy.phar update --ignore-externals
+```
+
+Updates a working copy, but doesn't checkout externals.
 
 ### The "conflicts" (alias "cf") command
 
