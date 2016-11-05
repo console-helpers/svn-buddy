@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - The `update` command now also tracks conflicts resulted from problematic update.
 - The list of options for `aggregate` command is now built dynamically based on options of aggregated commands.
+- The `merge` command now specially ignores externals, when doing working copy update before merging.
 
 ### Fixed
 - Invalid merge source url was guessed for `X.0.Z` branches (e.g. `5.0.x`).

@@ -290,7 +290,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 */
 	protected function updateWorkingCopy($wc_path)
 	{
-		$this->runOtherCommand('update', array('path' => $wc_path));
+		$this->runOtherCommand(
+			'update',
+			array('path' => $wc_path, '--ignore-externals' => true)
+		);
 	}
 
 	/**
