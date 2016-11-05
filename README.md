@@ -290,6 +290,7 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `-b`, `--bugs=BUGS` - List of bug(-s) to merge, e.g. `JRA-1234`, `43644`
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
+* `--update-revision=UPDATE-REVISION` - Update working copy to given revision before performing a merge
 * `--auto-commit=AUTO-COMMIT` - Automatically perform commit on successful merge, e.g. `yes` or `no`
 
 #### Configuration settings
@@ -396,6 +397,12 @@ svn-buddy.phar merge --with-summary
 ```
 
 Thanks to `log` command being used behind the scenes to display non-merged revisions it's possible to forward `--with-summary` option to it to see totals for paths affected by each non-merged revision.
+
+```
+svn-buddy.phar merge --update-revision 55
+```
+
+Will update working copy to the 55th revision before starting merge. Can be used to replay older merges for analytical purposes.
 
 ### The "commit" (alias "ci") command
 

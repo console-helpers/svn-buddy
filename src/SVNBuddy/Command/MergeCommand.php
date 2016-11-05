@@ -136,6 +136,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'Shows number of added/changed/removed paths in the revision'
 			)
 			->addOption(
+				'update-revision',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Update working copy to given revision before performing a merge'
+			)
+			->addOption(
 				'auto-commit',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -258,29 +264,27 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	protected function ensureLatestWorkingCopy($wc_path)
 	{
 		$this->io->write(' * Working Copy Status ... ');
+		$update_revision = $this->io->getOption('update-revision');
 
 		if ( $this->repositoryConnector->getWorkingCopyMissing($wc_path) ) {
-			$this->updateWorkingCopy($wc_path);
 			$this->io->writeln('<error>Locally deleted files found</error>');
+			$this->updateWorkingCopy($wc_path, $update_revision);
 
 			return;
 		}
 
 		if ( $this->repositoryConnector->isMixedRevisionWorkingCopy($wc_path) ) {
 			$this->io->writeln('<error>Mixed revisions</error>');
-			$this->updateWorkingCopy($wc_path);
+			$this->updateWorkingCopy($wc_path, $update_revision);
 
 			return;
 		}
 
-		$working_copy_revision = $this->repositoryConnector->getLastRevision($wc_path);
-		$repository_revision = $this->repositoryConnector->getLastRevision(
-			$this->repositoryConnector->getWorkingCopyUrl($wc_path)
-		);
+		$update_revision = $this->getWorkingCopyUpdateRevision($wc_path);
 
-		if ( $repository_revision > $working_copy_revision ) {
-			$this->io->writeln('<error>Out of date</error>');
-			$this->updateWorkingCopy($wc_path);
+		if ( isset($update_revision) ) {
+			$this->io->writeln('<error>Not at ' . $update_revision . ' revision</error>');
+			$this->updateWorkingCopy($wc_path, $update_revision);
 
 			return;
 		}
@@ -289,18 +293,49 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	}
 
 	/**
-	 * Updates working copy.
+	 * Returns revision, that working copy needs to be updated to.
 	 *
 	 * @param string $wc_path Working copy path.
 	 *
+	 * @return integer|null
+	 */
+	protected function getWorkingCopyUpdateRevision($wc_path)
+	{
+		$update_revision = $this->io->getOption('update-revision');
+		$actual_revision = $this->repositoryConnector->getLastRevision($wc_path);
+
+		if ( isset($update_revision) ) {
+			if ( is_numeric($update_revision) ) {
+				return (int)$update_revision === (int)$actual_revision ? null : $update_revision;
+			}
+
+			return $update_revision;
+		}
+
+		$repository_revision = $this->repositoryConnector->getLastRevision(
+			$this->repositoryConnector->getWorkingCopyUrl($wc_path)
+		);
+
+		return $repository_revision > $actual_revision ? $repository_revision : null;
+	}
+
+	/**
+	 * Updates working copy.
+	 *
+	 * @param string     $wc_path  Working copy path.
+	 * @param mixed|null $revision Revision.
+	 *
 	 * @return void
 	 */
-	protected function updateWorkingCopy($wc_path)
+	protected function updateWorkingCopy($wc_path, $revision = null)
 	{
-		$this->runOtherCommand(
-			'update',
-			array('path' => $wc_path, '--ignore-externals' => true)
-		);
+		$arguments = array('path' => $wc_path, '--ignore-externals' => true);
+
+		if ( isset($revision) ) {
+			$arguments['--revision'] = $revision;
+		}
+
+		$this->runOtherCommand('update', $arguments);
 	}
 
 	/**
