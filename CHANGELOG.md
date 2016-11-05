@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added `conflicts` command for manually managing list of recorded conflicts in a working copy.
 - Added `--ignore-externals` option to `update` command to allow updating working copy without checking out externals.
+- Added `--revision` option to `update` command to allow updating working copy to a specific revision.
 
 ### Changed
 - The `update` command now also tracks conflicts resulted from problematic update.

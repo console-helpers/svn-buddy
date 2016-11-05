@@ -499,6 +499,7 @@ Bring changes from the repository into the working copy.
 
 #### Options
 
+* `-r`, `--revision=REVISION` - Update working copy to specified revision, e.g. `NUMBER`, `{DATE}`, `HEAD`, `BASE`, `COMMITTED`, `PREV`
 * `--ignore-externals` - Ignore externals definitions
 
 #### Examples
@@ -508,6 +509,13 @@ svn-buddy.phar update
 ```
 
 Updates a working copy.
+
+```
+svn-buddy.phar update --revision 55
+```
+
+Updates a working copy to 55th revision.
+
 
 ```
 svn-buddy.phar update --ignore-externals

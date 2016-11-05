@@ -57,6 +57,12 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 				'.'
 			)
 			->addOption(
+				'revision',
+				'r',
+				InputOption::VALUE_REQUIRED,
+				'Update working copy to specified revision, e.g. <comment>NUMBER</comment>, <comment>{DATE}</comment>, <comment>HEAD</comment>, <comment>BASE</comment>, <comment>COMMITTED</comment>, <comment>PREV</comment>'
+			)
+			->addOption(
 				'ignore-externals',
 				null,
 				InputOption::VALUE_NONE,
@@ -72,12 +78,22 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
 		$wc_path = $this->getWorkingCopyPath();
+		$revision = $this->io->getOption('revision');
+		$ignore_externals = $this->io->getOption('ignore-externals');
 
-		$this->io->writeln('Updating working copy ... ');
+		$show_revision = $revision ? $revision : 'HEAD';
+		$show_externals = $ignore_externals ? '(excluding externals)' : '(including externals)';
+		$this->io->writeln(
+			'Updating working copy to <info>' . $show_revision . '</info> revision ' . $show_externals . ' ... '
+		);
 
 		$param_string = '{' . $wc_path . '}';
 
-		if ( $this->io->getOption('ignore-externals') ) {
+		if ( $revision ) {
+			$param_string .= ' --revision ' . $revision;
+		}
+
+		if ( $ignore_externals ) {
 			$param_string .= ' --ignore-externals';
 		}
 
