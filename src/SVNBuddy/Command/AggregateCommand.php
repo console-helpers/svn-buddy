@@ -108,9 +108,9 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 	{
 		$ret = array();
 
-		foreach ( $this->getApplication()->all() as $command ) {
+		foreach ( $this->getApplication()->all() as $alias => $command ) {
 			if ( $command instanceof IAggregatorAwareCommand ) {
-				$ret[] = $command->getName();
+				$ret[] = $alias;
 			}
 		}
 
