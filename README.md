@@ -584,13 +584,27 @@ Runs other command sequentially on every working copy on a path. Almost all othe
 * `sub-command` - Command to execute on each found working copy
 * `path` - Path to folder with working copies [default: "`.`"]
 
-#### Options
+#### Own options
 
-* `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
-* `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--ignore-add=IGNORE-ADD` - Adds path to ignored directory list
 * `--ignore-remove=IGNORE-REMOVE` - Removes path to ignored directory list
 * `--ignore-show` - Show ignored directory list
+
+#### Aggregated command options
+
+* `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
+* `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
+* `--merges` - Show merge revisions only
+* `--no-merges` - Hide merge revisions
+* `--merged` - Shows only revisions, that were merged at least once
+* `--not-merged` - Shows only revisions, that were not merged
+* `--action=ACTION` - Show revisions, whose paths were affected by specified action, e.g. `A`, `M`, `R`, `D`
+* `--kind=KIND` - Show revisions, whose paths match specified kind, e.g. `dir` or `file`
+* `--with-refs` - Shows revision refs
+* `--with-merge-oracle` - Shows number of paths in the revision, that can cause conflict upon merging
+* `--with-merge-status` - Shows merge revisions affecting this revision
+* `--max-count=MAX-COUNT` - Limit the number of revisions to output
+* `--ignore-externals` - Ignore externals definitions
 
 #### Configuration settings
 

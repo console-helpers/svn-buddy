@@ -177,4 +177,14 @@ class ConflictsCommand extends AbstractCommand implements IAggregatorAwareComman
 		);
 	}
 
+	/**
+	 * Returns option names, that makes sense to use in aggregation mode.
+	 *
+	 * @return array
+	 */
+	public function getAggregatedOptions()
+	{
+		return array();
+	}
+
 }

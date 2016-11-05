@@ -53,4 +53,14 @@ class CleanupCommand extends AbstractCommand implements IAggregatorAwareCommand
 		$this->io->writeln('<info>Done</info>');
 	}
 
+	/**
+	 * Returns option names, that makes sense to use in aggregation mode.
+	 *
+	 * @return array
+	 */
+	public function getAggregatedOptions()
+	{
+		return array();
+	}
+
 }

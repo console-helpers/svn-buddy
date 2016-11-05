@@ -597,4 +597,18 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		);
 	}
 
+	/**
+	 * Returns option names, that makes sense to use in aggregation mode.
+	 *
+	 * @return array
+	 */
+	public function getAggregatedOptions()
+	{
+		return array(
+			'merges', 'no-merges', 'merged', 'not-merged', 'action',
+			'kind', 'with-details', 'with-summary', 'with-refs',
+			'with-merge-oracle', 'with-merge-status', 'max-count',
+		);
+	}
+
 }

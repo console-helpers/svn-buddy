@@ -15,6 +15,7 @@ use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\PathsConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,18 +48,6 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 				'.'
 			)
 			->addOption(
-				'with-details',
-				'd',
-				InputOption::VALUE_NONE,
-				'Shows detailed revision information, e.g. paths affected'
-			)
-			->addOption(
-				'with-summary',
-				's',
-				InputOption::VALUE_NONE,
-				'Shows number of added/changed/removed paths in the revision'
-			)
-			->addOption(
 				'ignore-add',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -78,6 +67,43 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 			);
 
 		parent::configure();
+	}
+
+	/**
+	 * Copies relevant options from supported sub-commands.
+	 *
+	 * @param Application $application An Application instance.
+	 *
+	 * @return void
+	 */
+	public function setApplication(Application $application = null)
+	{
+		parent::setApplication($application);
+
+		// No application is provided, when this command is disabled.
+		if ( !$application ) {
+			return;
+		}
+
+		$input_definition = $this->getDefinition();
+
+		foreach ( $this->getSubCommands() as $sub_command_name ) {
+			$sub_command = $application->get($sub_command_name);
+			assert($sub_command instanceof IAggregatorAwareCommand);
+
+			$copy_options = $sub_command->getAggregatedOptions();
+
+			if ( !$copy_options ) {
+				continue;
+			}
+
+			$sub_command_input_definition = $sub_command->getDefinition();
+
+			foreach ( $copy_options as $copy_option_name ) {
+				$copy_option = $sub_command_input_definition->getOption($copy_option_name);
+				$input_definition->addOption($copy_option);
+			}
+		}
 	}
 
 	/**
@@ -248,14 +274,14 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 	}
 
 	/**
-	 * Runs sub-commands.
+	 * Runs sub-command.
 	 *
-	 * @param string $sub_command Sub-command.
+	 * @param string $sub_command_name Sub-command name.
 	 *
 	 * @return void
 	 * @throws \RuntimeException When command was used inside a working copy.
 	 */
-	protected function runSubCommand($sub_command)
+	protected function runSubCommand($sub_command_name)
 	{
 		$path = realpath($this->getRawPath());
 
@@ -269,35 +295,49 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 		$percent_done = 0;
 		$percent_increment = round(100 / count($working_copies), 2);
 
-		$with_details = $this->io->getOption('with-details');
-		$with_summary = $this->io->getOption('with-summary');
+		$sub_command_arguments = $this->prepareSubCommandArguments($sub_command_name);
 
 		foreach ( $working_copies as $index => $wc_path ) {
 			$this->io->writeln(array(
 				'',
-				'Executing <info>' . $sub_command . '</info> command on <info>' . $wc_path . '</info> path',
+				'Executing <info>' . $sub_command_name . '</info> command on <info>' . $wc_path . '</info> path',
 				'',
 			));
 
-			$sub_command_arguments = array(
-				'path' => $wc_path,
-			);
+			$sub_command_arguments['path'] = $wc_path;
 
-			if ( $with_details && in_array($sub_command, array('log', 'merge')) ) {
-				$sub_command_arguments['--with-details'] = $with_details;
-			}
-
-			if ( $with_summary && in_array($sub_command, array('log', 'merge')) ) {
-				$sub_command_arguments['--with-summary'] = $with_summary;
-			}
-
-			$this->runOtherCommand($sub_command, $sub_command_arguments);
+			$this->runOtherCommand($sub_command_name, $sub_command_arguments);
 
 			$this->io->writeln(
 				'<info>' . ($index + 1) . ' of ' . $working_copy_count . ' sub-commands completed.</info>'
 			);
 			$percent_done += $percent_increment;
 		}
+	}
+
+	/**
+	 * Prepares sub-command arguments.
+	 *
+	 * @param string $sub_command_name Sub-command name.
+	 *
+	 * @return array
+	 */
+	protected function prepareSubCommandArguments($sub_command_name)
+	{
+		$sub_command_arguments = array('path' => '');
+
+		$sub_command = $this->getApplication()->get($sub_command_name);
+		assert($sub_command instanceof IAggregatorAwareCommand);
+
+		foreach ( $sub_command->getAggregatedOptions() as $copy_option_name ) {
+			$copy_option_value = $this->io->getOption($copy_option_name);
+
+			if ( $copy_option_value ) {
+				$sub_command_arguments['--' . $copy_option_name] = $copy_option_value;
+			}
+		}
+
+		return $sub_command_arguments;
 	}
 
 	/**

@@ -616,4 +616,14 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		);
 	}
 
+	/**
+	 * Returns option names, that makes sense to use in aggregation mode.
+	 *
+	 * @return array
+	 */
+	public function getAggregatedOptions()
+	{
+		return array('with-details', 'with-summary');
+	}
+
 }
