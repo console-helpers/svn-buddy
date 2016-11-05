@@ -21,7 +21,7 @@ Almost each of commands described below accepts `path` argument to specify worki
 
 This command allows to change configuration settings, that are used by other commands.
 
-Some of the commands (`merge`, `log` and `aggregate`) also use central data store (located in `~/.svn-buddy/config.json` file) to store information about a working copy.
+Some of the commands (`merge`, `log`, `conflicts` and `aggregate`) also use central data store (located in `~/.svn-buddy/config.json` file) to store information about a working copy.
 
 * If nothing is stored for a given working copy, then a global default would be used.
 * If global default is missing, then built-in default would be used.
@@ -565,7 +565,7 @@ Forgets all recorded conflicted paths.
 
 ### The "aggregate" command
 
-Runs other command sequentially on every working copy on a path.
+Runs other command sequentially on every working copy on a path. Almost all other commands can be used in such a manner.
 
 #### Arguments
 
