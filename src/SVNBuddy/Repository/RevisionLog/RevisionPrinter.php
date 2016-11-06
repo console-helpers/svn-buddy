@@ -300,26 +300,28 @@ class RevisionPrinter
 	/**
 	 * Returns log message.
 	 *
-	 * @param boolean $with_details  With details.
-	 * @param array   $revision_data Revision data.
+	 * @param boolean $with_full_message Show commit message without truncation.
+	 * @param array   $revision_data     Revision data.
 	 *
 	 * @return string
 	 */
-	private function _generateLogMessageColumn($with_details, array $revision_data)
+	private function _generateLogMessageColumn($with_full_message, array $revision_data)
 	{
-		if ( $with_details ) {
+		$commit_message = trim($revision_data['msg']);
+
+		if ( $with_full_message ) {
 			// When details requested don't transform commit message except for word wrapping.
 			// FIXME: Not UTF-8 safe solution.
-			$log_message = wordwrap($revision_data['msg'], $this->_logMessageLimit);
+			$log_message = wordwrap($commit_message, $this->_logMessageLimit);
 
 			return $log_message;
 		}
 		else {
 			// When details not requested only operate on first line of commit message.
-			list($log_message,) = explode(PHP_EOL, $revision_data['msg']);
+			list($log_message,) = explode(PHP_EOL, $commit_message);
 			$log_message = preg_replace('/^\[fixes:.*?\]/s', "\xE2\x9C\x94", $log_message);
 
-			if ( strpos($revision_data['msg'], PHP_EOL) !== false
+			if ( strpos($commit_message, PHP_EOL) !== false
 				|| mb_strlen($log_message) > $this->_logMessageLimit
 			) {
 				$log_message = mb_substr($log_message, 0, $this->_logMessageLimit - 3) . '...';
