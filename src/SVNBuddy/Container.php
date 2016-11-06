@@ -151,13 +151,18 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 		};
 
 		$this['repository_connector'] = function ($c) {
-			return new Connector($c['config_editor'], $c['process_factory'], $c['io'], $c['cache_manager']);
+			return new Connector(
+				$c['config_editor'],
+				$c['process_factory'],
+				$c['io'],
+				$c['cache_manager'],
+				$c['revision_list_parser']
+			);
 		};
 
 		$this['commit_message_builder'] = function ($c) {
 			return new CommitMessageBuilder(
 				$c['repository_connector'],
-				$c['revision_list_parser'],
 				$c['revision_log_factory'],
 				$c['working_copy_conflict_tracker']
 			);

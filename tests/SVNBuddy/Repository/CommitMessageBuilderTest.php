@@ -52,9 +52,6 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 
 		$this->connector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
 
-		$revision_list_parser = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser');
-		$revision_list_parser->expandRanges(Argument::cetera())->willReturnArgument(0);
-
 		$this->revisionLogFactory = $this->prophesize(
 			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory'
 		);
@@ -65,7 +62,6 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 
 		$this->commitMessageBuilder = new CommitMessageBuilder(
 			$this->connector->reveal(),
-			$revision_list_parser->reveal(),
 			$this->revisionLogFactory->reveal(),
 			$this->workingCopyConflictTracker->reveal()
 		);
@@ -73,9 +69,7 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 
 	public function testBuildWithoutChangelist()
 	{
-		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', 'BASE')->willReturn($merge_info);
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', null)->willReturn($merge_info);
+		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array());
 		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array());
 
 		$this->assertEmpty($this->commitMessageBuilder->build('/path/to/working-copy'));
@@ -83,9 +77,7 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 
 	public function testBuildWithChangelist()
 	{
-		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', 'BASE')->willReturn($merge_info);
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', null)->willReturn($merge_info);
+		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array());
 		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array());
 
 		$this->assertEquals('cl name', $this->commitMessageBuilder->build('/path/to/working-copy', 'cl name'));
@@ -112,9 +104,7 @@ COMMIT_MSG;
 
 	public function testBuildWithConflicts()
 	{
-		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', 'BASE')->willReturn($merge_info);
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', null)->willReturn($merge_info);
+		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array());
 		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array(
 			'sub-folder/file1.txt',
 			'file2.ext',
@@ -167,13 +157,10 @@ COMMIT_MSG;
 
 	protected function prepareMergeResult()
 	{
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', 'BASE')->willReturn(
-			'/projects/project-name/trunk:10,15' . PHP_EOL
-		);
-		$this->connector->getProperty('svn:mergeinfo', '/path/to/working-copy', null)->willReturn(
-			'/projects/project-name/trunk:10,15,18,33' . PHP_EOL .
-			'/projects/project-name/branches/branch-name:4' . PHP_EOL
-		);
+		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array(
+			'/projects/project-name/trunk' => array('18', '33'),
+			'/projects/project-name/branches/branch-name' => array('4'),
+		));
 
 		$this->connector
 			->getWorkingCopyUrl('/path/to/working-copy')

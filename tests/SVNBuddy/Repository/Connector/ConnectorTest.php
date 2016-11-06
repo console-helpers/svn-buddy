@@ -50,6 +50,13 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 	private $_cacheManager;
 
 	/**
+	 * Revision list parser.
+	 *
+	 * @var ObjectProphecy
+	 */
+	private $_revisionListParser;
+
+	/**
 	 * Repository connector.
 	 *
 	 * @var Connector
@@ -64,6 +71,7 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
 		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
+		$this->_revisionListParser = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser');
 
 		// To get nice exception back when unexpected command is executed.
 		$this->_processFactory
@@ -691,6 +699,43 @@ MESSAGE;
 		);
 	}
 
+	public function testGetFreshMergedRevisionsWithoutChanges()
+	{
+		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
+		$this->_expectCommand(
+			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy' --revision BASE",
+			$merge_info
+		);
+		$this->_expectCommand("svn --non-interactive propget svn:mergeinfo '/path/to/working-copy'", $merge_info);
+
+		$this->assertEmpty(
+			$this->_repositoryConnector->getFreshMergedRevisions('/path/to/working-copy')
+		);
+	}
+
+	public function testGetFreshMergedRevisionsWithChanges()
+	{
+		$this->_expectCommand(
+			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy' --revision BASE",
+			'/projects/project-name/trunk:10,15' . PHP_EOL
+		);
+		$this->_expectCommand(
+			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy'",
+			'/projects/project-name/trunk:10,15,18,33' . PHP_EOL .
+			'/projects/project-name/branches/branch-name:4' . PHP_EOL
+		);
+
+		$this->_revisionListParser->expandRanges(Argument::cetera())->willReturnArgument(0);
+
+		$this->assertSame(
+			array(
+				'/projects/project-name/trunk' => array('18', '33'),
+				'/projects/project-name/branches/branch-name' => array('4'),
+			),
+			$this->_repositoryConnector->getFreshMergedRevisions('/path/to/working-copy')
+		);
+	}
+
 	/**
 	 * Sets expectation for specific command.
 	 *
@@ -745,7 +790,8 @@ MESSAGE;
 			$this->_configEditor->reveal(),
 			$this->_processFactory->reveal(),
 			$this->_io->reveal(),
-			$this->_cacheManager->reveal()
+			$this->_cacheManager->reveal(),
+			$this->_revisionListParser->reveal()
 		);
 	}
 

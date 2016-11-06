@@ -16,6 +16,7 @@ use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 
 /**
  * Executes command on the repository.
@@ -70,6 +71,13 @@ class Connector
 	private $_cacheManager;
 
 	/**
+	 * Revision list parser.
+	 *
+	 * @var RevisionListParser
+	 */
+	private $_revisionListParser;
+
+	/**
 	 * Path to an svn command.
 	 *
 	 * @var string
@@ -93,21 +101,24 @@ class Connector
 	/**
 	 * Creates repository connector.
 	 *
-	 * @param ConfigEditor    $config_editor   ConfigEditor.
-	 * @param IProcessFactory $process_factory Process factory.
-	 * @param ConsoleIO       $io              Console IO.
-	 * @param CacheManager    $cache_manager   Cache manager.
+	 * @param ConfigEditor       $config_editor        ConfigEditor.
+	 * @param IProcessFactory    $process_factory      Process factory.
+	 * @param ConsoleIO          $io                   Console IO.
+	 * @param CacheManager       $cache_manager        Cache manager.
+	 * @param RevisionListParser $revision_list_parser Revision list parser.
 	 */
 	public function __construct(
 		ConfigEditor $config_editor,
 		IProcessFactory $process_factory,
 		ConsoleIO $io,
-		CacheManager $cache_manager
+		CacheManager $cache_manager,
+		RevisionListParser $revision_list_parser
 	) {
 		$this->_configEditor = $config_editor;
 		$this->_processFactory = $process_factory;
 		$this->_io = $io;
 		$this->_cacheManager = $cache_manager;
+		$this->_revisionListParser = $revision_list_parser;
 
 		$cache_duration = $this->_configEditor->get('repository-connector.last-revision-cache-duration');
 
@@ -825,6 +836,70 @@ class Connector
 		}
 
 		return $wc_url != '';
+	}
+
+	/**
+	 * Returns list of just merged revisions.
+	 *
+	 * @param string $wc_path Working copy path, where merge happens.
+	 *
+	 * @return array
+	 */
+	public function getFreshMergedRevisions($wc_path)
+	{
+		$final_paths = array();
+		$old_paths = $this->getMergedRevisions($wc_path, 'BASE');
+		$new_paths = $this->getMergedRevisions($wc_path);
+
+		if ( $old_paths === $new_paths ) {
+			return array();
+		}
+
+		foreach ( $new_paths as $new_path => $new_merged_revisions ) {
+			if ( !isset($old_paths[$new_path]) ) {
+				// Merge from new path.
+				$final_paths[$new_path] = $this->_revisionListParser->expandRanges(
+					explode(',', $new_merged_revisions)
+				);
+			}
+			elseif ( $new_merged_revisions != $old_paths[$new_path] ) {
+				// Merge on existing path.
+				$new_merged_revisions_parsed = $this->_revisionListParser->expandRanges(
+					explode(',', $new_merged_revisions)
+				);
+				$old_merged_revisions_parsed = $this->_revisionListParser->expandRanges(
+					explode(',', $old_paths[$new_path])
+				);
+				$final_paths[$new_path] = array_values(
+					array_diff($new_merged_revisions_parsed, $old_merged_revisions_parsed)
+				);
+			}
+		}
+
+		return $final_paths;
+	}
+
+	/**
+	 * Returns list of merged revisions per path.
+	 *
+	 * @param string  $wc_path  Merge target: working copy path.
+	 * @param integer $revision Revision.
+	 *
+	 * @return array
+	 */
+	protected function getMergedRevisions($wc_path, $revision = null)
+	{
+		$paths = array();
+
+		$merge_info = $this->getProperty('svn:mergeinfo', $wc_path, $revision);
+		$merge_info = array_filter(explode("\n", $merge_info));
+
+		foreach ( $merge_info as $merge_info_line ) {
+			list($path, $revisions) = explode(':', $merge_info_line, 2);
+			$paths[$path] = $revisions;
+		}
+
+		return $paths;
 	}
 
 }

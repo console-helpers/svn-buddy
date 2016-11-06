@@ -12,7 +12,6 @@ namespace ConsoleHelpers\SVNBuddy\Repository;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 
 class CommitMessageBuilder
@@ -24,13 +23,6 @@ class CommitMessageBuilder
 	 * @var Connector
 	 */
 	protected $repositoryConnector;
-
-	/**
-	 * Revision list parser.
-	 *
-	 * @var RevisionListParser
-	 */
-	protected $revisionListParser;
 
 	/**
 	 * Revision log factory.
@@ -50,18 +42,15 @@ class CommitMessageBuilder
 	 * Creates commit message builder instance.
 	 *
 	 * @param Connector                  $repository_connector          Repository connector.
-	 * @param RevisionListParser         $revision_list_parser          Revision list parser.
 	 * @param RevisionLogFactory         $revision_log_factory          Revision log factory.
 	 * @param WorkingCopyConflictTracker $working_copy_conflict_tracker Working copy conflict tracker.
 	 */
 	public function __construct(
 		Connector $repository_connector,
-		RevisionListParser $revision_list_parser,
 		RevisionLogFactory $revision_log_factory,
 		WorkingCopyConflictTracker $working_copy_conflict_tracker
 	) {
 		$this->repositoryConnector = $repository_connector;
-		$this->revisionListParser = $revision_list_parser;
 		$this->revisionLogFactory = $revision_log_factory;
 		$this->workingCopyConflictTracker = $working_copy_conflict_tracker;
 	}
@@ -109,7 +98,7 @@ class CommitMessageBuilder
 	 */
 	protected function getFragmentForMergedRevisions($wc_path)
 	{
-		$merged_revisions = $this->getFreshMergedRevisions($wc_path);
+		$merged_revisions = $this->repositoryConnector->getFreshMergedRevisions($wc_path);
 
 		if ( !$merged_revisions ) {
 			return '';
@@ -135,70 +124,6 @@ class CommitMessageBuilder
 		}
 
 		return trim($ret);
-	}
-
-	/**
-	 * Returns list of just merged revisions.
-	 *
-	 * @param string $wc_path Merge target: working copy path.
-	 *
-	 * @return array
-	 */
-	protected function getFreshMergedRevisions($wc_path)
-	{
-		$final_paths = array();
-		$old_paths = $this->getMergedRevisions($wc_path, 'BASE');
-		$new_paths = $this->getMergedRevisions($wc_path);
-
-		if ( $old_paths === $new_paths ) {
-			return array();
-		}
-
-		foreach ( $new_paths as $new_path => $new_merged_revisions ) {
-			if ( !isset($old_paths[$new_path]) ) {
-				// Merge from new path.
-				$final_paths[$new_path] = $this->revisionListParser->expandRanges(
-					explode(',', $new_merged_revisions)
-				);
-			}
-			elseif ( $new_merged_revisions != $old_paths[$new_path] ) {
-				// Merge on existing path.
-				$new_merged_revisions_parsed = $this->revisionListParser->expandRanges(
-					explode(',', $new_merged_revisions)
-				);
-				$old_merged_revisions_parsed = $this->revisionListParser->expandRanges(
-					explode(',', $old_paths[$new_path])
-				);
-				$final_paths[$new_path] = array_values(
-					array_diff($new_merged_revisions_parsed, $old_merged_revisions_parsed)
-				);
-			}
-		}
-
-		return $final_paths;
-	}
-
-	/**
-	 * Returns list of merged revisions per path.
-	 *
-	 * @param string  $wc_path  Merge target: working copy path.
-	 * @param integer $revision Revision.
-	 *
-	 * @return array
-	 */
-	protected function getMergedRevisions($wc_path, $revision = null)
-	{
-		$paths = array();
-
-		$merge_info = $this->repositoryConnector->getProperty('svn:mergeinfo', $wc_path, $revision);
-		$merge_info = array_filter(explode("\n", $merge_info));
-
-		foreach ( $merge_info as $merge_info_line ) {
-			list($path, $revisions) = explode(':', $merge_info_line, 2);
-			$paths[$path] = $revisions;
-		}
-
-		return $paths;
 	}
 
 	/**
