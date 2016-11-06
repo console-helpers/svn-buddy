@@ -529,10 +529,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'-c ' . $revision . ' {' . $source_url . '} {' . $wc_path . '}'
 			);
 
-			$merge_line = '--- Merging r' . $revision . " into '.':";
+			$merge_line = '/^--- Merging r' . $revision . " into '([^']*)':$/";
 			$command->runLive(array(
 				$wc_path => '.',
-				$merge_line => '<fg=white;options=bold>' . $merge_line . '</>',
+				$merge_line => PHP_EOL . '<fg=white;options=bold>--- Merging r' . $revision . " into '$1':</>",
 			));
 
 			$this->_unmergedRevisions = array_diff($this->_unmergedRevisions, array($revision));
