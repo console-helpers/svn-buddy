@@ -541,7 +541,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 			$progress_bar = $this->createMergeProgressBar($merged_revision_count + $index + 1, $revision_count);
 			$merge_heading = PHP_EOL . '<fg=white;options=bold>';
-			$merge_heading .= '--- Merging <fg=white;options=underscore>r' . $revision . '</>';
+			$merge_heading .= '--- Merging <fg=white;options=underscore>' . $revision . '</> revision';
 			$merge_heading .= " into '$1' " . $progress_bar . ':</>';
 
 			$command->runLive(array(
