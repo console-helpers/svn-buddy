@@ -124,6 +124,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'List of bug(-s) to merge, e.g. <comment>JRA-1234</comment>, <comment>43644</comment>'
 			)
 			->addOption(
+				'with-full-message',
+				'f',
+				InputOption::VALUE_NONE,
+				'Shows non-truncated commit messages'
+			)
+			->addOption(
 				'with-details',
 				'd',
 				InputOption::VALUE_NONE,
@@ -235,6 +241,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$this->runOtherCommand('log', array(
 				'path' => $source_url,
 				'--revisions' => implode(',', $this->_unmergedRevisions),
+				'--with-full-message' => $this->io->getOption('with-full-message'),
 				'--with-details' => $this->io->getOption('with-details'),
 				'--with-summary' => $this->io->getOption('with-summary'),
 				'--with-merge-oracle' => true,
@@ -668,7 +675,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 */
 	public function getAggregatedOptions()
 	{
-		return array('with-details', 'with-summary');
+		return array('with-full-message', 'with-details', 'with-summary');
 	}
 
 }

@@ -103,6 +103,7 @@ The working copy revision row is highlighted in bold in revision list to ease id
 * `--merged-by=MERGED-BY` - Show revisions merged by list of revision(-s) and/or revision range(-s)
 * `--action=ACTION` - Show revisions, whose paths were affected by specified action, e.g. `A`, `M`, `R`, `D`
 * `--kind=KIND` - Show revisions, whose paths match specified kind, e.g. `dir` or `file`
+* `-f`, `--with-full-message` - Shows non-truncated commit messages
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--with-refs` -  Shows revision refs
@@ -217,6 +218,12 @@ svn-buddy.phar log --merged-by 12,15-17
 * Displays revisions merged by `12`, `15`, `16` and `17` revisions.
 
 ```
+svn-buddy.phar log --with-full-message
+```
+
+The log message won't be truncated in displayed revision list.
+
+```
 svn-buddy.phar log --with-details
 ```
 
@@ -288,6 +295,7 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `--source-url=SOURCE-URL` - Merge source url (absolute or relative) or ref name, e.g. `branches/branch-name`
 * `-r`, `--revisions=REVISIONS` - List of revision(-s) and/or revision range(-s) to merge, e.g. `53324`, `1224-4433` or `all`
 * `-b`, `--bugs=BUGS` - List of bug(-s) to merge, e.g. `JRA-1234`, `43644`
+* `-f`, `--with-full-message` - Shows non-truncated commit messages
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--update-revision=UPDATE-REVISION` - Update working copy to given revision before performing a merge
@@ -384,6 +392,12 @@ svn-buddy.phar merge --auto-commit no
 ```
 
 Don't automatically run `svn-buddy.phar commit` command, when merge was successful. Overrides value from `merge.auto-commit` config setting.
+
+```
+svn-buddy.phar merge --with-full-message
+```
+
+Thanks to `log` command being used behind the scenes to display non-merged revisions it's possible to forward `--with-full-message` option to it to see non-truncated log message for each revision.
 
 ```
 svn-buddy.phar merge --with-details
@@ -615,6 +629,7 @@ Runs other command sequentially on every working copy on a path. Almost all othe
 * `--not-merged` - Shows only revisions, that were not merged
 * `--action=ACTION` - Show revisions, whose paths were affected by specified action, e.g. `A`, `M`, `R`, `D`
 * `--kind=KIND` - Show revisions, whose paths match specified kind, e.g. `dir` or `file`
+* `-f`, `--with-full-message` - Shows non-truncated commit messages
 * `--with-refs` - Shows revision refs
 * `--with-merge-oracle` - Shows number of paths in the revision, that can cause conflict upon merging
 * `--with-merge-status` - Shows merge revisions affecting this revision

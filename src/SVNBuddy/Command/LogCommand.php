@@ -150,6 +150,12 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				'Show revisions, whose paths match specified kind, e.g. <comment>dir</comment> or <comment>file</comment>'
 			)
 			->addOption(
+				'with-full-message',
+				'f',
+				InputOption::VALUE_NONE,
+				'Shows non-truncated commit messages'
+			)
+			->addOption(
 				'with-details',
 				'd',
 				InputOption::VALUE_NONE,
@@ -556,6 +562,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	protected function printRevisions(array $revisions)
 	{
 		$column_mapping = array(
+			'with-full-message' => RevisionPrinter::COLUMN_FULL_MESSAGE,
 			'with-details' => RevisionPrinter::COLUMN_DETAILS,
 			'with-summary' => RevisionPrinter::COLUMN_SUMMARY,
 			'with-refs' => RevisionPrinter::COLUMN_REFS,
@@ -606,8 +613,8 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	{
 		return array(
 			'merges', 'no-merges', 'merged', 'not-merged', 'action',
-			'kind', 'with-details', 'with-summary', 'with-refs',
-			'with-merge-oracle', 'with-merge-status', 'max-count',
+			'kind', 'with-full-message', 'with-details', 'with-summary',
+			'with-refs', 'with-merge-oracle', 'with-merge-status', 'max-count',
 		);
 	}
 

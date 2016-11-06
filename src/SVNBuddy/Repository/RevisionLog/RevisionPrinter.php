@@ -21,15 +21,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RevisionPrinter
 {
 
-	const COLUMN_DETAILS = 1;
+	const COLUMN_FULL_MESSAGE = 1;
 
-	const COLUMN_SUMMARY = 2;
+	const COLUMN_DETAILS = 2;
 
-	const COLUMN_REFS = 3;
+	const COLUMN_SUMMARY = 3;
 
-	const COLUMN_MERGE_ORACLE = 4;
+	const COLUMN_REFS = 4;
 
-	const COLUMN_MERGE_STATUS = 5;
+	const COLUMN_MERGE_ORACLE = 5;
+
+	const COLUMN_MERGE_STATUS = 6;
 
 	/**
 	 * Date helper.
@@ -163,6 +165,7 @@ class RevisionPrinter
 		$table = new Table($output);
 		$headers = array('Revision', 'Author', 'Date', 'Bug-ID', 'Log Message');
 
+		$with_full_message = in_array(self::COLUMN_FULL_MESSAGE, $this->_columns);
 		$with_details = in_array(self::COLUMN_DETAILS, $this->_columns);
 
 		// Add "Summary" header.
@@ -230,7 +233,7 @@ class RevisionPrinter
 				$revision_data['author'],
 				$this->_dateHelper->getAgoTime($revision_data['date']),
 				$this->_outputHelper->formatArray($new_bugs, $bugs_per_row, $last_color),
-				$this->_generateLogMessageColumn($with_details, $revision_data),
+				$this->_generateLogMessageColumn($with_full_message || $with_details, $revision_data),
 			);
 
 			$revision_paths = $revisions_paths[$revision];
