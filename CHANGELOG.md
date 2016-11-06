@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `aggregate` command was ignoring command aliases (e.g. `up` for `update` command).
 - Externals in a working copy caused `Mixed revisions` error before merge resulting in immediate update.
 - Locally deleted files in a working copy caused `Mixed revisions` error before merge resulting in immediate update.
+- When `--refs` argument of `log` was used the revisions not belonging to specified refs were also shown.
 
 ## [0.3.0] - 2016-09-08
 ### Added
