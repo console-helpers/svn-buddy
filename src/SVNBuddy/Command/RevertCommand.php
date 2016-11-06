@@ -81,6 +81,19 @@ class RevertCommand extends AbstractCommand implements IAggregatorAwareCommand
 
 		$this->deletePaths($added_paths);
 
+		$recorded_conflicts = $this->_workingCopyConflictTracker->getRecordedConflicts($wc_path);
+
+		if ( $recorded_conflicts ) {
+			$this->io->writeln(array(
+				'',
+				'Reverted Recorded Conflicts (' . count($recorded_conflicts) . ' paths):',
+			));
+
+			foreach ( $recorded_conflicts as $conflicted_path ) {
+				$this->io->writeln(' * ' . $conflicted_path);
+			}
+		}
+
 		$this->_workingCopyConflictTracker->erase($wc_path);
 		$this->io->writeln('<info>Done</info>');
 	}

@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--update-revision` option to `merge` command allowing to update working copy to given revision prior to merging.
 - Added `--with-full-message` option to `log`, `merge` and `aggregate` commands to display non-truncated commit messages.
 - Show progress bar during merging to indicate merged/total revision count.
+- When using `revert` command display list of recorded conflicts before deleting it.
 
 ### Changed
 - The `update` command now also tracks conflicts resulted from problematic update.
