@@ -337,15 +337,15 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_io->write($expected_output)->shouldBeCalled();
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
-		$actual_result = $this->_command->runLive(array('TE' => 'KE'));
+		$actual_result = $this->_command->runLive(array('TE' => 'KE', '/([TX])/' => '{$1}'));
 		$this->assertEquals('OK', $actual_result);
 	}
 
 	public function runLiveDataProvider()
 	{
 		return array(
-			array(Process::OUT, 'KEXT'),
-			array(Process::ERR, '<error>ERR:</error> KEXT'),
+			array(Process::OUT, 'KE{X}{T}'),
+			array(Process::ERR, '<error>ERR:</error> KE{X}{T}'),
 		);
 	}
 

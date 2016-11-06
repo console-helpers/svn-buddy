@@ -226,11 +226,20 @@ class Command
 	{
 		$io = $this->_io;
 
-		$replace_from = array_keys($replacements);
-		$replace_to = array_values($replacements);
+		$replace_froms = array_keys($replacements);
+		$replace_tos = array_values($replacements);
 
-		return function ($type, $buffer) use ($io, $replace_from, $replace_to) {
-			$buffer = str_replace($replace_from, $replace_to, $buffer);
+		return function ($type, $buffer) use ($io, $replace_froms, $replace_tos) {
+			foreach ( $replace_froms as $index => $replace_from ) {
+				$replace_to = $replace_tos[$index];
+
+				if ( substr($replace_from, 0, 1) === '/' && substr($replace_from, -1, 1) === '/' ) {
+					$buffer = preg_replace($replace_from, $replace_to, $buffer);
+				}
+				else {
+					$buffer = str_replace($replace_from, $replace_to, $buffer);
+				}
+			}
 
 			if ( $type === Process::ERR ) {
 				$buffer = '<error>ERR:</error> ' . $buffer;
