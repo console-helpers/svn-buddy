@@ -524,15 +524,25 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		sort($revisions, SORT_NUMERIC);
 		$revision_count = count($revisions);
 
+		$merged_revision_count = 0;
+		$merged_revisions = $this->repositoryConnector->getFreshMergedRevisions($wc_path);
+
+		if ( $merged_revisions ) {
+			$merged_revisions = call_user_func_array('array_merge', $merged_revisions);
+			$merged_revision_count = count($merged_revisions);
+			$revision_count += $merged_revision_count;
+		}
+
 		foreach ( $revisions as $index => $revision ) {
 			$command = $this->repositoryConnector->getCommand(
 				'merge',
 				'-c ' . $revision . ' {' . $source_url . '} {' . $wc_path . '}'
 			);
 
+			$progress_bar = $this->createMergeProgressBar($merged_revision_count + $index + 1, $revision_count);
 			$merge_heading = PHP_EOL . '<fg=white;options=bold>';
 			$merge_heading .= '--- Merging <fg=white;options=underscore>r' . $revision . '</>';
-			$merge_heading .= " into '$1' " . $this->createMergeProgressBar($index + 1, $revision_count) . ':</>';
+			$merge_heading .= " into '$1' " . $progress_bar . ':</>';
 
 			$command->runLive(array(
 				$wc_path => '.',
