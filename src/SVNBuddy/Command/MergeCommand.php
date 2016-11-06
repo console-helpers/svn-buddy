@@ -522,17 +522,21 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	protected function performMerge($source_url, $wc_path, array $revisions)
 	{
 		sort($revisions, SORT_NUMERIC);
+		$revision_count = count($revisions);
 
-		foreach ( $revisions as $revision ) {
+		foreach ( $revisions as $index => $revision ) {
 			$command = $this->repositoryConnector->getCommand(
 				'merge',
 				'-c ' . $revision . ' {' . $source_url . '} {' . $wc_path . '}'
 			);
 
-			$merge_line = '/^--- Merging r' . $revision . " into '([^']*)':$/";
+			$merge_heading = PHP_EOL . '<fg=white;options=bold>';
+			$merge_heading .= '--- Merging <fg=white;options=underscore>r' . $revision . '</>';
+			$merge_heading .= " into '$1' " . $this->createMergeProgressBar($index + 1, $revision_count) . ':</>';
+
 			$command->runLive(array(
 				$wc_path => '.',
-				$merge_line => PHP_EOL . '<fg=white;options=bold>--- Merging r' . $revision . " into '$1':</>",
+				'/^--- Merging r' . $revision . " into '([^']*)':$/" => $merge_heading,
 			));
 
 			$this->_unmergedRevisions = array_diff($this->_unmergedRevisions, array($revision));
@@ -540,6 +544,27 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 
 		$this->performCommit();
+	}
+
+	/**
+	 * Create merge progress bar.
+	 *
+	 * @param integer $current Current.
+	 * @param integer $total   Total.
+	 *
+	 * @return string
+	 */
+	protected function createMergeProgressBar($current, $total)
+	{
+		$total_length = 28;
+		$percent_used = floor(($current / $total) * 100);
+		$length_used = floor(($total_length * $percent_used) / 100);
+		$length_free = $total_length - $length_used;
+
+		$ret = $length_used > 0 ? str_repeat('=', $length_used - 1) : '';
+		$ret .= '>' . str_repeat('-', $length_free);
+
+		return '[' . $ret . '] ' . $percent_used . '% (' . $current . ' of ' . $total . ')';
 	}
 
 	/**
