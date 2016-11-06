@@ -66,9 +66,21 @@ class RefsPluginTest extends AbstractPluginTestCase
 	public function testFindMultipleRefs()
 	{
 		$this->commitBuilder
-			->addCommit(100, 'user', 0, '')
+			->addCommit(1, 'user', 0, '')
 			->addPath('A', '/project/branches/branch-name/', 'branches/branch-name', '/project/')
 			->addPath('A', '/project/tags/tag-name/', 'tags/tag-name', '/project/');
+
+		$this->commitBuilder
+			->addCommit(2, 'user', 0, '')
+			->addPath('A', '/project/branches/branch-name/file.txt', 'branches/branch-name', '/project/');
+
+		$this->commitBuilder
+			->addCommit(3, 'user', 0, '')
+			->addPath('A', '/project/tags/tag-name/file.txt', 'tags/tag-name', '/project/');
+
+		$this->commitBuilder
+			->addCommit(4, 'user', 0, '')
+			->addPath('A', '/project/tags/another-tag-name/', 'tags/tag-name', '/project/');
 
 		$this->commitBuilder->build();
 
@@ -86,9 +98,21 @@ class RefsPluginTest extends AbstractPluginTestCase
 	public function testFindSingleRefs()
 	{
 		$this->commitBuilder
-			->addCommit(100, 'user', 0, '')
+			->addCommit(1, 'user', 0, '')
 			->addPath('A', '/project/branches/branch-name/', 'branches/branch-name', '/project/')
 			->addPath('A', '/project/tags/tag-name/', 'tags/tag-name', '/project/');
+
+		$this->commitBuilder
+			->addCommit(2, 'user', 0, '')
+			->addPath('A', '/project/branches/branch-name/file.txt', 'branches/branch-name', '/project/');
+
+		$this->commitBuilder
+			->addCommit(3, 'user', 0, '')
+			->addPath('A', '/project/tags/tag-name/file.txt', 'tags/tag-name', '/project/');
+
+		$this->commitBuilder
+			->addCommit(4, 'user', 0, '')
+			->addPath('A', '/project/tags/another-tag-name/', 'tags/tag-name', '/project/');
 
 		$this->commitBuilder->build();
 
