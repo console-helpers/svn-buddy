@@ -777,13 +777,13 @@ class Connector
 	}
 
 	/**
-	 * Determines if working copy contains mixed revisions.
+	 * Returns revisions of paths in a working copy.
 	 *
 	 * @param string $wc_path Working copy path.
 	 *
-	 * @return boolean
+	 * @return array
 	 */
-	public function isMixedRevisionWorkingCopy($wc_path)
+	public function getWorkingCopyRevisions($wc_path)
 	{
 		$revisions = array();
 		$status = $this->getCommand('status', '--xml --verbose {' . $wc_path . '}')->run();
@@ -794,19 +794,16 @@ class Connector
 			}
 
 			foreach ( $target as $entry ) {
-				$item_status = (string)$entry->{'wc-status'}['item'];
-
-				if ( $item_status !== self::STATUS_UNVERSIONED && $item_status !== self::STATUS_EXTERNAL ) {
-					$revision = (int)$entry->{'wc-status'}['revision'];
-					$revisions[$revision] = true;
-				}
+				$revision = (int)$entry->{'wc-status'}['revision'];
+				$revisions[$revision] = true;
 			}
 		}
 
 		// The "-1" revision happens, when external is deleted.
-		unset($revisions[-1]);
+		// The "0" happens for not committed paths (e.g. added).
+		unset($revisions[-1], $revisions[0]);
 
-		return count($revisions) > 1;
+		return array_keys($revisions);
 	}
 
 	/**

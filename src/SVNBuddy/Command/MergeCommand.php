@@ -280,8 +280,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			return;
 		}
 
-		if ( $this->repositoryConnector->isMixedRevisionWorkingCopy($wc_path) ) {
-			$this->io->writeln('<error>Mixed revisions</error>');
+		$working_copy_revisions = $this->repositoryConnector->getWorkingCopyRevisions($wc_path);
+
+		if ( count($working_copy_revisions) > 1 ) {
+			$this->io->writeln(
+				'<error>Mixed revisions: ' . implode(', ', $working_copy_revisions) . '</error>'
+			);
 			$this->updateWorkingCopy($wc_path, $update_revision);
 
 			return;
