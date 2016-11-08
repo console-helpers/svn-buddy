@@ -550,7 +550,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 			$command->runLive(array(
 				$wc_path => '.',
-				'/^--- Merging r' . $revision . " into '([^']*)':$/" => $merge_heading,
+				'/--- Merging r' . $revision . " into '([^']*)':/" => $merge_heading,
 			));
 
 			$this->_unmergedRevisions = array_diff($this->_unmergedRevisions, array($revision));
