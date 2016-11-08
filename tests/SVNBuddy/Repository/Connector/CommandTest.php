@@ -327,7 +327,7 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_process
 			->mustRun(Argument::type('callable'))
 			->will(function (array $args) use ($output_type) {
-				return call_user_func($args[0], $output_type, 'TEXT');
+				return call_user_func($args[0], $output_type, "TEX\nT");
 			})
 			->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
@@ -344,8 +344,8 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 	public function runLiveDataProvider()
 	{
 		return array(
-			array(Process::OUT, 'KE{X}{T}'),
-			array(Process::ERR, '<error>ERR:</error> KE{X}{T}'),
+			array(Process::OUT, "KE{X}\n{T}"),
+			array(Process::ERR, "<error>ERR:</error> KE{X}\n{T}"),
 		);
 	}
 
