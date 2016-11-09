@@ -24,7 +24,7 @@ use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
-use ConsoleHelpers\SVNBuddy\Repository\CommitMessageBuilder;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;

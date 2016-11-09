@@ -8,11 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Repository;
+namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 
-use ConsoleHelpers\SVNBuddy\Repository\CommitMessageBuilder;
-use Prophecy\Argument;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase

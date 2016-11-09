@@ -13,7 +13,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
-use ConsoleHelpers\SVNBuddy\Repository\CommitMessageBuilder;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
