@@ -11,10 +11,8 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 
-use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 
 class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 {
@@ -183,7 +181,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 			->writeln(array(
 				'',
 				'<debug>[db, 5s]: IGNORE ME "bb"</debug>',
-				'<debug>[db origin]: ' . __FILE__ . ':194</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':192</debug>',
 				))
 			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
@@ -213,7 +211,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 			->writeln(array(
 				'',
 				'<debug>[db, 5s]: SELECT "PA" "PAR","AM"</debug>',
-				'<debug>[db origin]: ' . __FILE__ . ':227</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':225</debug>',
 			))
 			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());

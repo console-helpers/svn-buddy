@@ -13,7 +13,6 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use Prophecy\Argument;
 
 abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
 {

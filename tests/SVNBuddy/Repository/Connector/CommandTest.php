@@ -17,7 +17,6 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
-use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\RegExToken;
 
 class CommandTest extends \PHPUnit_Framework_TestCase
 {
