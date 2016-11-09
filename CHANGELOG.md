@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--with-full-message` option to `log`, `merge` and `aggregate` commands to display non-truncated commit messages.
 - Show progress bar during merging to indicate merged/total revision count.
 - When using `revert` command display list of recorded conflicts before deleting it.
+- Added different formats (merge templates), used during automatic merge commit log message generation.
 
 ### Changed
 - The `update` command now also tracks conflicts resulted from problematic update.

@@ -18,18 +18,11 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 {
 
 	/**
-	 * Repository connector.
+	 * Merge template.
 	 *
 	 * @var ObjectProphecy
 	 */
-	protected $connector;
-
-	/**
-	 * Revision log factory
-	 *
-	 * @var ObjectProphecy
-	 */
-	protected $revisionLogFactory;
+	protected $mergeTemplate;
 
 	/**
 	 * Working copy conflict tracker
@@ -49,10 +42,8 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 	{
 		parent::setUp();
 
-		$this->connector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
-
-		$this->revisionLogFactory = $this->prophesize(
-			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory'
+		$this->mergeTemplate = $this->prophesize(
+			'ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate'
 		);
 
 		$this->workingCopyConflictTracker = $this->prophesize(
@@ -60,50 +51,46 @@ class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
 		);
 
 		$this->commitMessageBuilder = new CommitMessageBuilder(
-			$this->connector->reveal(),
-			$this->revisionLogFactory->reveal(),
 			$this->workingCopyConflictTracker->reveal()
 		);
 	}
 
 	public function testBuildWithoutChangelist()
 	{
-		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array());
+		$this->mergeTemplate->apply('/path/to/working-copy')->willReturn('');
 		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array());
 
-		$this->assertEmpty($this->commitMessageBuilder->build('/path/to/working-copy'));
+		$this->assertEmpty($this->buildCommitMessage());
 	}
 
 	public function testBuildWithChangelist()
 	{
-		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array());
+		$this->mergeTemplate->apply('/path/to/working-copy')->willReturn('');
 		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array());
 
-		$this->assertEquals('cl name', $this->commitMessageBuilder->build('/path/to/working-copy', 'cl name'));
+		$this->assertEquals(
+			'cl name',
+			$this->buildCommitMessage('cl name')
+		);
 	}
 
 	public function testBuildMergeResult()
 	{
-		$this->prepareMergeResult();
+		$this->mergeTemplate->apply('/path/to/working-copy')->willReturn('MERGE TEMPLATE');
 
 		$expected = <<<COMMIT_MSG
-Merging from Trunk to Stable
-* r18: a-line1
-a-line2
-* r33: b-line1
-b-line2
-
-Merging from Branch-name to Stable
-* r4: c-line1
-c-line2
+MERGE TEMPLATE
 COMMIT_MSG;
 
-		$this->assertEquals($expected, $this->commitMessageBuilder->build('/path/to/working-copy'));
+		$this->assertEquals(
+			$expected,
+			$this->buildCommitMessage()
+		);
 	}
 
 	public function testBuildWithConflicts()
 	{
-		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array());
+		$this->mergeTemplate->apply('/path/to/working-copy')->willReturn('');
 		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array(
 			'sub-folder/file1.txt',
 			'file2.ext',
@@ -118,13 +105,13 @@ COMMIT_MSG;
 
 		$this->assertEquals(
 			$expected,
-			$this->commitMessageBuilder->build('/path/to/working-copy')
+			$this->buildCommitMessage()
 		);
 	}
 
 	public function testBuildEverythingPresent()
 	{
-		$this->prepareMergeResult();
+		$this->mergeTemplate->apply('/path/to/working-copy')->willReturn('MERGE TEMPLATE');
 
 		$this->workingCopyConflictTracker->getRecordedConflicts('/path/to/working-copy')->willReturn(array(
 			'sub-folder/file1.txt',
@@ -133,15 +120,7 @@ COMMIT_MSG;
 
 		$expected = <<<COMMIT_MSG
 cl one
-Merging from Trunk to Stable
-* r18: a-line1
-a-line2
-* r33: b-line1
-b-line2
-
-Merging from Branch-name to Stable
-* r4: c-line1
-c-line2
+MERGE TEMPLATE
 
 Conflicts:
  * sub-folder/file1.txt
@@ -150,62 +129,20 @@ COMMIT_MSG;
 
 		$this->assertEquals(
 			$expected,
-			$this->commitMessageBuilder->build('/path/to/working-copy', 'cl one')
+			$this->buildCommitMessage('cl one')
 		);
 	}
 
-	protected function prepareMergeResult()
-	{
-		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array(
-			'/projects/project-name/trunk' => array('18', '33'),
-			'/projects/project-name/branches/branch-name' => array('4'),
-		));
-
-		$this->connector
-			->getWorkingCopyUrl('/path/to/working-copy')
-			->willReturn('svn://repository.com/path/to/project/tags/stable');
-
-		$this->connector
-			->getRootUrl('svn://repository.com/path/to/project/tags/stable')
-			->willReturn('svn://repository.com');
-
-		$revision_log1 = $this->getRevisionLog('svn://repository.com/projects/project-name/trunk');
-		$revision_log1->getRevisionsData('summary', array(18, 33))->willReturn(array(
-			18 => array(
-				'author' => 'user1',
-				'date' => 3534535353,
-				'msg' => 'a-line1' . PHP_EOL . 'a-line2' . PHP_EOL . PHP_EOL,
-			),
-			33 => array(
-				'author' => 'user2',
-				'date' => 35345445353,
-				'msg' => 'b-line1' . PHP_EOL . 'b-line2' . PHP_EOL . PHP_EOL,
-			),
-		));
-
-		$revision_log2 = $this->getRevisionLog('svn://repository.com/projects/project-name/branches/branch-name');
-		$revision_log2->getRevisionsData('summary', array(4))->willReturn(array(
-			4 => array(
-				'author' => 'user2',
-				'date' => 35345444353,
-				'msg' => 'c-line1' . PHP_EOL . 'c-line2' . PHP_EOL . PHP_EOL,
-			),
-		));
-	}
-
 	/**
-	 * Returns revision log object for given url.
+	 * Builds commit message.
 	 *
-	 * @param string $repository_url Repository url.
+	 * @param string|null $changelist Changelist.
 	 *
-	 * @return ObjectProphecy
+	 * @return string
 	 */
-	protected function getRevisionLog($repository_url)
+	protected function buildCommitMessage($changelist = null)
 	{
-		$revision_log = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog');
-		$this->revisionLogFactory->getRevisionLog($repository_url)->willReturn($revision_log);
-
-		return $revision_log;
+		return $this->commitMessageBuilder->build('/path/to/working-copy', $this->mergeTemplate->reveal(), $changelist);
 	}
 
 }

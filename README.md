@@ -430,6 +430,10 @@ The command sends changes from your working copy to the repository.
 
 * `--cl` - Operate only on members of selected changelist
 
+#### Configuration settings
+
+* `commit.merge-template` - log message template for merge commits (defaults to `group_by_revision`)
+
 #### Examples
 
 ```

@@ -25,6 +25,8 @@ use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\GroupByRevisionMergeTemplate;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
@@ -161,11 +163,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 		};
 
 		$this['commit_message_builder'] = function ($c) {
-			return new CommitMessageBuilder(
-				$c['repository_connector'],
-				$c['revision_log_factory'],
-				$c['working_copy_conflict_tracker']
-			);
+			return new CommitMessageBuilder($c['working_copy_conflict_tracker']);
 		};
 
 		$this['working_copy_resolver'] = function ($c) {
@@ -174,6 +172,16 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['working_copy_conflict_tracker'] = function ($c) {
 			return new WorkingCopyConflictTracker($c['repository_connector'], $c['command_config']);
+		};
+
+		$this['merge_template_factory'] = function ($c) {
+			$factory = new MergeTemplateFactory();
+			$repository_connector = $c['repository_connector'];
+			$revision_log_factory = $c['revision_log_factory'];
+
+			$factory->add(new GroupByRevisionMergeTemplate($repository_connector, $revision_log_factory));
+
+			return $factory;
 		};
 
 		$this['command_config'] = function ($c) {

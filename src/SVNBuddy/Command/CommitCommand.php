@@ -12,16 +12,21 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CommitCommand extends AbstractCommand
+class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 {
+
+	const SETTING_COMMIT_MERGE_TEMPLATE = 'commit.merge-template';
 
 	const STOP_LINE = '--This line, and those below, will be ignored--';
 
@@ -38,6 +43,13 @@ class CommitCommand extends AbstractCommand
 	 * @var CommitMessageBuilder
 	 */
 	private $_commitMessageBuilder;
+
+	/**
+	 * Merge template factory.
+	 *
+	 * @var MergeTemplateFactory
+	 */
+	private $_mergeTemplateFactory;
 
 	/**
 	 * Working copy conflict tracker.
@@ -86,6 +98,7 @@ class CommitCommand extends AbstractCommand
 
 		$this->_editor = $container['editor'];
 		$this->_commitMessageBuilder = $container['commit_message_builder'];
+		$this->_mergeTemplateFactory = $container['merge_template_factory'];
 		$this->_workingCopyConflictTracker = $container['working_copy_conflict_tracker'];
 	}
 
@@ -112,7 +125,8 @@ class CommitCommand extends AbstractCommand
 			throw new CommandException('Nothing to commit.');
 		}
 
-		$commit_message = $this->_commitMessageBuilder->build($wc_path, $changelist);
+		$merge_template = $this->_mergeTemplateFactory->get($this->getSetting(self::SETTING_COMMIT_MERGE_TEMPLATE));
+		$commit_message = $this->_commitMessageBuilder->build($wc_path, $merge_template, $changelist);
 		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $compact_working_copy_status;
 
 		$edited_commit_message = $this->_editor
@@ -183,6 +197,29 @@ class CommitCommand extends AbstractCommand
 			$changelists,
 			0,
 			'Changelist "%s" is invalid.'
+		);
+	}
+
+	/**
+	 * Returns list of config settings.
+	 *
+	 * @return AbstractConfigSetting[]
+	 */
+	public function getConfigSettings()
+	{
+		$container = $this->getContainer();
+		$merge_template_names = array();
+
+		foreach ( $container['merge_template_factory']->getNames() as $merge_template_name ) {
+			$merge_template_names[$merge_template_name] = str_replace('_', ' ', ucfirst($merge_template_name));
+		}
+
+		return array(
+			new ChoiceConfigSetting(
+				self::SETTING_COMMIT_MERGE_TEMPLATE,
+				$merge_template_names,
+				reset($merge_template_names)
+			),
 		);
 	}
 
