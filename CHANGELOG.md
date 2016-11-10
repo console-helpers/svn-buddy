@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - When using `revert` command display list of recorded conflicts before deleting it.
 - Added different formats (merge templates), used during automatic merge commit log message generation.
 - Added empty merge template allowing to prevent merge information to be used during commit log message generation.
+- Added `cfg` alias to `config` command.
 
 ### Changed
 - The `update` command now also tracks conflicts resulted from problematic update.

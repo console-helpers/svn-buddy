@@ -55,6 +55,7 @@ class ConfigCommand extends AbstractCommand implements IAggregatorAwareCommand
 		$this
 			->setName('config')
 			->setDescription('Change configuration settings, that are used by other commands')
+			->setAliases(array('cfg'))
 			->addArgument(
 				'path',
 				InputArgument::OPTIONAL,

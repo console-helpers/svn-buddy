@@ -17,7 +17,7 @@ The Git users will also feel right at home, because used terminology (commands/o
 
 Almost each of commands described below accepts `path` argument to specify working copy path. This allows to work with several working copies without the need to `cd` to each of them.
 
-### The "config" command
+### The "config" (alias "cfg") command
 
 This command allows to change configuration settings, that are used by other commands.
 
