@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `empty` merge template allowing to prevent merge information to be used during commit log message generation.
 - Added `cfg` alias to `config` command.
 - Added `summary` merge template to display only summary from performed merge in a commit log message.
+- Added `--merge-template` option to `commit` command to allow overriding merge template for this commit.
 
 ### Changed
 - The `update` command now also tracks conflicts resulted from problematic update.

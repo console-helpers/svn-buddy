@@ -15,9 +15,11 @@ use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -80,9 +82,34 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 				null,
 				InputOption::VALUE_NONE,
 				'Operate only on members of selected changelist'
+			)
+			->addOption(
+				'merge-template',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Use alternative merge template for this commit'
 			);
 
 		parent::configure();
+	}
+
+	/**
+	 * Return possible values for the named option
+	 *
+	 * @param string            $optionName Option name.
+	 * @param CompletionContext $context    Completion context.
+	 *
+	 * @return array
+	 */
+	public function completeOptionValues($optionName, CompletionContext $context)
+	{
+		$ret = parent::completeOptionValues($optionName, $context);
+
+		if ( $optionName === 'merge-template' ) {
+			return $this->getMergeTemplateNames();
+		}
+
+		return $ret;
 	}
 
 	/**
@@ -125,8 +152,7 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 			throw new CommandException('Nothing to commit.');
 		}
 
-		$merge_template = $this->_mergeTemplateFactory->get($this->getSetting(self::SETTING_COMMIT_MERGE_TEMPLATE));
-		$commit_message = $this->_commitMessageBuilder->build($wc_path, $merge_template, $changelist);
+		$commit_message = $this->_commitMessageBuilder->build($wc_path, $this->getMergeTemplate(), $changelist);
 		$commit_message .= PHP_EOL . PHP_EOL . self::STOP_LINE . PHP_EOL . PHP_EOL . $compact_working_copy_status;
 
 		$edited_commit_message = $this->_editor
@@ -201,16 +227,48 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 	}
 
 	/**
+	 * Returns merge template to use.
+	 *
+	 * @return AbstractMergeTemplate
+	 */
+	protected function getMergeTemplate()
+	{
+		$merge_template_name = $this->io->getOption('merge-template');
+
+		if ( !isset($merge_template_name) ) {
+			$merge_template_name = $this->getSetting(self::SETTING_COMMIT_MERGE_TEMPLATE);
+		}
+
+		return $this->_mergeTemplateFactory->get($merge_template_name);
+	}
+
+	/**
+	 * Returns merge template names.
+	 *
+	 * @return array
+	 */
+	protected function getMergeTemplateNames()
+	{
+		if ( isset($this->_mergeTemplateFactory) ) {
+			return $this->_mergeTemplateFactory->getNames();
+		}
+
+		// When used from "getConfigSettings" method.
+		$container = $this->getContainer();
+
+		return $container['merge_template_factory']->getNames();
+	}
+
+	/**
 	 * Returns list of config settings.
 	 *
 	 * @return AbstractConfigSetting[]
 	 */
 	public function getConfigSettings()
 	{
-		$container = $this->getContainer();
 		$merge_template_names = array();
 
-		foreach ( $container['merge_template_factory']->getNames() as $merge_template_name ) {
+		foreach ( $this->getMergeTemplateNames() as $merge_template_name ) {
 			$merge_template_names[$merge_template_name] = str_replace('_', ' ', ucfirst($merge_template_name));
 		}
 

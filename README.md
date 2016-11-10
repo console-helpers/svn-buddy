@@ -429,6 +429,7 @@ The command sends changes from your working copy to the repository.
 #### Options
 
 * `--cl` - Operate only on members of selected changelist
+* `--merge-template=MERGE-TEMPLATE` Use alternative merge template for this commit
 
 #### Configuration settings
 
@@ -448,12 +449,12 @@ The command workflow is following:
 2. open an Interactive Editor for commit message entry
 3. commit message is automatically generated, from:
  * selected changelist name (when `--cl` option was used)
- * commit messages of all merged revisions (when this is a merge commit)
- * list of conflicted paths (if merge caused conflicts, that later were resolved)
+ * merged revision information using selected merge template (when this is a merge commit)
+ * list of conflicted paths (if conflicts were present, but later were resolved)
 4. once user is done changing commit message a confirmation dialog is shown to ensure user really wants to perform commit
 5. when user agreed previously the commit is made
 
-The auto-generated commit message looks like this:
+The auto-generated commit message looks like this (with `group_by_revision` merge template):
 
 ```
 Changelist Name
@@ -485,6 +486,12 @@ Same as above, but will also:
 
 * ask user to select changelist
 * put changelist name in commit message
+
+```
+svn-buddy.phar commit --merge-template summary
+```
+
+Same as above, but will use `summary` merge template instead of merge template configured for this working copy.
 
 ### The "cleanup" command
 
