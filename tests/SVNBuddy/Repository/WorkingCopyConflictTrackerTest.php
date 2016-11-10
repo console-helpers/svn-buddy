@@ -74,7 +74,7 @@ class WorkingCopyConflictTrackerTest extends \PHPUnit_Framework_TestCase
 	{
 		return array(
 			array(array(), array('new-file.txt'), array('new-file.txt')),
-			array(array('old-file.txt'), array('new-file.txt'), array('old-file.txt', 'new-file.txt')),
+			array(array('old-file.txt'), array('new-file.txt'), array('new-file.txt', 'old-file.txt')),
 		);
 	}
 

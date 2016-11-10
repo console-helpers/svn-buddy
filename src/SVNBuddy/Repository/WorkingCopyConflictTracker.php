@@ -143,6 +143,8 @@ class WorkingCopyConflictTracker
 	 */
 	protected function setRecordedConflicts($wc_path, array $conflicts)
 	{
+		sort($conflicts, SORT_STRING);
+
 		$this->commandConfig->setSettingValue(
 			ConflictsCommand::SETTING_CONFLICTS_RECORDED_CONFLICTS,
 			$this->conflictsCommand,
