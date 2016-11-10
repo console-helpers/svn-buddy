@@ -13,47 +13,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\GroupByRevisionMergeTemplate;
-use Prophecy\Prophecy\ObjectProphecy;
 
 class GroupByRevisionMergeTemplateTest extends AbstractMergeTemplateTestCase
 {
-
-	/**
-	 * Repository connector.
-	 *
-	 * @var ObjectProphecy
-	 */
-	protected $connector;
-
-	/**
-	 * Revision log factory
-	 *
-	 * @var ObjectProphecy
-	 */
-	protected $revisionLogFactory;
-
-	/**
-	 * Merge template.
-	 *
-	 * @var AbstractMergeTemplate
-	 */
-	protected $mergeTemplate;
-
-	protected function setUp()
-	{
-		parent::setUp();
-
-		$this->connector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
-
-		$this->revisionLogFactory = $this->prophesize(
-			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory'
-		);
-
-		$this->mergeTemplate = new GroupByRevisionMergeTemplate(
-			$this->connector->reveal(),
-			$this->revisionLogFactory->reveal()
-		);
-	}
 
 	public function testGetName()
 	{
