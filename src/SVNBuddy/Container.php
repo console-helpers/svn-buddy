@@ -25,6 +25,7 @@ use ConsoleHelpers\SVNBuddy\MergeSourceDetector\InPortalMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\EmptyMergeTemplate;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\GroupByRevisionMergeTemplate;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
@@ -180,6 +181,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			$revision_log_factory = $c['revision_log_factory'];
 
 			$factory->add(new GroupByRevisionMergeTemplate($repository_connector, $revision_log_factory));
+			$factory->add(new EmptyMergeTemplate($repository_connector, $revision_log_factory));
 
 			return $factory;
 		};
