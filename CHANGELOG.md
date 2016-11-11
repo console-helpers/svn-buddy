@@ -35,6 +35,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The merged revision heading (e.g. `--- Merging r15512 into './core':`) wasn't highlighted during merging.
 - Added files in a working copy caused `Mixed revisions` error before merge resulting in immediate update.
 - The merging heading wasn't shown, when fast network connection to Subversion server was used (command output buffer contained 2+ lines of text).
+- Current revision row highlighting also affected table markup instead of just affecting text inside cells.
 
 ## [0.3.0] - 2016-09-08
 ### Added

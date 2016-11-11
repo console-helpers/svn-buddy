@@ -267,7 +267,7 @@ class RevisionPrinter
 
 			if ( $revision === $this->_currentRevision ) {
 				foreach ( $row as $index => $cell ) {
-					$row[$index] = sprintf('<fg=white;options=bold>%s</>', $cell);
+					$row[$index] = $this->applyStyle($cell, 'fg=white;options=bold');
 				}
 			}
 
@@ -298,6 +298,25 @@ class RevisionPrinter
 		$table->render();
 
 		$this->_resetState();
+	}
+
+	/**
+	 * Applies a style to the text.
+	 *
+	 * @param string $text  Text.
+	 * @param string $style Style.
+	 *
+	 * @return string
+	 */
+	protected function applyStyle($text, $style)
+	{
+		if ( strpos($text, PHP_EOL) === false ) {
+			return '<' . $style . '>' . $text . '</>';
+		}
+
+		$lines = explode(PHP_EOL, $text);
+
+		return '<' . $style . '>' . implode('</>' . PHP_EOL . '<' . $style . '>', $lines) . '</>';
 	}
 
 	/**
