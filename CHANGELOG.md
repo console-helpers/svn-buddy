@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `cfg` alias to `config` command.
 - Added `summary` merge template to display only summary from performed merge in a commit log message.
 - Added `--merge-template` option to `commit` command to allow overriding merge template for this commit.
+- Added `--record-only` option to `merge` command for marking revisions as merged without actually merging them.
 
 ### Changed
 - The `update` command now also tracks conflicts resulted from problematic update.

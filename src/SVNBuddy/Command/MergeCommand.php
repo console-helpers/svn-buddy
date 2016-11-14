@@ -152,6 +152,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Automatically perform commit on successful merge, e.g. <comment>yes</comment> or <comment>no</comment>'
+			)
+			->addOption(
+				'record-only',
+				null,
+				InputOption::VALUE_NONE,
+				'Mark revisions as merged without actually merging them'
 			);
 
 		parent::configure();
@@ -537,10 +543,16 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$revision_count += $merged_revision_count;
 		}
 
+		$param_string_ending = '{' . $source_url . '} {' . $wc_path . '}';
+
+		if ( $this->io->getOption('record-only') ) {
+			$param_string_ending = '--record-only ' . $param_string_ending;
+		}
+
 		foreach ( $revisions as $index => $revision ) {
 			$command = $this->repositoryConnector->getCommand(
 				'merge',
-				'-c ' . $revision . ' {' . $source_url . '} {' . $wc_path . '}'
+				'-c ' . $revision . ' ' . $param_string_ending
 			);
 
 			$progress_bar = $this->createMergeProgressBar($merged_revision_count + $index + 1, $revision_count);

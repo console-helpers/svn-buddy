@@ -300,6 +300,7 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--update-revision=UPDATE-REVISION` - Update working copy to given revision before performing a merge
 * `--auto-commit=AUTO-COMMIT` - Automatically perform commit on successful merge, e.g. `yes` or `no`
+* `--record-only` - Mark revisions as merged without actually merging them
 
 #### Configuration settings
 
@@ -417,6 +418,18 @@ svn-buddy.phar merge --update-revision 55
 ```
 
 Will update working copy to the 55th revision before starting merge. Can be used to replay older merges for analytical purposes.
+
+```
+svn-buddy.phar merge --bugs JRA-123 --record-only
+```
+
+Will mark revisions, associated with `JRA-123` bug as merged (no files will be changed).
+
+```
+svn-buddy.phar merge --revisions 55 --record-only
+```
+
+Will mark 55th revision as merged (no files will be changed).
 
 ### The "commit" (alias "ci") command
 
