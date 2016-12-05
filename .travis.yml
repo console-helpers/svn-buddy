@@ -6,8 +6,13 @@ cache:
         - $HOME/.composer/cache
 
 matrix:
-    allow_failures:
-        - php: 7
+  allow_failures:
+    - php: 7
+  include:
+    - php: 7.0
+      env: PHPUNIT_VERSION='5.0.0'
+    - php: 7.1
+      env: PHPUNIT_VERSION='5.0.0'
 
 php:
     - 5.3
@@ -15,16 +20,17 @@ php:
     - 5.5
     - 5.6
     - hhvm
-    - 7.0
 
 install:
-    - composer install --prefer-dist --no-interaction
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require phpunit/phpunit:$PHPUNIT_VERSION --prefer-dist --no-interaction; fi;
+    - if [ "$PHPUNIT_VERSION" == "" ]; then composer install --prefer-dist --no-interaction; fi;
 
 before_script:
     - mkdir -p build/logs
 
 script:
-    - phpunit --coverage-clover build/logs/clover.xml
+    - if [ "$PHPUNIT_VERSION" != "" ]; then vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" == "" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
