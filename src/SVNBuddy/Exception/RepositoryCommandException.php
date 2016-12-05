@@ -62,7 +62,7 @@ class RepositoryCommandException extends AbstractException
 		foreach ( $lines as $line ) {
 			if ( preg_match('/^svn\: E([\d]+)\: (.*)$/', $line, $regs) ) {
 				// SVN 1.7+.
-				$error_code = $regs[1];
+				$error_code = (int)$regs[1]; // Typecast, because HHVM's "Exception" class doesn't do this.
 				$error_message .= PHP_EOL . $regs[2];
 			}
 			elseif ( preg_match('/^svn\: (.*)$/', $line, $regs) ) {
