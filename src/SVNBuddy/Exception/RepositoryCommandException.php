@@ -29,6 +29,8 @@ class RepositoryCommandException extends AbstractException
 
 	const SVN_ERR_FS_NOT_FOUND = 160013;
 
+	const SVN_ERR_BASE = 200000;
+
 	/**
 	 * Creates instance of repository command execution exception.
 	 *

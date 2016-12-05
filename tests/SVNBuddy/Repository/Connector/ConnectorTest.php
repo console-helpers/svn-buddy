@@ -180,6 +180,31 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		);
 	}
 
+	public function testGetNonExistingPropertyOnSubversion18()
+	{
+		$this->_expectCommand("svn --non-interactive propget prop-name 'the/path' --revision 5", null);
+
+		$this->assertSame(
+			'',
+			$this->_repositoryConnector->getProperty('prop-name', 'the/path', 5)
+		);
+	}
+
+	public function testGetNonExistingPropertyOnSubversion19()
+	{
+		$this->_expectCommand(
+			"svn --non-interactive propget prop-name 'the/path' --revision 5",
+			null,
+			'A problem occurred; see other errors for details',
+			RepositoryCommandException::SVN_ERR_BASE
+		);
+
+		$this->assertSame(
+			'',
+			$this->_repositoryConnector->getProperty('prop-name', 'the/path', 5)
+		);
+	}
+
 	/**
 	 * @dataProvider svnInfoBasedMethodDataProvider
 	 */

@@ -237,6 +237,7 @@ class Connector
 	 * @param mixed  $revision    Revision.
 	 *
 	 * @return string
+	 * @throws RepositoryCommandException When other, then missing property exception happens.
 	 */
 	public function getProperty($name, $path_or_url, $revision = null)
 	{
@@ -246,7 +247,20 @@ class Connector
 			$param_string .= ' --revision ' . $revision;
 		}
 
-		return $this->getCommand('propget', $param_string)->run();
+		// The "null" for non-existing properties is never returned, because output is converted to string.
+		$property_value = '';
+
+		try {
+			$property_value = $this->getCommand('propget', $param_string)->run();
+		}
+		catch ( RepositoryCommandException $e ) {
+			// Preserve SVN 1.8- behavior, where reading value of non-existing property returned an empty string.
+			if ( $e->getCode() !== RepositoryCommandException::SVN_ERR_BASE ) {
+				throw $e;
+			}
+		}
+
+		return $property_value;
 	}
 
 	/**
