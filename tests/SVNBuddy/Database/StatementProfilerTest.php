@@ -207,11 +207,15 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 	{
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
+
+		// The PHP7 threats multi-line statement position differently in traces.
+		$expect_line = PHP_VERSION_ID < 70000 ? 229 : 228;
+
 		$io
 			->writeln(array(
 				'',
 				'<debug>[db, 5s]: SELECT "PA" "PAR","AM"</debug>',
-				'<debug>[db origin]: ' . __FILE__ . ':225</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':' . $expect_line . '</debug>',
 			))
 			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
