@@ -761,6 +761,20 @@ MESSAGE;
 		);
 	}
 
+	public function testGetFileContent()
+	{
+		$svn_command = "svn --non-interactive cat '/path/to/working-copy/file.php' --revision 100";
+		$this->_expectCommand($svn_command, 'OK');
+
+		$this->_cacheManager->getCache('misc/command:' . $svn_command, null, Connector::SVN_CAT_CACHE_DURATION)->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager->setCache('misc/command:' .  $svn_command, 'OK', null, Connector::SVN_CAT_CACHE_DURATION)->shouldBeCalled();
+
+		$this->assertEquals(
+			'OK',
+			$this->_repositoryConnector->getFileContent('/path/to/working-copy/file.php', 100)
+		);
+	}
+
 	/**
 	 * Sets expectation for specific command.
 	 *

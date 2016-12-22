@@ -42,6 +42,8 @@ class Connector
 
 	const SVN_INFO_CACHE_DURATION = '1 year';
 
+	const SVN_CAT_CACHE_DURATION = '1 month';
+
 	/**
 	 * Reference to configuration.
 	 *
@@ -911,6 +913,22 @@ class Connector
 		}
 
 		return $paths;
+	}
+
+	/**
+	 * Returns file contents at given revision.
+	 *
+	 * @param string  $path_or_url Path or url.
+	 * @param integer $revision    Revision.
+	 *
+	 * @return string
+	 */
+	public function getFileContent($path_or_url, $revision)
+	{
+		return $this
+			->withCache(self::SVN_CAT_CACHE_DURATION)
+			->getCommand('cat', '{' . $path_or_url . '} --revision ' . $revision)
+			->run();
 	}
 
 }
