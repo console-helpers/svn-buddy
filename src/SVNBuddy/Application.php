@@ -24,6 +24,7 @@ use ConsoleHelpers\SVNBuddy\Command\Dev\PharCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
 use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
 use ConsoleHelpers\SVNBuddy\Command\RevertCommand;
+use ConsoleHelpers\SVNBuddy\Command\SearchCommand;
 use ConsoleHelpers\SVNBuddy\Command\SelfUpdateCommand;
 use ConsoleHelpers\SVNBuddy\Command\UpdateCommand;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
@@ -86,6 +87,7 @@ class Application extends BaseApplication
 		$default_commands[] = new ConfigCommand();
 		$default_commands[] = new AggregateCommand();
 		$default_commands[] = new CompletionCommand();
+		$default_commands[] = new SearchCommand();
 		$default_commands[] = new SelfUpdateCommand();
 
 		if ( !$this->isPharFile() ) {
