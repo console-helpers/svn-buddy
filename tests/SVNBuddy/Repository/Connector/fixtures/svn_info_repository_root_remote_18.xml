@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+	<entry kind="dir" path="." revision="16534">
+		<url>svn://repository.com</url>
+		<relative-url>^/</relative-url>
+		<repository>
+			<root>svn://repository.com</root>
+			<uuid>2d19b2cd-e369-0410-8045-b8fb98e743af</uuid>
+		</repository>
+		<commit revision="100">
+			<author>alex</author>
+			<date>2017-01-29T18:28:39.167969Z</date>
+		</commit>
+	</entry>
+</info>

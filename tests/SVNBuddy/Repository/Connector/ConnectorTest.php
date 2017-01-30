@@ -542,6 +542,37 @@ MESSAGE;
 	}
 
 	/**
+	 * @dataProvider getLastRevisionOnRepositoryRootDataProvider
+	 */
+	public function testGetLastRevisionOnRepositoryRoot($fixture)
+	{
+		$raw_command = "svn --non-interactive --username a --password b info --xml 'svn://repository.com'";
+		$raw_command_output = $this->getFixture($fixture);
+
+		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 minute')->willReturn(null)->shouldBeCalled();
+		$this->_cacheManager
+			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 minute')
+			->shouldBeCalled();
+
+		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
+
+		$this->_expectCommand(
+			$raw_command,
+			$raw_command_output
+		);
+
+		$this->assertEquals(100, $repository_connector->getLastRevision('svn://repository.com'));
+	}
+
+	public function getLastRevisionOnRepositoryRootDataProvider()
+	{
+		return array(
+			'svn_1.6' => array('svn_info_repository_root_remote_16.xml'),
+			'svn_1.8' => array('svn_info_repository_root_remote_18.xml'),
+		);
+	}
+
+	/**
 	 * @dataProvider svnInfoBasedMethodDataProvider
 	 */
 	public function testRemoveCredentials($given_repository_url, $used_repository_url)
