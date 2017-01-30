@@ -95,6 +95,7 @@ class SearchCommand extends AbstractCommand
 	 * {@inheritdoc}
 	 *
 	 * @throws \RuntimeException When invalid direction is specified.
+	 * @throws \RuntimeException When keywords are empty.
 	 * @throws CommandException When no revisions found for path specified.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
@@ -109,6 +110,11 @@ class SearchCommand extends AbstractCommand
 		$relative_path = $this->repositoryConnector->getRelativePath($wc_path);
 
 		$keywords = $this->io->getArgument('keywords');
+
+		if ( !strlen($keywords) ) {
+			throw new \RuntimeException('The "keywords" are empty.');
+		}
+
 		$this->io->writeln(sprintf(
 			'Searching for %s match of "<info>%s</info>" in "<info>%s</info>":',
 			$match_type,

@@ -40,6 +40,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Current revision row highlighting also affected table markup instead of just affecting text inside cells.
 - Initial repository import using Subversion 1.9+ failed with `Property 'bugtraq:logregexp' not found` error.
 - Attempt to use "svn-buddy" inside sub-folder of a working copy ended up in exception for Subversion 1.7+ client.
+- It was possible to search for an empty keyword using "search" command.
 
 ## [0.3.0] - 2016-09-08
 ### Added
