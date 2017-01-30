@@ -454,7 +454,7 @@ class Connector
 		$svn_info = $this->withCache($cache_duration)->getCommand('info', '--xml {' . $path_or_url . '}')->run();
 
 		// When getting remote "svn info", then path is last folder only.
-		$svn_info_path = $this->_getSvnInfoEntryPath($svn_info->entry);
+		$svn_info_path = (string)$svn_info->entry['path'];
 
 		// In SVN 1.7+, when doing "svn info" on repository root url.
 		if ( $svn_info_path === '.' ) {
@@ -466,26 +466,6 @@ class Connector
 		}
 
 		return $svn_info->entry;
-	}
-
-	/**
-	 * Returns path of "svn info" entry.
-	 *
-	 * @param \SimpleXMLElement $svn_info_entry The "entry" node of "svn info" command.
-	 *
-	 * @return string
-	 */
-	private function _getSvnInfoEntryPath(\SimpleXMLElement $svn_info_entry)
-	{
-		// SVN 1.7+.
-		$path = (string)$svn_info_entry->{'wc-info'}->{'wcroot-abspath'};
-
-		if ( $path ) {
-			return $path;
-		}
-
-		// SVN 1.6-.
-		return (string)$svn_info_entry['path'];
 	}
 
 	/**

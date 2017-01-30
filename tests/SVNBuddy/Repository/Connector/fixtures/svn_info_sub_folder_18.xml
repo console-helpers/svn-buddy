@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
+	<entry kind="dir" path="/path/to/working-copy/sub-folder" revision="16534">
+		<url>svn://repository.com/path/to/project/sub-folder</url>
+		<relative-url>^/path/to/project/sub-folder</relative-url>
+		<repository>
+			<root>svn://repository.com</root>
+			<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
+		</repository>
+		<wc-info>
+			<wcroot-abspath>/path/to/working-copy</wcroot-abspath>
+			<schedule>normal</schedule>
+			<depth>infinity</depth>
+		</wc-info>
+		<commit revision="16534">
+			<author>alex</author>
+			<date>2017-01-29T18:28:39.167969Z</date>
+		</commit>
+	</entry>
+</info>

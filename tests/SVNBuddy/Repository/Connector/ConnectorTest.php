@@ -219,9 +219,8 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 	/**
 	 * @dataProvider svnInfoDataProvider
 	 */
-	public function testGetWorkingCopyUrlFromPath($raw_command_output)
+	public function testGetWorkingCopyUrlFromPath($raw_command_output, $path, $url)
 	{
-		$path = '/path/to/working-copy';
 		$raw_command = "svn --non-interactive info --xml '" . $path . "'";
 
 		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
@@ -232,14 +231,16 @@ class ConnectorTest extends \PHPUnit_Framework_TestCase
 		$this->_expectCommand($raw_command, $raw_command_output);
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl($path);
-		$this->assertEquals(self::DUMMY_REPO, $actual);
+		$this->assertEquals($url, $actual);
 	}
 
 	public function svnInfoDataProvider()
 	{
 		return array(
-			'svn1.6' => array($this->getFixture('svn_info_16.xml')),
-			'svn1.7' => array($this->getFixture('svn_info_17.xml')),
+			'svn1.6_wc_root' => array($this->getFixture('svn_info_16.xml'), '/path/to/working-copy', self::DUMMY_REPO),
+			'svn1.7_wc_root' => array($this->getFixture('svn_info_17.xml'), '/path/to/working-copy', self::DUMMY_REPO),
+			'svn1.6_wc_sub_folder' => array($this->getFixture('svn_info_sub_folder_16.xml'), '/path/to/working-copy/sub-folder', self::DUMMY_REPO . '/sub-folder'),
+			'svn1.8_wc_sub_folder' => array($this->getFixture('svn_info_sub_folder_18.xml'), '/path/to/working-copy/sub-folder', self::DUMMY_REPO . '/sub-folder'),
 		);
 	}
 
