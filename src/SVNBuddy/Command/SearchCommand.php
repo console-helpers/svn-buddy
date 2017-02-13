@@ -109,10 +109,10 @@ class SearchCommand extends AbstractCommand
 		$wc_path = $this->getWorkingCopyPath();
 		$relative_path = $this->repositoryConnector->getRelativePath($wc_path);
 
-		$keywords = $this->io->getArgument('keywords');
+		$keywords = trim($this->io->getArgument('keywords'));
 
 		if ( !strlen($keywords) ) {
-			throw new \RuntimeException('The "keywords" are empty.');
+			throw new \RuntimeException('The "keywords" argument is empty or contains only whitespaces.');
 		}
 
 		$this->io->writeln(sprintf(

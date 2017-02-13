@@ -27,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The trailing empty lines are removed from displayed commit message for increased clarity.
 - The merge heading is more readable now, because "r123" was changed into "123 revision" (e.g. `--- Merging 15512 revision into './core':`).
 - The recorded conflicts are now sorted alphabetically.
+- Disallow searching for whitespace-only keywords using `search` command.
 
 ### Fixed
 - Invalid merge source url was guessed for `X.0.Z` branches (e.g. `5.0.x`).
