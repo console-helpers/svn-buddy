@@ -291,8 +291,10 @@ class CommandTest extends \PHPUnit_Framework_TestCase
 		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
+		$delay = defined('HHVM_VERSION') ? '0.01s' : '0s';
+
 		$this->_io
-			->writeln(array('', '<debug>[svn, 0s]: svn log</debug>'))
+			->writeln(array('', '<debug>[svn, ' . $delay . ']: svn log</debug>'))
 			->shouldBeCalled();
 
 		$this->_command->run();
