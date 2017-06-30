@@ -346,6 +346,7 @@ class Connector
 		}
 
 		try {
+			// TODO: No exception is thrown, when we have a valid cache, but SVN client was upgraded.
 			$wc_url = (string)$this->_getSvnInfoEntry($wc_path, self::SVN_INFO_CACHE_DURATION)->url;
 		}
 		catch ( RepositoryCommandException $e ) {
