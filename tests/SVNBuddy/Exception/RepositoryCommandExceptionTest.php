@@ -78,6 +78,18 @@ class RepositoryCommandExceptionTest extends \PHPUnit_Framework_TestCase
 				10,
 				'Command:' . PHP_EOL . 'command' . PHP_EOL . 'Error #10:' . PHP_EOL . 'error',
 			),
+			'obfuscate-username' => array(
+				'svn --non-interactive --username PLAIN log',
+				'svn: error',
+				0,
+				'Command:' . PHP_EOL . 'svn --non-interactive --username ******** log' . PHP_EOL . 'Error #0:' . PHP_EOL . 'error',
+			),
+			'obfuscate-password' => array(
+				'svn --non-interactive --password PLAIN log',
+				'svn: error',
+				0,
+				'Command:' . PHP_EOL . 'svn --non-interactive --password ******** log' . PHP_EOL . 'Error #0:' . PHP_EOL . 'error',
+			),
 		);
 	}
 

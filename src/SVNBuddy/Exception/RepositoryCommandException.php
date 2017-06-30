@@ -39,6 +39,8 @@ class RepositoryCommandException extends AbstractException
 	 */
 	public function __construct($command, $stderr)
 	{
+		$command = \preg_replace('/(--username|--password) ([^\s]+)/', '$1 ********', $command);
+
 		list ($code, $message) = $this->parseErrorOutput($stderr);
 		$message = 'Command:' . PHP_EOL . $command . PHP_EOL . 'Error #' . $code . ':' . PHP_EOL . $message;
 
