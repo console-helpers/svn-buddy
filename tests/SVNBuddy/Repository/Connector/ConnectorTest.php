@@ -695,10 +695,29 @@ MESSAGE;
 				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
 				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true),
 				'admin/index.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
-				'themes/default' => array('item' => 'external', 'props' => 'none', 'tree-conflicted' => false),
 				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
 			),
 			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy')
+		);
+	}
+
+	public function testGetWorkingCopyStatusWithoutChangelistAndWithoutExclusions()
+	{
+		$this->_expectCommand(
+			"svn --non-interactive status --xml '/path/to/working-copy'",
+			$this->getFixture('svn_status_with_changelist_16.xml')
+		);
+
+		$this->assertSame(
+			array(
+				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
+				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true),
+				'admin/index.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
+				'new.txt' => array('item' => 'unversioned', 'props' => 'none', 'tree-conflicted' => false),
+				'themes/default' => array('item' => 'external', 'props' => 'none', 'tree-conflicted' => false),
+				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
+			),
+			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy', null, array())
 		);
 	}
 

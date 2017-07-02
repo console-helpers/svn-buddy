@@ -531,17 +531,20 @@ class Connector
 	/**
 	 * Returns compact working copy status.
 	 *
-	 * @param string      $wc_path          Working copy path.
-	 * @param string|null $changelist       Changelist.
-	 * @param boolean     $with_unversioned With unversioned.
+	 * @param string      $wc_path         Working copy path.
+	 * @param string|null $changelist      Changelist.
+	 * @param array       $except_statuses Except statuses.
 	 *
 	 * @return string
 	 */
-	public function getCompactWorkingCopyStatus($wc_path, $changelist = null, $with_unversioned = false)
-	{
+	public function getCompactWorkingCopyStatus(
+		$wc_path,
+		$changelist = null,
+		array $except_statuses = array(self::STATUS_UNVERSIONED, self::STATUS_EXTERNAL)
+	) {
 		$ret = array();
 
-		foreach ( $this->getWorkingCopyStatus($wc_path, $changelist, $with_unversioned) as $path => $status ) {
+		foreach ( $this->getWorkingCopyStatus($wc_path, $changelist, $except_statuses) as $path => $status ) {
 			$line = $this->getShortItemStatus($status['item']) . $this->getShortPropertiesStatus($status['props']);
 			$line .= '   ' . $path;
 
@@ -612,15 +615,18 @@ class Connector
 	/**
 	 * Returns working copy status.
 	 *
-	 * @param string      $wc_path          Working copy path.
-	 * @param string|null $changelist       Changelist.
-	 * @param boolean     $with_unversioned With unversioned.
+	 * @param string      $wc_path         Working copy path.
+	 * @param string|null $changelist      Changelist.
+	 * @param array       $except_statuses Except statuses.
 	 *
 	 * @return array
 	 * @throws \InvalidArgumentException When changelist doens't exist.
 	 */
-	public function getWorkingCopyStatus($wc_path, $changelist = null, $with_unversioned = false)
-	{
+	public function getWorkingCopyStatus(
+		$wc_path,
+		$changelist = null,
+		array $except_statuses = array(self::STATUS_UNVERSIONED, self::STATUS_EXTERNAL)
+	) {
 		$all_paths = array();
 
 		$status = $this->getCommand('status', '--xml {' . $wc_path . '}')->run();
@@ -660,16 +666,21 @@ class Connector
 			ksort($all_paths, SORT_STRING);
 		}
 
-		// Exclude paths, that haven't changed (e.g. from changelists).
 		$changed_paths = array();
 
 		foreach ( $all_paths as $path => $status ) {
+			// Exclude paths, that haven't changed (e.g. from changelists).
 			if ( $this->isWorkingCopyPathStatus($status, self::STATUS_NORMAL) ) {
 				continue;
 			}
 
-			if ( !$with_unversioned && $this->isWorkingCopyPathStatus($status, self::STATUS_UNVERSIONED) ) {
-				continue;
+			// Exclude paths with requested statuses.
+			if ( $except_statuses ) {
+				foreach ( $except_statuses as $except_status ) {
+					if ( $this->isWorkingCopyPathStatus($status, $except_status) ) {
+						continue 2;
+					}
+				}
 			}
 
 			$changed_paths[$path] = $status;
