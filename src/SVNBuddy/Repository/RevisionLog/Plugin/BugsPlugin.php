@@ -146,28 +146,36 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 	 */
 	protected function detectProjectBugTraqRegEx($project_path, $revision, $project_deleted)
 	{
-		$ref_path = $this->getLastChangedRefPath($project_path);
+		$ref_paths = $this->getLastChangedRefPaths($project_path);
 
-		if ( !isset($ref_path) ) {
+		if ( !$ref_paths ) {
 			return '';
 		}
 
-		return $this->_repositoryConnector
-			->withCache('1 year')
-			->getProperty(
-				'bugtraq:logregex',
-				$this->_repositoryUrl . $ref_path . ($project_deleted ? '@' . $revision : '')
-			);
+		foreach ( $ref_paths as $ref_path ) {
+			$logregex = $this->_repositoryConnector
+				->withCache('1 year')
+				->getProperty(
+					'bugtraq:logregex',
+					$this->_repositoryUrl . $ref_path . ($project_deleted ? '@' . $revision : '')
+				);
+
+			if ( strlen($logregex) ) {
+				return $logregex;
+			}
+		}
+
+		return '';
 	}
 
 	/**
-	 * Returns last changed ref within given project.
+	 * Returns given project refs, where last changed are on top.
 	 *
 	 * @param string $project_path Path.
 	 *
-	 * @return string|null
+	 * @return array
 	 */
-	protected function getLastChangedRefPath($project_path)
+	protected function getLastChangedRefPaths($project_path)
 	{
 		$own_nesting_level = substr_count($project_path, '/') - 1;
 
@@ -188,7 +196,7 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 
 		// No sub-folders.
 		if ( !$paths ) {
-			return null;
+			return array();
 		}
 
 		$filtered_paths = array();
@@ -201,12 +209,12 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 
 		// None of sub-folders matches a ref.
 		if ( !$filtered_paths ) {
-			return null;
+			return array();
 		}
 
 		arsort($filtered_paths, SORT_NUMERIC);
 
-		return key($filtered_paths);
+		return array_keys($filtered_paths);
 	}
 
 	/**

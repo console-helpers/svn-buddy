@@ -29,6 +29,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The recorded conflicts are now sorted alphabetically.
 - Disallow searching for whitespace-only keywords using `search` command.
 - Obfuscate credentials displayed in error messages.
+- While looking for "bugtraq:logregexp" property of a project look at each ref instead of using last modified only.
 
 ### Fixed
 - Invalid merge source url was guessed for `X.0.Z` branches (e.g. `5.0.x`).
