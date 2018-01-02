@@ -171,9 +171,15 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 	{
 		$own_nesting_level = substr_count($project_path, '/') - 1;
 
+		$where_clause = array(
+			'Path LIKE :parent_path',
+			'PathNestingLevel BETWEEN :from_level AND :to_level',
+			'RevisionDeleted IS NULL',
+		);
+
 		$sql = 'SELECT Path, RevisionLastSeen
 				FROM Paths
-				WHERE Path LIKE :parent_path AND PathNestingLevel BETWEEN :from_level AND :to_level';
+				WHERE (' . implode(') AND (', $where_clause) . ')';
 		$paths = $this->database->fetchPairs($sql, array(
 			'parent_path' => $project_path . '%',
 			'from_level' => $own_nesting_level + 1,

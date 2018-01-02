@@ -44,6 +44,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Attempt to use "svn-buddy" inside sub-folder of a working copy ended up in exception for Subversion 1.7+ client.
 - It was possible to search for an empty keyword using "search" command.
 - The externals were shown in auto-generated commit message for `commit` command.
+- Deleted branches/tags of a project were introspected for a "bugtraq:logregexp" property resulting in `Path ... not found in ... revision.` error.
 
 ## [0.3.0] - 2016-09-08
 ### Added
