@@ -11,15 +11,15 @@ matrix:
       env: PHPUNIT_VERSION='4.8.36'
 
 php:
-    - 5.4
-    - 5.6
-    - 7.0
-    - 7.1
+#    - 5.4
+#    - 5.6
+#    - 7.0
+#    - 7.1
     - 7.2
 
 install:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require phpunit/phpunit:$PHPUNIT_VERSION --prefer-dist --no-interaction; fi;
-    - if [ "$PHPUNIT_VERSION" == "" ]; then composer install --prefer-dist --no-interaction; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require phpunit/phpunit:$PHPUNIT_VERSION --no-update; fi;
+    - composer install --prefer-dist
 
 before_script:
     - mkdir -p build/logs
