@@ -17,6 +17,10 @@ php:
 #    - 7.1
     - 7.2
 
+env:
+    global:
+        secure: kDrt1NWGJI5Zj0mnFjVnE1/CnvONYP0Z0Csc7pWpW/KATyW97AC9CfbuWdFu/NW9RI8WHgtzFov52Lv21rExGERoUd8K/I2wLKaeD5tefZeoby8FYZYt2NaR5bDthqKdONjy/lv2nuK7404c8DyAkI0Rc9AX/ahREJ6M/KzJnNFabMKSk6pdL2a8Y7VuLXDgIzhMglBK3FOfs505NoGx8xHJ+hyXyPzTAuYvgGOgsGJtCHaTyojyy9JPkULN0CQzGJy/lnfEIibJZl57HNwhljrJ8AFgRqr5jDOfSMv8+pd7ezYUAXogjGNAp/qTso7M0GHYmNWJEwM4HwG/cSe5fjD/4FTxtZSgGACZWSGANHUhl4GGmuII5+ka9WVmzfD3tzZ2py9O+eTVN/pmzCq1m+Scr0tM0pmG5ZwQNxjZiQAOImjipNcS4ECYZraLgkaM8y7QwUMNl58+qd45cMI1YNqu0J6Lg3QzDfvCF0xjyRWY33gO1vTUA/DeHAnJE9A9qnoEoEA7QbzPq8pjFFLtqi/nVdCmWOD5KmfixyWoGLxPExMch3ju9y3CQwL9UJ6E5vkjGyTSsF8uLH0WUHiCasQGdDwnb6THkt0m2x2eaFxD2J59ViJEUtYLzOeRUOvvplZeMY93xMPUOEl+3hkUKFUMNmb180JNZGFlTeOqqf0=
+
 install:
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer require phpunit/phpunit:$PHPUNIT_VERSION --no-update; fi;
     - composer install --prefer-dist
