@@ -13,8 +13,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-abstract class AbstractConfigSettingTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractConfigSettingTest extends AbstractTestCase
 {
 
 	/**

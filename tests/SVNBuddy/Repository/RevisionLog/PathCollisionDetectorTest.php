@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\PathCollisionDetector;
+use PHPUnit\Framework\TestCase;
 
-class PathCollisionDetectorTest extends \PHPUnit_Framework_TestCase
+class PathCollisionDetectorTest extends TestCase
 {
 
 	/**

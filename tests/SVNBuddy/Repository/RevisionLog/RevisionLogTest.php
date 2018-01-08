@@ -13,11 +13,12 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
 
-class RevisionLogTest extends \PHPUnit_Framework_TestCase
+class RevisionLogTest extends TestCase
 {
 
 	/**

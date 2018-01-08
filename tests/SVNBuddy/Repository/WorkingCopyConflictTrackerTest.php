@@ -13,10 +13,11 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository;
 
 use ConsoleHelpers\SVNBuddy\Command\ConflictsCommand;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class WorkingCopyConflictTrackerTest extends \PHPUnit_Framework_TestCase
+class WorkingCopyConflictTrackerTest extends TestCase
 {
 
 	/**

@@ -12,9 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 
 use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class DatabaseCacheTest extends \PHPUnit_Framework_TestCase
+class DatabaseCacheTest extends TestCase
 {
 
 	/**

@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
+use PHPUnit\Framework\TestCase;
 
-class RevisionListParserTest extends \PHPUnit_Framework_TestCase
+class RevisionListParserTest extends TestCase
 {
 
 	/**

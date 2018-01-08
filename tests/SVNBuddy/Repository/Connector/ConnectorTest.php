@@ -15,8 +15,9 @@ use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class ConnectorTest extends \PHPUnit_Framework_TestCase
+class ConnectorTest extends AbstractTestCase
 {
 
 	const DUMMY_REPO = 'svn://repository.com/path/to/project';

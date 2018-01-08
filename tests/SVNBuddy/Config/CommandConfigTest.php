@@ -14,9 +14,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class CommandConfigTest extends \PHPUnit_Framework_TestCase
+class CommandConfigTest extends TestCase
 {
 
 	/**

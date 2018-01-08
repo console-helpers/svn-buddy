@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Helper;
 
 
 use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
+use PHPUnit\Framework\TestCase;
 
-class OutputHelperTest extends \PHPUnit_Framework_TestCase
+class OutputHelperTest extends TestCase
 {
 
 	/**

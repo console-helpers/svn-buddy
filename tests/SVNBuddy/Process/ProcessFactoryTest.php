@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Process;
 
 
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
+use PHPUnit\Framework\TestCase;
 
-class ProcessFactoryTest extends \PHPUnit_Framework_TestCase
+class ProcessFactoryTest extends TestCase
 {
 
 	public function testImplementsCorrectInterface()

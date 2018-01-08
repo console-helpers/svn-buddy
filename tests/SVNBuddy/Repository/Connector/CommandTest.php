@@ -12,13 +12,14 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class CommandTest extends \PHPUnit_Framework_TestCase
+class CommandTest extends TestCase
 {
 
 	/**
