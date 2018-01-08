@@ -8,7 +8,7 @@ cache:
 matrix:
   include:
     - php: 5.5
-      env: PHPUNIT_VERSION='4.8.36' GITHUB_TOKEN=2ebe350b8e684e94c4271e9217c91084fb32f509
+      env: PHPUNIT_VERSION='4.8.36'
 
 php:
 #    - 5.4
@@ -19,7 +19,8 @@ php:
 
 install:
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer require phpunit/phpunit:$PHPUNIT_VERSION --no-update; fi;
-    - composer install --prefer-dist
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer install --prefer-source; fi;
+    - if [ "$PHPUNIT_VERSION" == "" ]; then composer install --prefer-dist; fi;
 
 before_script:
     - mkdir -p build/logs
