@@ -21,8 +21,8 @@ before_install:
     - composer config --global github-protocols https
 
 install:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require phpunit/phpunit:$PHPUNIT_VERSION; fi;
-    - if [ "$PHPUNIT_VERSION" == "" ]; then composer install --prefer-dist; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require phpunit/phpunit:$PHPUNIT_VERSION -vvv; fi;
+    - if [ "$PHPUNIT_VERSION" == "" ]; then composer install --prefer-dist -vvv; fi;
 
 before_script:
     - mkdir -p build/logs
