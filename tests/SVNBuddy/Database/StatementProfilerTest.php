@@ -13,8 +13,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use Prophecy\Argument;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class StatementProfilerTest extends \PHPUnit_Framework_TestCase
+class StatementProfilerTest extends AbstractTestCase
 {
 
 	/**
@@ -181,7 +182,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 			->writeln(array(
 				'',
 				'<debug>[db, 5s]: IGNORE ME "bb"</debug>',
-				'<debug>[db origin]: ' . __FILE__ . ':192</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':193</debug>',
 				))
 			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
@@ -209,7 +210,7 @@ class StatementProfilerTest extends \PHPUnit_Framework_TestCase
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
 		// The PHP7 threats multi-line statement position differently in traces.
-		$expect_line = PHP_VERSION_ID < 70000 ? 229 : 228;
+		$expect_line = PHP_VERSION_ID < 70000 ? 230 : 229;
 
 		$io
 			->writeln(array(

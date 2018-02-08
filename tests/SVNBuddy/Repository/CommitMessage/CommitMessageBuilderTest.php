@@ -12,9 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class CommitMessageBuilderTest extends \PHPUnit_Framework_TestCase
+class CommitMessageBuilderTest extends TestCase
 {
 
 	/**

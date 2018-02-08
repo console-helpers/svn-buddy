@@ -13,8 +13,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository;
 
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
 use Prophecy\Prophecy\ObjectProphecy;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class WorkingCopyResolverTest extends \PHPUnit_Framework_TestCase
+class WorkingCopyResolverTest extends AbstractTestCase
 {
 
 	/**

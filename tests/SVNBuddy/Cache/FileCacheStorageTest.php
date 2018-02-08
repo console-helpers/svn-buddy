@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Cache;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\FileCacheStorage;
+use PHPUnit\Framework\TestCase;
 
-class FileCacheStorageTest extends \PHPUnit_Framework_TestCase
+class FileCacheStorageTest extends TestCase
 {
 
 	/**

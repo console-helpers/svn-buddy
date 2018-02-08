@@ -12,9 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 
-class UrlResolverTest extends \PHPUnit_Framework_TestCase
+class UrlResolverTest extends TestCase
 {
 
 	/**

@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Helper;
 
 
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
+use PHPUnit\Framework\TestCase;
 
-class DateHelperTest extends \PHPUnit_Framework_TestCase
+class DateHelperTest extends TestCase
 {
 
 	/**

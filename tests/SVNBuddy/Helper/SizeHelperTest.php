@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Helper;
 
 
 use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
+use PHPUnit\Framework\TestCase;
 
-class SizeHelperTest extends \PHPUnit_Framework_TestCase
+class SizeHelperTest extends TestCase
 {
 
 	/**

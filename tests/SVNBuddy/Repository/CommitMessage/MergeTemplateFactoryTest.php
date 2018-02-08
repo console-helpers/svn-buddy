@@ -12,8 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
+use PHPUnit\Framework\TestCase;
 
-class MergeTemplateFactoryTest extends \PHPUnit_Framework_TestCase
+class MergeTemplateFactoryTest extends TestCase
 {
 
 	/**
