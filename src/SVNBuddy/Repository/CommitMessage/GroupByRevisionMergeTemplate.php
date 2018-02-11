@@ -71,7 +71,15 @@ class GroupByRevisionMergeTemplate extends AbstractMergeTemplate
 	 */
 	protected function getCommitMessageHeading($wc_url, $path)
 	{
-		return 'Merging from ' . ucfirst(basename($path)) . ' to ' . ucfirst(basename($wc_url));
+		$from_path = basename($path);
+		$to_path = basename($wc_url);
+
+		if ( $from_path === $to_path ) {
+			$from_project_parts = explode('/', $this->repositoryConnector->getProjectUrl($path));
+			$from_path .= ' (' . end($from_project_parts) . ')';
+		}
+
+		return 'Merging from ' . ucfirst($from_path) . ' to ' . ucfirst($to_path);
 	}
 
 }

@@ -36,6 +36,10 @@ b-line2
 Merging from Branch-name to Stable
 * r4: c-line1
 c-line2
+
+Merging from Stable (another-project-name) to Stable
+* r15: d-line1
+d-line2
 COMMIT_MSG;
 
 		$this->assertEquals($expected, $this->mergeTemplate->apply('/path/to/working-copy'));
