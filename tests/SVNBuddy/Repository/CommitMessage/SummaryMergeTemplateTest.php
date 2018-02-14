@@ -35,6 +35,8 @@ Merge of "projects/project-name/trunk@33" to "path/to/project/tags/stable@555".
 Merge of "projects/project-name/branches/branch-name@4" to "path/to/project/tags/stable@555".
 
 Merge of "projects/another-project-name/tags/stable@15" to "path/to/project/tags/stable@555".
+
+Merge of "projects/another-project-name/trunk@17" to "path/to/project/tags/stable@555".
 COMMIT_MSG;
 
 		$this->assertEquals($expected, $this->mergeTemplate->apply('/path/to/working-copy'));

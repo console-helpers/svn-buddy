@@ -69,6 +69,7 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 			'/projects/project-name/trunk' => array('18', '33'),
 			'/projects/project-name/branches/branch-name' => array('4'),
 			'/projects/another-project-name/tags/stable' => array('15'),
+			'/projects/another-project-name/trunk' => array('17'),
 		));
 
 		$this->connector
@@ -78,10 +79,6 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 		$this->connector
 			->getRootUrl('svn://repository.com/path/to/project-name/tags/stable')
 			->willReturn('svn://repository.com');
-
-		$this->connector
-			->getProjectUrl('/projects/another-project-name/tags/stable')
-			->willReturn('/projects/another-project-name');
 
 		$revision_log1 = $this->getRevisionLog('svn://repository.com/projects/project-name/trunk');
 		$revision_log1->getRevisionsData('summary', array(18, 33))->willReturn(array(
@@ -112,6 +109,15 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 				'author' => 'user3',
 				'date' => 35345444353,
 				'msg' => 'd-line1' . PHP_EOL . 'd-line2' . PHP_EOL . PHP_EOL,
+			),
+		));
+
+		$revision_log4 = $this->getRevisionLog('svn://repository.com/projects/another-project-name/trunk');
+		$revision_log4->getRevisionsData('summary', array(17))->willReturn(array(
+			17 => array(
+				'author' => 'user4',
+				'date' => 35345444353,
+				'msg' => 'e-line1' . PHP_EOL . 'e-line2' . PHP_EOL . PHP_EOL,
 			),
 		));
 	}

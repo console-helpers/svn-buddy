@@ -41,12 +41,13 @@ class GroupByRevisionMergeTemplate extends AbstractMergeTemplate
 
 		$ret = '';
 		$wc_url = $this->repositoryConnector->getWorkingCopyUrl($wc_path);
+		$relative_path = $this->repositoryConnector->getRelativePath($wc_url);
 		$repository_url = $this->repositoryConnector->getRootUrl($wc_url);
 
 		foreach ( $merged_revisions as $path => $revisions ) {
 			$merged_messages = array();
 			$revision_log = $this->revisionLogFactory->getRevisionLog($repository_url . $path);
-			$ret .= PHP_EOL . $this->getCommitMessageHeading($wc_url, $path) . PHP_EOL;
+			$ret .= PHP_EOL . $this->getCommitMessageHeading($path, $relative_path) . PHP_EOL;
 
 			$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
 
@@ -64,18 +65,21 @@ class GroupByRevisionMergeTemplate extends AbstractMergeTemplate
 	/**
 	 * Builds commit message heading.
 	 *
-	 * @param string $wc_url Working copy url.
-	 * @param string $path   Source path for merge operation.
+	 * @param string $source_path Source path for merge operation.
+	 * @param string $target_path Target path for merge operation.
 	 *
 	 * @return string
 	 */
-	protected function getCommitMessageHeading($wc_url, $path)
+	protected function getCommitMessageHeading($source_path, $target_path)
 	{
-		$from_path = basename($path);
-		$to_path = basename($wc_url);
+		$from_path = basename($source_path);
+		$source_project = $this->repositoryConnector->getProjectUrl($source_path);
 
-		if ( $from_path === $to_path ) {
-			$from_project_parts = explode('/', $this->repositoryConnector->getProjectUrl($path));
+		$to_path = basename($target_path);
+		$target_project = $this->repositoryConnector->getProjectUrl($target_path);
+
+		if ( $source_project !== $target_project ) {
+			$from_project_parts = explode('/', $source_project);
 			$from_path .= ' (' . end($from_project_parts) . ')';
 		}
 
