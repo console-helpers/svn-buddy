@@ -402,7 +402,10 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 		}
 
 		foreach ( glob($path . '/*', GLOB_ONLYDIR) as $sub_folder ) {
-			if ( file_exists($sub_folder . '/.git') || file_exists($sub_folder . '/CVS') ) {
+			if ( file_exists($sub_folder . '/.git')
+				|| file_exists($sub_folder . '/CVS')
+				|| in_array(basename($sub_folder), array('node_modules', 'vendor'))
+			) {
 				continue;
 			}
 
