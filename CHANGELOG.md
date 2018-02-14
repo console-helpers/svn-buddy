@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Attempt to use `--help` option on any command resulted in the exception.
 - Greatly improved speed of working copy location by `aggregate` command via ignoring of known dependency folders (`node_modules` and `vendor`).
+- The `svn info` command no longer fails on folders, that have `@` in their name, e.g. `node_modules/@gulp-sourcemaps`.
 
 ## [0.4.0] - 2018-02-11
 ### Added

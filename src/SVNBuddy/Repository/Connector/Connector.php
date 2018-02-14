@@ -451,8 +451,18 @@ class Connector
 			$path_or_url = $this->removeCredentials($path_or_url);
 		}
 
+		// Escape "@" in path names, because peg revision syntax (path@revision) isn't used in here.
+		$path_or_url_escaped = $path_or_url;
+
+		if ( strpos($path_or_url, '@') !== false ) {
+			$path_or_url_escaped .= '@';
+		}
+
 		// TODO: When wc path (not url) is given, then credentials can be present in "svn info" result anyway.
-		$svn_info = $this->withCache($cache_duration)->getCommand('info', '--xml {' . $path_or_url . '}')->run();
+		$svn_info = $this
+			->withCache($cache_duration)
+			->getCommand('info', '--xml {' . $path_or_url_escaped . '}')
+			->run();
 
 		// When getting remote "svn info", then path is last folder only.
 		$svn_info_path = (string)$svn_info->entry['path'];

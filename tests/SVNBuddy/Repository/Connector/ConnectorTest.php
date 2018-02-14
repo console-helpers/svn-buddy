@@ -222,7 +222,12 @@ class ConnectorTest extends AbstractTestCase
 	 */
 	public function testGetWorkingCopyUrlFromPath($raw_command_output, $path, $url)
 	{
-		$raw_command = "svn --non-interactive info --xml '" . $path . "'";
+		if ( strpos($path, '@') !== false ) {
+			$raw_command = "svn --non-interactive info --xml '" . $path . '@' . "'";
+		}
+		else {
+			$raw_command = "svn --non-interactive info --xml '" . $path . "'";
+		}
 
 		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
 		$this->_cacheManager
@@ -238,6 +243,7 @@ class ConnectorTest extends AbstractTestCase
 	public function svnInfoDataProvider()
 	{
 		return array(
+			'svn1.6_wc_root_with_peg' => array($this->getFixture('svn_info_peg_16.xml'), '/path/to/working-c@py', self::DUMMY_REPO),
 			'svn1.6_wc_root' => array($this->getFixture('svn_info_16.xml'), '/path/to/working-copy', self::DUMMY_REPO),
 			'svn1.7_wc_root' => array($this->getFixture('svn_info_17.xml'), '/path/to/working-copy', self::DUMMY_REPO),
 			'svn1.6_wc_sub_folder' => array($this->getFixture('svn_info_sub_folder_16.xml'), '/path/to/working-copy/sub-folder', self::DUMMY_REPO . '/sub-folder'),

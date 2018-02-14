@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<info>
+<entry
+   kind="dir"
+   path="/path/to/working-c@py"
+   revision="100">
+<url>svn://repository.com/path/to/project</url>
+<repository>
+<root>svn://repository.com</root>
+<uuid>c6e7d787-7ad8-457e-9a1c-a9e1c46edae4</uuid>
+</repository>
+<wc-info>
+<schedule>normal</schedule>
+<depth>infinity</depth>
+</wc-info>
+<commit
+   revision="100">
+<author>user</author>
+<date>2015-11-04T16:20:28.991340Z</date>
+</commit>
+</entry>
+</info>
