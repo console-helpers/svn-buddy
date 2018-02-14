@@ -16,6 +16,7 @@ use ConsoleHelpers\SVNBuddy\Config\PathsConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -87,10 +88,8 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 
 		$input_definition = $this->getDefinition();
 
-		foreach ( $this->getSubCommands() as $sub_command_name ) {
-			$sub_command = $application->get($sub_command_name);
+		foreach ( $this->getSubCommands() as $sub_command ) {
 			assert($sub_command instanceof IAggregatorAwareCommand);
-
 			$copy_options = $sub_command->getAggregatedOptions();
 
 			if ( !$copy_options ) {
@@ -119,16 +118,26 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 		$ret = parent::completeArgumentValues($argumentName, $context);
 
 		if ( $argumentName === 'sub-command' ) {
-			return $this->getSubCommands();
+			return $this->getSubCommandNames();
 		}
 
 		return $ret;
 	}
 
 	/**
-	 * Returns available sub commands.
+	 * Returns available sub command names.
 	 *
 	 * @return array
+	 */
+	protected function getSubCommandNames()
+	{
+		return array_keys($this->getSubCommands());
+	}
+
+	/**
+	 * Returns available sub commands.
+	 *
+	 * @return Command[]
 	 */
 	protected function getSubCommands()
 	{
@@ -136,7 +145,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 
 		foreach ( $this->getApplication()->all() as $alias => $command ) {
 			if ( $command instanceof IAggregatorAwareCommand ) {
-				$ret[] = $alias;
+				$ret[$alias] = $command;
 			}
 		}
 
@@ -161,7 +170,7 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 			throw new \RuntimeException('Not enough arguments (missing: "sub-command").');
 		}
 
-		if ( !in_array($sub_command, $this->getSubCommands()) ) {
+		if ( !in_array($sub_command, $this->getSubCommandNames()) ) {
 			throw new \RuntimeException(
 				'The "' . $sub_command . '" sub-command is unknown or doesn\'t support aggregation.'
 			);
