@@ -182,8 +182,8 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			$repository_connector = $c['repository_connector'];
 			$revision_log_factory = $c['revision_log_factory'];
 
-			$factory->add(new GroupByRevisionMergeTemplate($repository_connector, $revision_log_factory));
 			$factory->add(new GroupByBugMergeTemplate($repository_connector, $revision_log_factory));
+			$factory->add(new GroupByRevisionMergeTemplate($repository_connector, $revision_log_factory));
 			$factory->add(new SummaryMergeTemplate($repository_connector, $revision_log_factory));
 			$factory->add(new EmptyMergeTemplate($repository_connector, $revision_log_factory));
 

@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Include source branch project name in commit message, when merge source project differs from merge target project.
+- Default merge template for `commit` command changed from `group_by_revision` into `group_by_bug`.
 
 ### Fixed
 - Attempt to use `--help` option on any command resulted in the exception.
