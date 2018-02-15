@@ -87,7 +87,7 @@ class GroupByBugMergeTemplate extends AbstractGroupByMergeTemplate
 
 
 		$ret = '';
-		$ret .= '[' . $this->generateGroupHeading($path, $relative_path, false) . '] ';
+		$ret .= $this->generateGroupHeading($path, $relative_path, false) . ': ';
 		$ret .= implode(PHP_EOL, $merged_messages);
 
 		return $ret;

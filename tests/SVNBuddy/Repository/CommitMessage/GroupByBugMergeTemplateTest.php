@@ -49,15 +49,15 @@ r47: own-tr3-line2
 * JRA-120 - own-tr2-line1
 r33: own-tr2-line2
 
-[merge:branch-name > stable] Revisions without Bug IDs:
+Merge (branch-name > stable): Revisions without Bug IDs:
 * r4: own-br1-line1
 own-br1-line2
 
-[merge:stable (another-project-name) > stable] Revisions without Bug IDs:
+Merge (stable (another-project-name) > stable): Revisions without Bug IDs:
 * r15: another-st1-line1
 another-st1-line2
 
-[merge:trunk (another-project-name) > stable] Revisions without Bug IDs:
+Merge (trunk (another-project-name) > stable): Revisions without Bug IDs:
 * r17: another-tr1-line1
 another-tr1-line2
 COMMIT_MSG;

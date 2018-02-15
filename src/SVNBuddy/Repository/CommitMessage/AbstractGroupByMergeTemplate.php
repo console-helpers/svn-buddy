@@ -84,7 +84,7 @@ abstract class AbstractGroupByMergeTemplate extends AbstractMergeTemplate
 			return 'Merging from ' . ucfirst($from_path) . ' to ' . ucfirst($to_path);
 		}
 
-		return 'merge:' . $from_path . ' > ' . $to_path;
+		return 'Merge (' . $from_path . ' > ' . $to_path . ')';
 	}
 
 	/**
