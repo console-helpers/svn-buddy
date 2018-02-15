@@ -14,7 +14,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\GroupByRevisionMergeTemplate;
 
-class GroupByRevisionMergeTemplateTest extends AbstractMergeTemplateTestCase
+class GroupByRevisionMergeTemplateTest extends AbstractGroupByMergeTemplateTestCase
 {
 
 	public function testGetName()
@@ -24,30 +24,6 @@ class GroupByRevisionMergeTemplateTest extends AbstractMergeTemplateTestCase
 
 	public function testApplyWithMergeChanges()
 	{
-		$this->connector
-			->getRelativePath('svn://repository.com/path/to/project-name/tags/stable')
-			->willReturn('/projects/project-name/tags/stable');
-
-		$this->connector
-			->getProjectUrl('/projects/project-name/tags/stable')
-			->willReturn('/projects/project-name');
-
-		$this->connector
-			->getProjectUrl('/projects/project-name/trunk')
-			->willReturn('/projects/project-name');
-
-		$this->connector
-			->getProjectUrl('/projects/project-name/branches/branch-name')
-			->willReturn('/projects/project-name');
-
-		$this->connector
-			->getProjectUrl('/projects/another-project-name/tags/stable')
-			->willReturn('/projects/another-project-name');
-
-		$this->connector
-			->getProjectUrl('/projects/another-project-name/trunk')
-			->willReturn('/projects/another-project-name');
-
 		$this->prepareMergeResult();
 
 		$expected = <<<COMMIT_MSG
