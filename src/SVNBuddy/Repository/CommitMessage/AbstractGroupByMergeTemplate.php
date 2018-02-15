@@ -61,12 +61,13 @@ abstract class AbstractGroupByMergeTemplate extends AbstractMergeTemplate
 	/**
 	 * Builds group heading.
 	 *
-	 * @param string $source_path Source path for merge operation.
-	 * @param string $target_path Target path for merge operation.
+	 * @param string  $source_path Source path for merge operation.
+	 * @param string  $target_path Target path for merge operation.
+	 * @param boolean $long        Generate long heading.
 	 *
 	 * @return string
 	 */
-	protected function generateGroupHeading($source_path, $target_path)
+	protected function generateGroupHeading($source_path, $target_path, $long = true)
 	{
 		$from_path = basename($source_path);
 		$source_project = $this->repositoryConnector->getProjectUrl($source_path);
@@ -79,7 +80,11 @@ abstract class AbstractGroupByMergeTemplate extends AbstractMergeTemplate
 			$from_path .= ' (' . end($from_project_parts) . ')';
 		}
 
-		return 'Merging from ' . ucfirst($from_path) . ' to ' . ucfirst($to_path);
+		if ( $long ) {
+			return 'Merging from ' . ucfirst($from_path) . ' to ' . ucfirst($to_path);
+		}
+
+		return 'merge:' . $from_path . ' > ' . $to_path;
 	}
 
 	/**

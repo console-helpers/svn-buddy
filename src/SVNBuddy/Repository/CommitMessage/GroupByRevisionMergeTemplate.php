@@ -46,8 +46,16 @@ class GroupByRevisionMergeTemplate extends AbstractGroupByMergeTemplate
 
 		$merged_messages = array_unique(array_map('trim', $merged_messages));
 
+		if ( count($revisions) > 1 ) {
+			$ret = '';
+			$ret .= $this->generateGroupHeading($path, $relative_path) . PHP_EOL;
+			$ret .= implode(PHP_EOL, $merged_messages);
+
+			return $ret;
+		}
+
 		$ret = '';
-		$ret .= $this->generateGroupHeading($path, $relative_path) . PHP_EOL;
+		$ret .= '[' . $this->generateGroupHeading($path, $relative_path, false) . '] ';
 		$ret .= implode(PHP_EOL, $merged_messages);
 
 		return $ret;

@@ -35,16 +35,13 @@ own-tr2-line2
 * r47: JRA-100 - own-tr3-line1
 own-tr3-line2
 
-Merging from Branch-name to Stable
-* r4: own-br1-line1
+[merge:branch-name > stable] * r4: own-br1-line1
 own-br1-line2
 
-Merging from Stable (another-project-name) to Stable
-* r15: another-st1-line1
+[merge:stable (another-project-name) > stable] * r15: another-st1-line1
 another-st1-line2
 
-Merging from Trunk (another-project-name) to Stable
-* r17: another-tr1-line1
+[merge:trunk (another-project-name) > stable] * r17: another-tr1-line1
 another-tr1-line2
 COMMIT_MSG;
 
