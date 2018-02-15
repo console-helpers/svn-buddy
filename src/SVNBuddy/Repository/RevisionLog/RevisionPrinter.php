@@ -341,7 +341,7 @@ class RevisionPrinter
 		else {
 			// When details not requested only operate on first line of commit message.
 			list($log_message,) = explode(PHP_EOL, $commit_message);
-			$log_message = preg_replace('/^\[fixes:.*?\]/s', "\xE2\x9C\x94", $log_message);
+			$log_message = preg_replace('/(^|\s+)\[fixes:.*?\]/s', "$1\xE2\x9C\x94", $log_message);
 
 			if ( strpos($commit_message, PHP_EOL) !== false
 				|| mb_strlen($log_message) > $this->_logMessageLimit
