@@ -30,7 +30,7 @@ class SummaryMergeTemplateTest extends AbstractMergeTemplateTestCase
 		$this->prepareMergeResult();
 
 		$expected = <<<COMMIT_MSG
-Merge of "projects/project-name/trunk@33" to "path/to/project/tags/stable@555".
+Merge of "projects/project-name/trunk@47" to "path/to/project/tags/stable@555".
 
 Merge of "projects/project-name/branches/branch-name@4" to "path/to/project/tags/stable@555".
 

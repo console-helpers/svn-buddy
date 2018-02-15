@@ -44,7 +44,7 @@ abstract class AbstractGroupByMergeTemplateTestCase extends AbstractMergeTemplat
 			->getProjectUrl('/projects/another-project-name/trunk')
 			->willReturn('/projects/another-project-name');
 
-		parent::prepareMergeResult();
+		return parent::prepareMergeResult();
 	}
 
 }

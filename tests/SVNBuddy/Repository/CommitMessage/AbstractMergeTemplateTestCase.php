@@ -66,7 +66,7 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 	protected function prepareMergeResult()
 	{
 		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array(
-			'/projects/project-name/trunk' => array('18', '33'),
+			'/projects/project-name/trunk' => array('18', '33', '47'),
 			'/projects/project-name/branches/branch-name' => array('4'),
 			'/projects/another-project-name/tags/stable' => array('15'),
 			'/projects/another-project-name/trunk' => array('17'),
@@ -81,16 +81,21 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 			->willReturn('svn://repository.com');
 
 		$revision_log1 = $this->getRevisionLog('svn://repository.com/projects/project-name/trunk');
-		$revision_log1->getRevisionsData('summary', array(18, 33))->willReturn(array(
+		$revision_log1->getRevisionsData('summary', array(18, 33, 47))->willReturn(array(
 			18 => array(
 				'author' => 'user1',
 				'date' => 3534535353,
-				'msg' => 'a-line1' . PHP_EOL . 'a-line2' . PHP_EOL . PHP_EOL,
+				'msg' => 'JRA-100 - own-tr1-line1' . PHP_EOL . 'own-tr1-line2' . PHP_EOL . PHP_EOL,
 			),
 			33 => array(
 				'author' => 'user2',
 				'date' => 35345445353,
-				'msg' => 'b-line1' . PHP_EOL . 'b-line2' . PHP_EOL . PHP_EOL,
+				'msg' => 'JRA-120 - own-tr2-line1' . PHP_EOL . 'own-tr2-line2' . PHP_EOL . PHP_EOL,
+			),
+			47 => array(
+				'author' => 'user3',
+				'date' => 35345445353,
+				'msg' => 'JRA-100 - own-tr3-line1' . PHP_EOL . 'own-tr3-line2' . PHP_EOL . PHP_EOL,
 			),
 		));
 
@@ -99,7 +104,7 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 			4 => array(
 				'author' => 'user2',
 				'date' => 35345444353,
-				'msg' => 'c-line1' . PHP_EOL . 'c-line2' . PHP_EOL . PHP_EOL,
+				'msg' => 'own-br1-line1' . PHP_EOL . 'own-br1-line2' . PHP_EOL . PHP_EOL,
 			),
 		));
 
@@ -108,7 +113,7 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 			15 => array(
 				'author' => 'user3',
 				'date' => 35345444353,
-				'msg' => 'd-line1' . PHP_EOL . 'd-line2' . PHP_EOL . PHP_EOL,
+				'msg' => 'another-st1-line1' . PHP_EOL . 'another-st1-line2' . PHP_EOL . PHP_EOL,
 			),
 		));
 
@@ -117,9 +122,11 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 			17 => array(
 				'author' => 'user4',
 				'date' => 35345444353,
-				'msg' => 'e-line1' . PHP_EOL . 'e-line2' . PHP_EOL . PHP_EOL,
+				'msg' => 'another-tr1-line1' . PHP_EOL . 'another-tr1-line2' . PHP_EOL . PHP_EOL,
 			),
 		));
+
+		return array($revision_log1, $revision_log2, $revision_log3, $revision_log4);
 	}
 
 	/**
