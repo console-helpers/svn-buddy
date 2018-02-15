@@ -27,15 +27,17 @@ class GroupByBugMergeTemplate extends AbstractGroupByMergeTemplate
 	/**
 	 * Builds group body.
 	 *
-	 * @param array  $revisions  Revisions.
-	 * @param string $source_url Source URL.
+	 * @param string $path           Path.
+	 * @param array  $revisions      Revisions.
+	 * @param string $repository_url Repository URL.
+	 * @param string $relative_path  Relative path.
 	 *
 	 * @return string
 	 */
-	protected function generateGroupBody(array $revisions, $source_url)
+	protected function generateGroupBody($path, array $revisions, $repository_url, $relative_path)
 	{
 		$merged_messages = array();
-		$revision_log = $this->revisionLogFactory->getRevisionLog($source_url);
+		$revision_log = $this->revisionLogFactory->getRevisionLog($repository_url . $path);
 		$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
 		$revisions_grouped = $this->groupRevisionsByBugs($revision_log->getRevisionsData('bugs', $revisions));
 
@@ -72,7 +74,11 @@ class GroupByBugMergeTemplate extends AbstractGroupByMergeTemplate
 
 		$merged_messages = array_unique(array_map('trim', $merged_messages));
 
-		return implode(PHP_EOL, $merged_messages);
+		$ret = '';
+		$ret .= $this->generateGroupHeading($path, $relative_path) . PHP_EOL;
+		$ret .= implode(PHP_EOL, $merged_messages);
+
+		return $ret;
 	}
 
 	/**

@@ -50,8 +50,8 @@ abstract class AbstractGroupByMergeTemplate extends AbstractMergeTemplate
 		$ret = '';
 
 		foreach ( $merged_revisions as $path => $revisions ) {
-			$ret .= PHP_EOL . $this->generateGroupHeading($path, $relative_path);
-			$ret .= PHP_EOL . $this->generateGroupBody($revisions, $repository_url . $path);
+			$ret .= PHP_EOL;
+			$ret .= $this->generateGroupBody($path, $revisions, $repository_url, $relative_path);
 			$ret .= PHP_EOL;
 		}
 
@@ -85,11 +85,13 @@ abstract class AbstractGroupByMergeTemplate extends AbstractMergeTemplate
 	/**
 	 * Builds group body.
 	 *
-	 * @param array  $revisions  Revisions.
-	 * @param string $source_url Source URL.
+	 * @param string $path           Path.
+	 * @param array  $revisions      Revisions.
+	 * @param string $repository_url Repository URL.
+	 * @param string $relative_path  Relative path.
 	 *
 	 * @return string
 	 */
-	abstract protected function generateGroupBody(array $revisions, $source_url);
+	abstract protected function generateGroupBody($path, array $revisions, $repository_url, $relative_path);
 
 }
