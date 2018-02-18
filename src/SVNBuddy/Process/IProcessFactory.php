@@ -29,4 +29,14 @@ interface IProcessFactory
 		$idle_timeout = null
 	);
 
+	/**
+	 * Creates new Symfony PHP process with given arguments.
+	 *
+	 * @param string $command   Command.
+	 * @param array  $arguments Arguments.
+	 *
+	 * @return Process
+	 */
+	public function createCommandProcess($command, array $arguments = array());
+
 }

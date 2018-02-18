@@ -17,7 +17,9 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
+use ConsoleHelpers\SVNBuddy\Updater\UpdateManager;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -77,6 +79,13 @@ abstract class AbstractCommand extends BaseCommand
 	private $_commandConfig;
 
 	/**
+	 * Update manager.
+	 *
+	 * @var UpdateManager
+	 */
+	private $_updateManager;
+
+	/**
 	 * {@inheritdoc}
 	 *
 	 * @throws \RuntimeException When url was given instead of path.
@@ -94,6 +103,52 @@ abstract class AbstractCommand extends BaseCommand
 				throw new \RuntimeException('The "path" argument must be a working copy path and not URL.');
 			}
 		}
+
+		if ( $this->checkForAppUpdates($input) ) {
+			$this->_showAppUpdateBanner($output);
+		}
+	}
+
+	/**
+	 * Allow showing update banner.
+	 *
+	 * @param InputInterface $input Input.
+	 *
+	 * @return boolean
+	 */
+	protected function checkForAppUpdates(InputInterface $input)
+	{
+		// Show update banner only for outer command invoked by user and not sub-commands.
+		return $input instanceof ArgvInput;
+	}
+
+	/**
+	 * Shows application update banner.
+	 *
+	 * @param OutputInterface $output Output.
+	 *
+	 * @return void
+	 */
+	private function _showAppUpdateBanner(OutputInterface $output)
+	{
+		$new_version = $this->_updateManager->getNewVersion();
+
+		if ( !strlen($new_version) ) {
+			return;
+		}
+
+		$message = sprintf(
+			'  Update available. Run "%s self-update" to upgrade.  ',
+			$_SERVER['argv'][0]
+		);
+		$line_length = mb_strlen($message);
+
+		$output->writeln(array(
+			'<fg=white;bg=blue>' . str_repeat(' ', $line_length) . '</>',
+			'<fg=white;bg=blue>' . $message . '</>',
+			'<fg=white;bg=blue>' . str_repeat(' ', $line_length) . '</>',
+			'',
+		));
 	}
 
 	/**
@@ -112,6 +167,7 @@ abstract class AbstractCommand extends BaseCommand
 		$this->_revisionLogFactory = $container['revision_log_factory'];
 		$this->workingDirectory = $container['working_directory'];
 		$this->_commandConfig = $container['command_config'];
+		$this->_updateManager = $container['update_manager'];
 	}
 
 	/**

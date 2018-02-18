@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Added `group_by_bug` merge template for `ci` command, that allows grouping merged revisions by their bug ids.
+- Added automatic update checker.
 
 ### Changed
 - Include source branch project name in commit message, when merge source project differs from merge target project.

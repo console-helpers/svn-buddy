@@ -54,6 +54,7 @@ class ContainerTest extends BaseContainerTest
 			'size_helper' => array('ConsoleHelpers\SVNBuddy\Helper\SizeHelper', 'size_helper'),
 			'output_helper' => array('ConsoleHelpers\SVNBuddy\Helper\OutputHelper', 'output_helper'),
 			'editor' => array('ConsoleHelpers\\SVNBuddy\\InteractiveEditor', 'editor'),
+			'updater' => array('ConsoleHelpers\\SVNBuddy\\Updater\\Updater', 'updater'),
 		);
 
 		return array_merge($instance_data, $new_instance_data);

@@ -11,6 +11,7 @@
 namespace ConsoleHelpers\SVNBuddy;
 
 
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\DatabaseMigration\PhpMigrationRunner;
@@ -39,6 +40,9 @@ use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
+use ConsoleHelpers\SVNBuddy\Updater\UpdateManager;
+use ConsoleHelpers\SVNBuddy\Updater\Updater;
+use ConsoleHelpers\SVNBuddy\Updater\VersionUpdateStrategy;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -208,6 +212,29 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 
 		$this['editor'] = function () {
 			return new InteractiveEditor();
+		};
+
+		$this['updater'] = function ($c) {
+			/** @var ConfigEditor $config_editor */
+			$config_editor = $c['config_editor'];
+
+			$update_strategy = new VersionUpdateStrategy();
+			$update_strategy->setStability($config_editor->get('update-channel'));
+			$update_strategy->setCurrentLocalVersion($c['app_version']);
+
+			$updater = new Updater(null, false);
+			$updater->setStrategyObject($update_strategy);
+
+			return $updater;
+		};
+
+		$this['update_manager'] = function ($c) {
+			return new UpdateManager(
+				$c['updater'],
+				$c['config_editor'],
+				$c['process_factory'],
+				$c['working_directory']
+			);
 		};
 	}
 

@@ -13,7 +13,9 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use ConsoleHelpers\SVNBuddy\Updater\Stability;
+use ConsoleHelpers\SVNBuddy\Updater\UpdateManager;
 use ConsoleHelpers\SVNBuddy\Updater\Updater;
 use ConsoleHelpers\SVNBuddy\Updater\VersionUpdateStrategy;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,11 +28,18 @@ class SelfUpdateCommand extends AbstractCommand
 {
 
 	/**
-	 * Config editor.
+	 * Update manager.
 	 *
-	 * @var ConfigEditor
+	 * @var UpdateManager
 	 */
-	private $_configEditor;
+	private $_updateManager;
+
+	/**
+	 * Process factory.
+	 *
+	 * @var ProcessFactory
+	 */
+	private $_processFactory;
 
 	/**
 	 * {@inheritdoc}
@@ -65,6 +74,12 @@ class SelfUpdateCommand extends AbstractCommand
 				null,
 				InputOption::VALUE_NONE,
 				'Force an update to the preview channel'
+			)
+			->addOption(
+				'check',
+				null,
+				InputOption::VALUE_NONE,
+				'Checks for update availability'
 			);
 
 		parent::configure();
@@ -81,7 +96,20 @@ class SelfUpdateCommand extends AbstractCommand
 
 		$container = $this->getContainer();
 
-		$this->_configEditor = $container['config_editor'];
+		$this->_updateManager = $container['update_manager'];
+		$this->_processFactory = $container['process_factory'];
+	}
+
+	/**
+	 * Allow showing update banner.
+	 *
+	 * @param InputInterface $input Input.
+	 *
+	 * @return boolean
+	 */
+	protected function checkForAppUpdates(InputInterface $input)
+	{
+		return false;
 	}
 
 	/**
@@ -89,8 +117,13 @@ class SelfUpdateCommand extends AbstractCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
+		$this->changeUpdateChannel();
+
 		if ( $this->io->getOption('rollback') ) {
 			$this->processRollback();
+		}
+		elseif ( $this->io->getOption('check') ) {
+			$this->processCheck();
 		}
 		else {
 			$this->processUpdate();
@@ -98,25 +131,23 @@ class SelfUpdateCommand extends AbstractCommand
 	}
 
 	/**
-	 * Returns update channel.
+	 * Changes update channel.
 	 *
-	 * @return string
+	 * @return void
 	 */
-	protected function getUpdateChannel()
+	protected function changeUpdateChannel()
 	{
 		if ( $this->io->getOption('stable') ) {
-			$this->_configEditor->set('update-channel', Stability::STABLE);
+			$this->_updateManager->setUpdateChannel(Stability::STABLE);
 		}
 
 		if ( $this->io->getOption('snapshot') ) {
-			$this->_configEditor->set('update-channel', Stability::SNAPSHOT);
+			$this->_updateManager->setUpdateChannel(Stability::SNAPSHOT);
 		}
 
 		if ( $this->io->getOption('preview') ) {
-			$this->_configEditor->set('update-channel', Stability::PREVIEW);
+			$this->_updateManager->setUpdateChannel(Stability::PREVIEW);
 		}
-
-		return $this->_configEditor->get('update-channel');
 	}
 
 	/**
@@ -145,19 +176,13 @@ class SelfUpdateCommand extends AbstractCommand
 	 * Returns fresh application version.
 	 *
 	 * @return string
-	 * @throws \RuntimeException When PHP executable can't be found.
 	 */
 	protected function getFreshVersion()
 	{
-		$php_executable_finder = new PhpExecutableFinder();
-		$php_executable = $php_executable_finder->find();
-
-		if ( !$php_executable ) {
-			throw new \RuntimeException('The PHP executable cannot be found.');
-		}
-
-		$arguments = array($php_executable, $_SERVER['argv'][0], 'list', '--format=xml');
-		$output = ProcessBuilder::create($arguments)->getProcess()->mustRun()->getOutput();
+		$output = $this->_processFactory
+			->createCommandProcess('list', array('--format=xml'))
+			->mustRun()
+			->getOutput();
 
 		$xml = new \SimpleXMLElement($output);
 
@@ -171,16 +196,13 @@ class SelfUpdateCommand extends AbstractCommand
 	 */
 	protected function processUpdate()
 	{
-		$update_strategy = new VersionUpdateStrategy();
-		$update_channel = $this->getUpdateChannel();
-		$update_strategy->setStability($update_channel);
-		$update_strategy->setCurrentLocalVersion($this->getApplication()->getVersion());
+		$updater = $this->_updateManager->getUpdater();
 
 		$this->io->write('Checking for updates ... ');
-		$updater = new Updater(null, false);
-		$updater->setStrategyObject($update_strategy);
 		$has_update = $updater->hasUpdate();
 		$this->io->writeln('done');
+
+		$update_channel = $this->_updateManager->getUpdateChannel();
 
 		if ( !$has_update ) {
 			$this->io->writeln(sprintf(
@@ -201,10 +223,26 @@ class SelfUpdateCommand extends AbstractCommand
 		$this->io->writeln('done.');
 
 		$this->io->writeln(sprintf(
-			'Use <info>%s self-update --rollback</info> to return to version %s',
+			'Run <info>%s self-update --rollback</info> to return to version %s',
 			$_SERVER['argv'][0],
 			$updater->getOldVersion()
 		));
+	}
+
+	/**
+	 * Processes check.
+	 *
+	 * @return void
+	 */
+	protected function processCheck()
+	{
+		$updater = $this->_updateManager->getUpdater();
+
+		$this->io->write('Checking for updates ... ');
+		$has_update = $updater->hasUpdate();
+		$this->io->writeln('done');
+
+		$this->_updateManager->setNewVersion($has_update ? $updater->getNewVersion() : '');
 	}
 
 }
