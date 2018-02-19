@@ -219,6 +219,7 @@ class SelfUpdateCommand extends AbstractCommand
 		);
 
 		$updater->update();
+		$this->_updateManager->setNewVersion('');
 
 		$this->io->writeln('done.');
 
