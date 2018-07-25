@@ -229,6 +229,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			}
 			elseif ( $bugs ) {
 				$revisions = $this->getRevisionLog($source_url)->find('bugs', $bugs);
+
+				if ( !$revisions ) {
+					throw new CommandException('Specified bugs aren\'t mentioned in any of revisions');
+				}
 			}
 
 			if ( $revisions ) {
