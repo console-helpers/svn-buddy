@@ -85,7 +85,7 @@ class Command
 	}
 
 	/**
-	 * Set cache duration.
+	 * Set cache invalidator.
 	 *
 	 * @param string $invalidator Invalidator.
 	 *
