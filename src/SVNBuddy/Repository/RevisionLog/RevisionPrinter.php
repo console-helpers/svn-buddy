@@ -219,6 +219,8 @@ class RevisionPrinter
 			);
 		}
 
+		$first_revision = reset($revisions);
+
 		foreach ( $revisions as $revision ) {
 			$revision_data = $revisions_data[$revision];
 
@@ -269,6 +271,10 @@ class RevisionPrinter
 				foreach ( $row as $index => $cell ) {
 					$row[$index] = $this->applyStyle($cell, 'fg=white;options=bold');
 				}
+			}
+
+			if ( $with_full_message && $revision !== $first_revision ) {
+				$table->addRow(new TableSeparator());
 			}
 
 			$table->addRow($row);
