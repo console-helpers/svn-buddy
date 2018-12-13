@@ -10,6 +10,7 @@
 		}
 	],
 	"require": {
+		"php": ">=5.3.7",
 		"symfony/process": "^2.7",
 		"console-helpers/console-kit": "^0.1@dev",
 		"aura/sql": "^2.5",
@@ -41,5 +42,10 @@
 			"type": "vcs",
 			"url": "https://github.com/console-helpers/phar-updater"
 		}
-	]
+	],
+	"config": {
+		"platform": {
+			"php": "5.4"
+		}
+	}
 }
