@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added `group_by_bug` merge template for `ci` command, that allows grouping merged revisions by their bug ids.
 - Added automatic update checker.
+- Added support for display merged revision number as a link to Phabricator instance (when project has `.arcconfig` file).
 
 ### Changed
 - Include source branch project name in commit message, when merge source project differs from merge target project.

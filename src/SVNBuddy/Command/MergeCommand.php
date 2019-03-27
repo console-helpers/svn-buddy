@@ -553,6 +553,8 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$param_string_ending = '--record-only ' . $param_string_ending;
 		}
 
+		$revision_title_mask = $this->getRevisionTitle($wc_path);
+
 		foreach ( $revisions as $index => $revision ) {
 			$command = $this->repositoryConnector->getCommand(
 				'merge',
@@ -561,7 +563,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 			$progress_bar = $this->createMergeProgressBar($merged_revision_count + $index + 1, $revision_count);
 			$merge_heading = PHP_EOL . '<fg=white;options=bold>';
-			$merge_heading .= '--- Merging <fg=white;options=underscore>' . $revision . '</> revision';
+			$merge_heading .= '--- Merging ' . \str_replace('{revision}', $revision, $revision_title_mask);
 			$merge_heading .= " into '$1' " . $progress_bar . ':</>';
 
 			$command->runLive(array(
@@ -574,6 +576,35 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 
 		$this->performCommit();
+	}
+
+	/**
+	 * Returns revision title.
+	 *
+	 * @param string $wc_path Working copy path.
+	 *
+	 * @return string
+	 */
+	protected function getRevisionTitle($wc_path)
+	{
+		$arcanist_config_file = $wc_path . \DIRECTORY_SEPARATOR . '.arcconfig';
+
+		if ( !\file_exists($arcanist_config_file) ) {
+			return '<fg=white;options=underscore>{revision}</> revision';
+		}
+
+		$arcanist_config = \json_decode(\file_get_contents($arcanist_config_file), true);
+
+		if ( !\is_array($arcanist_config)
+			|| !isset($arcanist_config['repository.callsign'], $arcanist_config['phabricator.uri'])
+		) {
+			return '<fg=white;options=underscore>{revision}</> revision';
+		}
+
+		$revision_title = $arcanist_config['phabricator.uri'];
+		$revision_title .= 'r' . $arcanist_config['repository.callsign'] . '{revision}';
+
+		return '<fg=white;options=underscore>' . $revision_title . '</>';
 	}
 
 	/**
