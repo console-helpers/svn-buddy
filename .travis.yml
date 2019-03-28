@@ -6,27 +6,33 @@ cache:
         - $HOME/.composer/cache
 
 php:
-#    - 5.4
-    - 5.5
-#    - 5.6
-#    - 7.0
-#    - 7.1
-    - 7.2
+    - 5.4
+    - 5.6
+    - 7.0
+    - 7.1
+
+matrix:
+    include:
+        - php: 5.5
+          env: PHPUNIT_VERSION="^4.8"
+        - php: 7.2
+          env: PHPUNIT_VERSION="^7.2"
+        - php: 7.3
+          env: PHPUNIT_VERSION="^7.2"
 
 before_install:
-    - composer config --global github-protocols https
     - phpunit --version
 
 install:
-    - if [ "$TRAVIS_PHP_VERSION" = "5.5" ]; then composer require "phpunit/phpunit:^4.8" --dev; fi;
-    - if [ "$TRAVIS_PHP_VERSION" != "5.5" ]; then composer install --prefer-dist; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-interaction; fi;
+    - if [ "$PHPUNIT_VERSION" = "" ]; then composer install --prefer-dist; fi;
 
 before_script:
     - mkdir -p build/logs
 
 script:
-    - if [ "$TRAVIS_PHP_VERSION" = "5.5" ]; then ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
-    - if [ "$TRAVIS_PHP_VERSION" != "5.5" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" = "" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
