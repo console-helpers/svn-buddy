@@ -22,6 +22,7 @@ matrix:
 
 before_install:
     - composer config --global github-protocols https
+    - composer diagnose
     - phpunit --version
 
 install:
