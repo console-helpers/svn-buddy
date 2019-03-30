@@ -16,7 +16,11 @@
 		"aura/sql": "^2.5",
 		"padraic/phar-updater": "dev-use-curl",
 		"padraic/humbug_get_contents": "^1.0",
-		"console-helpers/db-migration": "^0.1.0"
+		"console-helpers/db-migration": "^0.1.0",
+		"ext-simplexml": "*",
+		"ext-zlib": "*",
+		"ext-json": "*",
+		"ext-pdo": "*"
 	},
 	"require-dev": {
 		"aik099/coding-standard": "dev-master"
