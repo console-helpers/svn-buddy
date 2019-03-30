@@ -31,7 +31,8 @@ before_script:
     - mkdir -p build/logs
 
 script:
-    - phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then ~/.composer/vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" = "" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
