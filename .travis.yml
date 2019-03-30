@@ -20,16 +20,18 @@ matrix:
         - php: 7.3
           env: PHPUNIT_VERSION="^7.2"
 
+before_install:
+    - which phpunit
+
 install:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-interaction -vvv; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer global require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction; fi;
     - if [ "$PHPUNIT_VERSION" = "" ]; then composer install --prefer-dist; fi;
 
 before_script:
     - mkdir -p build/logs
 
 script:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
-    - if [ "$PHPUNIT_VERSION" = "" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
+    - phpunit --coverage-clover build/logs/clover.xml; fi;
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
