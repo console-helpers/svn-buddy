@@ -20,12 +20,9 @@ matrix:
         - php: 7.3
           env: PHPUNIT_VERSION="^7.2"
 
-before_install:
-    - which phpunit
-
 install:
+    - composer install --prefer-dist
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer global require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction; fi;
-    - if [ "$PHPUNIT_VERSION" = "" ]; then composer install --prefer-dist; fi;
 
 before_script:
     - mkdir -p build/logs
