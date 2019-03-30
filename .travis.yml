@@ -20,11 +20,6 @@ matrix:
         - php: 7.3
           env: PHPUNIT_VERSION="^7.2"
 
-before_install:
-    - composer config --global github-protocols https
-    - composer diagnose
-    - phpunit --version
-
 install:
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-interaction -vvv; fi;
     - if [ "$PHPUNIT_VERSION" = "" ]; then composer install --prefer-dist; fi;
