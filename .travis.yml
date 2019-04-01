@@ -5,11 +5,11 @@ cache:
     directories:
         - $HOME/.composer/cache
 
-php:
-    - 5.4
-    - 5.6
-    - 7.0
-    - 7.1
+#php:
+#    - 5.4
+#    - 5.6
+#    - 7.0
+#    - 7.1
 
 matrix:
     include:
@@ -21,14 +21,14 @@ matrix:
           env: PHPUNIT_VERSION="^7.2"
 
 install:
-    - composer install --prefer-dist
-    - if [ "$PHPUNIT_VERSION" != "" ]; then composer global require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer install --prefer-dist; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction; fi;
 
 before_script:
     - mkdir -p build/logs
 
 script:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then ~/.composer/vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
     - if [ "$PHPUNIT_VERSION" = "" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
 
 after_success:
