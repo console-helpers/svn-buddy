@@ -22,7 +22,7 @@ matrix:
 
 install:
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer install --prefer-dist; fi;
-    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction --no-plugins; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction --no-plugins -vvv; fi;
 
 before_script:
     - mkdir -p build/logs
