@@ -719,6 +719,7 @@ class Connector
 				'item' => (string)$entry->{'wc-status'}['item'],
 				'props' => (string)$entry->{'wc-status'}['props'],
 				'tree-conflicted' => (string)$entry->{'wc-status'}['tree-conflicted'] === 'true',
+				'copied' => (string)$entry->{'wc-status'}['copied'] === 'true',
 			);
 		}
 

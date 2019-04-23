@@ -699,10 +699,10 @@ MESSAGE;
 
 		$this->assertSame(
 			array(
-				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
-				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true),
-				'admin/index.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
-				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
+				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false, 'copied' => false),
+				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true, 'copied' => false),
+				'admin/index.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => false),
+				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => false),
 			),
 			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy')
 		);
@@ -717,12 +717,12 @@ MESSAGE;
 
 		$this->assertSame(
 			array(
-				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
-				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true),
-				'admin/index.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
-				'new.txt' => array('item' => 'unversioned', 'props' => 'none', 'tree-conflicted' => false),
-				'themes/default' => array('item' => 'external', 'props' => 'none', 'tree-conflicted' => false),
-				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
+				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false, 'copied' => false),
+				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true, 'copied' => false),
+				'admin/index.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => false),
+				'new.txt' => array('item' => 'unversioned', 'props' => 'none', 'tree-conflicted' => false, 'copied' => false),
+				'themes/default' => array('item' => 'external', 'props' => 'none', 'tree-conflicted' => false, 'copied' => false),
+				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => false),
 			),
 			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy', null, array())
 		);
@@ -737,9 +737,9 @@ MESSAGE;
 
 		$this->assertSame(
 			array(
-				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
-				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true),
-				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
+				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false, 'copied' => false),
+				'admin' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => true, 'copied' => false),
+				'admin/system_presets/simple/users_u.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => false),
 			),
 			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy', 'cl one')
 		);
@@ -768,9 +768,28 @@ MESSAGE;
 
 		$this->assertSame(
 			array(
-				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
-				'modules/custom/units/helpers/helpers_config.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
-				'modules/custom/units/sections/e_product_eh.php' => array('item' => 'modified', 'props' => 'none', 'tree-conflicted' => false),
+				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false, 'copied' => false),
+				'modules/custom/units/helpers/helpers_config.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => false),
+				'modules/custom/units/sections/e_product_eh.php' => array('item' => 'modified', 'props' => 'none', 'tree-conflicted' => false, 'copied' => false),
+			),
+			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy')
+		);
+	}
+
+	public function testGetWorkingCopyStatusWithCopiedPaths()
+	{
+		$this->_expectCommand(
+			"svn --non-interactive status --xml '/path/to/working-copy'",
+			$this->getFixture('svn_status_with_copied18.xml')
+		);
+
+		$this->assertSame(
+			array(
+				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false, 'copied' => false),
+				'modules/custom/admin_templates/copied_folder' => array('item' => 'added', 'props' => 'none', 'tree-conflicted' => false, 'copied' => true),
+				'modules/custom/units/helpers/helpers_config.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => false),
+				'modules/custom/units/helpers/import/product_image_import_helper.php' => array('item' => 'added', 'props' => 'normal', 'tree-conflicted' => false, 'copied' => true),
+				'modules/custom/units/sections/e_product_eh.php' => array('item' => 'modified', 'props' => 'none', 'tree-conflicted' => false, 'copied' => false),
 			),
 			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy')
 		);

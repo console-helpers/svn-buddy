@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<status>
+	<target path=".">
+		<entry path=".">
+			<wc-status item="normal" props="modified" revision="37633">
+				<commit revision="37632">
+					<author>dmitrya</author>
+					<date>2019-04-22T23:32:54.334486Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="modules/custom/admin_templates/copied_folder">
+			<wc-status copied="true" item="added" props="none">
+				<commit revision="37619">
+					<author>erik</author>
+					<date>2019-04-18T16:05:55.303220Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+	</target>
+	<changelist name="Default">
+		<entry path="modules/custom/units/cxml_logs/cxml_log_tp.php">
+			<wc-status item="normal" props="none" revision="37633">
+				<commit revision="37592">
+					<author>alex</author>
+					<date>2019-04-16T12:46:18.271608Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="modules/custom/units/helpers/helpers_config.php">
+			<wc-status item="modified" props="normal" revision="37633">
+				<commit revision="37592">
+					<author>alex</author>
+					<date>2019-04-16T12:46:18.271608Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="modules/custom/units/helpers/import/product_image_import_helper.php">
+			<wc-status copied="true" item="added" props="normal">
+				<commit revision="37619">
+					<author>erik</author>
+					<date>2019-04-18T16:05:55.303220Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="modules/custom/units/sections/e_product_eh.php">
+			<wc-status item="modified" props="none" revision="37633">
+				<commit revision="37559">
+					<author>dmitrya</author>
+					<date>2019-04-11T16:18:51.930195Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+		<entry path="modules/custom/units/traits/TLogDurationTagProcessorFeature.php">
+			<wc-status item="normal" props="normal" revision="37633">
+				<commit revision="37592">
+					<author>alex</author>
+					<date>2019-04-16T12:46:18.271608Z</date>
+				</commit>
+			</wc-status>
+		</entry>
+	</changelist>
+</status>
