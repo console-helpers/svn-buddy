@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- Files, that weren't changed and had no properies and were added to a changelist were displayed in `commit` (`ci`) command result.
 
 ## [0.5.0] - 2019-03-30
 ### Added

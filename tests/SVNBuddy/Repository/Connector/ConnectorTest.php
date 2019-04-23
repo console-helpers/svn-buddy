@@ -759,6 +759,23 @@ MESSAGE;
 		$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy', 'cl missing');
 	}
 
+	public function testGetWorkingCopyStatusWithNoneProperties()
+	{
+		$this->_expectCommand(
+			"svn --non-interactive status --xml '/path/to/working-copy'",
+			$this->getFixture('svn_status_with_props_eq_none18.xml')
+		);
+
+		$this->assertSame(
+			array(
+				'.' => array('item' => 'normal', 'props' => 'modified', 'tree-conflicted' => false),
+				'modules/custom/units/helpers/helpers_config.php' => array('item' => 'modified', 'props' => 'normal', 'tree-conflicted' => false),
+				'modules/custom/units/sections/e_product_eh.php' => array('item' => 'modified', 'props' => 'none', 'tree-conflicted' => false),
+			),
+			$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy')
+		);
+	}
+
 	/**
 	 * @dataProvider getWorkingCopyChangelistsDataProvider
 	 */

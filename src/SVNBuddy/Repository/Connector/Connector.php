@@ -739,7 +739,9 @@ class Connector
 
 		if ( $path_status === self::STATUS_NORMAL ) {
 			// Normal if all of 3 are normal.
-			return $status['item'] === $path_status && $status['props'] === $path_status && !$tree_conflicted;
+			return $status['item'] === $path_status
+				&& ($status['props'] === $path_status || $status['props'] === self::STATUS_NONE)
+				&& !$tree_conflicted;
 		}
 		elseif ( $path_status === self::STATUS_CONFLICTED ) {
 			// Conflict if any of 3 has conflict.
