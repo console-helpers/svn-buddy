@@ -555,8 +555,11 @@ class Connector
 		$ret = array();
 
 		foreach ( $this->getWorkingCopyStatus($wc_path, $changelist, $except_statuses) as $path => $status ) {
-			$line = $this->getShortItemStatus($status['item']) . $this->getShortPropertiesStatus($status['props']);
-			$line .= '   ' . $path;
+			$line = $this->getShortItemStatus($status['item']); // Path status.
+			$line .= $this->getShortPropertiesStatus($status['props']); // Properties status.
+			$line .= ' '; // Locked status.
+			$line .= $status['copied'] === true ? '+' : ' '; // Copied status.
+			$line .= ' ' . $path;
 
 			$ret[] = $line;
 		}

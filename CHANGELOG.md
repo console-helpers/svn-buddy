@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Changed
-...
+- Improve commit message of `commit` (`ci`) command by showing if path/file was copied or not.
 
 ### Fixed
 - Files, that weren't changed and had no properies and were added to a changelist were displayed in `commit` (`ci`) command result.
