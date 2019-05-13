@@ -860,17 +860,25 @@ class Connector
 	}
 
 	/**
-	 * Returns list of just merged revisions.
+	 * Returns list of add/removed revisions from last merge operation.
 	 *
-	 * @param string $wc_path Working copy path, where merge happens.
+	 * @param string  $wc_path            Working copy path, where merge happens.
+	 * @param boolean $regular_or_reverse Merge direction ("regular" or "reverse").
 	 *
 	 * @return array
 	 */
-	public function getFreshMergedRevisions($wc_path)
+	public function getMergedRevisionChanges($wc_path, $regular_or_reverse)
 	{
 		$final_paths = array();
-		$old_paths = $this->getMergedRevisions($wc_path, 'BASE');
-		$new_paths = $this->getMergedRevisions($wc_path);
+
+		if ( $regular_or_reverse ) {
+			$old_paths = $this->getMergedRevisions($wc_path, 'BASE');
+			$new_paths = $this->getMergedRevisions($wc_path);
+		}
+		else {
+			$old_paths = $this->getMergedRevisions($wc_path);
+			$new_paths = $this->getMergedRevisions($wc_path, 'BASE');
+		}
 
 		if ( $old_paths === $new_paths ) {
 			return array();

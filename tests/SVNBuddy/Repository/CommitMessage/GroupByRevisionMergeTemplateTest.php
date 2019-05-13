@@ -43,6 +43,15 @@ another-st1-line2
 
 Merge (trunk (another-project-name) > stable): * r17: another-tr1-line1
 another-tr1-line2
+
+Reverse-merging from Trunk to Stable
+* r95: JRA-100 - own-tr1-line1
+own-tr1-line2(r)
+* r11: JRA-100 - own-tr2-line1
+own-tr2-line2(r)
+
+Reverse-merge (trunk (another-project-name) > stable): * r112: another-tr1-line1
+another-tr1-line2(r)
 COMMIT_MSG;
 
 		$this->assertEquals($expected, $this->mergeTemplate->apply('/path/to/working-copy'));

@@ -61,4 +61,20 @@ abstract class AbstractMergeTemplate
 	 */
 	abstract public function apply($wc_path);
 
+	/**
+	 * Flattens groups in revisions.
+	 *
+	 * @param array $grouped_revisions Grouped revisions.
+	 *
+	 * @return array
+	 */
+	protected function flattenMergedRevisions(array $grouped_revisions)
+	{
+		if ( count($grouped_revisions) > 1 ) {
+			return \call_user_func_array('array_merge', $grouped_revisions);
+		}
+
+		return \array_values($grouped_revisions);
+	}
+
 }

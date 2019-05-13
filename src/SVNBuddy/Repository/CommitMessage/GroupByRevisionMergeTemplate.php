@@ -27,14 +27,15 @@ class GroupByRevisionMergeTemplate extends AbstractGroupByMergeTemplate
 	/**
 	 * Builds group body.
 	 *
-	 * @param string $path           Path.
-	 * @param array  $revisions      Revisions.
-	 * @param string $repository_url Repository URL.
-	 * @param string $relative_path  Relative path.
+	 * @param string  $path            Path.
+	 * @param array   $revisions       Revisions.
+	 * @param string  $repository_url  Repository URL.
+	 * @param string  $relative_path   Relative path.
+	 * @param boolean $merge_direction Merge direction.
 	 *
 	 * @return string
 	 */
-	protected function generateGroupBody($path, array $revisions, $repository_url, $relative_path)
+	protected function generateGroupBody($path, array $revisions, $repository_url, $relative_path, $merge_direction)
 	{
 		$merged_messages = array();
 		$revision_log = $this->revisionLogFactory->getRevisionLog($repository_url . $path);
@@ -48,14 +49,14 @@ class GroupByRevisionMergeTemplate extends AbstractGroupByMergeTemplate
 
 		if ( count($revisions) > 1 ) {
 			$ret = '';
-			$ret .= $this->generateGroupHeading($path, $relative_path) . PHP_EOL;
+			$ret .= $this->generateGroupHeading($path, $relative_path, $merge_direction) . PHP_EOL;
 			$ret .= implode(PHP_EOL, $merged_messages);
 
 			return $ret;
 		}
 
 		$ret = '';
-		$ret .= $this->generateGroupHeading($path, $relative_path, false) . ': ';
+		$ret .= $this->generateGroupHeading($path, $relative_path, $merge_direction, false) . ': ';
 		$ret .= implode(PHP_EOL, $merged_messages);
 
 		return $ret;

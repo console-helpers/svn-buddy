@@ -33,9 +33,12 @@ class SummaryMergeTemplate extends AbstractMergeTemplate
 	 */
 	public function apply($wc_path)
 	{
-		$merged_revisions = $this->repositoryConnector->getFreshMergedRevisions($wc_path);
+		$merged_revisions = $this->repositoryConnector->getMergedRevisionChanges($wc_path, true);
+		$unmerged_revisions = $this->repositoryConnector->getMergedRevisionChanges($wc_path, false);
+		$has_merged_revisions = $this->flattenMergedRevisions($merged_revisions);
+		$has_unmerged_revisions = $this->flattenMergedRevisions($unmerged_revisions);
 
-		if ( !$merged_revisions ) {
+		if ( !$has_merged_revisions && !$has_unmerged_revisions ) {
 			return '';
 		}
 
@@ -49,6 +52,11 @@ class SummaryMergeTemplate extends AbstractMergeTemplate
 		foreach ( $merged_revisions as $path => $revisions ) {
 			$source = $this->getMomentInTime($path, max($revisions));
 			$ret .= PHP_EOL . 'Merge of "' . $source . '" to "' . $target . '".' . PHP_EOL;
+		}
+
+		foreach ( $unmerged_revisions as $path => $revisions ) {
+			$source = $this->getMomentInTime($path, max($revisions));
+			$ret .= PHP_EOL . 'Reverse-merge of "' . $source . '" to "' . $target . '".' . PHP_EOL;
 		}
 
 		return trim($ret);

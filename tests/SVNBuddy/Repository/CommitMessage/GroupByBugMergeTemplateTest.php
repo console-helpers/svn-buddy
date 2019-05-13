@@ -26,6 +26,7 @@ class GroupByBugMergeTemplateTest extends AbstractGroupByMergeTemplateTestCase
 	{
 		list ($revision_log1, $revision_log2, $revision_log3, $revision_log4) = $this->prepareMergeResult();
 
+		// Merged revision information.
 		$revision_log1->getRevisionsData('bugs', array(18, 33, 47))->willReturn(array(
 			18 => array('JRA-100'),
 			33 => array('JRA-120'),
@@ -39,6 +40,15 @@ class GroupByBugMergeTemplateTest extends AbstractGroupByMergeTemplateTestCase
 		));
 		$revision_log4->getRevisionsData('bugs', array(17))->willReturn(array(
 			17 => array(),
+		));
+
+		// Reverse-merged revision information.
+		$revision_log1->getRevisionsData('bugs', array(95, 11))->willReturn(array(
+			95 => array('JRA-100'),
+			11 => array('JRA-100'),
+		));
+		$revision_log4->getRevisionsData('bugs', array(112))->willReturn(array(
+			112 => array(),
 		));
 
 		$expected = <<<COMMIT_MSG
@@ -60,6 +70,14 @@ another-st1-line2
 Merge (trunk (another-project-name) > stable): Revisions without Bug IDs:
 * r17: another-tr1-line1
 another-tr1-line2
+
+Reverse-merge (trunk > stable): * JRA-100 - own-tr1-line1
+r95: own-tr1-line2(r)
+r11: own-tr2-line2(r)
+
+Reverse-merge (trunk (another-project-name) > stable): Revisions without Bug IDs:
+* r112: another-tr1-line1
+another-tr1-line2(r)
 COMMIT_MSG;
 
 		$this->assertEquals($expected, $this->mergeTemplate->apply('/path/to/working-copy'));

@@ -54,11 +54,11 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	private $_revisionListParser;
 
 	/**
-	 * Unmerged revisions.
+	 * Usable revisions (either to be merged OR to be unmerged).
 	 *
 	 * @var array
 	 */
-	private $_unmergedRevisions = array();
+	private $_usableRevisions = array();
 
 	/**
 	 * Url resolver.
@@ -158,6 +158,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				null,
 				InputOption::VALUE_NONE,
 				'Mark revisions as merged without actually merging them'
+			)
+			->addOption(
+				'reverse',
+				null,
+				InputOption::VALUE_NONE,
+				'Rollback previously merged revisions'
 			);
 
 		parent::configure();
@@ -212,16 +218,19 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 		$source_url = $this->getSourceUrl($wc_path);
 		$this->printSourceAndTarget($source_url, $wc_path);
-		$this->_unmergedRevisions = $this->getUnmergedRevisions($source_url, $wc_path);
+		$this->_usableRevisions = $this->getUsableRevisions($source_url, $wc_path);
 
-		if ( ($bugs || $revisions) && !$this->_unmergedRevisions ) {
-			throw new CommandException('Nothing to merge.');
+		if ( ($bugs || $revisions) && !$this->_usableRevisions ) {
+			throw new CommandException(\sprintf(
+				'Nothing to %s.',
+				$this->isReverseMerge() ? 'reverse-merge' : 'merge'
+			));
 		}
 
 		$this->ensureWorkingCopyWithoutConflicts($source_url, $wc_path);
 
-		if ( $this->shouldMergeAll($revisions) ) {
-			$revisions = $this->_unmergedRevisions;
+		if ( $this->shouldUseAll($revisions) ) {
+			$revisions = $this->_usableRevisions;
 		}
 		else {
 			if ( $revisions ) {
@@ -236,10 +245,13 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			}
 
 			if ( $revisions ) {
-				$revisions = array_intersect($revisions, $this->_unmergedRevisions);
+				$revisions = array_intersect($revisions, $this->_usableRevisions);
 
 				if ( !$revisions ) {
-					throw new CommandException('Requested revisions are already merged');
+					throw new CommandException(\sprintf(
+						'Requested revisions are %s',
+						$this->isReverseMerge() ? 'not yet merged' : 'already merged'
+					));
 				}
 			}
 		}
@@ -247,10 +259,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		if ( $revisions ) {
 			$this->performMerge($source_url, $wc_path, $revisions);
 		}
-		elseif ( $this->_unmergedRevisions ) {
+		elseif ( $this->_usableRevisions ) {
 			$this->runOtherCommand('log', array(
 				'path' => $source_url,
-				'--revisions' => implode(',', $this->_unmergedRevisions),
+				'--revisions' => implode(',', $this->_usableRevisions),
 				'--with-full-message' => $this->io->getOption('with-full-message'),
 				'--with-details' => $this->io->getOption('with-details'),
 				'--with-summary' => $this->io->getOption('with-summary'),
@@ -260,13 +272,13 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	}
 
 	/**
-	 * Determines if all unmerged revisions should be merged.
+	 * Determines if all usable revisions should be processed.
 	 *
 	 * @param array $revisions Revisions.
 	 *
 	 * @return boolean
 	 */
-	protected function shouldMergeAll(array $revisions)
+	protected function shouldUseAll(array $revisions)
 	{
 		return $revisions === array(self::REVISION_ALL);
 	}
@@ -416,46 +428,59 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	}
 
 	/**
-	 * Ensures, that there are some unmerged revisions.
+	 * Ensures, that there are some usable revisions.
 	 *
 	 * @param string $source_url Merge source: url.
 	 * @param string $wc_path    Merge target: working copy path.
 	 *
 	 * @return array
 	 */
-	protected function getUnmergedRevisions($source_url, $wc_path)
+	protected function getUsableRevisions($source_url, $wc_path)
 	{
 		// Avoid missing revision query progress bar overwriting following output.
 		$revision_log = $this->getRevisionLog($source_url);
 
-		$this->io->write(' * Upcoming Merge Status ... ');
-		$unmerged_revisions = $this->calculateUnmergedRevisions($source_url, $wc_path);
+		$this->io->write(sprintf(
+			' * Upcoming %s Status ... ',
+			$this->isReverseMerge() ? 'Reverse-merge' : 'Merge'
+		));
+		$usable_revisions = $this->calculateUsableRevisions($source_url, $wc_path);
 
-		if ( $unmerged_revisions ) {
-			$unmerged_bugs = $revision_log->getBugsFromRevisions($unmerged_revisions);
-			$error_msg = '<error>%d revision(-s) or %d bug(-s) not merged</error>';
-			$this->io->writeln(sprintf($error_msg, count($unmerged_revisions), count($unmerged_bugs)));
+		if ( $usable_revisions ) {
+			$usable_bugs = $revision_log->getBugsFromRevisions($usable_revisions);
+			$error_msg = '<error>%d revision(-s) or %d bug(-s) %s</error>';
+			$this->io->writeln(sprintf(
+				$error_msg,
+				count($usable_revisions),
+				count($usable_bugs),
+				$this->isReverseMerge() ? 'merged' : 'not merged'
+			));
 		}
 		else {
 			$this->io->writeln('<info>Up to date</info>');
 		}
 
-		return $unmerged_revisions;
+		return $usable_revisions;
 	}
 
 	/**
-	 * Returns not merged revisions.
+	 * Returns usable revisions.
 	 *
 	 * @param string $source_url Merge source: url.
 	 * @param string $wc_path    Merge target: working copy path.
 	 *
 	 * @return array
 	 */
-	protected function calculateUnmergedRevisions($source_url, $wc_path)
+	protected function calculateUsableRevisions($source_url, $wc_path)
 	{
 		$command = $this->repositoryConnector->getCommand(
 			'mergeinfo',
-			'--show-revs eligible {' . $source_url . '} {' . $wc_path . '}'
+			sprintf(
+				'--show-revs %s {%s} {%s}',
+				$this->isReverseMerge() ? 'merged' : 'eligible',
+				$source_url,
+				$wc_path
+			)
 		);
 
 		$merge_info = $this->repositoryConnector->getProperty('svn:mergeinfo', $wc_path);
@@ -535,19 +560,30 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 */
 	protected function performMerge($source_url, $wc_path, array $revisions)
 	{
-		sort($revisions, SORT_NUMERIC);
-		$revision_count = count($revisions);
-
-		$merged_revision_count = 0;
-		$merged_revisions = $this->repositoryConnector->getFreshMergedRevisions($wc_path);
-
-		if ( $merged_revisions ) {
-			$merged_revisions = call_user_func_array('array_merge', $merged_revisions);
-			$merged_revision_count = count($merged_revisions);
-			$revision_count += $merged_revision_count;
+		if ( $this->isReverseMerge() ) {
+			rsort($revisions, SORT_NUMERIC);
+		}
+		else {
+			sort($revisions, SORT_NUMERIC);
 		}
 
+		$revision_count = count($revisions);
+
+		$used_revision_count = 0;
+		$used_revisions = $this->repositoryConnector->getMergedRevisionChanges($wc_path, !$this->isReverseMerge());
+
+		if ( $used_revisions ) {
+			$used_revisions = call_user_func_array('array_merge', $used_revisions);
+			$used_revision_count = count($used_revisions);
+			$revision_count += $used_revision_count;
+		}
+
+		$param_string_beginning = '-c ';
 		$param_string_ending = '{' . $source_url . '} {' . $wc_path . '}';
+
+		if ( $this->isReverseMerge() ) {
+			$param_string_beginning .= '-';
+		}
 
 		if ( $this->io->getOption('record-only') ) {
 			$param_string_ending = '--record-only ' . $param_string_ending;
@@ -558,20 +594,20 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		foreach ( $revisions as $index => $revision ) {
 			$command = $this->repositoryConnector->getCommand(
 				'merge',
-				'-c ' . $revision . ' ' . $param_string_ending
+				$param_string_beginning . $revision . ' ' . $param_string_ending
 			);
 
-			$progress_bar = $this->createMergeProgressBar($merged_revision_count + $index + 1, $revision_count);
+			$progress_bar = $this->createMergeProgressBar($used_revision_count + $index + 1, $revision_count);
 			$merge_heading = PHP_EOL . '<fg=white;options=bold>';
-			$merge_heading .= '--- Merging ' . \str_replace('{revision}', $revision, $revision_title_mask);
-			$merge_heading .= " into '$1' " . $progress_bar . ':</>';
+			$merge_heading .= '--- $1 ' . \str_replace('{revision}', $revision, $revision_title_mask);
+			$merge_heading .= " into '$2' " . $progress_bar . ':</>';
 
 			$command->runLive(array(
 				$wc_path => '.',
-				'/--- Merging r' . $revision . " into '([^']*)':/" => $merge_heading,
+				'/--- (Merging|Reverse-merging) r' . $revision . " into '([^']*)':/" => $merge_heading,
 			));
 
-			$this->_unmergedRevisions = array_diff($this->_unmergedRevisions, array($revision));
+			$this->_usableRevisions = array_diff($this->_usableRevisions, array($revision));
 			$this->ensureWorkingCopyWithoutConflicts($source_url, $wc_path, $revision);
 		}
 
@@ -676,7 +712,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 		foreach ( $conflicts as $conflict_path ) {
 			$path_revisions = $revision_log->find('paths', $source_path . $conflict_path);
-			$path_revisions = array_intersect($this->_unmergedRevisions, $path_revisions);
+			$path_revisions = array_intersect($this->_usableRevisions, $path_revisions);
 
 			if ( $path_revisions && isset($largest_suggested_revision) ) {
 				$path_revisions = $this->limitRevisions($path_revisions, $largest_suggested_revision);
@@ -762,6 +798,16 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	public function getAggregatedOptions()
 	{
 		return array('with-full-message', 'with-details', 'with-summary');
+	}
+
+	/**
+	 * Determines if merge should be done in opposite direction (unmerge).
+	 *
+	 * @return boolean
+	 */
+	protected function isReverseMerge()
+	{
+		return $this->io->getOption('reverse');
 	}
 
 }

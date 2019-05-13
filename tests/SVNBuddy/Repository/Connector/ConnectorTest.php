@@ -819,7 +819,10 @@ MESSAGE;
 		);
 	}
 
-	public function testGetFreshMergedRevisionsWithoutChanges()
+	/**
+	 * @dataProvider testGetMergedRevisionChangesWithoutChangesDataProvider
+	 */
+	public function testGetMergedRevisionChangesWithoutChanges($regular_or_reverse)
 	{
 		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
 		$this->_expectCommand(
@@ -829,20 +832,30 @@ MESSAGE;
 		$this->_expectCommand("svn --non-interactive propget svn:mergeinfo '/path/to/working-copy'", $merge_info);
 
 		$this->assertEmpty(
-			$this->_repositoryConnector->getFreshMergedRevisions('/path/to/working-copy')
+			$this->_repositoryConnector->getMergedRevisionChanges('/path/to/working-copy', $regular_or_reverse)
 		);
 	}
 
-	public function testGetFreshMergedRevisionsWithChanges()
+	public function testGetMergedRevisionChangesWithoutChangesDataProvider()
+	{
+		return array(
+			'Merged revisions' => array(true),
+			'Reverse-merged revisions' => array(false),
+		);
+	}
+
+	/**
+	 * @dataProvider testGetMergedRevisionChangesWithChangesDataProvider
+	 */
+	public function testGetMergedRevisionChangesWithChanges($regular_or_reverse, $base_merged, $wc_merged)
 	{
 		$this->_expectCommand(
 			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy' --revision BASE",
-			'/projects/project-name/trunk:10,15' . PHP_EOL
+			$base_merged
 		);
 		$this->_expectCommand(
 			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy'",
-			'/projects/project-name/trunk:10,15,18,33' . PHP_EOL .
-			'/projects/project-name/branches/branch-name:4' . PHP_EOL
+			$wc_merged
 		);
 
 		$this->_revisionListParser->expandRanges(Argument::cetera())->willReturnArgument(0);
@@ -852,7 +865,25 @@ MESSAGE;
 				'/projects/project-name/trunk' => array('18', '33'),
 				'/projects/project-name/branches/branch-name' => array('4'),
 			),
-			$this->_repositoryConnector->getFreshMergedRevisions('/path/to/working-copy')
+			$this->_repositoryConnector->getMergedRevisionChanges('/path/to/working-copy', $regular_or_reverse)
+		);
+	}
+
+	public function testGetMergedRevisionChangesWithChangesDataProvider()
+	{
+		return array(
+			'Merged revisions' => array(
+				true,
+				'/projects/project-name/trunk:10,15' . PHP_EOL,
+				'/projects/project-name/trunk:10,15,18,33' . PHP_EOL .
+				'/projects/project-name/branches/branch-name:4' . PHP_EOL,
+			),
+			'Reverse-merged revisions' => array(
+				false,
+				'/projects/project-name/trunk:10,15,18,33' . PHP_EOL .
+				'/projects/project-name/branches/branch-name:4' . PHP_EOL,
+				'/projects/project-name/trunk:10,15' . PHP_EOL,
+			),
 		);
 	}
 

@@ -56,7 +56,8 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 
 	public function testApplyWithoutMergeChanges()
 	{
-		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array());
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', true)->willReturn(array());
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', false)->willReturn(array());
 
 		$this->assertEmpty($this->mergeTemplate->apply('/path/to/working-copy'));
 	}
@@ -65,11 +66,16 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 
 	protected function prepareMergeResult()
 	{
-		$this->connector->getFreshMergedRevisions('/path/to/working-copy')->willReturn(array(
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', true)->willReturn(array(
 			'/projects/project-name/trunk' => array('18', '33', '47'),
 			'/projects/project-name/branches/branch-name' => array('4'),
 			'/projects/another-project-name/tags/stable' => array('15'),
 			'/projects/another-project-name/trunk' => array('17'),
+		));
+
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', false)->willReturn(array(
+			'/projects/project-name/trunk' => array('95', '11'),
+			'/projects/another-project-name/trunk' => array('112'),
 		));
 
 		$this->connector
@@ -80,6 +86,7 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 			->getRootUrl('svn://repository.com/path/to/project-name/tags/stable')
 			->willReturn('svn://repository.com');
 
+		// Merged revision information.
 		$revision_log1 = $this->getRevisionLog('svn://repository.com/projects/project-name/trunk');
 		$revision_log1->getRevisionsData('summary', array(18, 33, 47))->willReturn(array(
 			18 => array(
@@ -123,6 +130,28 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 				'author' => 'user4',
 				'date' => 35345444353,
 				'msg' => 'another-tr1-line1' . PHP_EOL . 'another-tr1-line2' . PHP_EOL . PHP_EOL,
+			),
+		));
+
+		// Reverse-merged revision information.
+		$revision_log1->getRevisionsData('summary', array(95, 11))->willReturn(array(
+			95 => array(
+				'author' => 'user5',
+				'date' => 3534535353,
+				'msg' => 'JRA-100 - own-tr1-line1' . PHP_EOL . 'own-tr1-line2(r)' . PHP_EOL . PHP_EOL,
+			),
+			11 => array(
+				'author' => 'user6',
+				'date' => 35345445353,
+				'msg' => 'JRA-100 - own-tr2-line1' . PHP_EOL . 'own-tr2-line2(r)' . PHP_EOL . PHP_EOL,
+			),
+		));
+
+		$revision_log4->getRevisionsData('summary', array(112))->willReturn(array(
+			112 => array(
+				'author' => 'user7',
+				'date' => 35345444353,
+				'msg' => 'another-tr1-line1' . PHP_EOL . 'another-tr1-line2(r)' . PHP_EOL . PHP_EOL,
 			),
 		));
 
