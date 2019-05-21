@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Changed
+...
+
+### Fixed
+...
+
+## [0.5.1] - 2019-05-21
+### Changed
 - Improve commit message of `commit` (`ci`) command by showing if path/file was copied or not.
 
 ### Fixed
@@ -230,7 +237,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release.
 - Adding `aggregate`, `cleanup`, `commit`, `log`, `merge` and `revert` commands.
 
-[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/console-helpers/svn-buddy/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/console-helpers/svn-buddy/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/console-helpers/svn-buddy/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/console-helpers/svn-buddy/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/console-helpers/svn-buddy/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/console-helpers/svn-buddy/compare/v0.0.4...v0.1.0
