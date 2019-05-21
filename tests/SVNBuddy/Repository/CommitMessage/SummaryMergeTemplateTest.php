@@ -22,6 +22,14 @@ class SummaryMergeTemplateTest extends AbstractMergeTemplateTestCase
 		$this->assertEquals('summary', $this->mergeTemplate->getName());
 	}
 
+	public function testApplyWithoutMergeChanges()
+	{
+		$this->connector->getRelativePath('/path/to/working-copy')->willReturn('/path/to/project/tags/stable');
+		$this->connector->getLastRevision('/path/to/working-copy')->willReturn(555);
+
+		parent::testApplyWithoutMergeChanges();
+	}
+
 	public function testApplyWithMergeChanges()
 	{
 		$this->connector->getRelativePath('/path/to/working-copy')->willReturn('/path/to/project/tags/stable');

@@ -56,8 +56,24 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 
 	public function testApplyWithoutMergeChanges()
 	{
-		$this->connector->getMergedRevisionChanges('/path/to/working-copy', true)->willReturn(array());
-		$this->connector->getMergedRevisionChanges('/path/to/working-copy', false)->willReturn(array());
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', true)->willReturn(array(
+			'/projects/project-name/trunk' => array(),
+		));
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', false)->willReturn(array(
+			'/projects/project-name/trunk' => array(),
+		));
+
+		$this->connector
+			->getWorkingCopyUrl('/path/to/working-copy')
+			->willReturn('svn://repository.com/path/to/project-name/tags/stable');
+
+		$this->connector
+			->getRelativePath('svn://repository.com/path/to/project-name/tags/stable')
+			->willReturn('/projects/project-name/tags/stable');
+
+		$this->connector
+			->getRootUrl('svn://repository.com/path/to/project-name/tags/stable')
+			->willReturn('svn://repository.com');
 
 		$this->assertEmpty($this->mergeTemplate->apply('/path/to/working-copy'));
 	}

@@ -74,7 +74,7 @@ abstract class AbstractMergeTemplate
 			return \call_user_func_array('array_merge', $grouped_revisions);
 		}
 
-		return \array_values($grouped_revisions);
+		return \array_values(reset($grouped_revisions));
 	}
 
 }
