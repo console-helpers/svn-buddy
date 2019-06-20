@@ -10,6 +10,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
+...
+
+## [0.5.2] - 2019-06-20
+### Fixed
 - Fixed PHP warning, when using `commit` (`ci`) command when no merge was performed.
 
 ## [0.5.1] - 2019-05-21
@@ -237,7 +241,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release.
 - Adding `aggregate`, `cleanup`, `commit`, `log`, `merge` and `revert` commands.
 
-[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/console-helpers/svn-buddy/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/console-helpers/svn-buddy/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/console-helpers/svn-buddy/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/console-helpers/svn-buddy/compare/v0.3.0...v0.4.0
