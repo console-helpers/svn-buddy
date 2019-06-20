@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- Fixed PHP warning, when using `commit` (`ci`) command when no merge was performed.
 
 ## [0.5.1] - 2019-05-21
 ### Changed

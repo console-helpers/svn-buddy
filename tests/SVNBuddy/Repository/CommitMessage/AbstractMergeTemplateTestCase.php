@@ -54,6 +54,14 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 
 	abstract public function testGetName();
 
+	public function testApplyWithoutMerge()
+	{
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', true)->willReturn(array());
+		$this->connector->getMergedRevisionChanges('/path/to/working-copy', false)->willReturn(array());
+
+		$this->assertEmpty($this->mergeTemplate->apply('/path/to/working-copy'));
+	}
+
 	public function testApplyWithoutMergeChanges()
 	{
 		$this->connector->getMergedRevisionChanges('/path/to/working-copy', true)->willReturn(array(

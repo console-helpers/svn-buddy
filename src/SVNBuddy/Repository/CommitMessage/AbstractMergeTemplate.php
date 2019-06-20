@@ -70,10 +70,17 @@ abstract class AbstractMergeTemplate
 	 */
 	protected function flattenMergedRevisions(array $grouped_revisions)
 	{
+		// Not a merge commit.
+		if ( !$grouped_revisions ) {
+			return array();
+		}
+
+		// Multi-source merge commit.
 		if ( count($grouped_revisions) > 1 ) {
 			return \call_user_func_array('array_merge', $grouped_revisions);
 		}
 
+		// Single source merge commit.
 		return \array_values(reset($grouped_revisions));
 	}
 
