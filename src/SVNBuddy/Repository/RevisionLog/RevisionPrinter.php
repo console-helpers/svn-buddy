@@ -55,6 +55,13 @@ class RevisionPrinter
 	private $_columns = array();
 
 	/**
+	 * Aggregate by bug.
+	 *
+	 * @var boolean
+	 */
+	private $_aggregateByBug = false;
+
+	/**
 	 * Merge conflict regexps.
 	 *
 	 * @var array
@@ -99,6 +106,7 @@ class RevisionPrinter
 		$this->_columns = array();
 		$this->_mergeConflictRegExps = array();
 		$this->_logMessageLimit = 68;
+		$this->_aggregateByBug = false;
 	}
 
 	/**
@@ -113,6 +121,18 @@ class RevisionPrinter
 		$this->_columns[] = $column;
 
 		return $this;
+	}
+
+	/**
+	 * Sets aggregate by bug.
+	 *
+	 * @param boolean $aggregate_by_bug Aggregate by bug.
+	 *
+	 * @return void
+	 */
+	public function setAggregateByBug($aggregate_by_bug)
+	{
+		$this->_aggregateByBug = $aggregate_by_bug;
 	}
 
 	/**
@@ -200,6 +220,12 @@ class RevisionPrinter
 
 		$prev_bugs = null;
 		$last_color = 'yellow';
+
+		if ( $this->_aggregateByBug ) {
+			$aggregated_revisions = $this->aggregateRevisionsByBug($revisions, $revision_log);
+			$revisions = array_keys($aggregated_revisions);
+		}
+
 		$last_revision = end($revisions);
 
 		$project_path = $revision_log->getProjectPath();
@@ -231,7 +257,7 @@ class RevisionPrinter
 			}
 
 			$row = array(
-				$revision,
+				$this->_aggregateByBug ? $aggregated_revisions[$revision] . ' cmts' : $revision,
 				$revision_data['author'],
 				$this->_dateHelper->getAgoTime($revision_data['date']),
 				$this->_outputHelper->formatArray($new_bugs, $bugs_per_row, $last_color),
@@ -304,6 +330,50 @@ class RevisionPrinter
 		$table->render();
 
 		$this->_resetState();
+	}
+
+	/**
+	 * Aggregates revisions by bugs.
+	 *
+	 * @param array       $revisions    Revisions.
+	 * @param RevisionLog $revision_log Revision Log.
+	 *
+	 * @return array
+	 */
+	protected function aggregateRevisionsByBug(array $revisions, RevisionLog $revision_log)
+	{
+		$bugs_revisions = array(
+			'unknown' => array(),
+		);
+
+		$revisions_bugs = $revision_log->getRevisionsData('bugs', $revisions);
+
+		foreach ( \array_reverse($revisions) as $revision ) {
+			$revision_bugs = $revisions_bugs[$revision];
+
+			if ( !$revision_bugs ) {
+				$bugs_revisions['unknown'][] = $revision;
+				continue;
+			}
+
+			foreach ( $revision_bugs as $revision_bug ) {
+				if ( !isset($bugs_revisions[$revision_bug]) ) {
+					$bugs_revisions[$revision_bug] = array();
+				}
+
+				$bugs_revisions[$revision_bug][] = $revision;
+			}
+		}
+
+		$bugs_revisions = \array_reverse($bugs_revisions, true);
+
+		$ret = array();
+
+		foreach ( $bugs_revisions as $bug => $bug_revisions ) {
+			$ret[reset($bug_revisions)] = count($bug_revisions);
+		}
+
+		return $ret;
 	}
 
 	/**

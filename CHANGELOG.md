@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- Added `--aggregate` option to `merge` and `commit` commands to aggregate displayed commits by tasks.
 
 ### Changed
 ...

@@ -164,6 +164,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				null,
 				InputOption::VALUE_NONE,
 				'Rollback previously merged revisions'
+			)
+			->addOption(
+				'aggregate',
+				null,
+				InputOption::VALUE_NONE,
+				'Aggregate displayed revisions by bugs'
 			);
 
 		parent::configure();
@@ -266,6 +272,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'--with-full-message' => $this->io->getOption('with-full-message'),
 				'--with-details' => $this->io->getOption('with-details'),
 				'--with-summary' => $this->io->getOption('with-summary'),
+				'--aggregate' => $this->io->getOption('aggregate'),
 				'--with-merge-oracle' => true,
 			));
 		}

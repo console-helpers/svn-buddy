@@ -190,6 +190,12 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Limit the number of revisions to output'
+			)
+			->addOption(
+				'aggregate',
+				null,
+				InputOption::VALUE_NONE,
+				'Aggregate displayed revisions by bugs'
 			);
 
 		parent::configure();
@@ -585,6 +591,10 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			$this->_revisionPrinter->setCurrentRevision(
 				$this->repositoryConnector->getLastRevision($wc_path)
 			);
+		}
+
+		if ( $this->io->getOption('aggregate') ) {
+			$this->_revisionPrinter->setAggregateByBug(true);
 		}
 
 		$this->_revisionPrinter->printRevisions($this->_revisionLog, $revisions, $this->io->getOutput());
