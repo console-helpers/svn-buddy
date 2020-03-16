@@ -65,6 +65,12 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 				null,
 				InputOption::VALUE_NONE,
 				'Show ignored directory list'
+			)
+			->addOption(
+				'recursive',
+				null,
+				InputOption::VALUE_NONE,
+				'Perform deep scan for working copies'
 			);
 
 		parent::configure();
@@ -401,23 +407,50 @@ class AggregateCommand extends AbstractCommand implements IConfigAwareCommand
 			);
 		}
 
+		// Recursively scan for working copies.
+		if ( $this->io->getOption('recursive') ) {
+			foreach ( glob($path . '/*', GLOB_ONLYDIR) as $sub_folder ) {
+				if ( $this->isExcludedFolder($sub_folder) ) {
+					continue;
+				}
+
+				if ( $this->repositoryConnector->isWorkingCopy($sub_folder) ) {
+					$working_copies[] = $sub_folder;
+				}
+				else {
+					$working_copies = array_merge($working_copies, $this->getWorkingCopiesRecursive($sub_folder));
+				}
+			}
+
+			return $working_copies;
+		}
+
+		// Detect working copies only in current directly.
 		foreach ( glob($path . '/*', GLOB_ONLYDIR) as $sub_folder ) {
-			if ( file_exists($sub_folder . '/.git')
-				|| file_exists($sub_folder . '/CVS')
-				|| in_array(basename($sub_folder), array('node_modules', 'vendor'))
-			) {
+			if ( $this->isExcludedFolder($sub_folder) ) {
 				continue;
 			}
 
 			if ( $this->repositoryConnector->isWorkingCopy($sub_folder) ) {
 				$working_copies[] = $sub_folder;
 			}
-			else {
-				$working_copies = array_merge($working_copies, $this->getWorkingCopiesRecursive($sub_folder));
-			}
 		}
 
 		return $working_copies;
+	}
+
+	/**
+	 * Determines if given folder should be excluded from processing.
+	 *
+	 * @param string $sub_folder Sub folder.
+	 *
+	 * @return boolean
+	 */
+	protected function isExcludedFolder($sub_folder)
+	{
+		return file_exists($sub_folder . '/.git')
+			|| file_exists($sub_folder . '/CVS')
+			|| in_array(basename($sub_folder), array('node_modules', 'vendor'));
 	}
 
 	/**

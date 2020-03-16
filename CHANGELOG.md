@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--aggregate` option to `merge` and `commit` commands to aggregate displayed commits by tasks.
 
 ### Changed
-...
+- The recursive working copy lookup behavior of the `aggregate` command is disabled by default, but can be enabled via new `--recursive` option.
 
 ### Fixed
 ...
