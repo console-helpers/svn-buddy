@@ -21,7 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Improve commit message of `commit` (`ci`) command by showing if path/file was copied or not.
 
 ### Fixed
-- Files, that weren't changed and had no properies and were added to a changelist were displayed in `commit` (`ci`) command result.
+- Files, that weren't changed and had no properties and were added to a changelist were displayed in `commit` (`ci`) command result.
 - Empty reverse merge sub-section was always added to merge commit messages.
 
 ## [0.5.0] - 2019-03-30
@@ -211,7 +211,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - The `merge` command doesn't ask user confirmation to run `svn update` when outdated/mixed revision working copy detected.
-- The `log` command now reads default limit (was 10) from config setting instead of harcoding it.
+- The `log` command now reads default limit (was 10) from config setting instead of hardcoding it.
 - The `merge` command now reads default merge source url from config setting, when available.
 
 ### Fixed
