@@ -12,6 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -56,10 +57,7 @@ class RevisionLogTest extends TestCase
 	public function testPluginRegistrationSuccess()
 	{
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
-
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
+		$plugin = $this->createPluginMock($revision_log);
 
 		$this->assertFalse($revision_log->pluginRegistered('mocked'), 'The "mocked" plugin is not registered.');
 		$revision_log->registerPlugin($plugin->reveal());
@@ -73,22 +71,37 @@ class RevisionLogTest extends TestCase
 	public function testPluginRegistrationFailure()
 	{
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
-
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
+		$plugin = $this->createPluginMock($revision_log);
 
 		$revision_log->registerPlugin($plugin->reveal());
 		$revision_log->registerPlugin($plugin->reveal());
+	}
+
+	public function testGetPluginSuccess()
+	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
+		$plugin = $this->createPluginMock($revision_log);
+		$revision_log->registerPlugin($plugin->reveal());
+
+		$this->assertSame($plugin->reveal(), $revision_log->getPlugin('mocked'));
+	}
+
+	/**
+	 * @expectedException \InvalidArgumentException
+	 * @expectedExceptionMessage The "mocked" revision log plugin is unknown.
+	 */
+	public function testGetPluginFailure()
+	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+		$revision_log->getPlugin('mocked');
 	}
 
 	public function testFindCriterionSuccess()
 	{
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
+		$plugin = $this->createPluginMock($revision_log);
 		$plugin->find(array('criterion'), '/projects/project-name/')->willReturn('OK')->shouldBeCalled();
 
 		$revision_log->registerPlugin($plugin->reveal());
@@ -100,9 +113,7 @@ class RevisionLogTest extends TestCase
 	{
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
+		$plugin = $this->createPluginMock($revision_log);
 		$plugin->find(array('criterion1', 'criterion2'), '/projects/project-name/')->willReturn('OK')->shouldBeCalled();
 
 		$revision_log->registerPlugin($plugin->reveal());
@@ -124,9 +135,7 @@ class RevisionLogTest extends TestCase
 	{
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
-		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
-		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
+		$plugin = $this->createPluginMock($revision_log);
 		$plugin->getRevisionsData(array(1))->willReturn('OK')->shouldBeCalled();
 
 		$revision_log->registerPlugin($plugin->reveal());
@@ -402,6 +411,22 @@ OUTPUT;
 		);
 
 		return $revision_log;
+	}
+
+	/**
+	 * Returns plugin mock.
+	 *
+	 * @param RevisionLog $revision_log Revision log.
+	 *
+	 * @return ObjectProphecy
+	 */
+	protected function createPluginMock(RevisionLog $revision_log)
+	{
+		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
+		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
+		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
+
+		return $plugin;
 	}
 
 }

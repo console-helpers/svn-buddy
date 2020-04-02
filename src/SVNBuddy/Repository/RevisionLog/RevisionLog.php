@@ -333,15 +333,10 @@ class RevisionLog
 	 * @param array|string $criteria    Search criteria.
 	 *
 	 * @return array
-	 * @throws \InvalidArgumentException When unknown plugin is given.
 	 */
 	public function find($plugin_name, $criteria)
 	{
-		if ( !$this->pluginRegistered($plugin_name) ) {
-			throw new \InvalidArgumentException('The "' . $plugin_name . '" revision log plugin is unknown.');
-		}
-
-		return $this->_plugins[$plugin_name]->find((array)$criteria, $this->_projectPath);
+		return $this->getPlugin($plugin_name)->find((array)$criteria, $this->_projectPath);
 	}
 
 	/**
@@ -351,15 +346,10 @@ class RevisionLog
 	 * @param array  $revisions   Revisions.
 	 *
 	 * @return array
-	 * @throws \InvalidArgumentException When unknown plugin is given.
 	 */
 	public function getRevisionsData($plugin_name, array $revisions)
 	{
-		if ( !$this->pluginRegistered($plugin_name) ) {
-			throw new \InvalidArgumentException('The "' . $plugin_name . '" revision log plugin is unknown.');
-		}
-
-		return $this->_plugins[$plugin_name]->getRevisionsData($revisions);
+		return $this->getPlugin($plugin_name)->getRevisionsData($revisions);
 	}
 
 	/**
@@ -372,6 +362,23 @@ class RevisionLog
 	public function pluginRegistered($plugin_name)
 	{
 		return array_key_exists($plugin_name, $this->_plugins);
+	}
+
+	/**
+	 * Returns plugin instance.
+	 *
+	 * @param string $plugin_name Plugin name.
+	 *
+	 * @return IPlugin
+	 * @throws \InvalidArgumentException When unknown plugin is given.
+	 */
+	public function getPlugin($plugin_name)
+	{
+		if ( !$this->pluginRegistered($plugin_name) ) {
+			throw new \InvalidArgumentException('The "' . $plugin_name . '" revision log plugin is unknown.');
+		}
+
+		return $this->_plugins[$plugin_name];
 	}
 
 	/**
