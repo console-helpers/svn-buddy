@@ -104,6 +104,74 @@ class LogMessageParserTest extends TestCase
 		);
 	}
 
+	/**
+	 * @dataProvider parseMultipleIssueTrackersWithPreFilterDataProvider
+	 */
+	public function testParseMultipleIssueTrackersWithPreFilter($message, array $bugs)
+	{
+		$parser = new LogMessageParser('([A-Z]+\-\d+|#\d+\s+)' . PHP_EOL . '([A-Z]+\-\d+|\d+)');
+
+		$this->assertSame($bugs, $parser->parse($message));
+	}
+
+	public function parseMultipleIssueTrackersWithPreFilterDataProvider()
+	{
+		return array(
+			'both trackers: no issues' => array(
+				'log message',
+				array(),
+			),
+
+			// Tracker 1 fixtures.
+			'tracker 1: one issue' => array(
+				'ABC-1234',
+				array('ABC-1234'),
+			),
+			'tracker 1: several issues' => array(
+				'ABC-1234, ABC-5432',
+				array('ABC-1234', 'ABC-5432'),
+			),
+			'tracker 1: several issues and text' => array(
+				'Fixes ABC-1234 and ABC-5432 test',
+				array('ABC-1234', 'ABC-5432'),
+			),
+			'tracker 1: several issues multi-line' => array(
+				'Fixes ABC-1234 ' . PHP_EOL . 'and ABC-5432 test',
+				array('ABC-1234', 'ABC-5432'),
+			),
+			'tracker 1: several duplicate issues' => array(
+				'Fixes ABC-1234 ' . PHP_EOL . 'and ABC-1234 test',
+				array('ABC-1234'),
+			),
+
+			// Tracker 2 fixtures.
+			'tracker 2: no issues' => array(
+				'1234',
+				array(),
+			),
+			'tracker 2: one issue' => array(
+				'#1234 ',
+				array('1234'),
+			),
+			'tracker 2: several issues' => array(
+				'#1234 #5432 ',
+				array('1234', '5432'),
+			),
+			'tracker 2: several issues and text' => array(
+				'Fixes #1234 and #5432 test',
+				array('1234', '5432'),
+			),
+			'tracker 2: several issues multi-line' => array(
+				'Fixes #1234 ' . PHP_EOL . 'and #5432 test',
+				array('1234', '5432'),
+			),
+			'tracker 2: several duplicate issues' => array(
+				'Fixes #1234 ' . PHP_EOL . 'and #1234 test',
+				array('1234'),
+			),
+		);
+	}
+
 	public function testMantisIntoJIRAPatching()
 	{
 		$mantis_regexp = '(?:[Bb]ugs?|[Ii]ssues?|[Rr]eports?|[Ff]ixe?s?|[Rr]esolves?)+\s+(?:#?(?:\d+)[,\.\s]*)+';
