@@ -106,6 +106,20 @@ class CacheManager
 	}
 
 	/**
+	 * Deletes value from cache.
+	 *
+	 * @param string  $name     Name.
+	 * @param integer $duration Duration in seconds.
+	 *
+	 * @return void
+	 */
+	public function deleteCache($name, $duration = null)
+	{
+		$storage = $this->_getStorage($name, $this->durationIntoSeconds($duration));
+		$storage->invalidate();
+	}
+
+	/**
 	 * Converts duration into seconds.
 	 *
 	 * @param integer $duration Duration in seconds.

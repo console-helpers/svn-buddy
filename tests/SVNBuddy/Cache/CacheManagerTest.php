@@ -156,6 +156,39 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 	}
 
 	/**
+	 * @dataProvider removalOfExistingCacheDataProvider
+	 */
+	public function testRemovalOfExistingCache($duration)
+	{
+		$this->assertCount(0, $this->getCacheFilenames('namespace'));
+
+		$this->cacheManager->setCache('namespace:name', 'value', $duration);
+
+		$this->assertCount(1, $this->getCacheFilenames('namespace'));
+
+		$this->cacheManager->deleteCache('namespace:name');
+
+		$this->assertCount(0, $this->getCacheFilenames('namespace'));
+	}
+
+	public function removalOfExistingCacheDataProvider()
+	{
+		return array(
+			'without duration' => array(null),
+			'with duration' => array(3600),
+		);
+	}
+
+	public function testRemovalOfNonExistingCache()
+	{
+		$this->assertCount(0, $this->getCacheFilenames('namespace'));
+
+		$this->cacheManager->deleteCache('namespace:name');
+
+		$this->assertCount(0, $this->getCacheFilenames('namespace'));
+	}
+
+	/**
 	 * Expects verbose output.
 	 *
 	 * @param ObjectProphecy $io     ConsoleIO mock.
