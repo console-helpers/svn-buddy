@@ -192,4 +192,18 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 		return $this->database->fetchPairs($sql);
 	}
 
+	/**
+	 * Returns project meta information.
+	 *
+	 * @param string $project_path Project path.
+	 *
+	 * @return array
+	 */
+	public function getMeta($project_path)
+	{
+		$projects = $this->getProjects('Id = :id', array('id' => $this->getProject($project_path)));
+
+		return reset($projects);
+	}
+
 }

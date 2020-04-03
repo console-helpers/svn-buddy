@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Added `--aggregate` option to `merge` and `commit` commands to aggregate displayed commits by tasks.
+- Added `project` command, that allows to show project meta information and reset refresh tracking regular expression.
 
 ### Changed
 - The recursive working copy lookup behavior of the `aggregate` command is disabled by default, but can be enabled via new `--recursive` option.

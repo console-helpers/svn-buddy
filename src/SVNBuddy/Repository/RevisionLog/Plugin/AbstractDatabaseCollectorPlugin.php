@@ -69,10 +69,11 @@ abstract class AbstractDatabaseCollectorPlugin extends AbstractPlugin implements
 	 * Returns projects.
 	 *
 	 * @param string $where_clause Where clause.
+	 * @param array  $values       Values.
 	 *
 	 * @return array
 	 */
-	protected function getProjects($where_clause = '')
+	protected function getProjects($where_clause = '', array $values = array())
 	{
 		$sql = 'SELECT *
 				FROM Projects';
@@ -81,7 +82,7 @@ abstract class AbstractDatabaseCollectorPlugin extends AbstractPlugin implements
 			$sql .= ' WHERE ' . $where_clause;
 		}
 
-		$projects = $this->database->fetchAll($sql);
+		$projects = $this->database->fetchAll($sql, $values);
 
 		if ( !$projects ) {
 			return array();
