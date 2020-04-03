@@ -717,6 +717,52 @@ svn-buddy.phar aggregate --ignore-show
 
 Shows list of ignored paths.
 
+### The "project" command
+
+Changes and displays project configuration.
+
+#### Arguments
+
+* `path` - Working copy path [default: "`.`"]
+
+
+#### Options
+
+* `--refresh-bug-tracking` - Refreshes value of "bugtraq:logregex" SVN property of the project
+* `--show-meta` - Shows meta information of a project
+
+#### Examples
+
+```
+svn-buddy.phar project --refresh-bug-tracking
+```
+
+Pulls `bugtraq:logregex` SVN property from recently modified trunk/branch/tag and stores into project configuration.
+
+```
+svn-buddy.phar project --show-meta
+```
+
+Displays project meta information in following format:
+
+```
+Showing project meta information for svn://alex@in-portal.org/in-portal/branches/5.2.x url:
++------------------+---------------+
+| Field Name       | Field Value   |
++------------------+---------------+
+| Id               | 43            |
+| Path             | /in-portal/   |
+| BugRegExp        | ([A-Z]+\-\d+) |
+|                  |               |
+| IsDeleted        | 0             |
+| PathId           | 83906         |
+| RevisionAdded    | 12            |
+| RevisionDeleted  |               |
+| RevisionLastSeen | 16637         |
++------------------+---------------+
+```
+
+
 ### The "self-update" command
 
 Updates application to most recent version. Following update channels are available:
