@@ -73,6 +73,13 @@ class Connector
 	private $_nextCommandCacheDuration = null;
 
 	/**
+	 * Cache overwrite for next invoked command.
+	 *
+	 * @var mixed
+	 */
+	private $_nextCommandCacheOverwrite = null;
+
+	/**
 	 * Whatever to cache last repository revision or not.
 	 *
 	 * @var mixed
@@ -123,19 +130,26 @@ class Connector
 			$this->_nextCommandCacheDuration = null;
 		}
 
+		if ( isset($this->_nextCommandCacheOverwrite) ) {
+			$command->setCacheOverwrite($this->_nextCommandCacheOverwrite);
+			$this->_nextCommandCacheOverwrite = null;
+		}
+
 		return $command;
 	}
 
 	/**
 	 * Sets cache configuration for next created command.
 	 *
-	 * @param mixed $cache_duration Cache duration.
+	 * @param mixed        $cache_duration  Cache duration.
+	 * @param boolean|null $cache_overwrite Cache overwrite.
 	 *
 	 * @return self
 	 */
-	public function withCache($cache_duration)
+	public function withCache($cache_duration, $cache_overwrite = null)
 	{
 		$this->_nextCommandCacheDuration = $cache_duration;
+		$this->_nextCommandCacheOverwrite = $cache_overwrite;
 
 		return $this;
 	}

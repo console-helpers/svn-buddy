@@ -80,12 +80,35 @@ class ConnectorTest extends AbstractTestCase
 		$this->_repositoryConnector = $this->_createRepositoryConnector();
 	}
 
-	public function testGetCommandWithCaching()
+	/**
+	 * @dataProvider getCommandWithCachingDataProvider
+	 */
+	public function testGetCommandWithCaching($duration, $overwrite)
 	{
 		$command = $this->_expectCommand('info', null, 'OK');
-		$command->setCacheDuration(100)->shouldBeCalled();
 
-		$this->_repositoryConnector->withCache(100)->getCommand('info')->run();
+		if ( $duration !== null ) {
+			$command->setCacheDuration($duration)->shouldBeCalled();
+		}
+
+		if ( $overwrite !== null ) {
+			$command->setCacheOverwrite($overwrite)->shouldBeCalled();
+		}
+
+		$this->_repositoryConnector->withCache($duration, $overwrite)->getCommand('info')->run();
+	}
+
+	public function getCommandWithCachingDataProvider()
+	{
+		return array(
+			'duration - enabled, overwrite - enabled' => array(100, true),
+			'duration - enabled, overwrite - disabled 1' => array(100, false),
+			'duration - enabled, overwrite - disabled 2' => array(100, null),
+
+			'duration - disabled, overwrite - enabled' => array(null, true),
+			'duration - disabled, overwrite - disabled 1' => array(null, false),
+			'duration - disabled, overwrite - disabled 2' => array(null, null),
+		);
 	}
 
 	public function testGetProperty()
