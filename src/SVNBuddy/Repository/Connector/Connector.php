@@ -45,18 +45,11 @@ class Connector
 	const SVN_CAT_CACHE_DURATION = '1 month';
 
 	/**
-	 * Reference to configuration.
+	 * Command factory.
 	 *
-	 * @var ConfigEditor
+	 * @var CommandFactory
 	 */
-	private $_configEditor;
-
-	/**
-	 * Process factory.
-	 *
-	 * @var IProcessFactory
-	 */
-	private $_processFactory;
+	private $_commandFactory;
 
 	/**
 	 * Console IO.
@@ -66,25 +59,11 @@ class Connector
 	private $_io;
 
 	/**
-	 * Cache manager.
-	 *
-	 * @var CacheManager
-	 */
-	private $_cacheManager;
-
-	/**
 	 * Revision list parser.
 	 *
 	 * @var RevisionListParser
 	 */
 	private $_revisionListParser;
-
-	/**
-	 * Path to an svn command.
-	 *
-	 * @var string
-	 */
-	private $_svnCommand = 'svn';
 
 	/**
 	 * Cache duration for next invoked command.
@@ -104,54 +83,27 @@ class Connector
 	 * Creates repository connector.
 	 *
 	 * @param ConfigEditor       $config_editor        ConfigEditor.
-	 * @param IProcessFactory    $process_factory      Process factory.
+	 * @param CommandFactory     $command_factory      Command factory.
 	 * @param ConsoleIO          $io                   Console IO.
-	 * @param CacheManager       $cache_manager        Cache manager.
 	 * @param RevisionListParser $revision_list_parser Revision list parser.
 	 */
 	public function __construct(
 		ConfigEditor $config_editor,
-		IProcessFactory $process_factory,
+		CommandFactory $command_factory,
 		ConsoleIO $io,
-		CacheManager $cache_manager,
 		RevisionListParser $revision_list_parser
 	) {
-		$this->_configEditor = $config_editor;
-		$this->_processFactory = $process_factory;
+		$this->_commandFactory = $command_factory;
 		$this->_io = $io;
-		$this->_cacheManager = $cache_manager;
 		$this->_revisionListParser = $revision_list_parser;
 
-		$cache_duration = $this->_configEditor->get('repository-connector.last-revision-cache-duration');
+		$cache_duration = $config_editor->get('repository-connector.last-revision-cache-duration');
 
 		if ( (string)$cache_duration === '' || substr($cache_duration, 0, 1) === '0' ) {
 			$cache_duration = 0;
 		}
 
 		$this->_lastRevisionCacheDuration = $cache_duration;
-
-		$this->prepareSvnCommand();
-	}
-
-	/**
-	 * Prepares static part of svn command to be used across the script.
-	 *
-	 * @return void
-	 */
-	protected function prepareSvnCommand()
-	{
-		$username = $this->_configEditor->get('repository-connector.username');
-		$password = $this->_configEditor->get('repository-connector.password');
-
-		$this->_svnCommand .= ' --non-interactive';
-
-		if ( $username ) {
-			$this->_svnCommand .= ' --username ' . $username;
-		}
-
-		if ( $password ) {
-			$this->_svnCommand .= ' --password ' . $password;
-		}
 	}
 
 	/**
@@ -164,14 +116,7 @@ class Connector
 	 */
 	public function getCommand($sub_command, $param_string = null)
 	{
-		$command_line = $this->buildCommand($sub_command, $param_string);
-
-		$command = new Command(
-			$command_line,
-			$this->_io,
-			$this->_cacheManager,
-			$this->_processFactory
-		);
+		$command = $this->_commandFactory->getCommand($sub_command, $param_string);
 
 		if ( isset($this->_nextCommandCacheDuration) ) {
 			$command->setCacheDuration($this->_nextCommandCacheDuration);
@@ -179,42 +124,6 @@ class Connector
 		}
 
 		return $command;
-	}
-
-	/**
-	 * Builds command from given arguments.
-	 *
-	 * @param string $sub_command  Command.
-	 * @param string $param_string Parameter string.
-	 *
-	 * @return string
-	 * @throws \InvalidArgumentException When command contains spaces.
-	 */
-	protected function buildCommand($sub_command, $param_string = null)
-	{
-		if ( strpos($sub_command, ' ') !== false ) {
-			throw new \InvalidArgumentException('The "' . $sub_command . '" sub-command contains spaces.');
-		}
-
-		$command_line = $this->_svnCommand;
-
-		if ( !empty($sub_command) ) {
-			$command_line .= ' ' . $sub_command;
-		}
-
-		if ( !empty($param_string) ) {
-			$command_line .= ' ' . $param_string;
-		}
-
-		$command_line = preg_replace_callback(
-			'/\{([^\}]*)\}/',
-			function (array $matches) {
-				return escapeshellarg($matches[1]);
-			},
-			$command_line
-		);
-
-		return $command_line;
 	}
 
 	/**

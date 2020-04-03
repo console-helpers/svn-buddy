@@ -44,6 +44,7 @@ class ContainerTest extends BaseContainerTest
 			'log_message_parser_factory' => array('ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory', 'log_message_parser_factory'),
 			'revision_list_parser' => array('ConsoleHelpers\\SVNBuddy\\Repository\\Parser\\RevisionListParser', 'revision_list_parser'),
 			'revision_printer' => array('ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter', 'revision_printer'),
+			'command_factory' => array('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\CommandFactory', 'command_factory'),
 			'repository_connector' => array('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector', 'repository_connector'),
 			'commit_message_builder' => array('ConsoleHelpers\\SVNBuddy\\Repository\\CommitMessage\\CommitMessageBuilder', 'commit_message_builder'),
 			'working_copy_resolver' => array('ConsoleHelpers\\SVNBuddy\\Repository\\WorkingCopyResolver', 'working_copy_resolver'),

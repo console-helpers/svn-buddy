@@ -37,18 +37,11 @@ class ConnectorTest extends AbstractTestCase
 	private $_io;
 
 	/**
-	 * Process factory.
+	 * Command factory.
 	 *
 	 * @var ObjectProphecy
 	 */
-	private $_processFactory;
-
-	/**
-	 * Cache manager.
-	 *
-	 * @var ObjectProphecy
-	 */
-	private $_cacheManager;
+	private $_commandFactory;
 
 	/**
 	 * Revision list parser.
@@ -70,100 +63,34 @@ class ConnectorTest extends AbstractTestCase
 
 		$this->_configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
-		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
-		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
+		$this->_commandFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\CommandFactory');
 		$this->_revisionListParser = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser');
 
 		// To get nice exception back when unexpected command is executed.
-		$this->_processFactory
-			->createProcess(Argument::any(), 1200)
+		$this->_commandFactory
+			->getCommand(Argument::any(), Argument::any())
 			->will(function (array $args) {
-				throw new \LogicException('The createProcess("' . $args[0] . '", 1200) call wasn\'t expected.');
+				throw new \LogicException(\sprintf(
+					'The getCommand(%s, %s) call wasn\'t expected.',
+					var_export($args[0], true),
+					var_export($args[1], true)
+				));
 			});
 
-		$this->_repositoryConnector = $this->_createRepositoryConnector('', '');
-	}
-
-	/**
-	 * @dataProvider baseCommandBuildingDataProvider
-	 */
-	public function testBaseCommandBuilding($username, $password, $expected_command)
-	{
-		$repository_connector = $this->_createRepositoryConnector($username, $password);
-
-		$this->_expectCommand($expected_command, 'OK');
-		$this->assertEquals('OK', $repository_connector->getCommand('', '--version')->run());
-	}
-
-	public function baseCommandBuildingDataProvider()
-	{
-		return array(
-			'no username, no password' => array('', '', 'svn --non-interactive --version'),
-			'username, no password' => array('user', '', 'svn --non-interactive --username user --version'),
-			'no username, password' => array('', 'pass', 'svn --non-interactive --password pass --version'),
-			'username, password' => array(
-				'user',
-				'pass',
-				'svn --non-interactive --username user --password pass --version',
-			),
-		);
-	}
-
-	public function testCommandWithoutSubCommand()
-	{
-		$this->_expectCommand('svn --non-interactive --version', 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('', '--version')->run());
-	}
-
-	public function testCommandWithoutParams()
-	{
-		$this->_expectCommand('svn --non-interactive log', 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log')->run());
-	}
-
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "log -r 5" sub-command contains spaces.
-	 */
-	public function testSubCommandWithSpace()
-	{
-		$this->_repositoryConnector->getCommand('log -r 5')->run();
-	}
-
-	/**
-	 * @dataProvider commandWithParamsDataProvider
-	 */
-	public function testCommandWithParams($params, $expected_command)
-	{
-		$this->_expectCommand($expected_command, 'OK');
-		$this->assertEquals('OK', $this->_repositoryConnector->getCommand('log', $params)->run());
-	}
-
-	public function commandWithParamsDataProvider()
-	{
-		return array(
-			'regular param' => array('-r 12', 'svn --non-interactive log -r 12'),
-			'path param' => array('{path/to/folder}', "svn --non-interactive log 'path/to/folder'"),
-			'regular and path param' => array(
-				'-r 12 {path/to/folder}',
-				"svn --non-interactive log -r 12 'path/to/folder'",
-			),
-		);
+		$this->_repositoryConnector = $this->_createRepositoryConnector();
 	}
 
 	public function testGetCommandWithCaching()
 	{
-		$this->_expectCommand('svn --non-interactive info', 'OK');
-
-		$this->_cacheManager->getCache('misc/command:svn --non-interactive info', null, 100)->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager->setCache('misc/command:svn --non-interactive info', 'OK', null, 100)->shouldBeCalled();
+		$command = $this->_expectCommand('info', null, 'OK');
+		$command->setCacheDuration(100)->shouldBeCalled();
 
 		$this->_repositoryConnector->withCache(100)->getCommand('info')->run();
 	}
 
 	public function testGetProperty()
 	{
-		$this->_expectCommand("svn --non-interactive propget prop-name 'the/path'", 'OK');
+		$this->_expectCommand('propget', 'prop-name {the/path}', 'OK');
 
 		$this->assertEquals(
 			'OK',
@@ -173,7 +100,7 @@ class ConnectorTest extends AbstractTestCase
 
 	public function testGetPropertyWithRevision()
 	{
-		$this->_expectCommand("svn --non-interactive propget prop-name 'the/path' --revision 5", 'OK');
+		$this->_expectCommand('propget', 'prop-name {the/path} --revision 5', 'OK');
 
 		$this->assertEquals(
 			'OK',
@@ -183,7 +110,7 @@ class ConnectorTest extends AbstractTestCase
 
 	public function testGetNonExistingPropertyOnSubversion18()
 	{
-		$this->_expectCommand("svn --non-interactive propget prop-name 'the/path' --revision 5", null);
+		$this->_expectCommand('propget', 'prop-name {the/path} --revision 5', '');
 
 		$this->assertSame(
 			'',
@@ -194,7 +121,8 @@ class ConnectorTest extends AbstractTestCase
 	public function testGetNonExistingPropertyOnSubversion19()
 	{
 		$this->_expectCommand(
-			"svn --non-interactive propget prop-name 'the/path' --revision 5",
+			'propget',
+			'prop-name {the/path} --revision 5',
 			null,
 			'A problem occurred; see other errors for details',
 			RepositoryCommandException::SVN_ERR_BASE
@@ -223,18 +151,16 @@ class ConnectorTest extends AbstractTestCase
 	public function testGetWorkingCopyUrlFromPath($raw_command_output, $path, $url)
 	{
 		if ( strpos($path, '@') !== false ) {
-			$raw_command = "svn --non-interactive info --xml '" . $path . '@' . "'";
+			$sub_command = 'info';
+			$param_string = '--xml {' . $path . '@}';
 		}
 		else {
-			$raw_command = "svn --non-interactive info --xml '" . $path . "'";
+			$sub_command = 'info';
+			$param_string = '--xml {' . $path . '}';
 		}
 
-		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
-			->shouldBeCalled();
-
-		$this->_expectCommand($raw_command, $raw_command_output);
+		$command = $this->_expectCommand($sub_command, $param_string, $raw_command_output);
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl($path);
 		$this->assertEquals($url, $actual);
@@ -257,10 +183,12 @@ class ConnectorTest extends AbstractTestCase
 	 */
 	public function testGetWorkingCopyUrlWithBrokenSvnInfo()
 	{
-		$this->_expectCommand(
-			"svn --non-interactive info --xml '/path/to/working-copy'",
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_info_broken.xml')
 		);
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 	}
@@ -278,14 +206,16 @@ class ConnectorTest extends AbstractTestCase
 			})
 			->shouldBeCalled();
 
-		$this->_expectCommand(
-			"svn --non-interactive info --xml '/path/to/working-copy'",
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {/path/to/working-copy}',
 			'',
 			'error message',
 			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
 		);
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
-		$this->_expectCommand("svn --non-interactive upgrade '/path/to/working-copy'", 'OK');
+		$this->_expectCommand('upgrade', '{/path/to/working-copy}', 'OK');
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 		$this->assertEquals(self::DUMMY_REPO, $actual);
@@ -293,28 +223,32 @@ class ConnectorTest extends AbstractTestCase
 
 	public function closureGetWorkingCopyUrlOnOldFormatWorkingCopy()
 	{
-		$this->_expectCommand(
-			"svn --non-interactive info --xml '/path/to/working-copy'",
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_info_16.xml')
 		);
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		return true;
 	}
 
 	public function testGetWorkingCopyUrlWithUnknownError()
 	{
-		$this->_expectCommand(
-			"svn --non-interactive info --xml '/path/to/working-copy'",
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {/path/to/working-copy}',
 			'',
 			'error message',
 			555
 		);
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->setExpectedException(
 			'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
 			<<<MESSAGE
 Command:
-svn --non-interactive info --xml '/path/to/working-copy'
+stub command
 Error #555:
 error message
 MESSAGE
@@ -331,16 +265,18 @@ MESSAGE
 			->willReturn(false)
 			->shouldBeCalled();
 
-		$this->_expectCommand(
-			"svn --non-interactive info --xml '/path/to/working-copy'",
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {/path/to/working-copy}',
 			'',
 			'error message',
 			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
 		);
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$exception_msg = <<<MESSAGE
 Command:
-svn --non-interactive info --xml '/path/to/working-copy'
+stub command
 Error #%d:
 error message
 MESSAGE;
@@ -358,17 +294,12 @@ MESSAGE;
 	 */
 	public function testGetRelativePathAutomaticCachingForUrls($given_repository_url, $used_repository_url)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
 		$raw_command_output = $this->getFixture('svn_info_remote.xml');
 
-		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 year')
-			->shouldBeCalled();
+		$repository_connector = $this->_createRepositoryConnector();
 
-		$repository_connector = $this->_createRepositoryConnector('a', 'b');
-
-		$this->_expectCommand($raw_command, $raw_command_output);
+		$command = $this->_expectCommand('info', '--xml {' . $used_repository_url . '}', $raw_command_output);
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($given_repository_url));
 	}
@@ -376,17 +307,10 @@ MESSAGE;
 	public function testGetRelativePathAutomaticCachingForPaths()
 	{
 		$path = '/path/to/working-copy';
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
-		$raw_command_output = $this->getFixture('svn_info_16.xml');
+		$repository_connector = $this->_createRepositoryConnector();
 
-		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
-			->shouldBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b');
-
-		$this->_expectCommand($raw_command, $raw_command_output);
+		$command = $this->_expectCommand('info', '--xml {' . $path . '}', $this->getFixture('svn_info_16.xml'));
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path));
 	}
@@ -396,17 +320,10 @@ MESSAGE;
 	 */
 	public function testGetRootUrlAutomaticCachingForUrls($given_repository_url, $used_repository_url)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
-		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+		$repository_connector = $this->_createRepositoryConnector();
 
-		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 year')
-			->shouldBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b');
-
-		$this->_expectCommand($raw_command, $raw_command_output);
+		$command = $this->_expectCommand('info', '--xml {' . $used_repository_url . '}', $this->getFixture('svn_info_remote.xml'));
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($given_repository_url));
 	}
@@ -414,17 +331,10 @@ MESSAGE;
 	public function testGetRootUrlAutomaticCachingForPaths()
 	{
 		$path = '/path/to/working-copy';
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
-		$raw_command_output = $this->getFixture('svn_info_16.xml');
+		$repository_connector = $this->_createRepositoryConnector();
 
-		$this->_cacheManager->getCache('misc/command:' . $raw_command, null, '1 year')->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('misc/command:' . $raw_command, $raw_command_output, null, '1 year')
-			->shouldBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b');
-
-		$this->_expectCommand($raw_command, $raw_command_output);
+		$command = $this->_expectCommand('info', '--xml {' . $path . '}', $this->getFixture('svn_info_16.xml'));
+		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($path));
 	}
@@ -484,16 +394,14 @@ MESSAGE;
 	 */
 	public function testGetLastRevisionWithoutAutomaticCaching($cache_duration)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . self::DUMMY_REPO . "'";
+		$repository_connector = $this->_createRepositoryConnector($cache_duration);
 
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', $cache_duration);
-
-		$this->_expectCommand(
-			$raw_command,
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {' . self::DUMMY_REPO . '}',
 			$this->getFixture('svn_info_remote.xml')
 		);
+		$command->setCacheDuration(0)->shouldBeCalled();
 
 		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO));
 	}
@@ -513,20 +421,14 @@ MESSAGE;
 	 */
 	public function testGetLastRevisionWithAutomaticCaching($given_repository_url, $used_repository_url)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $used_repository_url . "'";
-		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+		$repository_connector = $this->_createRepositoryConnector('1 minute');
 
-		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 minute')->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 minute')
-			->shouldBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
-
-		$this->_expectCommand(
-			$raw_command,
-			$raw_command_output
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {' . $used_repository_url . '}',
+			$this->getFixture('svn_info_remote.xml')
 		);
+		$command->setCacheDuration('1 minute')->shouldBeCalled();
 
 		$this->assertEquals(100, $repository_connector->getLastRevision($given_repository_url));
 	}
@@ -534,16 +436,14 @@ MESSAGE;
 	public function testGetLastRevisionNoAutomaticCachingForPaths()
 	{
 		$path = '/path/to/working-copy';
-		$raw_command = "svn --non-interactive --username a --password b info --xml '" . $path . "'";
+		$repository_connector = $this->_createRepositoryConnector('1 minute');
 
-		$this->_cacheManager->getCache('command:' . $raw_command, null)->shouldNotBeCalled();
-
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
-
-		$this->_expectCommand(
-			$raw_command,
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {' . $path . '}',
 			$this->getFixture('svn_info_16.xml')
 		);
+		$command->setCacheDuration(Argument::any())->shouldNotBeCalled();
 
 		$this->assertEquals(100, $repository_connector->getLastRevision($path));
 	}
@@ -553,20 +453,16 @@ MESSAGE;
 	 */
 	public function testGetLastRevisionOnRepositoryRoot($fixture)
 	{
-		$raw_command = "svn --non-interactive --username a --password b info --xml 'svn://repository.com'";
 		$raw_command_output = $this->getFixture($fixture);
 
-		$this->_cacheManager->getCache('repository.com/command:' . $raw_command, null, '1 minute')->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('repository.com/command:' . $raw_command, $raw_command_output, null, '1 minute')
-			->shouldBeCalled();
+		$repository_connector = $this->_createRepositoryConnector('1 minute');
 
-		$repository_connector = $this->_createRepositoryConnector('a', 'b', '1 minute');
-
-		$this->_expectCommand(
-			$raw_command,
+		$command = $this->_expectCommand(
+			'info',
+			'--xml {svn://repository.com}',
 			$raw_command_output
 		);
+		$command->setCacheDuration('1 minute')->shouldBeCalled();
 
 		$this->assertEquals(100, $repository_connector->getLastRevision('svn://repository.com'));
 	}
@@ -648,7 +544,8 @@ MESSAGE;
 	public function testGetWorkingCopyConflicts($fixture, $expected)
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture($fixture)
 		);
 
@@ -672,7 +569,8 @@ MESSAGE;
 	public function testGetWorkingCopyMissing($fixture, $expected)
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture($fixture)
 		);
 
@@ -693,7 +591,8 @@ MESSAGE;
 	public function testGetWorkingCopyStatusWithoutChangelist()
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -711,7 +610,8 @@ MESSAGE;
 	public function testGetWorkingCopyStatusWithoutChangelistAndWithoutExclusions()
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -731,7 +631,8 @@ MESSAGE;
 	public function testGetWorkingCopyStatusWithChangelist()
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -752,7 +653,8 @@ MESSAGE;
 	public function testGetWorkingCopyStatusWithNonExistingChangelist()
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -762,7 +664,8 @@ MESSAGE;
 	public function testGetWorkingCopyStatusWithNoneProperties()
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_status_with_props_eq_none18.xml')
 		);
 
@@ -779,7 +682,8 @@ MESSAGE;
 	public function testGetWorkingCopyStatusWithCopiedPaths()
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture('svn_status_with_copied18.xml')
 		);
 
@@ -801,7 +705,8 @@ MESSAGE;
 	public function testGetWorkingCopyChangelists($fixture, $expected)
 	{
 		$this->_expectCommand(
-			"svn --non-interactive status --xml '/path/to/working-copy'",
+			'status',
+			'--xml {/path/to/working-copy}',
 			$this->getFixture($fixture)
 		);
 
@@ -826,10 +731,15 @@ MESSAGE;
 	{
 		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
 		$this->_expectCommand(
-			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy' --revision BASE",
+			'propget',
+			'svn:mergeinfo {/path/to/working-copy} --revision BASE',
 			$merge_info
 		);
-		$this->_expectCommand("svn --non-interactive propget svn:mergeinfo '/path/to/working-copy'", $merge_info);
+		$this->_expectCommand(
+			'propget',
+			'svn:mergeinfo {/path/to/working-copy}',
+			$merge_info
+		);
 
 		$this->assertEmpty(
 			$this->_repositoryConnector->getMergedRevisionChanges('/path/to/working-copy', $regular_or_reverse)
@@ -850,11 +760,13 @@ MESSAGE;
 	public function testGetMergedRevisionChangesWithChanges($regular_or_reverse, $base_merged, $wc_merged)
 	{
 		$this->_expectCommand(
-			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy' --revision BASE",
+			'propget',
+			'svn:mergeinfo {/path/to/working-copy} --revision BASE',
 			$base_merged
 		);
 		$this->_expectCommand(
-			"svn --non-interactive propget svn:mergeinfo '/path/to/working-copy'",
+			'propget',
+			'svn:mergeinfo {/path/to/working-copy}',
 			$wc_merged
 		);
 
@@ -889,11 +801,8 @@ MESSAGE;
 
 	public function testGetFileContent()
 	{
-		$svn_command = "svn --non-interactive cat '/path/to/working-copy/file.php' --revision 100";
-		$this->_expectCommand($svn_command, 'OK');
-
-		$this->_cacheManager->getCache('misc/command:' . $svn_command, null, Connector::SVN_CAT_CACHE_DURATION)->willReturn(null)->shouldBeCalled();
-		$this->_cacheManager->setCache('misc/command:' .  $svn_command, 'OK', null, Connector::SVN_CAT_CACHE_DURATION)->shouldBeCalled();
+		$command = $this->_expectCommand('cat', '{/path/to/working-copy/file.php} --revision 100', 'OK');
+		$command->setCacheDuration(Connector::SVN_CAT_CACHE_DURATION)->shouldBeCalled();
 
 		$this->assertEquals(
 			'OK',
@@ -904,48 +813,55 @@ MESSAGE;
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string       $command    Command.
-	 * @param string       $output     Output.
-	 * @param string|null  $error_msg  Error msg.
-	 * @param integer $error_code Error code.
+	 * @param string      $sub_command  Sub command.
+	 * @param string|null $param_string Parameter string.
+	 * @param string      $output       Output.
+	 * @param string|null $error_msg    Error msg.
+	 * @param integer     $error_code   Error code.
+	 *
+	 * @return ObjectProphecy
 	 */
-	private function _expectCommand($command, $output, $error_msg = null, $error_code = 0)
+	private function _expectCommand($sub_command, $param_string, $output, $error_msg = null, $error_code = 0)
 	{
-		$process = $this->prophesize('Symfony\\Component\\Process\\Process');
+		$command = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Command');
 
-		$expectation = $process
-			->mustRun(strpos($command, 'upgrade') !== false ? Argument::type('callable') : null)
-			->shouldBeCalled();
+		if ( $sub_command === 'upgrade' ) {
+			$run_expectation = $command->runLive()->shouldBeCalled();
+		}
+		else {
+			$run_expectation = $command->run()->shouldBeCalled();
+		}
 
 		if ( isset($error_code) && isset($error_msg) ) {
-			$expectation->willThrow(
-				new RepositoryCommandException($command, 'svn: E' . $error_code . ': ' . $error_msg)
+			$run_expectation->willThrow(
+				new RepositoryCommandException('stub command', 'svn: E' . $error_code . ': ' . $error_msg)
 			);
 		}
 		else {
-			$expectation->willReturn(null);
-			$process->getOutput()->willReturn($output)->shouldBeCalled();
+			if ( strpos($param_string, '--xml') !== false ) {
+				$output = simplexml_load_string($output);
+			}
+
+			$run_expectation->willReturn($output);
 		}
 
-		$this->_io->isVerbose()->willReturn(false);
-		$this->_io->isDebug()->willReturn(false);
+		$this->_commandFactory
+			->getCommand($sub_command, $param_string)
+			->willReturn($command->reveal())
+			->shouldBeCalled();
 
-		$this->_processFactory->createProcess($command, 1200)->willReturn($process)->shouldBeCalled();
+		return $command;
 	}
 
 	/**
 	 * Creates repository connector.
 	 *
-	 * @param string $username                     Username.
-	 * @param string $password                     Password.
 	 * @param string $last_revision_cache_duration Last revision cache duration.
 	 *
 	 * @return Connector
 	 */
-	private function _createRepositoryConnector($username, $password, $last_revision_cache_duration = '10 minutes')
+	private function _createRepositoryConnector($last_revision_cache_duration = '10 minutes')
 	{
-		$this->_configEditor->get('repository-connector.username')->willReturn($username)->shouldBeCalled();
-		$this->_configEditor->get('repository-connector.password')->willReturn($password)->shouldBeCalled();
 		$this->_configEditor
 			->get('repository-connector.last-revision-cache-duration')
 			->willReturn($last_revision_cache_duration)
@@ -953,9 +869,8 @@ MESSAGE;
 
 		return new Connector(
 			$this->_configEditor->reveal(),
-			$this->_processFactory->reveal(),
+			$this->_commandFactory->reveal(),
 			$this->_io->reveal(),
-			$this->_cacheManager->reveal(),
 			$this->_revisionListParser->reveal()
 		);
 	}

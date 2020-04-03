@@ -31,6 +31,7 @@ use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\GroupByBugMergeTemplate;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\GroupByRevisionMergeTemplate;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\SummaryMergeTemplate;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
@@ -159,12 +160,15 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 			return new RevisionPrinter($c['date_helper'], $c['output_helper']);
 		};
 
+		$this['command_factory'] = function ($c) {
+			return new CommandFactory($c['config_editor'], $c['process_factory'], $c['io'], $c['cache_manager']);
+		};
+
 		$this['repository_connector'] = function ($c) {
 			return new Connector(
 				$c['config_editor'],
-				$c['process_factory'],
+				$c['command_factory'],
 				$c['io'],
-				$c['cache_manager'],
 				$c['revision_list_parser']
 			);
 		};
