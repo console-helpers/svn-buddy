@@ -136,20 +136,9 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->repositoryConnector->isRefRoot('/path/to/project/branches/branch-name/')->willReturn(true)->shouldBeCalled();
 		$this->repositoryConnector->isRefRoot(Argument::any())->willReturn(false)->shouldBeCalled();
 
-		$this->repositoryConnector->withCache('1 year')->willReturn($this->repositoryConnector);
+		$this->repositoryConnector->withCache('1 year', false)->willReturn($this->repositoryConnector);
 
-		if ( $project_deleted ) {
-			$this->repositoryConnector
-				->getProperty('bugtraq:logregex', 'svn://localhost/path/to/project/branches/branch-name/@200')
-				->willReturn('OK')
-				->shouldBeCalled();
-		}
-		else {
-			$this->repositoryConnector
-				->getProperty('bugtraq:logregex', 'svn://localhost/path/to/project/branches/branch-name/')
-				->willReturn('OK')
-				->shouldBeCalled();
-		}
+		$this->setBugRegexpExpectation($project_deleted, 'OK');
 
 		$this->commitBuilder
 			->addCommit(100, 'user', 0, 'message')
@@ -183,6 +172,95 @@ class BugsPluginTest extends AbstractPluginTestCase
 				),
 			)
 		);
+	}
+
+	/**
+	 * @dataProvider processDetectsMissingBugRegexpsDataProvider
+	 */
+	public function testBugRegexpsRefresh($project_deleted)
+	{
+		$this->repositoryConnector->isRefRoot('/path/to/project/trunk/')->willReturn(true)->shouldBeCalled();
+		$this->repositoryConnector->isRefRoot('/path/to/project/branches/branch-name/')->willReturn(true)->shouldBeCalled();
+		$this->repositoryConnector->isRefRoot(Argument::any())->willReturn(false)->shouldBeCalled();
+
+		$this->repositoryConnector->withCache('1 year', false)->willReturn($this->repositoryConnector)->shouldBeCalled();
+
+		$this->setBugRegexpExpectation($project_deleted, 'FIRST_EXPRESSION');
+
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, 'message')
+			->addPath('A', '/path/to/project/', '', '/path/to/project/')
+			->addPath('A', '/path/to/project/trunk/', 'trunk', '/path/to/project/')
+			->addPath('A', '/path/to/project/trunk/file.txt', 'trunk', '/path/to/project/');
+
+		$this->commitBuilder
+			->addCommit(200, 'user', 0, 'message')
+			->addPath('A', '/path/to/project/branches/', '', '/path/to/project/')
+			->addPath('A', '/path/to/project/branches/branch-name/', '', '/path/to/project/')
+			->addPath('A', '/path/to/project/branches/branch-name/file.txt', '', '/path/to/project/');
+
+		$this->commitBuilder->build();
+
+		// Assuming that project id would be "1".
+		$this->filler->setProjectStatus(1, $project_deleted);
+
+		$this->setLastRevision(200);
+		$this->plugin->process(0, 200);
+
+		$this->assertTableEmpty('CommitBugs');
+		$this->assertTableContent(
+			'Projects',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/path/to/project/',
+					'BugRegExp' => 'FIRST_EXPRESSION',
+					'IsDeleted' => $project_deleted,
+				),
+			)
+		);
+
+		$this->setBugRegexpExpectation($project_deleted, 'SECOND_EXPRESSION');
+
+		$this->repositoryConnector->withCache('1 year', true)->willReturn($this->repositoryConnector)->shouldBeCalled();
+
+		$this->plugin->refreshBugRegExp('/path/to/project/');
+
+		$this->assertTableContent(
+			'Projects',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/path/to/project/',
+					'BugRegExp' => 'SECOND_EXPRESSION',
+					'IsDeleted' => $project_deleted,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Sets bug regexp expectation.
+	 *
+	 * @param boolean $project_deleted Is project deleted.
+	 * @param string  $expression      Expression.
+	 *
+	 * @return void
+	 */
+	public function setBugRegexpExpectation($project_deleted, $expression)
+	{
+		if ( $project_deleted ) {
+			$this->repositoryConnector
+				->getProperty('bugtraq:logregex', 'svn://localhost/path/to/project/branches/branch-name/@200')
+				->willReturn($expression)
+				->shouldBeCalled();
+		}
+		else {
+			$this->repositoryConnector
+				->getProperty('bugtraq:logregex', 'svn://localhost/path/to/project/branches/branch-name/')
+				->willReturn($expression)
+				->shouldBeCalled();
+		}
 	}
 
 	public function processDetectsMissingBugRegexpsDataProvider()

@@ -111,9 +111,11 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 	/**
 	 * Populate "BugRegExp" column for projects without it.
 	 *
+	 * @param boolean $cache_overwrite Overwrite used "bugtraq:logregex" SVN property's cached value.
+	 *
 	 * @return void
 	 */
-	protected function populateMissingBugRegExp()
+	protected function populateMissingBugRegExp($cache_overwrite = false)
 	{
 		$projects = $this->getProjects('BugRegExp IS NULL');
 
@@ -127,7 +129,8 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 			$bug_regexp = $this->detectProjectBugTraqRegEx(
 				$project_data['Path'],
 				$project_data['RevisionLastSeen'],
-				(bool)$project_data['IsDeleted']
+				(bool)$project_data['IsDeleted'],
+				$cache_overwrite
 			);
 
 			$this->repositoryFiller->setProjectBugRegexp($project_data['Id'], $bug_regexp);
@@ -141,10 +144,11 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 	 * @param string  $project_path    Project project_path.
 	 * @param integer $revision        Revision.
 	 * @param boolean $project_deleted Project is deleted.
+	 * @param boolean $cache_overwrite Overwrite used "bugtraq:logregex" SVN property's cached value.
 	 *
 	 * @return string
 	 */
-	protected function detectProjectBugTraqRegEx($project_path, $revision, $project_deleted)
+	protected function detectProjectBugTraqRegEx($project_path, $revision, $project_deleted, $cache_overwrite = false)
 	{
 		$ref_paths = $this->getLastChangedRefPaths($project_path);
 
@@ -154,7 +158,7 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 
 		foreach ( $ref_paths as $ref_path ) {
 			$logregex = $this->_repositoryConnector
-				->withCache('1 year')
+				->withCache('1 year', $cache_overwrite)
 				->getProperty(
 					'bugtraq:logregex',
 					$this->_repositoryUrl . $ref_path . ($project_deleted ? '@' . $revision : '')
@@ -417,6 +421,27 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 		}
 
 		return $this->addMissingResults($revisions, $results);
+	}
+
+	/**
+	 * Refreshes BugRegExp of a project.
+	 *
+	 * @param string $project_path Project path.
+	 *
+	 * @return void
+	 */
+	public function refreshBugRegExp($project_path)
+	{
+		$project_id = $this->getProject($project_path);
+
+		$sql = 'UPDATE Projects
+				SET BugRegExp = NULL
+				WHERE Id = :project_id';
+		$this->database->perform($sql, array(
+			'project_id' => $project_id,
+		));
+
+		$this->populateMissingBugRegExp(true);
 	}
 
 }
