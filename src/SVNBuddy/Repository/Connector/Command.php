@@ -65,6 +65,13 @@ class Command
 	private $_cacheInvalidator;
 
 	/**
+	 * Overwrites cached value regardless of it's expiration/invalidation settings.
+	 *
+	 * @var boolean
+	 */
+	private $_cacheOverwrite = false;
+
+	/**
 	 * Creates a command instance.
 	 *
 	 * @param string          $command_line    Command line.
@@ -113,6 +120,20 @@ class Command
 	}
 
 	/**
+	 * Set cache overwrite.
+	 *
+	 * @param boolean $cache_overwrite Cache replace.
+	 *
+	 * @return self
+	 */
+	public function setCacheOverwrite($cache_overwrite)
+	{
+		$this->_cacheOverwrite = $cache_overwrite;
+
+		return $this;
+	}
+
+	/**
 	 * Runs the command.
 	 *
 	 * @param callable|null $callback Callback.
@@ -121,10 +142,16 @@ class Command
 	 */
 	public function run($callback = null)
 	{
+		$output = null;
 		$cache_key = $this->_getCacheKey();
 
 		if ( $cache_key ) {
-			$output = $this->_cacheManager->getCache($cache_key, $this->_cacheInvalidator, $this->_cacheDuration);
+			if ( $this->_cacheOverwrite ) {
+				$this->_cacheManager->deleteCache($cache_key, $this->_cacheDuration);
+			}
+			else {
+				$output = $this->_cacheManager->getCache($cache_key, $this->_cacheInvalidator, $this->_cacheDuration);
+			}
 
 			if ( isset($output) && is_callable($callback) ) {
 				call_user_func($callback, Process::OUT, $output);

@@ -121,7 +121,7 @@ class CommandTest extends TestCase
 	/**
 	 * @dataProvider runWithCacheDataProvider
 	 */
-	public function testRunWithMissingCache($duration, $invalidator, $use_callback, $is_xml)
+	public function testRunWithMissingCache($duration, $invalidator, $overwrite, $use_callback, $is_xml)
 	{
 		if ( $is_xml ) {
 			$command_line = 'svn log --xml';
@@ -137,6 +137,113 @@ class CommandTest extends TestCase
 		$callback_output = null;
 		$callback = $this->createRunCallback($use_callback, $callback_output);
 
+		$this->configureProcess($callback, $process_output, true);
+
+		if ( $overwrite === true ) {
+			$this->_cacheManager->deleteCache('misc/command:' . $command_line, $duration)->shouldBeCalled();
+		}
+		else {
+			$this->_cacheManager
+				->getCache('misc/command:' . $command_line, $invalidator, $duration)
+				->willReturn(null)
+				->shouldBeCalled();
+		}
+
+		$this->_cacheManager
+			->setCache('misc/command:' . $command_line, $process_output, $invalidator, $duration)
+			->shouldBeCalled();
+
+		if ( isset($duration) ) {
+			$this->_command->setCacheDuration($duration);
+		}
+
+		if ( isset($invalidator) ) {
+			$this->_command->setCacheInvalidator($invalidator);
+		}
+
+		if ( isset($overwrite) ) {
+			$this->_command->setCacheOverwrite($overwrite);
+		}
+
+		$this->assertCommandOutput($callback, $is_xml, $process_output);
+
+		if ( $use_callback ) {
+			$this->assertEquals($process_output, $callback_output);
+		}
+	}
+
+	/**
+	 * @dataProvider runWithCacheDataProvider
+	 */
+	public function testRunWithExistingCache($duration, $invalidator, $overwrite, $use_callback, $is_xml)
+	{
+		if ( $is_xml ) {
+			$command_line = 'svn log --xml';
+			$process_output = '<log><logentry/></log>';
+		}
+		else {
+			$command_line = 'svn log';
+			$process_output = 'OK';
+		}
+
+		$this->_command = $this->_createCommand($command_line, $overwrite === true);
+
+		$callback_output = null;
+		$callback = $this->createRunCallback($use_callback, $callback_output);
+
+		$this->configureProcess($callback, $process_output, $overwrite === true);
+
+		if ( $overwrite === true ) {
+			$this->_cacheManager->deleteCache('misc/command:' . $command_line, $duration)->shouldBeCalled();
+			$this->_cacheManager
+				->setCache('misc/command:' . $command_line, $process_output, $invalidator, $duration)
+				->shouldBeCalled();
+		}
+		else {
+			$this->_cacheManager
+				->getCache('misc/command:' . $command_line, $invalidator, $duration)
+				->willReturn($process_output)
+				->shouldBeCalled();
+			$this->_cacheManager->setCache(Argument::any())->shouldNotBeCalled();
+		}
+
+
+		if ( isset($duration) ) {
+			$this->_command->setCacheDuration($duration);
+		}
+
+		if ( isset($invalidator) ) {
+			$this->_command->setCacheInvalidator($invalidator);
+		}
+
+		if ( isset($overwrite) ) {
+			$this->_command->setCacheOverwrite($overwrite);
+		}
+
+		$this->assertCommandOutput($callback, $is_xml, $process_output);
+
+		if ( $use_callback ) {
+			$this->assertEquals($process_output, $callback_output);
+		}
+	}
+
+	/**
+	 * Configures process.
+	 *
+	 * @param callable|null $callback       Callback.
+	 * @param string        $process_output Process output.
+	 * @param boolean       $will_run       Process will be executed.
+	 *
+	 * @return void
+	 */
+	protected function configureProcess($callback, $process_output, $will_run)
+	{
+		if ( !$will_run ) {
+			$this->_process->mustRun($callback)->shouldNotBeCalled();
+
+			return;
+		}
+
 		$this->_process
 			->mustRun($callback)
 			->will(function (array $args) use ($process_output) {
@@ -150,90 +257,30 @@ class CommandTest extends TestCase
 
 		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
 		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
-
-		$this->_cacheManager
-			->getCache('misc/command:' . $command_line, $invalidator, $duration)
-			->willReturn(null)
-			->shouldBeCalled();
-		$this->_cacheManager
-			->setCache('misc/command:' . $command_line, $process_output, $invalidator, $duration)
-			->shouldBeCalled();
-
-		if ( isset($duration) ) {
-			$this->_command->setCacheDuration($duration);
-		}
-
-		if ( isset($invalidator) ) {
-			$this->_command->setCacheInvalidator($invalidator);
-		}
-
-		$this->assertCommandOutput($callback, $is_xml, $process_output);
-
-		if ( $use_callback ) {
-			$this->assertEquals($process_output, $callback_output);
-		}
-	}
-
-	/**
-	 * @dataProvider runWithCacheDataProvider
-	 */
-	public function testRunWithExistingCache($duration, $invalidator, $use_callback, $is_xml)
-	{
-		if ( $is_xml ) {
-			$command_line = 'svn log --xml';
-			$process_output = '<log><logentry/></log>';
-		}
-		else {
-			$command_line = 'svn log';
-			$process_output = 'OK';
-		}
-
-		$this->_command = $this->_createCommand($command_line, false);
-
-		$callback_output = null;
-		$callback = $this->createRunCallback($use_callback, $callback_output);
-
-		$this->_process->mustRun($callback)->shouldNotBeCalled();
-
-		$this->_cacheManager
-			->getCache('misc/command:' . $command_line, $invalidator, $duration)
-			->willReturn($process_output)
-			->shouldBeCalled();
-		$this->_cacheManager->setCache(Argument::any())->shouldNotBeCalled();
-
-		if ( isset($duration) ) {
-			$this->_command->setCacheDuration($duration);
-		}
-
-		if ( isset($invalidator) ) {
-			$this->_command->setCacheInvalidator($invalidator);
-		}
-
-		$this->assertCommandOutput($callback, $is_xml, $process_output);
-
-		if ( $use_callback ) {
-			$this->assertEquals($process_output, $callback_output);
-		}
 	}
 
 	public function runWithCacheDataProvider()
 	{
 		return array(
-			'duration only, w/o callback, not xml' => array(100, null, false, false),
-			'invalidator only, w/o callback, not xml' => array(null, 'invalidator', false, false),
-			'duration and invalidator, w/o callback, not xml' => array(100, 'invalidator', false, false),
+			'duration only, w/o callback, not xml' => array(100, null, null, false, false),
+			'invalidator only, w/o callback, not xml' => array(null, 'invalidator', null, false, false),
+			'duration and invalidator, w/o callback, not xml' => array(100, 'invalidator', null, false, false),
 
-			'duration only, w/o callback, is xml' => array(100, null, false, true),
-			'invalidator only, w/o callback, is xml' => array(null, 'invalidator', false, true),
-			'duration and invalidator, w/o callback, is xml' => array(100, 'invalidator', false, true),
+			'duration only, w/o callback, is xml' => array(100, null, null, false, true),
+			'invalidator only, w/o callback, is xml' => array(null, 'invalidator', null, false, true),
+			'duration and invalidator, w/o callback, is xml' => array(100, 'invalidator', null, false, true),
 
-			'duration only, w callback, not xml' => array(100, null, true, false),
-			'invalidator only, w callback, not xml' => array(null, 'invalidator', true, false),
-			'duration and invalidator, w callback, not xml' => array(100, 'invalidator', true, false),
+			'duration only, w callback, not xml' => array(100, null, null, true, false),
+			'invalidator only, w callback, not xml' => array(null, 'invalidator', null, true, false),
+			'duration and invalidator, w callback, not xml' => array(100, 'invalidator', null, true, false),
 
-			'duration only, w callback, is xml' => array(100, null, true, true),
-			'invalidator only, w callback, is xml' => array(null, 'invalidator', true, true),
-			'duration and invalidator, w callback, is xml' => array(100, 'invalidator', true, true),
+			'duration only, w callback, is xml' => array(100, null, null, true, true),
+			'invalidator only, w callback, is xml' => array(null, 'invalidator', null, true, true),
+			'duration and invalidator, w callback, is xml' => array(100, 'invalidator', null, true, true),
+
+			'duration only, cache overwrite (true), w/o callback, not xml' => array(100, null, true, false, false),
+			'duration only, cache overwrite (false), w/o callback, not xml' => array(100, null, false, false, false),
+			'duration only, cache overwrite (null), w/o callback, not xml' => array(100, null, null, false, false),
 		);
 	}
 
