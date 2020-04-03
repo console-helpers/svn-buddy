@@ -745,22 +745,7 @@ svn-buddy.phar project --show-meta
 
 Displays project meta information in following format:
 
-```
-Showing project meta information for svn://alex@in-portal.org/in-portal/branches/5.2.x url:
-+------------------+---------------+
-| Field Name       | Field Value   |
-+------------------+---------------+
-| Id               | 43            |
-| Path             | /in-portal/   |
-| BugRegExp        | ([A-Z]+\-\d+) |
-|                  |               |
-| IsDeleted        | 0             |
-| PathId           | 83906         |
-| RevisionAdded    | 12            |
-| RevisionDeleted  |               |
-| RevisionLastSeen | 16637         |
-+------------------+---------------+
-```
+![project meta information](docs/images/SvnBuddy_ProjectCommand_ShowMetaOption.png)
 
 
 ### The "self-update" command
