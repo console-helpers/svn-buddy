@@ -90,7 +90,15 @@ class ProjectCommand extends AbstractCommand
 			$bugs_plugin = $this->_revisionLog->getPlugin('bugs');
 			$bugs_plugin->refreshBugRegExp($project_path);
 
-			$this->io->writeln('The "<info>' . $project_path . '</info>" project bug tracking expression was reset.');
+			/** @var ProjectsPlugin $projects_plugin */
+			$projects_plugin = $this->_revisionLog->getPlugin('projects');
+			$project_meta = $projects_plugin->getMeta($project_path);
+
+			$this->io->writeln(array(
+				'Changed "<info>' . $project_path . '</info>" project bug tracking expression to',
+				'',
+				'<info>' . $project_meta['BugRegExp'] . '</info>',
+			));
 		}
 		elseif ( $show_meta ) {
 			$this->io->writeln(
