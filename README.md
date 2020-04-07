@@ -692,6 +692,8 @@ Runs other command sequentially on every working copy on a path. Almost all othe
 * `--with-merge-status` - Shows merge revisions affecting this revision
 * `--max-count=MAX-COUNT` - Limit the number of revisions to output
 * `--ignore-externals` - Ignore externals definitions
+* `--refresh-bug-tracking` - Refreshes value of "bugtraq:logregex" SVN property of the project
+* `--show-meta` - Shows meta information of a project
 
 #### Configuration settings
 

@@ -20,7 +20,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ProjectCommand extends AbstractCommand
+class ProjectCommand extends AbstractCommand implements IAggregatorAwareCommand
 {
 
 	/**
@@ -118,6 +118,18 @@ class ProjectCommand extends AbstractCommand
 
 			$table->render();
 		}
+	}
+
+	/**
+	 * Returns option names, that makes sense to use in aggregation mode.
+	 *
+	 * @return array
+	 */
+	public function getAggregatedOptions()
+	{
+		return array(
+			'refresh-bug-tracking', 'show-meta',
+		);
 	}
 
 }

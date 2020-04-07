@@ -86,10 +86,10 @@ class Application extends BaseApplication
 		$default_commands[] = new CommitCommand();
 		$default_commands[] = new ConflictsCommand();
 		$default_commands[] = new ConfigCommand();
+		$default_commands[] = new ProjectCommand();
 		$default_commands[] = new AggregateCommand();
 		$default_commands[] = new CompletionCommand();
 		$default_commands[] = new SearchCommand();
-		$default_commands[] = new ProjectCommand();
 		$default_commands[] = new SelfUpdateCommand();
 
 		if ( !$this->isPharFile() ) {
