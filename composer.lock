@@ -124,12 +124,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "67766a332ca2d66214c244ff78fc2f7e902457fe"
+                "reference": "e5ef4007259f4a64a2290225710f2d3ca863c52b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/67766a332ca2d66214c244ff78fc2f7e902457fe",
-                "reference": "67766a332ca2d66214c244ff78fc2f7e902457fe",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/e5ef4007259f4a64a2290225710f2d3ca863c52b",
+                "reference": "e5ef4007259f4a64a2290225710f2d3ca863c52b",
                 "shasum": ""
             },
             "require": {
@@ -149,8 +149,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/",
-                    "Tests\\ConsoleHelpers\\ConsoleKit\\": "tests/ConsoleKit/"
+                    "ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -164,7 +163,7 @@
                 }
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
-            "time": "2018-01-31T06:24:42+00:00"
+            "time": "2019-04-19T14:31:24+00:00"
         },
         {
             "name": "console-helpers/db-migration",
@@ -709,7 +708,7 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.49",
+            "version": "v2.8.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
@@ -764,12 +763,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aik099/CodingStandard.git",
-                "reference": "0f65c52bf2d95d5068af9f73110770ddb9de8de7"
+                "reference": "4b605a2fadc7f69bd89ee83a388d2965a0b34b0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/0f65c52bf2d95d5068af9f73110770ddb9de8de7",
-                "reference": "0f65c52bf2d95d5068af9f73110770ddb9de8de7",
+                "url": "https://api.github.com/repos/aik099/CodingStandard/zipball/4b605a2fadc7f69bd89ee83a388d2965a0b34b0c",
+                "reference": "4b605a2fadc7f69bd89ee83a388d2965a0b34b0c",
                 "shasum": ""
             },
             "require-dev": {
@@ -796,7 +795,7 @@
                 "PHP_CodeSniffer",
                 "codesniffer"
             ],
-            "time": "2019-02-06T07:12:25+00:00"
+            "time": "2020-01-14T16:30:17+00:00"
         }
     ],
     "aliases": [],
