@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2691233027f406b3da3ba6e169f50c3d",
+    "content-hash": "01c2a91236179e4703d6c9f0b9f93129",
     "packages": [
         {
             "name": "aura/sql",
@@ -64,27 +64,27 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.1.4",
+            "version": "1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "558f321c52faeb4828c03e7dc0cfe39a09e09a2d"
+                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/558f321c52faeb4828c03e7dc0cfe39a09e09a2d",
-                "reference": "558f321c52faeb4828c03e7dc0cfe39a09e09a2d",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/95c63ab2117a72f48f5a55da9740a3273d45b7fd",
+                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
                 "ext-pcre": "*",
-                "php": "^5.3.2 || ^7.0"
+                "php": "^5.3.2 || ^7.0 || ^8.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || 6.5 - 8",
                 "psr/log": "^1.0",
-                "symfony/process": "^2.5 || ^3.0 || ^4.0"
+                "symfony/process": "^2.5 || ^3.0 || ^4.0 || ^5.0"
             },
             "type": "library",
             "extra": {
@@ -116,7 +116,7 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2019-01-28T09:30:10+00:00"
+            "time": "2020-04-08T08:27:21+00:00"
         },
         {
             "name": "console-helpers/console-kit",
@@ -124,18 +124,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "e5ef4007259f4a64a2290225710f2d3ca863c52b"
+                "reference": "d24438cd67f7312770f820b6b5749afd5fa37eaf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/e5ef4007259f4a64a2290225710f2d3ca863c52b",
-                "reference": "e5ef4007259f4a64a2290225710f2d3ca863c52b",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/d24438cd67f7312770f820b6b5749afd5fa37eaf",
+                "reference": "d24438cd67f7312770f820b6b5749afd5fa37eaf",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0",
                 "pimple/pimple": "^2.0|^3.0",
-                "stecman/symfony-console-completion": "^0.6.1",
+                "stecman/symfony-console-completion": "^0.11.0",
                 "symfony/console": "^2.7"
             },
             "require-dev": {
@@ -163,7 +163,7 @@
                 }
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
-            "time": "2019-04-19T14:31:24+00:00"
+            "time": "2020-05-30T11:38:19+00:00"
         },
         {
             "name": "console-helpers/db-migration",
@@ -439,16 +439,16 @@
         },
         {
             "name": "psr/log",
-            "version": "1.1.0",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
-                "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/0f73288fd15629204f9d42b7055f72dacbe811fc",
+                "reference": "0f73288fd15629204f9d42b7055f72dacbe811fc",
                 "shasum": ""
             },
             "require": {
@@ -457,7 +457,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -482,33 +482,33 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2018-11-20T15:27:04+00:00"
+            "time": "2020-03-23T09:12:05+00:00"
         },
         {
             "name": "stecman/symfony-console-completion",
-            "version": "0.6.2",
+            "version": "0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stecman/symfony-console-completion.git",
-                "reference": "3f9a6c017e688c771df9948521c84c6190175293"
+                "reference": "a9502dab59405e275a9f264536c4e1cb61fc3518"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/3f9a6c017e688c771df9948521c84c6190175293",
-                "reference": "3f9a6c017e688c771df9948521c84c6190175293",
+                "url": "https://api.github.com/repos/stecman/symfony-console-completion/zipball/a9502dab59405e275a9f264536c4e1cb61fc3518",
+                "reference": "a9502dab59405e275a9f264536c4e1cb61fc3518",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "symfony/console": "~2.3 || ~3.0"
+                "symfony/console": "~2.3 || ~3.0 || ~4.0 || ~5.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.4"
+                "phpunit/phpunit": "~4.8.36 || ~5.7 || ~6.4"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.6.x-dev"
+                    "dev-master": "0.10.x-dev"
                 }
             },
             "autoload": {
@@ -527,11 +527,11 @@
                 }
             ],
             "description": "Automatic BASH completion for Symfony Console Component based applications.",
-            "time": "2015-12-12T12:23:58+00:00"
+            "time": "2019-11-24T17:03:06+00:00"
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.49",
+            "version": "v2.8.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
@@ -592,7 +592,7 @@
         },
         {
             "name": "symfony/debug",
-            "version": "v2.8.49",
+            "version": "v2.8.52",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
@@ -649,16 +649,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.11.0",
+            "version": "v1.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "fe5e94c604826c35a32fa832f35bd036b6799609"
+                "reference": "7110338d81ce1cbc3e273136e4574663627037a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/fe5e94c604826c35a32fa832f35bd036b6799609",
-                "reference": "fe5e94c604826c35a32fa832f35bd036b6799609",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7110338d81ce1cbc3e273136e4574663627037a7",
+                "reference": "7110338d81ce1cbc3e273136e4574663627037a7",
                 "shasum": ""
             },
             "require": {
@@ -670,7 +670,11 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.11-dev"
+                    "dev-master": "1.17-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
                 }
             },
             "autoload": {
@@ -704,7 +708,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2019-02-06T07:57:58+00:00"
+            "time": "2020-06-06T08:46:27+00:00"
         },
         {
             "name": "symfony/process",
@@ -808,7 +812,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.3.7",
+        "php": ">=5.4",
         "ext-simplexml": "*",
         "ext-zlib": "*",
         "ext-json": "*",

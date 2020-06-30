@@ -10,7 +10,7 @@
 		}
 	],
 	"require": {
-		"php": ">=5.3.7",
+		"php": ">=5.4",
 		"symfony/process": "^2.7",
 		"console-helpers/console-kit": "^0.1@dev",
 		"aura/sql": "^2.5",
