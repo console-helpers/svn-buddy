@@ -685,14 +685,7 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 			return array();
 		}
 
-		$sql = 'SELECT Revision, CopyPathId
-				FROM CommitPaths
-				WHERE PathId = :path_id AND CopyPathId IS NOT NULL
-				ORDER BY Revision DESC
-				LIMIT 1';
-		$copy_data = $this->database->fetchOne($sql, array(
-			'path_id' => $path_id,
-		));
+		$copy_data = $this->getPathCopyData($path_id, $max_revision);
 
 		if ( $this->_repositoryConnector->isRefRoot($path) ) {
 			$where_clause = array(
@@ -798,14 +791,7 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 			return array();
 		}
 
-		$sql = 'SELECT Revision, CopyPathId
-				FROM CommitPaths
-				WHERE PathId = :path_id AND CopyPathId IS NOT NULL
-				ORDER BY Revision DESC
-				LIMIT 1';
-		$copy_data = $this->database->fetchOne($sql, array(
-			'path_id' => $path_id,
-		));
+		$copy_data = $this->getPathCopyData($path_id, $max_revision);
 
 		$where_clause = array(
 			'cpr.ProjectId = :project_id',
@@ -844,6 +830,40 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 			$results,
 			$this->findByExactMatch($project_id, $this->getPathFromId($copy_data['CopyPathId']), $copy_data['Revision'])
 		);
+	}
+
+	/**
+	 * Returns path copy data.
+	 *
+	 * @param integer      $path_id      Path ID.
+	 * @param integer|null $max_revision Max revision.
+	 *
+	 * @return array
+	 */
+	protected function getPathCopyData($path_id, $max_revision = null)
+	{
+		$where_clause = array(
+			'PathId = :path_id',
+			'CopyPathId IS NOT NULL',
+		);
+
+		$bind_params = array(
+			'path_id' => $path_id,
+		);
+
+		// Copy made before, maximal revision.
+		if ( isset($max_revision) ) {
+			$where_clause[] = 'Revision <= :max_revision';
+			$bind_params['max_revision'] = $max_revision;
+		}
+
+		$sql = 'SELECT Revision, CopyPathId
+				FROM CommitPaths
+				WHERE (' . implode(') AND (', $where_clause) . ')
+				ORDER BY Revision DESC
+				LIMIT 1';
+
+		return $this->database->fetchOne($sql, $bind_params);
 	}
 
 	/**

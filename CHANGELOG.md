@@ -11,7 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The recursive working copy lookup behavior of the `aggregate` command is disabled by default, but can be enabled via new `--recursive` option.
 
 ### Fixed
-...
+- Attempt to print commit history of paths copied to themselves (e.g. trunk > branches/something > trunk) resulted in a recursion.
 
 ## [0.5.2] - 2019-06-20
 ### Fixed
