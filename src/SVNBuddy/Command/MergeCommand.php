@@ -243,6 +243,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 		if ( $this->shouldUseAll($revisions) ) {
 			$revisions = $this->_usableRevisions;
+
+			if ( $this->io->getOption('no-merges') ) {
+				$revisions = array_diff($revisions, $this->getRevisionLog($source_url)->find('merges', 'all_merges'));
+			}
 		}
 		else {
 			if ( $revisions ) {
@@ -254,6 +258,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				if ( !$revisions ) {
 					throw new CommandException('Specified bugs aren\'t mentioned in any of revisions');
 				}
+			}
+
+			if ( $this->io->getOption('no-merges') ) {
+				$revisions = array_diff($revisions, $this->getRevisionLog($source_url)->find('merges', 'all_merges'));
 			}
 
 			if ( $revisions ) {
