@@ -64,16 +64,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.2.7",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd"
+                "reference": "8a7ecad675253e4654ea05505233285377405215"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/95c63ab2117a72f48f5a55da9740a3273d45b7fd",
-                "reference": "95c63ab2117a72f48f5a55da9740a3273d45b7fd",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/8a7ecad675253e4654ea05505233285377405215",
+                "reference": "8a7ecad675253e4654ea05505233285377405215",
                 "shasum": ""
             },
             "require": {
@@ -116,7 +116,21 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2020-04-08T08:27:21+00:00"
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-08-23T12:54:47+00:00"
         },
         {
             "name": "console-helpers/console-kit",
@@ -124,12 +138,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "d24438cd67f7312770f820b6b5749afd5fa37eaf"
+                "reference": "4dccfec9b03b9f6c47df0e59b3b7cbf6b9ad94d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/d24438cd67f7312770f820b6b5749afd5fa37eaf",
-                "reference": "d24438cd67f7312770f820b6b5749afd5fa37eaf",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/4dccfec9b03b9f6c47df0e59b3b7cbf6b9ad94d0",
+                "reference": "4dccfec9b03b9f6c47df0e59b3b7cbf6b9ad94d0",
                 "shasum": ""
             },
             "require": {
@@ -149,7 +163,8 @@
             },
             "autoload": {
                 "psr-4": {
-                    "ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/"
+                    "ConsoleHelpers\\ConsoleKit\\": "src/ConsoleKit/",
+                    "Tests\\ConsoleHelpers\\ConsoleKit\\": "tests/ConsoleKit/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -163,7 +178,7 @@
                 }
             ],
             "description": "Toolkit for creating command line applications using Symfony Console component",
-            "time": "2020-05-30T11:38:19+00:00"
+            "time": "2020-12-20T19:10:51+00:00"
         },
         {
             "name": "console-helpers/db-migration",
@@ -649,16 +664,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.17.1",
+            "version": "v1.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "7110338d81ce1cbc3e273136e4574663627037a7"
+                "reference": "b5f7b932ee6fa802fc792eabd77c4c88084517ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7110338d81ce1cbc3e273136e4574663627037a7",
-                "reference": "7110338d81ce1cbc3e273136e4574663627037a7",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/b5f7b932ee6fa802fc792eabd77c4c88084517ce",
+                "reference": "b5f7b932ee6fa802fc792eabd77c4c88084517ce",
                 "shasum": ""
             },
             "require": {
@@ -670,7 +685,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.17-dev"
+                    "dev-main": "1.19-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -708,7 +723,21 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-06-06T08:46:27+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-10-23T09:01:57+00:00"
         },
         {
             "name": "symfony/process",
@@ -821,5 +850,6 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.4"
-    }
+    },
+    "plugin-api-version": "1.1.0"
 }
