@@ -29,10 +29,11 @@ install:
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer global require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction; fi;
 
 before_script:
+    - DEPENDENCY_BINANY_FOLDER=`composer global config bin-dir --absolute --quiet`
     - mkdir -p build/logs
 
 script:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then ~/.composer/vendor/bin/phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then ${DEPENDENCY_BINANY_FOLDER}/phpunit --coverage-clover build/logs/clover.xml; fi;
     - if [ "$PHPUNIT_VERSION" = "" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
 
 after_success:
