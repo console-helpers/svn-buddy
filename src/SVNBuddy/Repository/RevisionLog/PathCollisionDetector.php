@@ -57,7 +57,7 @@ class PathCollisionDetector
 		$path_count = count($this->_expandedPaths);
 
 		if ( $path_count > 1 ) {
-			$this->_longestPathLength = call_user_func_array('max', $this->_expandedPaths);
+			$this->_longestPathLength = call_user_func_array('max', \array_values($this->_expandedPaths));
 		}
 		elseif ( $path_count === 1 ) {
 			$this->_longestPathLength = current($this->_expandedPaths);

@@ -77,7 +77,7 @@ abstract class AbstractMergeTemplate
 
 		// Multi-source merge commit.
 		if ( count($grouped_revisions) > 1 ) {
-			return \call_user_func_array('array_merge', $grouped_revisions);
+			return \call_user_func_array('array_merge', \array_values($grouped_revisions));
 		}
 
 		// Single source merge commit.
