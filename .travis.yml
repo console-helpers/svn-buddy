@@ -23,18 +23,20 @@ matrix:
           env: PHPUNIT_VERSION="^7.2"
         - php: 7.3
           env: PHPUNIT_VERSION="^7.2"
+        - php: 7.4
+          env: PHPUNIT_VERSION="^7.2"
 
 install:
     - composer install --prefer-dist
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer global require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-interaction; fi;
 
 before_script:
-    - DEPENDENCY_BINANY_FOLDER=`composer global config bin-dir --absolute --quiet`
+    - DEPENDENCY_BINARY_FOLDER=`composer global config bin-dir --absolute --quiet`
     - mkdir -p build/logs
 
 script:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then ${DEPENDENCY_BINANY_FOLDER}/phpunit --coverage-clover build/logs/clover.xml; fi;
-    - if [ "$PHPUNIT_VERSION" = "" ]; then phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" != "" ]; then XDEBUG_MODE=coverage ${DEPENDENCY_BINARY_FOLDER}/phpunit --coverage-clover build/logs/clover.xml; fi;
+    - if [ "$PHPUNIT_VERSION" = "" ]; then XDEBUG_MODE=coverage phpunit --coverage-clover build/logs/clover.xml; fi;
 
 after_success:
     - bash <(curl -s https://codecov.io/bash)
