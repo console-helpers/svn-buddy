@@ -55,8 +55,14 @@ class ContainerTest extends BaseContainerTest
 			'size_helper' => array('ConsoleHelpers\SVNBuddy\Helper\SizeHelper', 'size_helper'),
 			'output_helper' => array('ConsoleHelpers\SVNBuddy\Helper\OutputHelper', 'output_helper'),
 			'editor' => array('ConsoleHelpers\\SVNBuddy\\InteractiveEditor', 'editor'),
-			'updater' => array('ConsoleHelpers\\SVNBuddy\\Updater\\Updater', 'updater'),
 		);
+
+		// The "updater" service self-enables inside PHARs, including "phpunit.phar".
+		$phar_running = \Phar::running();
+
+		if ( empty($phar_running) ) {
+			$new_instance_data['updater'] = array('ConsoleHelpers\\SVNBuddy\\Updater\\Updater', 'updater');
+		}
 
 		return array_merge($instance_data, $new_instance_data);
 	}
