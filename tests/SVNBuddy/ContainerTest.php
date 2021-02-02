@@ -57,10 +57,10 @@ class ContainerTest extends BaseContainerTest
 			'editor' => array('ConsoleHelpers\\SVNBuddy\\InteractiveEditor', 'editor'),
 		);
 
-		// The "updater" service self-enables inside PHARs, including "phpunit.phar".
-		$phar_running = \Phar::running();
+		// The "updater" service requires executable to be writable (assuming it's PHAR file all the time).
+		$local_phar_file = realpath($_SERVER['argv'][0]) ?: $_SERVER['argv'][0];
 
-		if ( empty($phar_running) ) {
+		if ( is_writable($local_phar_file) ) {
 			$new_instance_data['updater'] = array('ConsoleHelpers\\SVNBuddy\\Updater\\Updater', 'updater');
 		}
 
