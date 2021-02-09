@@ -17,8 +17,8 @@ jobs:
         include:
 #          - php-versions: '5.4'
 #            phpunit-versions: '4.8.36'
-#          - php-versions: '5.5'
-#            phpunit-versions: '4.8.36'
+          - php-versions: '5.5'
+            phpunit-versions: '4.8.36'
           - php-versions: '5.6'
             phpunit-versions: '5.7.27'
           - php-versions: '7.0'
@@ -34,7 +34,7 @@ jobs:
 #          - php-versions: '8.0'
 #            phpunit-versions: '9.5.1'
 
-    name: PHP ${{ matrix.php-versions }}, PHPUnit ${{ matrix.phpunit-versions }}
+#    name: PHP ${{ matrix.php-versions }}, PHPUnit ${{ matrix.phpunit-versions }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -50,6 +50,9 @@ jobs:
     - name: Install Dependencies
       run: composer install --prefer-dist
 
+    - name: Setup upterm session
+      uses: lhotari/action-upterm@v1
+
     - name: Run Tests
       run: |
         mkdir -p build/logs
@@ -58,8 +61,8 @@ jobs:
     - name: Downloading Scrutinizer CI binary
       run: wget https://scrutinizer-ci.com/ocular.phar
 
-    - name: Uploading code coverage to Codecov
-      run: bash <(curl -s https://codecov.io/bash)
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
 
     - name: Uploading code coverage to Scrutinizer CI
       run: php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
