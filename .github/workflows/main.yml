@@ -50,8 +50,8 @@ jobs:
     - name: Install Dependencies
       run: composer install --prefer-dist
 
-    - name: Setup upterm session
-      uses: lhotari/action-upterm@v1
+#    - name: Setup upterm session
+#      uses: lhotari/action-upterm@v1
 
     - name: Run Tests
       run: |
