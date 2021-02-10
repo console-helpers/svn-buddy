@@ -1,36 +1,67 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php-versions: '5.4'
+            phpunit-versions: '4.8.36'
+          - php-versions: '5.5'
+            phpunit-versions: '4.8.36'
+          - php-versions: '5.6'
+            phpunit-versions: '5.7.27'
+          - php-versions: '7.0'
+            phpunit-versions: '6.5.14'
+          - php-versions: '7.1'
+            phpunit-versions: '7.5.20'
+          - php-versions: '7.2'
+            phpunit-versions: '7.5.20'
+          - php-versions: '7.3'
+            phpunit-versions: '7.5.20'
+          - php-versions: '7.4'
+            phpunit-versions: '7.5.20'
+          - php-versions: '8.0'
+            phpunit-versions: '9.5.1'
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    name: PHP ${{ matrix.php-versions }}, PHPUnit ${{ matrix.phpunit-versions }}
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        coverage: xdebug
+        tools: phpunit:${{ matrix.phpunit-versions }}
+        extensions: pdo_sqlite
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Install Dependencies
+      run: composer install --prefer-dist
+
+    - name: Run Tests
+      continue-on-error: ${{ matrix.php-versions == '7.0' || matrix.php-versions == '8.0' }}
+      run: |
+        mkdir -p build/logs
+        phpunit --coverage-clover build/logs/clover.xml
+
+    - name: Downloading Scrutinizer CI binary
+      run: wget https://scrutinizer-ci.com/ocular.phar
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+
+    - name: Uploading code coverage to Scrutinizer CI
+      run: php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+

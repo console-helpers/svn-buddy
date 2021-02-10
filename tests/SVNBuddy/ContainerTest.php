@@ -55,8 +55,14 @@ class ContainerTest extends BaseContainerTest
 			'size_helper' => array('ConsoleHelpers\SVNBuddy\Helper\SizeHelper', 'size_helper'),
 			'output_helper' => array('ConsoleHelpers\SVNBuddy\Helper\OutputHelper', 'output_helper'),
 			'editor' => array('ConsoleHelpers\\SVNBuddy\\InteractiveEditor', 'editor'),
-			'updater' => array('ConsoleHelpers\\SVNBuddy\\Updater\\Updater', 'updater'),
 		);
+
+		// The "updater" service requires executable to be writable (assuming it's PHAR file all the time).
+		$local_phar_file = realpath($_SERVER['argv'][0]) ?: $_SERVER['argv'][0];
+
+		if ( is_writable($local_phar_file) ) {
+			$new_instance_data['updater'] = array('ConsoleHelpers\\SVNBuddy\\Updater\\Updater', 'updater');
+		}
 
 		return array_merge($instance_data, $new_instance_data);
 	}
