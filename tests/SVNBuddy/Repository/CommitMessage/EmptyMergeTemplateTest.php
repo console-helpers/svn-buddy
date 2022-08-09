@@ -22,9 +22,12 @@ class EmptyMergeTemplateTest extends AbstractMergeTemplateTestCase
 		$this->assertEquals('empty', $this->mergeTemplate->getName());
 	}
 
-	public function testApplyWithMergeChanges()
+	/**
+	 * @dataProvider applyWithMergeChangesDataProvider
+	 */
+	public function testApplyWithMergeChanges($regular_or_reverse)
 	{
-		$this->prepareMergeResult();
+		$this->prepareMergeResult($regular_or_reverse);
 
 		$this->assertEmpty($this->mergeTemplate->apply('/path/to/working-copy'));
 	}

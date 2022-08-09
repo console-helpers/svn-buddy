@@ -22,11 +22,15 @@ class GroupByRevisionMergeTemplateTest extends AbstractGroupByMergeTemplateTestC
 		$this->assertEquals('group_by_revision', $this->mergeTemplate->getName());
 	}
 
-	public function testApplyWithMergeChanges()
+	/**
+	 * @dataProvider applyWithMergeChangesDataProvider
+	 */
+	public function testApplyWithMergeChanges($regular_or_reverse)
 	{
-		$this->prepareMergeResult();
+		$this->prepareMergeResult($regular_or_reverse);
 
-		$expected = <<<COMMIT_MSG
+		if ( $regular_or_reverse ) {
+			$expected = <<<COMMIT_MSG
 Merging from Trunk to Stable
 * r18: JRA-100 - own-tr1-line1
 own-tr1-line2
@@ -43,7 +47,10 @@ another-st1-line2
 
 Merge (trunk (another-project-name) > stable): * r17: another-tr1-line1
 another-tr1-line2
-
+COMMIT_MSG;
+		}
+		else {
+			$expected = <<<COMMIT_MSG
 Reverse-merging from Trunk to Stable
 * r95: JRA-100 - own-tr1-line1
 own-tr1-line2(r)
@@ -53,6 +60,7 @@ own-tr2-line2(r)
 Reverse-merge (trunk (another-project-name) > stable): * r112: another-tr1-line1
 another-tr1-line2(r)
 COMMIT_MSG;
+		}
 
 		$this->assertEquals($expected, $this->mergeTemplate->apply('/path/to/working-copy'));
 	}

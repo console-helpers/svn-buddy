@@ -18,7 +18,7 @@ use Prophecy\Prophecy\ObjectProphecy;
 abstract class AbstractGroupByMergeTemplateTestCase extends AbstractMergeTemplateTestCase
 {
 
-	protected function prepareMergeResult()
+	protected function prepareMergeResult($regular_or_reverse)
 	{
 		$this->connector
 			->getRelativePath('svn://repository.com/path/to/project-name/tags/stable')
@@ -44,7 +44,7 @@ abstract class AbstractGroupByMergeTemplateTestCase extends AbstractMergeTemplat
 			->getProjectUrl('/projects/another-project-name/trunk')
 			->willReturn('/projects/another-project-name');
 
-		return parent::prepareMergeResult();
+		return parent::prepareMergeResult($regular_or_reverse);
 	}
 
 }
