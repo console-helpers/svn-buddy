@@ -50,11 +50,21 @@ class SummaryMergeTemplate extends AbstractMergeTemplate
 		$ret = '';
 
 		foreach ( $merged_revisions as $path => $revisions ) {
+			// No changes on particular path.
+			if ( !$revisions ) {
+				continue;
+			}
+
 			$source = $this->getMomentInTime($path, max($revisions));
 			$ret .= PHP_EOL . 'Merge of "' . $source . '" to "' . $target . '".' . PHP_EOL;
 		}
 
 		foreach ( $unmerged_revisions as $path => $revisions ) {
+			// No changes on particular path.
+			if ( !$revisions ) {
+				continue;
+			}
+
 			$source = $this->getMomentInTime($path, max($revisions));
 			$ret .= PHP_EOL . 'Reverse-merge of "' . $source . '" to "' . $target . '".' . PHP_EOL;
 		}

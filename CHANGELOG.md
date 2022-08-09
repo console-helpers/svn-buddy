@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Attempt to print commit history of paths copied to themselves (e.g. trunk > branches/something > trunk) resulted in a recursion.
 - The `--no-merges` option of `merge` command wasn't used during actual merge, but only to display to be merged revisions.
+- The `Reverse-merge of ...` heading was shown even on strait merges (not reverse ones), when `commit` command was using `summary` merge template.
 
 ## [0.5.2] - 2019-06-20
 ### Fixed
