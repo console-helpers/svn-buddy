@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+## [0.6.0] - 2022-11-14
+### Added
 - Added `--aggregate` option to `merge` and `commit` commands to aggregate displayed commits by tasks.
 - Added `project` command, that allows to show project meta information and reset refresh tracking regular expression.
 - Added `--no-merges` option (from `log` command) to `merge` command to allow hiding merge revisions.
