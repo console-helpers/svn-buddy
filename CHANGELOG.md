@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - The recursive working copy lookup behavior of the `aggregate` command is disabled by default, but can be enabled via new `--recursive` option.
+- Improve Phabricator integration during `merge` command by using `.arcconfig` file from the merge source repository.
 
 ### Fixed
 - Attempt to print commit history of paths copied to themselves (e.g. trunk > branches/something > trunk) resulted in a recursion.

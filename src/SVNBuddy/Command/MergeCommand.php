@@ -16,6 +16,7 @@ use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
@@ -611,7 +612,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$param_string_ending = '--record-only ' . $param_string_ending;
 		}
 
-		$revision_title_mask = $this->getRevisionTitle($wc_path);
+		$revision_title_mask = $this->getRevisionTitle($source_url);
 
 		foreach ( $revisions as $index => $revision ) {
 			$command = $this->repositoryConnector->getCommand(
@@ -639,26 +640,31 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	/**
 	 * Returns revision title.
 	 *
-	 * @param string $wc_path Working copy path.
+	 * @param string $source_url Merge source: url.
 	 *
 	 * @return string
 	 */
-	protected function getRevisionTitle($wc_path)
+	protected function getRevisionTitle($source_url)
 	{
-		$arcanist_config_file = $wc_path . \DIRECTORY_SEPARATOR . '.arcconfig';
-
-		if ( !\file_exists($arcanist_config_file) ) {
+		try {
+			$arcanist_config = \json_decode(
+				$this->repositoryConnector->getFileContent($source_url . '/.arcconfig', 'HEAD'),
+				true
+			);
+		}
+		catch ( RepositoryCommandException $e ) {
+			// Phabricator integration is not configured.
 			return '<fg=white;options=underscore>{revision}</> revision';
 		}
 
-		$arcanist_config = \json_decode(\file_get_contents($arcanist_config_file), true);
-
+		// Phabricator integration is not configured correctly.
 		if ( !\is_array($arcanist_config)
 			|| !isset($arcanist_config['repository.callsign'], $arcanist_config['phabricator.uri'])
 		) {
 			return '<fg=white;options=underscore>{revision}</> revision';
 		}
 
+		// Phabricator integration is configured properly.
 		$revision_title = $arcanist_config['phabricator.uri'];
 		$revision_title .= 'r' . $arcanist_config['repository.callsign'] . '{revision}';
 
