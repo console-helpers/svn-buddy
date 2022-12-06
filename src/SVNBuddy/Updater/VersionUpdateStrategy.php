@@ -19,7 +19,7 @@ use Humbug\SelfUpdate\Updater;
 class VersionUpdateStrategy implements StrategyInterface
 {
 
-	const UPDATE_SERVER_URL = 'https://svn-buddy-updater.herokuapp.com';
+	const RELEASES_URL = 'https://raw.githubusercontent.com/console-helpers/svn-buddy-updater/master/releases.json';
 
 	/**
 	 * Stability.
@@ -94,18 +94,19 @@ class VersionUpdateStrategy implements StrategyInterface
 	public function getCurrentRemoteVersion(Updater $updater)
 	{
 		$this->remoteUrl = '';
-		$versions = json_decode(
-			$this->downloadFile(self::UPDATE_SERVER_URL . '/versions'),
+		$releases = json_decode(
+			$this->downloadFile(self::RELEASES_URL),
 			true
 		);
 
-		if ( !isset($versions[$this->stability]) ) {
+		if ( !isset($releases[$this->stability]) ) {
 			throw new \LogicException('The "' . $this->stability . '" update channel not found.');
 		}
 
-		$this->remoteUrl = self::UPDATE_SERVER_URL . $versions[$this->stability]['path'];
+		$version = key($releases[$this->stability]);
+		$this->remoteUrl = $releases[$this->stability][$version]['phar_download_url'];
 
-		return $versions[$this->stability]['version'];
+		return $version;
 	}
 
 	/**
