@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 ...
 
+## [0.6.1] - 2022-12-06
+### Changed
+- Moved application upgrade system from Heroku into GitHub Actions.
+
 ## [0.6.0] - 2022-11-14
 ### Added
 - Added `--aggregate` option to `merge` and `commit` commands to aggregate displayed commits by tasks.
