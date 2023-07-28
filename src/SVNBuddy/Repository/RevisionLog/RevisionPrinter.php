@@ -365,6 +365,10 @@ class RevisionPrinter
 			}
 		}
 
+		if ( !$bugs_revisions['unknown'] ) {
+			unset($bugs_revisions['unknown']);
+		}
+
 		$bugs_revisions = \array_reverse($bugs_revisions, true);
 
 		$ret = array();
