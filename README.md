@@ -816,8 +816,12 @@ Displays help for a command.
 
 ## Installation
 
-1. download [stable/svn-buddy.phar](http://svn-buddy-updater.herokuapp.com/download/stable/svn-buddy.phar) (stable release) or [snapshot/svn-buddy.phar](http://svn-buddy-updater.herokuapp.com/download/snapshot/svn-buddy.phar) (snapshot release)
-2. setup auto-completion by placing `eval $(/path/to/svn-buddy.phar _completion --generate-hook -p svn-buddy.phar)` in `~/.bashrc` (Bash v4.0+ required)
+1. [download](https://github.com/console-helpers/svn-buddy/releases/download/latest/svn-buddy.phar) a stable release (preferably to the folder in PATH)
+2. setup auto-completion by placing `eval $(/path/to/svn-buddy.phar _completion --generate-hook -p svn-buddy.phar)` in `~/.bashrc` (Bash v4.0+ required) and reopening a Terminal window
+3. (optional) switch to the `snapshot` release channel to get weekly updates by running the `/path/to/svn-buddy.phar self-update --snapshot` command
+4. (optional) switch to the `preview` release channel to get daily updates by running the `/path/to/svn-buddy.phar self-update --preview` command
+
+How to upgrade Bash on macOS: https://www.shell-tips.com/mac/upgrade-bash/ .
 
 ## Requirements
 
