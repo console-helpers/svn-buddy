@@ -612,6 +612,9 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$param_string_ending = '--record-only ' . $param_string_ending;
 		}
 
+		$revision_log = $this->getRevisionLog($source_url);
+		$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
+
 		$revision_title_mask = $this->getRevisionTitle($source_url);
 
 		foreach ( $revisions as $index => $revision ) {
@@ -621,9 +624,18 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			);
 
 			$progress_bar = $this->createMergeProgressBar($used_revision_count + $index + 1, $revision_count);
+
+			// 1. Add revision link with a progress bar.
 			$merge_heading = PHP_EOL . '<fg=white;options=bold>';
 			$merge_heading .= '--- $1 ' . \str_replace('{revision}', $revision, $revision_title_mask);
 			$merge_heading .= " into '$2' " . $progress_bar . ':</>';
+
+			// 2. Add a commit message.
+			$commit_message = trim($revisions_data[$revision]['msg']);
+			$commit_message = wordwrap($commit_message, 68); // FIXME: Not UTF-8 safe solution.
+			$merge_heading .= PHP_EOL . $commit_message;
+			$merge_heading .= PHP_EOL;
+			$merge_heading .= PHP_EOL . '<fg=white;options=bold>Changed Paths:</>';
 
 			$command->runLive(array(
 				$wc_path => '.',

@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Added `-a` shortcut for the `--aggregate` option of the `merge` and `commit` commands.
+- Show merged revision commit message during merge process, that is done by the `merge` command.
 
 ### Changed
 ...
