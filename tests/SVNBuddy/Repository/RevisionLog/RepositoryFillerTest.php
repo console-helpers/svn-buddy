@@ -24,9 +24,13 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 	 */
 	protected $repositoryFiller;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
+		parent::setupTest();
 
 		$this->repositoryFiller = new RepositoryFiller($this->database, new DatabaseCache($this->database));
 	}
@@ -344,12 +348,11 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "$fields_hash" variable can't be empty.
-	 */
 	public function testTouchPathWithoutFields()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "$fields_hash" variable can\'t be empty.');
+
 		$this->repositoryFiller->touchPath('/path/', 100, array());
 	}
 

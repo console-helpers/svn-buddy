@@ -16,7 +16,11 @@ use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 class StringConfigSettingTest extends AbstractConfigSettingTest
 {
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
 			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\StringConfigSetting';
@@ -26,7 +30,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 			$this->defaultValue = '';
 		}
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function normalizationValueDataProvider($test_name, $value = 'a', $normalized_value = 'b')
@@ -59,12 +63,13 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "name" config setting value must be a string.
 	 * @dataProvider sampleArrayDataProvider
 	 */
 	public function testSetValueArrayToString($value)
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "name" config setting value must be a string.');
+
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 		$config_setting->setValue($value);
 	}
@@ -100,7 +105,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param mixed $scope_bit Scope bit.
+	 * @param mixed   $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

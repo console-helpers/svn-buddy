@@ -13,10 +13,13 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
+use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-abstract class AbstractConfigSettingTest extends AbstractTestCase
+abstract class AbstractConfigSettingTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Config editor
@@ -39,10 +42,12 @@ abstract class AbstractConfigSettingTest extends AbstractTestCase
 	 */
 	protected $defaultValue;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->configEditor = new ConfigEditor('php://memory');
 	}
 
@@ -81,12 +86,13 @@ abstract class AbstractConfigSettingTest extends AbstractTestCase
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The $scope must be either "working copy" or "global".
 	 * @dataProvider incorrectScopeDataProvider
 	 */
 	public function testCreateWithIncorrectScope($scope)
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('The $scope must be either "working copy" or "global".');
+
 		$this->createConfigSetting($scope);
 	}
 
@@ -107,21 +113,19 @@ abstract class AbstractConfigSettingTest extends AbstractTestCase
 		$this->assertEquals('name', $config_setting->getName());
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please use setEditor() before calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::getValue().
-	 */
 	public function testGetValueWithoutEditor()
 	{
+		$this->expectException('LogicException');
+		$this->expectExceptionMessage('Please use setEditor() before calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::getValue().');
+
 		$this->createConfigSetting(null, false, null)->getValue();
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The usage of "2" scope bit for "name" config setting is forbidden.
-	 */
 	public function testGetValueWithForbiddenScopeBit()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The usage of "2" scope bit for "name" config setting is forbidden.');
+
 		$this
 			->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL)
 			->getValue(AbstractConfigSetting::SCOPE_WORKING_COPY);
@@ -204,21 +208,19 @@ abstract class AbstractConfigSettingTest extends AbstractTestCase
 		$this->assertEquals($this->defaultValue, $config_setting->getValue());
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please use setEditor() before calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::setValue().
-	 */
 	public function testSetValueWithoutEditor()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('Please use setEditor() before calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::setValue().');
+
 		$this->createConfigSetting(null, false, null)->setValue('value');
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The usage of "2" scope bit for "name" config setting is forbidden.
-	 */
 	public function testSetValueWithForbiddenScopeBit()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The usage of "2" scope bit for "name" config setting is forbidden.');
+
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 		$config_setting->setValue('value', AbstractConfigSetting::SCOPE_WORKING_COPY);
 	}
@@ -267,21 +269,19 @@ abstract class AbstractConfigSettingTest extends AbstractTestCase
 		$this->assertSame($this->convertToStorage($expected_value), $this->configEditor->get($storage_setting_name));
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::getValue() method.
-	 */
 	public function testGetValueWithoutWorkingCopy()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('Please call setWorkingCopyUrl() prior to calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::getValue() method.');
+
 		$this->createConfigSetting()->getValue();
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please call setWorkingCopyUrl() prior to calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::setValue() method.
-	 */
 	public function testSetValueWithoutWorkingCopy()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('Please call setWorkingCopyUrl() prior to calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::setValue() method.');
+
 		$this->createConfigSetting()->setValue($this->getSampleValue(AbstractConfigSetting::SCOPE_WORKING_COPY));
 	}
 

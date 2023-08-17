@@ -24,10 +24,12 @@ class DateHelperTest extends TestCase
 	 */
 	protected $dateHelper;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->dateHelper = new DateHelper();
 	}
 

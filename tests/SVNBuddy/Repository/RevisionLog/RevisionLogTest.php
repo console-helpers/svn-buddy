@@ -15,12 +15,18 @@ use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\OutputInterface;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class RevisionLogTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Repository connector.
@@ -36,20 +42,21 @@ class RevisionLogTest extends TestCase
 	 */
 	protected $io;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
 		$this->io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage Please register at least one revision log plugin.
-	 */
 	public function testRefreshWithoutPlugins()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('Please register at least one revision log plugin.');
+
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->refresh(false);
 	}
@@ -64,12 +71,11 @@ class RevisionLogTest extends TestCase
 		$this->assertTrue($revision_log->pluginRegistered('mocked'), 'The "mocked" plugin is registered.');
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The "mocked" revision log plugin is already registered.
-	 */
 	public function testPluginRegistrationFailure()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The "mocked" revision log plugin is already registered.');
+
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$plugin = $this->createPluginMock($revision_log);
 
@@ -87,12 +93,11 @@ class RevisionLogTest extends TestCase
 		$this->assertSame($plugin->reveal(), $revision_log->getPlugin('mocked'));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "mocked" revision log plugin is unknown.
-	 */
 	public function testGetPluginFailure()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "mocked" revision log plugin is unknown.');
+
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->getPlugin('mocked');
 	}
@@ -121,12 +126,11 @@ class RevisionLogTest extends TestCase
 		$this->assertEquals('OK', $revision_log->find('mocked', array('criterion1', 'criterion2')));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "mocked" revision log plugin is unknown.
-	 */
 	public function testFindFailure()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "mocked" revision log plugin is unknown.');
+
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->find('mocked', '');
 	}
@@ -143,12 +147,11 @@ class RevisionLogTest extends TestCase
 		$this->assertEquals('OK', $revision_log->getRevisionsData('mocked', array(1)));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "mocked" revision log plugin is unknown.
-	 */
 	public function testGetRevisionsDataFailure()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "mocked" revision log plugin is unknown.');
+
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 		$revision_log->getRevisionsData('mocked', array(0));
 	}
@@ -177,30 +180,40 @@ class RevisionLogTest extends TestCase
 	 */
 	public function testRefreshWithoutCacheWithOutput($is_verbose)
 	{
-		// Create progress bar for repository.
-		$repository_progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
-		$repository_progress_bar->setMessage(' * Reading missing revisions:')->shouldBeCalled();
-		$repository_progress_bar
-			->setFormat(
-				'%message% %current%/%max% [%bar%] <info>%percent:3s%%</info> %elapsed:6s%/%estimated:-6s% <info>%memory:-10s%</info>'
-			)
-			->shouldBeCalled();
-		$repository_progress_bar->start()->shouldBeCalled();
-		$repository_progress_bar->advance()->shouldBeCalled();
-		$repository_progress_bar->clear()->shouldBeCalled();
+		$output_formatter = $this->prophesize(OutputFormatterInterface::class);
+		$output_formatter->format(Argument::any())->willReturnArgument();
+		$output_formatter->isDecorated()->willReturn(false);
+		$output_formatter->setDecorated(false)->shouldBeCalled();
 
+		$output = $this->prophesize(OutputInterface::class);
+		$output->isDecorated()->willReturn(false);
+		$output->getVerbosity()->willReturn(
+			$is_verbose ? OutputInterface::VERBOSITY_VERBOSE : OutputInterface::VERBOSITY_NORMAL
+		);
+		$output->getFormatter()->willReturn($output_formatter->reveal());
+
+		// Create progress bar for repository.
+		$repository_progress_bar = new ProgressBar($output->reveal(), 3);
+		$this->expectProgressBarOutput(
+			$output,
+			array(
+				' * Reading missing revisions: 0/3 [>---------------------------] <info>  0%</info> < 1 sec/< 1 sec <info>8.0 MiB   </info>',
+				"\n * Reading missing revisions: 1/3 [=========>------------------] <info> 33%</info> < 1 sec/< 1 sec <info>8.0 MiB   </info>",
+				"\n * Reading missing revisions: 2/3 [==================>---------] <info> 66%</info> < 1 sec/< 1 sec <info>8.0 MiB   </info>",
+				"\n * Reading missing revisions: 3/3 [============================] <info>100%</info> < 1 sec/< 1 sec <info>8.0 MiB   </info>",
+			)
+		);
 		$this->io->createProgressBar(3)->willReturn($repository_progress_bar)->shouldBeCalled();
 
 		// Create progress bar for database.
-		$database_progress_bar = $this->prophesize('Symfony\\Component\\Console\\Helper\\ProgressBar');
-		$database_progress_bar->setMessage(' * Reading missing revisions:')->shouldBeCalled();
-		$database_progress_bar
-			->setFormat('%message% %current% [%bar%] %elapsed:6s% <info>%memory:-10s%</info>')
-			->shouldBeCalled();
-		$database_progress_bar->start()->shouldBeCalled();
-		$database_progress_bar->advance()->shouldBeCalled();
-		$database_progress_bar->finish()->shouldBeCalled();
-
+		$database_progress_bar = new ProgressBar($output->reveal());
+		$this->expectProgressBarOutput(
+			$output,
+			array(
+				' * Reading missing revisions:    0 [>---------------------------] < 1 sec <info>8.0 MiB   </info>',
+				"\n * Reading missing revisions:    1 [->--------------------------] < 1 sec <info>8.0 MiB   </info>",
+			)
+		);
 		$this->io->createProgressBar()->willReturn($database_progress_bar)->shouldBeCalled();
 
 		$this->io->writeln('')->shouldBeCalled();
@@ -210,7 +223,32 @@ class RevisionLogTest extends TestCase
 			$this->io->writeln('<debug>Combined Plugin Statistics:</debug>')->shouldBeCalled();
 		}
 
-		$this->testRefreshWithoutCacheWithoutOutput($this->io->reveal(), $database_progress_bar->reveal(), $is_verbose);
+		$this->testRefreshWithoutCacheWithoutOutput($this->io->reveal(), $database_progress_bar, $is_verbose);
+	}
+
+	/**
+	 * Expects approximate writes.
+	 *
+	 * @param ObjectProphecy|OutputInterface $output Output.
+	 * @param array                          $lines  Lines.
+	 *
+	 * @return void
+	 */
+	protected function expectProgressBarOutput(ObjectProphecy $output, array $lines)
+	{
+		foreach ( $lines as $expected_line ) {
+			$expected_line = preg_replace('#<info>\d+\.\d+ MiB\s+</info>#', '<info>0.0 MiB</info>', $expected_line);
+			$expected_line = preg_replace('/(<)?\s+\d+(\.\d+)? sec(s)?/', '5 min', $expected_line);
+
+			$output->write(
+				Argument::that(function ($actual_line) use ($expected_line) {
+					$actual_line = preg_replace('#<info>\d+\.\d+ MiB\s+</info>#', '<info>0.0 MiB</info>', $actual_line);
+					$actual_line = preg_replace('/(<)?\s+\d+(\.\d+)? sec(s)?/', '5 min', $actual_line);
+
+					return $actual_line === $expected_line;
+				})
+			)->shouldBeCalled();
+		}
 	}
 
 	public function refreshWithoutCacheWithOutputDataProvider()

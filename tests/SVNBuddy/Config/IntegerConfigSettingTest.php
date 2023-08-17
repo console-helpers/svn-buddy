@@ -12,11 +12,18 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class IntegerConfigSettingTest extends AbstractConfigSettingTest
 {
 
-	protected function setUp()
+	use ExpectException;
+
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
 			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\IntegerConfigSetting';
@@ -26,7 +33,7 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 			$this->defaultValue = 0;
 		}
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function normalizationValueDataProvider($test_name, $value = 1, $normalized_value = 0)
@@ -47,12 +54,13 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "name" config setting value must be an integer.
 	 * @dataProvider sampleStringDataProvider
 	 */
 	public function testSetValueStringToInteger($value)
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "name" config setting value must be an integer.');
+
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 		$config_setting->setValue($value);
 	}
@@ -66,12 +74,13 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "name" config setting value must be an integer.
 	 * @dataProvider sampleArrayDataProvider
 	 */
 	public function testSetValueArrayToInteger($value)
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "name" config setting value must be an integer.');
+
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 		$config_setting->setValue($value);
 	}
@@ -107,7 +116,7 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param mixed $scope_bit Scope bit.
+	 * @param mixed   $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

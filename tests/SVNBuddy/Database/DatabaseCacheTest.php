@@ -32,10 +32,12 @@ class DatabaseCacheTest extends TestCase
 	 */
 	protected $databaseCache;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->database = $this->prophesize('Aura\Sql\ExtendedPdoInterface');
 		$this->databaseCache = new DatabaseCache($this->database->reveal());
 	}

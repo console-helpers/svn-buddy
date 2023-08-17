@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Show merged revision commit message during merge process, that is done by the `merge` command.
 
 ### Changed
-...
+- Dropped support for PHP 5.4 and PHP 5.5 versions.
 
 ### Fixed
 - The `--aggregate` option of the `merge` and `commit` commands wasn't working (triggered an exception) when revision without a bug wasn't present in the list of revisions.

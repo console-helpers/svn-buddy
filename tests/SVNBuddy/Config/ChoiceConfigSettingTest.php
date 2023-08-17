@@ -16,7 +16,11 @@ use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 {
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
 			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\ChoiceConfigSetting';
@@ -26,7 +30,7 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 			$this->defaultValue = 1;
 		}
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function normalizationValueDataProvider($test_name, $value = 1, $normalized_value = 1)
@@ -42,12 +46,11 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "name" config setting value must be one of "1", "2", "3".
-	 */
 	public function testSetValueUnknownChoice()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "name" config setting value must be one of "1", "2", "3".');
+
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 		$config_setting->setValue(5);
 	}
@@ -80,19 +83,18 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 		$this->assertEquals(array(1 => 'one', 2 => 'two', 3 => 'three'), $config_setting->getChoices());
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "$choices" parameter must not be empty.
-	 */
 	public function testCreateWithEmptyChoices()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "$choices" parameter must not be empty.');
+
 		new $this->className('name', array(), $this->defaultValue);
 	}
 
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param mixed $scope_bit Scope bit.
+	 * @param mixed   $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

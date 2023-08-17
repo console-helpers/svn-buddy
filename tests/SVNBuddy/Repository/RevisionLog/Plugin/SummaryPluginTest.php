@@ -132,12 +132,11 @@ class SummaryPluginTest extends AbstractPluginTestCase
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Each criterion of "summary" plugin must be in "field:value" format.
-	 */
 	public function testFindMalformedCriterion()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('Each criterion of "summary" plugin must be in "field:value" format.');
+
 		$this->commitBuilder
 			->addCommit(100, 'user', 0, 'task title')
 			->addPath('A', '/path/to/project/', '', '/path/to/project/');
@@ -146,12 +145,11 @@ class SummaryPluginTest extends AbstractPluginTestCase
 		$this->plugin->find(array('keyword'), '/path/to/project/');
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Searching by "field" is not supported by "summary" plugin.
-	 */
 	public function testFindUnsupportedField()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('Searching by "field" is not supported by "summary" plugin.');
+
 		$this->commitBuilder
 			->addCommit(100, 'user', 0, 'task title')
 			->addPath('A', '/path/to/project/', '', '/path/to/project/');
@@ -178,12 +176,11 @@ class SummaryPluginTest extends AbstractPluginTestCase
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Revision(-s) "100" not found by "summary" plugin.
-	 */
 	public function testGetRevisionsDataFailure()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('Revision(-s) "100" not found by "summary" plugin.');
+
 		$this->plugin->getRevisionsData(array(100));
 	}
 

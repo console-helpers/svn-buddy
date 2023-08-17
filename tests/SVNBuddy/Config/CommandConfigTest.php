@@ -16,9 +16,12 @@ use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class CommandConfigTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Config editor.
@@ -48,10 +51,12 @@ class CommandConfigTest extends TestCase
 	 */
 	protected $commandConfig;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->configEditor = $this->prophesize('ConsoleHelpers\ConsoleKit\Config\ConfigEditor');
 		$this->workingCopyResolver = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver');
 
@@ -92,12 +97,11 @@ class CommandConfigTest extends TestCase
 		);
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The "sample-command" command doesn't have "missing_name" config setting.
-	 */
 	public function testGetNonExistingSetting()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The "sample-command" command doesn\'t have "missing_name" config setting.');
+
 		$this->command->getConfigSettings()->willReturn(array(
 			new StringConfigSetting('sample_name', '', AbstractConfigSetting::SCOPE_GLOBAL),
 		));
@@ -105,12 +109,11 @@ class CommandConfigTest extends TestCase
 		$this->commandConfig->getSettingValue('missing_name', $this->command->reveal(), '');
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The "sample-command" command does not have any settings.
-	 */
 	public function testGetSettingFromNonConfigAwareCommand()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The "sample-command" command does not have any settings.');
+
 		$command = $this->prophesize('ConsoleHelpers\SVNBuddy\Command\AbstractCommand');
 		$command->getName()->willReturn('sample-command');
 
@@ -166,12 +169,11 @@ class CommandConfigTest extends TestCase
 		);
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The "sample-command" command doesn't have "missing_name" config setting.
-	 */
 	public function testSetNonExistingSetting()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The "sample-command" command doesn\'t have "missing_name" config setting.');
+
 		$this->command->getConfigSettings()->willReturn(array(
 			new StringConfigSetting('sample_name', '', AbstractConfigSetting::SCOPE_GLOBAL),
 		));
@@ -179,12 +181,11 @@ class CommandConfigTest extends TestCase
 		$this->commandConfig->setSettingValue('missing_name', $this->command->reveal(), '', 'sample_value');
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The "sample-command" command does not have any settings.
-	 */
 	public function testSetSettingToNonConfigAwareCommand()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The "sample-command" command does not have any settings.');
+
 		$command = $this->prophesize('ConsoleHelpers\SVNBuddy\Command\AbstractCommand');
 		$command->getName()->willReturn('sample-command');
 

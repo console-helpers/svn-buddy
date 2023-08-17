@@ -12,11 +12,14 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class StatementProfilerTest extends AbstractTestCase
+class StatementProfilerTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Statement profiler.
@@ -25,10 +28,12 @@ class StatementProfilerTest extends AbstractTestCase
 	 */
 	protected $statementProfiler;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->statementProfiler = new StatementProfiler();
 	}
 
@@ -124,7 +129,8 @@ class StatementProfilerTest extends AbstractTestCase
 
 	public function testDuplicateStatementsTrackingEnabledByDefault()
 	{
-		$this->setExpectedException('PDOException', 'Duplicate statement:' . PHP_EOL . 'bb "dd"');
+		$this->expectException('PDOException');
+		$this->expectExceptionMessage('Duplicate statement:' . PHP_EOL . 'bb "dd"');
 
 		$this->statementProfiler->setActive(true);
 		$this->statementProfiler->addProfile(5, 'perform', 'bb :cc', array('cc' => 'dd'));
@@ -133,7 +139,8 @@ class StatementProfilerTest extends AbstractTestCase
 
 	public function testDuplicateStatementsAreNotAllowed()
 	{
-		$this->setExpectedException('PDOException', 'Duplicate statement:' . PHP_EOL . 'bb "dd"');
+		$this->expectException('PDOException');
+		$this->expectExceptionMessage('Duplicate statement:' . PHP_EOL . 'bb "dd"');
 
 		$this->statementProfiler->setActive(true);
 		$this->statementProfiler->trackDuplicates(true);
@@ -182,8 +189,8 @@ class StatementProfilerTest extends AbstractTestCase
 			->writeln(array(
 				'',
 				'<debug>[db, 5s]: IGNORE ME "bb"</debug>',
-				'<debug>[db origin]: ' . __FILE__ . ':193</debug>',
-				))
+				'<debug>[db origin]: ' . __FILE__ . ':200</debug>',
+			))
 			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
 
@@ -210,7 +217,7 @@ class StatementProfilerTest extends AbstractTestCase
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
 		// The PHP7 threats multi-line statement position differently in traces.
-		$expect_line = PHP_VERSION_ID < 70000 ? 230 : 229;
+		$expect_line = PHP_VERSION_ID < 70000 ? 237 : 236;
 
 		$io
 			->writeln(array(

@@ -24,10 +24,12 @@ class OutputHelperTest extends TestCase
 	 */
 	protected $outputHelper;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->outputHelper = new OutputHelper();
 	}
 

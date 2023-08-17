@@ -24,10 +24,12 @@ class PathCollisionDetectorTest extends TestCase
 	 */
 	protected $pathCollisionDetector;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->pathCollisionDetector = new PathCollisionDetector();
 	}
 

@@ -24,10 +24,12 @@ class SizeHelperTest extends TestCase
 	 */
 	protected $sizeHelper;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->sizeHelper = new SizeHelper();
 	}
 

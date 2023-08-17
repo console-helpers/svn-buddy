@@ -12,11 +12,14 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
-use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class WorkingCopyResolverTest extends AbstractTestCase
+class WorkingCopyResolverTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Repository connector.
@@ -39,18 +42,22 @@ class WorkingCopyResolverTest extends AbstractTestCase
 	 */
 	protected $tempFolder;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->connector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
 		$this->workingCopyResolver = new WorkingCopyResolver($this->connector->reveal());
 	}
 
-	protected function tearDown()
+	/**
+	 * @after
+	 * @return void
+	 */
+	protected function teardownTest()
 	{
-		parent::tearDown();
-
 		if ( strlen($this->tempFolder) && file_exists($this->tempFolder) ) {
 			rmdir($this->tempFolder);
 		}
@@ -139,7 +146,8 @@ class WorkingCopyResolverTest extends AbstractTestCase
 		$this->connector->isUrl($this->tempFolder)->willReturn(false);
 		$this->connector->isWorkingCopy($this->tempFolder)->willReturn(false);
 
-		$this->setExpectedException('LogicException', 'The "' . $this->tempFolder . '" isn\'t a working copy.');
+		$this->expectException('LogicException');
+		$this->expectExceptionMessage('The "' . $this->tempFolder . '" isn\'t a working copy.');
 
 		$this->workingCopyResolver->getWorkingCopyPath($this->tempFolder);
 	}

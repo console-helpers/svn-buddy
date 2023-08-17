@@ -14,11 +14,15 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Command;
 class MergeCommandTest extends AbstractCommandTestCase
 {
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		$this->commandName = 'merge';
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function testExampleTest()

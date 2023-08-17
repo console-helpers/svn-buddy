@@ -24,10 +24,12 @@ class LogMessageParserFactoryTest extends TestCase
 	 */
 	protected $logMessageParserFactory;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->logMessageParserFactory = new LogMessageParserFactory();
 	}
 

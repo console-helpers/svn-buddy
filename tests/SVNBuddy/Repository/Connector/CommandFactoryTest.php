@@ -11,15 +11,17 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class CommandFactoryTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Config editor.
@@ -56,10 +58,12 @@ class CommandFactoryTest extends TestCase
 	 */
 	private $_commandFactory;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->_configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
@@ -112,12 +116,11 @@ class CommandFactoryTest extends TestCase
 		$this->assertEquals('OK', $this->_commandFactory->getCommand('log')->run());
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "log -r 5" sub-command contains spaces.
-	 */
 	public function testSubCommandWithSpace()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "log -r 5" sub-command contains spaces.');
+
 		$this->_commandFactory->getCommand('log -r 5')->run();
 	}
 
@@ -145,10 +148,10 @@ class CommandFactoryTest extends TestCase
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string       $command    Command.
-	 * @param string       $output     Output.
-	 * @param string|null  $error_msg  Error msg.
-	 * @param integer $error_code Error code.
+	 * @param string      $command    Command.
+	 * @param string      $output     Output.
+	 * @param string|null $error_msg  Error msg.
+	 * @param integer     $error_code Error code.
 	 */
 	private function _expectCommand($command, $output, $error_msg = null, $error_code = 0)
 	{

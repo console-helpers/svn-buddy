@@ -32,10 +32,12 @@ class UrlResolverTest extends TestCase
 	 */
 	protected $urlResolver;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->connector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
 		$this->urlResolver = new UrlResolver($this->connector->reveal());
 	}

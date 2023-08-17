@@ -41,9 +41,13 @@ abstract class AbstractCommandTestCase extends WorkingDirectoryAwareTestCase
 	 */
 	protected $commandTester;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
+		parent::setupTest();
 
 		$container = new Container();
 
