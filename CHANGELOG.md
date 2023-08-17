@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- Added `-a` shortcut for the `--aggregate` option of the `merge` and `commit` commands.
 
 ### Changed
 ...

@@ -174,7 +174,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			)
 			->addOption(
 				'aggregate',
-				null,
+				'a',
 				InputOption::VALUE_NONE,
 				'Aggregate displayed revisions by bugs'
 			);

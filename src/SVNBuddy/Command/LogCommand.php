@@ -193,7 +193,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			)
 			->addOption(
 				'aggregate',
-				null,
+				'a',
 				InputOption::VALUE_NONE,
 				'Aggregate displayed revisions by bugs'
 			);
