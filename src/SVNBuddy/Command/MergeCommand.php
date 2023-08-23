@@ -658,6 +658,8 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 */
 	protected function getRevisionTitle($source_url)
 	{
+		$link_style = 'fg=white;options=bold,underscore';
+
 		try {
 			$arcanist_config = \json_decode(
 				$this->repositoryConnector->getFileContent($source_url . '/.arcconfig', 'HEAD'),
@@ -666,21 +668,21 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 		catch ( RepositoryCommandException $e ) {
 			// Phabricator integration is not configured.
-			return '<fg=white;options=underscore>{revision}</> revision';
+			return '<' . $link_style . '>{revision}</> revision';
 		}
 
 		// Phabricator integration is not configured correctly.
 		if ( !\is_array($arcanist_config)
 			|| !isset($arcanist_config['repository.callsign'], $arcanist_config['phabricator.uri'])
 		) {
-			return '<fg=white;options=underscore>{revision}</> revision';
+			return '<' . $link_style . '>{revision}</> revision';
 		}
 
 		// Phabricator integration is configured properly.
 		$revision_title = $arcanist_config['phabricator.uri'];
 		$revision_title .= 'r' . $arcanist_config['repository.callsign'] . '{revision}';
 
-		return '<fg=white;options=underscore>' . $revision_title . '</>';
+		return '<' . $link_style . '>' . $revision_title . '</>';
 	}
 
 	/**
