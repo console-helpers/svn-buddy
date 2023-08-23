@@ -12,26 +12,31 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 {
 
-	protected function setUp()
+	use ExpectException;
+
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\RegExpsConfigSetting';
 		$this->defaultValue = array('default');
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function testValidation()
 	{
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 
-		$this->setExpectedException(
-			'InvalidArgumentException',
-			'The "/wrong-regexp" is not a valid regular expression.'
-		);
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('The "/wrong-regexp" is not a valid regular expression.');
 
 		$config_setting->setValue(array(
 			'/wrong-regexp',
@@ -41,7 +46,7 @@ class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param mixed $scope_bit Scope bit.
+	 * @param mixed   $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

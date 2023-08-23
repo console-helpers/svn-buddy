@@ -41,9 +41,13 @@ abstract class AbstractPluginTestCase extends AbstractDatabaseAwareTestCase
 	 */
 	protected $commitBuilder;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
+		parent::setupTest();
 
 		if ( strpos($this->getName(false), 'testProcess') === 0 ) {
 			$this->database->setProfiler($this->createStatementProfiler());
@@ -73,12 +77,11 @@ abstract class AbstractPluginTestCase extends AbstractDatabaseAwareTestCase
 		$this->assertEquals(5, $this->plugin->getLastRevision());
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The project with "/path/to/project/" path not found.
-	 */
 	public function testFindNonExistingProject()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The project with "/path/to/project/" path not found.');
+
 		$this->plugin->find(array('anything'), '/path/to/project/');
 	}
 

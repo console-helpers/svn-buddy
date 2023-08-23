@@ -57,10 +57,12 @@ class CommandTest extends TestCase
 	 */
 	private $_command;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->_processFactory = $this->prophesize('ConsoleHelpers\SVNBuddy\Process\IProcessFactory');
 		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
@@ -339,11 +341,13 @@ class CommandTest extends TestCase
 		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
-		$delay = defined('HHVM_VERSION') ? '0.01s' : '0s';
+		$this->_io->writeln(Argument::that(function ($messages) {
+			if ( count($messages) !== 2 || $messages[0] !== '' ) {
+				return false;
+			}
 
-		$this->_io
-			->writeln(array('', '<debug>[svn, ' . $delay . ']: svn log</debug>'))
-			->shouldBeCalled();
+			return preg_replace('/\[svn, [\d.]+s\]/', '[svn, 0s]', $messages[1]) === '<debug>[svn, 0s]: svn log</debug>';
+		}))->shouldBeCalled();
 
 		$this->_command->run();
 	}

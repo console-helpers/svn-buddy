@@ -39,10 +39,12 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 	 */
 	protected $mergeTemplate;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->connector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
 
 		$this->revisionLogFactory = $this->prophesize(

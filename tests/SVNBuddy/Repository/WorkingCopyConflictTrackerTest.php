@@ -16,9 +16,12 @@ use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class WorkingCopyConflictTrackerTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Repository connector.
@@ -41,10 +44,12 @@ class WorkingCopyConflictTrackerTest extends TestCase
 	 */
 	protected $workingCopyConflictTracker;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
 		$this->commandConfig = $this->prophesize('\ConsoleHelpers\SVNBuddy\Config\CommandConfig');
 
@@ -79,12 +84,11 @@ class WorkingCopyConflictTrackerTest extends TestCase
 		);
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The working copy at "/path/to/working-copy" has no conflicts to be added.
-	 */
 	public function testAddError()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The working copy at "/path/to/working-copy" has no conflicts to be added.');
+
 		$wc_path = '/path/to/working-copy';
 
 		$this->expectRecordedConflicts($wc_path);
@@ -118,12 +122,11 @@ class WorkingCopyConflictTrackerTest extends TestCase
 		);
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The working copy at "/path/to/working-copy" has no conflicts to be added.
-	 */
 	public function testReplaceError()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The working copy at "/path/to/working-copy" has no conflicts to be added.');
+
 		$wc_path = '/path/to/working-copy';
 
 		$this->expectRecordedConflicts($wc_path);

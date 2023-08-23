@@ -25,11 +25,15 @@ class RefsPluginTest extends AbstractPluginTestCase
 	 */
 	protected $repositoryConnector;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function testGetName()

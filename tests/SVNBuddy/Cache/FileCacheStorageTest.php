@@ -31,10 +31,12 @@ class FileCacheStorageTest extends TestCase
 	 */
 	protected $cacheFile;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->cacheFile = sys_get_temp_dir() . '/test.cache';
 
 		$this->cache = new FileCacheStorage($this->cacheFile);
@@ -93,9 +95,10 @@ class FileCacheStorageTest extends TestCase
 	/**
 	 * Removes temporary files.
 	 *
+	 * @after
 	 * @return void
 	 */
-	protected function tearDown()
+	protected function teardownTest()
 	{
 		if ( file_exists($this->cacheFile) ) {
 			unlink($this->cacheFile);

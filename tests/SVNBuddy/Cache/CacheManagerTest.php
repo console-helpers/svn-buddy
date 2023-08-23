@@ -15,9 +15,12 @@ use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class CacheManagerTest extends WorkingDirectoryAwareTestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Cache manager.
@@ -33,20 +36,23 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 	 */
 	protected $sizeHelper;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
+		parent::setupTest();
 
 		$this->sizeHelper = $this->prophesize('ConsoleHelpers\SVNBuddy\Helper\SizeHelper');
 		$this->cacheManager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal());
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The $name parameter must be in "namespace:name" format.
-	 */
 	public function testCacheNameWithoutNamespaceError()
 	{
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage('The $name parameter must be in "namespace:name" format.');
+
 		$this->cacheManager->setCache('name', 'value');
 	}
 

@@ -39,10 +39,12 @@ class CommitMessageBuilderTest extends TestCase
 	 */
 	protected $commitMessageBuilder;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->mergeTemplate = $this->prophesize(
 			'ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate'
 		);

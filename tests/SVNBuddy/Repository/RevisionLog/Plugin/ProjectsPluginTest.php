@@ -214,14 +214,11 @@ class ProjectsPluginTest extends AbstractPluginTestCase
 		$this->assertLastRevision(100);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "/path/to/project-a/" project(-s) not found by "projects" plugin.
-	 *
-	 * @return void
-	 */
 	public function testFindUnknownProject()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "/path/to/project-a/" project(-s) not found by "projects" plugin.');
+
 		$this->plugin->find(array('/path/to/project-a/'), '');
 	}
 

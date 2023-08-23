@@ -13,12 +13,15 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class ConnectorTest extends AbstractTestCase
+class ConnectorTest extends TestCase
 {
+
+	use ExpectException;
 
 	const DUMMY_REPO = 'svn://repository.com/path/to/project';
 
@@ -57,10 +60,12 @@ class ConnectorTest extends AbstractTestCase
 	 */
 	private $_repositoryConnector;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->_configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
 		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
 		$this->_commandFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\CommandFactory');
@@ -200,12 +205,11 @@ class ConnectorTest extends AbstractTestCase
 		);
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The directory "/path/to/working-copy" not found in "svn info" command results.
-	 */
 	public function testGetWorkingCopyUrlWithBrokenSvnInfo()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The directory "/path/to/working-copy" not found in "svn info" command results.');
+
 		$command = $this->_expectCommand(
 			'info',
 			'--xml {/path/to/working-copy}',
@@ -267,15 +271,14 @@ class ConnectorTest extends AbstractTestCase
 		);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
-		$this->setExpectedException(
-			'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
-			<<<MESSAGE
+		$exception_msg = <<<MESSAGE
 Command:
 stub command
 Error #555:
 error message
-MESSAGE
-		);
+MESSAGE;
+		$this->expectException('ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException');
+		$this->expectExceptionMessage($exception_msg);
 
 		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 	}
@@ -304,10 +307,11 @@ Error #%d:
 error message
 MESSAGE;
 
-		$this->setExpectedException(
-			'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
-			sprintf($exception_msg, RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED)
-		);
+		$this->expectException('ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException');
+		$this->expectExceptionMessage(sprintf(
+			$exception_msg,
+			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
+		));
 
 		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 	}
@@ -509,12 +513,11 @@ MESSAGE;
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Unable to remove credentials from "/path/to/working-copy" path.
-	 */
 	public function testRemoveCredentialsFromPath()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('Unable to remove credentials from "/path/to/working-copy" path.');
+
 		$this->_repositoryConnector->removeCredentials('/path/to/working-copy');
 	}
 
@@ -669,12 +672,11 @@ MESSAGE;
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "cl missing" changelist doens't exist.
-	 */
 	public function testGetWorkingCopyStatusWithNonExistingChangelist()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "cl missing" changelist doens\'t exist.');
+
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',

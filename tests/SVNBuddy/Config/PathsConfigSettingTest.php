@@ -12,9 +12,12 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class PathsConfigSettingTest extends ArrayConfigSettingTest
 {
+
+	use ExpectException;
 
 	/**
 	 * Temp folder.
@@ -23,12 +26,16 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	 */
 	protected $tempFolder = '';
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\PathsConfigSetting';
 		$this->defaultValue = array('default');
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function testValidation()
@@ -37,8 +44,8 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 
 		$this->createTempFolder();
 
-		$this->setExpectedException(
-			'InvalidArgumentException',
+		$this->expectException('InvalidArgumentException');
+		$this->expectExceptionMessage(
 			'The "' . $this->tempFolder . '/non-existing-path" path doesn\'t exist or not a directory.'
 		);
 
@@ -64,7 +71,7 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 
 		$this->tempFolder = $temp_file;
 
-		// Don't use "tearDown", because it isn't called for "createTempFolder" within data provider methods.
+		// Don't use "teardownTest", because it isn't called for "createTempFolder" within data provider methods.
 		register_shutdown_function(function ($temp_file) {
 			shell_exec('rm -Rf ' . escapeshellarg($temp_file));
 		}, $temp_file);
@@ -73,7 +80,7 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param mixed $scope_bit Scope bit.
+	 * @param mixed   $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

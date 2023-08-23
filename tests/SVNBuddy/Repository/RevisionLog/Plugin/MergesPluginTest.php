@@ -76,12 +76,11 @@ class MergesPluginTest extends AbstractPluginTestCase
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The merge revision(-s) "105" not found.
-	 */
 	public function testFindNoMatch()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The merge revision(-s) "105" not found.');
+
 		$this->createFixture();
 
 		$this->plugin->find(array(105), '/path/to/project/');

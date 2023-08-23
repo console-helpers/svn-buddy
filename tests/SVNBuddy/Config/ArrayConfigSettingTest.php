@@ -16,7 +16,11 @@ use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 class ArrayConfigSettingTest extends AbstractConfigSettingTest
 {
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
 			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\ArrayConfigSetting';
@@ -26,7 +30,7 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 			$this->defaultValue = array();
 		}
 
-		parent::setUp();
+		parent::setupTest();
 	}
 
 	public function normalizationValueDataProvider($test_name, $value = array('a'), $normalized_value = array('b'))
@@ -115,7 +119,7 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 	/**
 	 * Returns sample value based on scope, that would pass config setting validation.
 	 *
-	 * @param mixed $scope_bit Scope bit.
+	 * @param mixed   $scope_bit Scope bit.
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed

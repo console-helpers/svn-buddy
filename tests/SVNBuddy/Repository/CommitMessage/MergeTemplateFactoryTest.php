@@ -13,9 +13,12 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
 use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class MergeTemplateFactoryTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Merge template factory.
@@ -24,10 +27,12 @@ class MergeTemplateFactoryTest extends TestCase
 	 */
 	protected $mergeTemplateFactory;
 
-	protected function setUp()
+	/**
+	 * @before
+	 * @return void
+	 */
+	protected function setupTest()
 	{
-		parent::setUp();
-
 		$this->mergeTemplateFactory = new MergeTemplateFactory();
 	}
 
@@ -41,12 +46,11 @@ class MergeTemplateFactoryTest extends TestCase
 		$this->assertSame($merge_template->reveal(), $this->mergeTemplateFactory->get('name'));
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The merge template with "name" name is already added.
-	 */
 	public function testAddError()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The merge template with "name" name is already added.');
+
 		$merge_template = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate');
 		$merge_template->getName()->willReturn('name');
 
@@ -54,12 +58,11 @@ class MergeTemplateFactoryTest extends TestCase
 		$this->mergeTemplateFactory->add($merge_template->reveal());
 	}
 
-	/**
-	 * @expectedException \LogicException
-	 * @expectedExceptionMessage The merge template with "name" name is not found.
-	 */
 	public function testGetError()
 	{
+		$this->expectException('\LogicException');
+		$this->expectExceptionMessage('The merge template with "name" name is not found.');
+
 		$this->mergeTemplateFactory->get('name');
 	}
 

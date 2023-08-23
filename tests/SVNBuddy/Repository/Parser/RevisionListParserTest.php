@@ -13,9 +13,12 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class RevisionListParserTest extends TestCase
 {
+
+	use ExpectException;
 
 	/**
 	 * Repository connector.
@@ -27,9 +30,10 @@ class RevisionListParserTest extends TestCase
 	/**
 	 * Prepares fixture.
 	 *
+	 * @before
 	 * @return void
 	 */
-	protected function setUp()
+	protected function setupTest()
 	{
 		$this->_revisionListParser = new RevisionListParser();
 	}
@@ -66,21 +70,19 @@ class RevisionListParserTest extends TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The "r4" revision is invalid.
-	 */
 	public function testUnknownRevisionSymbol()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('The "r4" revision is invalid.');
+
 		$this->_revisionListParser->expandRanges(array(5, 'r4'));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Inverted revision range "5-3" is not implemented.
-	 */
 	public function testInvertedRange()
 	{
+		$this->expectException('\InvalidArgumentException');
+		$this->expectExceptionMessage('Inverted revision range "5-3" is not implemented.');
+
 		$this->_revisionListParser->expandRanges(array('5-3'));
 	}
 
