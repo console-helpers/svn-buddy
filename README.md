@@ -99,7 +99,7 @@ The working copy revision row is highlighted in bold in revision list to ease id
 * `--merges` - Show merge revisions only
 * `--no-merges` - Hide merge revisions
 * `--merged` - Shows only revisions, that were merged at least once
-* `--not-merged` - Print only not merged revisions
+* `--not-merged` - Shows only revisions, that were not merged
 * `--merged-by=MERGED-BY` - Show revisions merged by list of revision(-s) and/or revision range(-s)
 * `--action=ACTION` - Show revisions, whose paths were affected by specified action, e.g. `A`, `M`, `R`, `D`
 * `--kind=KIND` - Show revisions, whose paths match specified kind, e.g. `dir` or `file`
@@ -110,7 +110,8 @@ The working copy revision row is highlighted in bold in revision list to ease id
 * `--with-merge-oracle` - Shows number of paths in the revision, that can cause conflict upon merging
 * `--with-merge-status` - Shows merge revisions affecting this revision
 * `--max-count=MAX-COUNT` - Limit the number of revisions to output
-
+* `-a`, `--aggregate` - Aggregate displayed revisions by bugs
+  
 #### Configuration settings
 
 * `log.limit` - maximal number of displayed revisions (defaults to `10`)
@@ -295,12 +296,15 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `--source-url=SOURCE-URL` - Merge source url (absolute or relative) or ref name, e.g. `branches/branch-name`
 * `-r`, `--revisions=REVISIONS` - List of revision(-s) and/or revision range(-s) to merge, e.g. `53324`, `1224-4433` or `all`
 * `-b`, `--bugs=BUGS` - List of bug(-s) to merge, e.g. `JRA-1234`, `43644`
+* `--no-merges` - Hide merge revisions
 * `-f`, `--with-full-message` - Shows non-truncated commit messages
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--update-revision=UPDATE-REVISION` - Update working copy to given revision before performing a merge
 * `--auto-commit=AUTO-COMMIT` - Automatically perform commit on successful merge, e.g. `yes` or `no`
 * `--record-only` - Mark revisions as merged without actually merging them
+* `--reverse` - Rollback previously merged revisions
+* `-a`, `--aggregate` - Aggregate displayed revisions by bugs
 
 #### Configuration settings
 
