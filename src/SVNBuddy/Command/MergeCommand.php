@@ -119,10 +119,22 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'List of revision(-s) and/or revision range(-s) to merge, e.g. <comment>53324</comment>, <comment>1224-4433</comment> or <comment>all</comment>'
 			)
 			->addOption(
+				'exclude-revisions',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'List of revision(-s) and/or revision range(-s) not to merge, e.g. <comment>53324</comment>, <comment>1224-4433</comment>'
+			)
+			->addOption(
 				'bugs',
 				'b',
 				InputOption::VALUE_REQUIRED,
 				'List of bug(-s) to merge, e.g. <comment>JRA-1234</comment>, <comment>43644</comment>'
+			)
+			->addOption(
+				'exclude-bugs',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'List of bug(-s) not to merge, e.g. <comment>JRA-1234</comment>, <comment>43644</comment>'
 			)
 			->addOption(
 				'no-merges',
@@ -214,6 +226,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 *
 	 * @throws CommandException When everything is merged.
 	 * @throws CommandException When manually specified revisions are already merged.
+	 * @throws CommandException When bugs from "--bugs" option are not found.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
@@ -238,11 +251,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		$this->ensureWorkingCopyWithoutConflicts($source_url, $wc_path);
 
 		if ( $this->shouldUseAll($revisions) ) {
-			$revisions = $this->_usableRevisions;
-
-			if ( $this->io->getOption('no-merges') ) {
-				$revisions = array_diff($revisions, $this->getRevisionLog($source_url)->find('merges', 'all_merges'));
-			}
+			$revisions = $this->filterMergeableRevisions($this->_usableRevisions, $source_url);
 		}
 		else {
 			if ( $revisions ) {
@@ -259,9 +268,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				$revisions = array_merge($revisions, $revisions_from_bugs);
 			}
 
-			if ( $this->io->getOption('no-merges') ) {
-				$revisions = array_diff($revisions, $this->getRevisionLog($source_url)->find('merges', 'all_merges'));
-			}
+			$revisions = $this->filterMergeableRevisions($revisions, $source_url);
 
 			if ( $revisions ) {
 				$revisions = array_intersect($revisions, $this->_usableRevisions);
@@ -290,6 +297,44 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'--with-merge-oracle' => true,
 			));
 		}
+	}
+
+	/**
+	 * Filters mergeable revision list.
+	 *
+	 * @param array  $revisions  Revisions.
+	 * @param string $source_url Source URL.
+	 *
+	 * @return integer[]
+	 * @throws CommandException When bugs from "--exclude-bugs" option are not found.
+	 */
+	protected function filterMergeableRevisions(array $revisions, $source_url)
+	{
+		$exclude_bugs = $this->getList($this->io->getOption('exclude-bugs'));
+		$exclude_revisions = $this->getList($this->io->getOption('exclude-revisions'));
+
+		if ( $exclude_revisions ) {
+			$revisions = array_diff(
+				$revisions,
+				$this->getDirectRevisions($exclude_revisions, $source_url)
+			);
+		}
+
+		if ( $exclude_bugs ) {
+			$exclude_revisions_from_bugs = $this->getRevisionLog($source_url)->find('bugs', $exclude_bugs);
+
+			if ( !$exclude_revisions_from_bugs ) {
+				throw new CommandException('Specified exclude-bugs aren\'t mentioned in any of revisions');
+			}
+
+			$revisions = array_diff($revisions, $exclude_revisions_from_bugs);
+		}
+
+		if ( $this->io->getOption('no-merges') ) {
+			$revisions = array_diff($revisions, $this->getRevisionLog($source_url)->find('merges', 'all_merges'));
+		}
+
+		return $revisions;
 	}
 
 	/**

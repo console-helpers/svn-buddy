@@ -111,7 +111,7 @@ The working copy revision row is highlighted in bold in revision list to ease id
 * `--with-merge-status` - Shows merge revisions affecting this revision
 * `--max-count=MAX-COUNT` - Limit the number of revisions to output
 * `-a`, `--aggregate` - Aggregate displayed revisions by bugs
-  
+
 #### Configuration settings
 
 * `log.limit` - maximal number of displayed revisions (defaults to `10`)
@@ -295,7 +295,9 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 
 * `--source-url=SOURCE-URL` - Merge source url (absolute or relative) or ref name, e.g. `branches/branch-name`
 * `-r`, `--revisions=REVISIONS` - List of revision(-s) and/or revision range(-s) to merge, e.g. `53324`, `1224-4433` or `all`
+* `--exclude-revisions=EXCLUDE-REVISIONS` - List of revision(-s) and/or revision range(-s) not to merge, e.g. `53324`, `1224-4433`
 * `-b`, `--bugs=BUGS` - List of bug(-s) to merge, e.g. `JRA-1234`, `43644`
+* `--exclude-bugs=EXCLUDE-BUGS` - List of bug(-s) not to merge, e.g. `JRA-1234`, `43644`
 * `--no-merges` - Hide merge revisions
 * `-f`, `--with-full-message` - Shows non-truncated commit messages
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected

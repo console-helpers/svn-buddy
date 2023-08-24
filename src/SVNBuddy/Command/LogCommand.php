@@ -241,6 +241,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	 *
 	 * @throws CommandException When specified revisions are not present in current project.
 	 * @throws CommandException When project contains no associated revisions.
+	 * @throws CommandException When bugs from "--bugs" option are not found.
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
