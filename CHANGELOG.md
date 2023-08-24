@@ -9,10 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Dropped support for PHP 5.4 and PHP 5.5 versions.
+- The `--bugs` and `--revisions` options of the `merge` and `log` commands now can be combined to for complex revision range creation.
 
 ### Fixed
 - The `--aggregate` option of the `merge` and `commit` commands wasn't working (triggered an exception) when revision without a bug wasn't present in the list of revisions.
 - The revision color in merge header (that is underlined) of the `merge` command was matching color of the header itself (white+bold).
+- The `log` command verifies, that bugs provided in the `--bugs` option actually exist in the repository.
 
 ## [0.6.1] - 2022-12-06
 ### Changed

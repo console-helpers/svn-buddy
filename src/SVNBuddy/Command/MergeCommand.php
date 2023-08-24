@@ -212,7 +212,6 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @throws \RuntimeException When both "--bugs" and "--revisions" options were specified.
 	 * @throws CommandException When everything is merged.
 	 * @throws CommandException When manually specified revisions are already merged.
 	 */
@@ -220,10 +219,6 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	{
 		$bugs = $this->getList($this->io->getOption('bugs'));
 		$revisions = $this->getList($this->io->getOption('revisions'));
-
-		if ( $bugs && $revisions ) {
-			throw new \RuntimeException('The "--bugs" and "--revisions" options are mutually exclusive.');
-		}
 
 		$wc_path = $this->getWorkingCopyPath();
 
@@ -253,12 +248,15 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			if ( $revisions ) {
 				$revisions = $this->getDirectRevisions($revisions, $source_url);
 			}
-			elseif ( $bugs ) {
-				$revisions = $this->getRevisionLog($source_url)->find('bugs', $bugs);
 
-				if ( !$revisions ) {
+			if ( $bugs ) {
+				$revisions_from_bugs = $this->getRevisionLog($source_url)->find('bugs', $bugs);
+
+				if ( !$revisions_from_bugs ) {
 					throw new CommandException('Specified bugs aren\'t mentioned in any of revisions');
 				}
+
+				$revisions = array_merge($revisions, $revisions_from_bugs);
 			}
 
 			if ( $this->io->getOption('no-merges') ) {

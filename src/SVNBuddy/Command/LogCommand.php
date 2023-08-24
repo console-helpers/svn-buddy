@@ -239,7 +239,6 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	/**
 	 * {@inheritdoc}
 	 *
-	 * @throws \RuntimeException When both "--bugs" and "--revisions" options were specified.
 	 * @throws CommandException When specified revisions are not present in current project.
 	 * @throws CommandException When project contains no associated revisions.
 	 */
@@ -249,22 +248,29 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		$bugs = $this->getList($this->io->getOption('bugs'));
 		$revisions = $this->getList($this->io->getOption('revisions'));
 
-		if ( $bugs && $revisions ) {
-			throw new \RuntimeException('The "--bugs" and "--revisions" options are mutually exclusive.');
-		}
-
 		$missing_revisions = array();
 		$revisions_by_path = $this->getRevisionsByPath();
 
-		if ( $revisions ) {
-			$revisions = $this->_revisionListParser->expandRanges($revisions);
+		if ( $revisions || $bugs ) {
+			if ( $revisions ) {
+				$revisions = $this->_revisionListParser->expandRanges($revisions);
+
+				// Don't check missing revisions from bugs, because they can affect different repository paths.
+				$missing_revisions = array_diff($revisions, $revisions_by_path);
+			}
+
+			if ( $bugs ) {
+				$revisions_from_bugs = $this->_revisionLog->find('bugs', $bugs);
+
+				if ( !$revisions_from_bugs ) {
+					throw new CommandException('Specified bugs aren\'t mentioned in any of revisions');
+				}
+
+				$revisions = array_merge($revisions, $revisions_from_bugs);
+			}
+
+			// Only show revisions on given path.
 			$revisions_by_path = array_intersect($revisions_by_path, $revisions);
-			$missing_revisions = array_diff($revisions, $revisions_by_path);
-		}
-		elseif ( $bugs ) {
-			// Only show bug-related revisions on given path. The $missing_revisions is always empty.
-			$revisions_from_bugs = $this->_revisionLog->find('bugs', $bugs);
-			$revisions_by_path = array_intersect($revisions_by_path, $revisions_from_bugs);
 		}
 
 		$merged_by = $this->getList($this->io->getOption('merged-by'));
