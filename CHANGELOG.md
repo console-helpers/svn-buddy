@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `-a` shortcut for the `--aggregate` option of the `merge` and `commit` commands.
 - Show merged revision commit message during merge process, that is done by the `merge` command.
 - Added `--exclude-bugs` and `--exclude-revisions` options to the `merge` command for better versatility.
+- Added `--merges` option to the `merge` command to display only merge revisions.
 
 ### Changed
 - Dropped support for PHP 5.4 and PHP 5.5 versions.

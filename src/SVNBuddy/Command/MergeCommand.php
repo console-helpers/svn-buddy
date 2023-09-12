@@ -137,6 +137,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'List of bug(-s) not to merge, e.g. <comment>JRA-1234</comment>, <comment>43644</comment>'
 			)
 			->addOption(
+				'merges',
+				null,
+				InputOption::VALUE_NONE,
+				'Show merge revisions only'
+			)
+			->addOption(
 				'no-merges',
 				null,
 				InputOption::VALUE_NONE,
@@ -289,6 +295,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$this->runOtherCommand('log', array(
 				'path' => $source_url,
 				'--revisions' => implode(',', $this->_usableRevisions),
+				'--merges' => $this->io->getOption('merges'),
 				'--no-merges' => $this->io->getOption('no-merges'),
 				'--with-full-message' => $this->io->getOption('with-full-message'),
 				'--with-details' => $this->io->getOption('with-details'),
@@ -330,7 +337,10 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$revisions = array_diff($revisions, $exclude_revisions_from_bugs);
 		}
 
-		if ( $this->io->getOption('no-merges') ) {
+		if ( $this->io->getOption('merges') ) {
+			$revisions = array_intersect($revisions, $this->getRevisionLog($source_url)->find('merges', 'all_merges'));
+		}
+		elseif ( $this->io->getOption('no-merges') ) {
 			$revisions = array_diff($revisions, $this->getRevisionLog($source_url)->find('merges', 'all_merges'));
 		}
 

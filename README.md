@@ -298,6 +298,7 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `--exclude-revisions=EXCLUDE-REVISIONS` - List of revision(-s) and/or revision range(-s) not to merge, e.g. `53324`, `1224-4433`
 * `-b`, `--bugs=BUGS` - List of bug(-s) to merge, e.g. `JRA-1234`, `43644`
 * `--exclude-bugs=EXCLUDE-BUGS` - List of bug(-s) not to merge, e.g. `JRA-1234`, `43644`
+* `--merges` - Show merge revisions only
 * `--no-merges` - Hide merge revisions
 * `-f`, `--with-full-message` - Shows non-truncated commit messages
 * `-d`, `--with-details` - Shows detailed revision information, e.g. paths affected
