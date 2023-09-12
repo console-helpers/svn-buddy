@@ -49,7 +49,7 @@ class GroupByBugMergeTemplate extends AbstractGroupByMergeTemplate
 			$bug_title_added = false;
 
 			foreach ( $bug_revisions as $revision ) {
-				$commit_message_parts = explode(PHP_EOL, $revisions_data[$revision]['msg'], 2);
+				$commit_message_parts = explode(PHP_EOL, rtrim($revisions_data[$revision]['msg']), 2);
 				$bug_title = array_shift($commit_message_parts);
 				$commit_message = $commit_message_parts ? implode(PHP_EOL, $commit_message_parts) : '(no details)';
 

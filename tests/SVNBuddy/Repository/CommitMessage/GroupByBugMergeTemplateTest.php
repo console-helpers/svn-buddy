@@ -31,10 +31,11 @@ class GroupByBugMergeTemplateTest extends AbstractGroupByMergeTemplateTestCase
 
 		if ( $regular_or_reverse ) {
 			// Merged revision information.
-			$revision_log1->getRevisionsData('bugs', array(18, 33, 47))->willReturn(array(
+			$revision_log1->getRevisionsData('bugs', array(18, 33, 47, 516))->willReturn(array(
 				18 => array('JRA-100'),
 				33 => array('JRA-120'),
 				47 => array('JRA-100'),
+				516 => array('JRA-100'),
 			));
 			$revision_log2->getRevisionsData('bugs', array(4))->willReturn(array(
 				4 => array(),
@@ -51,6 +52,7 @@ Merging from Trunk to Stable
 * JRA-100 - own-tr1-line1
 r18: own-tr1-line2
 r47: own-tr3-line2
+r516: (no details)
 * JRA-120 - own-tr2-line1
 r33: own-tr2-line2
 

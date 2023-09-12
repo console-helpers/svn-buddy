@@ -38,6 +38,7 @@ own-tr1-line2
 own-tr2-line2
 * r47: JRA-100 - own-tr3-line1
 own-tr3-line2
+* r516: JRA-100 - own-tr3-line1
 
 Merge (branch-name > stable): * r4: own-br1-line1
 own-br1-line2

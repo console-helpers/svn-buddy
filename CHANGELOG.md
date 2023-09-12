@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `--aggregate` option of the `merge` and `commit` commands wasn't working (triggered an exception) when revision without a bug wasn't present in the list of revisions.
 - The revision color in merge header (that is underlined) of the `merge` command was matching color of the header itself (white+bold).
 - The `log` command verifies, that bugs provided in the `--bugs` option actually exist in the repository.
+- Revisions with empty 2nd line of their commit message weren't shown as "(no details)" in merge commit message. 
 
 ## [0.6.1] - 2022-12-06
 ### Changed

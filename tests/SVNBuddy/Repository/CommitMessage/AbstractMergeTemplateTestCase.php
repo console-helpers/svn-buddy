@@ -108,13 +108,13 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 		if ( $regular_or_reverse ) {
 			// Merged revision information.
 			$this->connector->getMergedRevisionChanges('/path/to/working-copy', true)->willReturn(array(
-				'/projects/project-name/trunk' => array('18', '33', '47'),
+				'/projects/project-name/trunk' => array('18', '33', '47', '516'),
 				'/projects/project-name/branches/branch-name' => array('4'),
 				'/projects/another-project-name/tags/stable' => array('15'),
 				'/projects/another-project-name/trunk' => array('17'),
 			));
 
-			$revision_log1->getRevisionsData('summary', array(18, 33, 47))->willReturn(array(
+			$revision_log1->getRevisionsData('summary', array(18, 33, 47, 516))->willReturn(array(
 				18 => array(
 					'author' => 'user1',
 					'date' => 3534535353,
@@ -129,6 +129,11 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 					'author' => 'user3',
 					'date' => 35345445353,
 					'msg' => 'JRA-100 - own-tr3-line1' . PHP_EOL . 'own-tr3-line2' . PHP_EOL . PHP_EOL,
+				),
+				516 => array(
+					'author' => 'user4',
+					'date' => 35345445353,
+					'msg' => 'JRA-100 - own-tr3-line1' . PHP_EOL,
 				),
 			));
 
