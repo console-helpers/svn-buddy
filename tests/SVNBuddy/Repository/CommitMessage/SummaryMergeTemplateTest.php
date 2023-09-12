@@ -42,7 +42,7 @@ class SummaryMergeTemplateTest extends AbstractMergeTemplateTestCase
 
 		if ( $regular_or_reverse ) {
 			$expected = <<<COMMIT_MSG
-Merge of "projects/project-name/trunk@47" to "path/to/project/tags/stable@555".
+Merge of "projects/project-name/trunk@516" to "path/to/project/tags/stable@555".
 
 Merge of "projects/project-name/branches/branch-name@4" to "path/to/project/tags/stable@555".
 
