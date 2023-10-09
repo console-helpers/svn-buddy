@@ -521,7 +521,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		$revision_log = $this->getRevisionLog($source_url);
 
 		$this->io->write(sprintf(
-			' * Upcoming %s Status ... ',
+			' * Upcoming %s Status (no filters) ... ',
 			$this->isReverseMerge() ? 'Reverse-merge' : 'Merge'
 		));
 		$usable_revisions = $this->calculateUsableRevisions($source_url, $wc_path);
