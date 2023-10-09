@@ -195,6 +195,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'a',
 				InputOption::VALUE_NONE,
 				'Aggregate displayed revisions by bugs'
+			)
+			->addOption(
+				'preview',
+				'p',
+				InputOption::VALUE_NONE,
+				'Preview revisions to be merged'
 			);
 
 		parent::configure();
@@ -289,20 +295,18 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 
 		if ( $revisions ) {
-			$this->performMerge($source_url, $wc_path, $revisions);
+			if ( $this->io->getOption('preview') ) {
+				// Display mergeable revisions according to user-specified filters.
+				$this->printRevisions($source_url, $revisions);
+			}
+			else {
+				// Perform merge using user-specified filters.
+				$this->performMerge($source_url, $wc_path, $revisions);
+			}
 		}
 		elseif ( $this->_usableRevisions ) {
-			$this->runOtherCommand('log', array(
-				'path' => $source_url,
-				'--revisions' => implode(',', $this->_usableRevisions),
-				'--merges' => $this->io->getOption('merges'),
-				'--no-merges' => $this->io->getOption('no-merges'),
-				'--with-full-message' => $this->io->getOption('with-full-message'),
-				'--with-details' => $this->io->getOption('with-details'),
-				'--with-summary' => $this->io->getOption('with-summary'),
-				'--aggregate' => $this->io->getOption('aggregate'),
-				'--with-merge-oracle' => true,
-			));
+			// Display all mergeable revisions, because user haven't specified any revisions for merging.
+			$this->printRevisions($source_url, $this->_usableRevisions);
 		}
 	}
 
@@ -865,6 +869,29 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$this->io->writeln(array('', 'Commencing automatic commit after merge ...'));
 			$this->runOtherCommand('commit');
 		}
+	}
+
+	/**
+	 * Prints revisions.
+	 *
+	 * @param string $source_url Merge source: url.
+	 * @param array  $revisions  Revisions.
+	 *
+	 * @return void
+	 */
+	protected function printRevisions($source_url, array $revisions)
+	{
+		$this->runOtherCommand('log', array(
+			'path' => $source_url,
+			'--revisions' => implode(',', $revisions),
+			'--merges' => $this->io->getOption('merges'),
+			'--no-merges' => $this->io->getOption('no-merges'),
+			'--with-full-message' => $this->io->getOption('with-full-message'),
+			'--with-details' => $this->io->getOption('with-details'),
+			'--with-summary' => $this->io->getOption('with-summary'),
+			'--aggregate' => $this->io->getOption('aggregate'),
+			'--with-merge-oracle' => true,
+		));
 	}
 
 	/**

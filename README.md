@@ -308,6 +308,7 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `--record-only` - Mark revisions as merged without actually merging them
 * `--reverse` - Rollback previously merged revisions
 * `-a`, `--aggregate` - Aggregate displayed revisions by bugs
+* `-p`, `--preview` - Preview revisions to be merged
 
 #### Configuration settings
 
