@@ -818,6 +818,16 @@ svn-buddy.phar
 svn-buddy.phar list
 ```
 
+### The "changelog" command
+
+Displays changes included in the current SVN-Buddy release.
+
+#### Examples
+
+```
+svn-buddy.phar changelog
+```
+
 ### The "help" command
 
 Displays help for a command.

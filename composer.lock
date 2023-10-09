@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "558d3b793621b60c1d0d55b4a14f74e5",
+    "content-hash": "04f37a4703a64218a52d209d88a2492a",
     "packages": [
         {
             "name": "aura/sql",
@@ -250,6 +250,43 @@
                 "source": "https://github.com/console-helpers/db-migration/tree/v0.1.1"
             },
             "time": "2020-12-21T10:18:04+00:00"
+        },
+        {
+            "name": "fiasco/symfony-console-style-markdown",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fiasco/symfony-console-style-markdown.git",
+                "reference": "c11cc4fa694f72e230d775d1bd40f748b6679936"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fiasco/symfony-console-style-markdown/zipball/c11cc4fa694f72e230d775d1bd40f748b6679936",
+                "reference": "c11cc4fa694f72e230d775d1bd40f748b6679936",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Fiasco\\SymfonyConsoleStyleMarkdown\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Josh Waihi",
+                    "email": "joshwaihi@gmail.com"
+                }
+            ],
+            "description": "A Symfony Console Style extension to support Markdown formatting.",
+            "support": {
+                "issues": "https://github.com/fiasco/symfony-console-style-markdown/issues",
+                "source": "https://github.com/fiasco/symfony-console-style-markdown/tree/master"
+            },
+            "time": "2019-08-09T04:10:21+00:00"
         },
         {
             "name": "padraic/humbug_get_contents",

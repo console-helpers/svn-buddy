@@ -3,7 +3,8 @@
     "chmod": "0755",
     "directories": ["migrations", "src", "bin"],
     "files": [
-        "LICENSE"
+        "LICENSE",
+		"CHANGELOG.md"
     ],
     "finder": [
         {

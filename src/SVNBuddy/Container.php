@@ -16,6 +16,7 @@ use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\DatabaseMigration\PhpMigrationRunner;
 use ConsoleHelpers\DatabaseMigration\SqlMigrationRunner;
+use ConsoleHelpers\SVNBuddy\Command\ChangelogCommand;
 use ConsoleHelpers\SVNBuddy\Command\CleanupCommand;
 use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
 use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
@@ -321,6 +322,9 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandL
 		};
 		$this->commandFactories['self-update'] = function () {
 			return new SelfUpdateCommand();
+		};
+		$this->commandFactories['changelog'] = function () {
+			return new ChangelogCommand();
 		};
 
 		if ( strpos(__DIR__, 'phar://') === false ) {

@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--exclude-bugs` and `--exclude-revisions` options to the `merge` command for better versatility.
 - Added `--merges` option to the `merge` command to display only merge revisions.
 - Added `--preview` option to the `merge` command to display revisions, that will be merged instead of merging them.
+- Added the `changelog` command, that will show changes included in the current SVN-Buddy release.
 
 ### Changed
 - Dropped support for PHP 5.4 and PHP 5.5 versions.

@@ -20,7 +20,8 @@
 		"ext-simplexml": "*",
 		"ext-zlib": "*",
 		"ext-json": "*",
-		"ext-pdo": "*"
+		"ext-pdo": "*",
+		"fiasco/symfony-console-style-markdown": "^1.2"
 	},
 	"require-dev": {
 		"aik099/coding-standard": "dev-master",
