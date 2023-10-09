@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Dropped support for PHP 5.4 and PHP 5.5 versions.
 - The `--bugs` and `--revisions` options of the `merge` and `log` commands now can be combined for better versatility.
 - Improved `merge` command phrasing for the "upcoming merge status" term. 
+- Lazy load other commands to improve each individual command performance.
 
 ### Fixed
 - The `--aggregate` option of the `merge` and `commit` commands wasn't working (triggered an exception) when revision without a bug wasn't present in the list of revisions.

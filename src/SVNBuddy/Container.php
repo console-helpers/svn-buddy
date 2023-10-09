@@ -16,6 +16,20 @@ use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\DatabaseMigration\PhpMigrationRunner;
 use ConsoleHelpers\DatabaseMigration\SqlMigrationRunner;
+use ConsoleHelpers\SVNBuddy\Command\CleanupCommand;
+use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
+use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
+use ConsoleHelpers\SVNBuddy\Command\ConfigCommand;
+use ConsoleHelpers\SVNBuddy\Command\ConflictsCommand;
+use ConsoleHelpers\SVNBuddy\Command\Dev\MigrationCreateCommand;
+use ConsoleHelpers\SVNBuddy\Command\Dev\PharCreateCommand;
+use ConsoleHelpers\SVNBuddy\Command\LogCommand;
+use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
+use ConsoleHelpers\SVNBuddy\Command\ProjectCommand;
+use ConsoleHelpers\SVNBuddy\Command\RevertCommand;
+use ConsoleHelpers\SVNBuddy\Command\SearchCommand;
+use ConsoleHelpers\SVNBuddy\Command\SelfUpdateCommand;
+use ConsoleHelpers\SVNBuddy\Command\UpdateCommand;
 use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
@@ -44,11 +58,20 @@ use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
 use ConsoleHelpers\SVNBuddy\Updater\UpdateManager;
 use ConsoleHelpers\SVNBuddy\Updater\Updater;
 use ConsoleHelpers\SVNBuddy\Updater\VersionUpdateStrategy;
+use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class Container extends \ConsoleHelpers\ConsoleKit\Container
+class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandLoaderInterface
 {
+
+	/**
+	 * Command factories.
+	 *
+	 * @var callable[]
+	 */
+	protected $commandFactories = array();
 
 	/**
 	 * {@inheritdoc}
@@ -240,6 +263,106 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container
 				$c['working_directory']
 			);
 		};
+
+		$this->addCommandFactories();
+	}
+
+	/**
+	 * Adds command factories.
+	 *
+	 * @return void
+	 */
+	protected function addCommandFactories()
+	{
+		$this->commandFactories['merge'] = function () {
+			return new MergeCommand();
+		};
+		$this->commandFactories['cleanup'] = function () {
+			return new CleanupCommand();
+		};
+		$this->commandFactories['revert'] = function () {
+			return new RevertCommand();
+		};
+		$this->commandFactories['log'] = function () {
+			return new LogCommand();
+		};
+		$this->commandFactories['update'] = function () {
+			return new UpdateCommand();
+		};
+		$this->commandFactories['up'] = function () {
+			return new UpdateCommand();
+		};
+		$this->commandFactories['commit'] = function () {
+			return new CommitCommand();
+		};
+		$this->commandFactories['ci'] = function () {
+			return new CommitCommand();
+		};
+		$this->commandFactories['conflicts'] = function () {
+			return new ConflictsCommand();
+		};
+		$this->commandFactories['cf'] = function () {
+			return new ConflictsCommand();
+		};
+		$this->commandFactories['config'] = function () {
+			return new ConfigCommand();
+		};
+		$this->commandFactories['cfg'] = function () {
+			return new ConfigCommand();
+		};
+		$this->commandFactories['project'] = function () {
+			return new ProjectCommand();
+		};
+		$this->commandFactories['_completion'] = function () {
+			return new CompletionCommand();
+		};
+		$this->commandFactories['search'] = function () {
+			return new SearchCommand();
+		};
+		$this->commandFactories['self-update'] = function () {
+			return new SelfUpdateCommand();
+		};
+
+		if ( strpos(__DIR__, 'phar://') === false ) {
+			$this->commandFactories['dev:migration-create'] = function () {
+				return new MigrationCreateCommand();
+			};
+			$this->commandFactories['dev:phar-create'] = function () {
+				return new PharCreateCommand();
+			};
+		}
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function has($name)
+	{
+		return isset($this->commandFactories[$name]);
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @throws CommandNotFoundException When command wasn't found.
+	 */
+	public function get($name)
+	{
+		if ( !isset($this->commandFactories[$name]) ) {
+			throw new CommandNotFoundException(sprintf('Command "%s" does not exist.', $name));
+		}
+
+		$factory = $this->commandFactories[$name];
+
+		return $factory();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function getNames()
+	{
+		return array_keys($this->commandFactories);
 	}
 
 }
