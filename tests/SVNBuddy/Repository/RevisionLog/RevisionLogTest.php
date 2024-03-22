@@ -14,6 +14,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -43,6 +44,13 @@ class RevisionLogTest extends TestCase
 	protected $io;
 
 	/**
+	 * Revision URL builder.
+	 *
+	 * @var ObjectProphecy|RevisionUrlBuilder
+	 */
+	protected $revisionUrlBuilder;
+
+	/**
 	 * @before
 	 * @return void
 	 */
@@ -50,6 +58,7 @@ class RevisionLogTest extends TestCase
 	{
 		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
 		$this->io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
+		$this->revisionUrlBuilder = $this->prophesize(RevisionUrlBuilder::class);
 	}
 
 	public function testRefreshWithoutPlugins()
@@ -353,6 +362,13 @@ class RevisionLogTest extends TestCase
 		$this->assertEquals('trunk', $revision_log->getRefName());
 	}
 
+	public function testGetRevisionUrlBuilder()
+	{
+		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
+
+		$this->assertSame($this->revisionUrlBuilder->reveal(), $revision_log->getRevisionURLBuilder());
+	}
+
 	/**
 	 * Expects query to "svn log".
 	 *
@@ -444,6 +460,7 @@ OUTPUT;
 
 		$revision_log = new RevisionLog(
 			$repository_url,
+			$this->revisionUrlBuilder->reveal(),
 			$this->repositoryConnector->reveal(),
 			$io
 		);

@@ -16,6 +16,7 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 
 class RevisionLog
 {
@@ -67,14 +68,23 @@ class RevisionLog
 	private $_plugins = array();
 
 	/**
+	 * Revision URL builder.
+	 *
+	 * @var RevisionUrlBuilder
+	 */
+	private $_revisionUrlBuilder;
+
+	/**
 	 * Create revision log.
 	 *
-	 * @param string    $repository_url       Repository url.
-	 * @param Connector $repository_connector Repository connector.
-	 * @param ConsoleIO $io                   Console IO.
+	 * @param string             $repository_url       Repository url.
+	 * @param RevisionUrlBuilder $revision_url_builder Revision URL builder.
+	 * @param Connector          $repository_connector Repository connector.
+	 * @param ConsoleIO          $io                   Console IO.
 	 */
 	public function __construct(
 		$repository_url,
+		RevisionUrlBuilder $revision_url_builder,
 		Connector $repository_connector,
 		ConsoleIO $io = null
 	) {
@@ -86,6 +96,17 @@ class RevisionLog
 		$relative_path = $repository_connector->getRelativePath($repository_url);
 		$this->_projectPath = $repository_connector->getProjectUrl($relative_path) . '/';
 		$this->_refName = $repository_connector->getRefByPath($relative_path);
+		$this->_revisionUrlBuilder = $revision_url_builder;
+	}
+
+	/**
+	 * Returns revision URL builder.
+	 *
+	 * @return RevisionUrlBuilder
+	 */
+	public function getRevisionURLBuilder()
+	{
+		return $this->_revisionUrlBuilder;
 	}
 
 	/**

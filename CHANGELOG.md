@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--preview` option to the `merge` command to display revisions, that will be merged instead of merging them.
 - Added the `changelog` command, that will show changes included in the current SVN-Buddy release.
 - Added `--author` option to the `log` command to display revisions, made by a specific author.
+- Added `--with-revision-url` option to the `log` command to display URL (Phabricator only for now) for each shown revision.
 
 ### Changed
 - Dropped support for PHP 5.4 and PHP 5.5 versions.

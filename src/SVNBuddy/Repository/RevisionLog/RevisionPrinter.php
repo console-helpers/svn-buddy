@@ -33,6 +33,8 @@ class RevisionPrinter
 
 	const COLUMN_MERGE_STATUS = 6;
 
+	const COLUMN_REVISION_URL = 7;
+
 	/**
 	 * Date helper.
 	 *
@@ -216,6 +218,22 @@ class RevisionPrinter
 			$headers[] = 'Merged Via';
 		}
 
+		// Add "Revision URL" header.
+		$with_revision_url = in_array(self::COLUMN_REVISION_URL, $this->_columns);
+
+		if ( $with_revision_url ) {
+			$revision_url_mask = $revision_log->getRevisionURLBuilder()->getMask();
+
+			if ( strpos($revision_url_mask, '://') !== false ) {
+				// Add column only, when it will contain a URL.
+				$headers[] = 'Revision URL';
+			}
+			else {
+				// Don't add the column, when it won't contain a URL.
+				$with_revision_url = false;
+			}
+		}
+
 		$table->setHeaders($headers);
 
 		$prev_bugs = null;
@@ -291,6 +309,11 @@ class RevisionPrinter
 			// Add "Merged Via" column.
 			if ( $with_merge_status ) {
 				$row[] = $this->_generateMergedViaColumn($revisions_merged_via[$revision], $revisions_merged_via_refs);
+			}
+
+			// Add "Revision URL" header.
+			if ( $with_revision_url ) {
+				$row[] = \str_replace('{revision}', $revision, $revision_url_mask);
 			}
 
 			if ( $revision === $this->_currentRevision ) {

@@ -14,6 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
@@ -108,8 +109,10 @@ class RevisionLogFactory
 		$database_cache = new DatabaseCache($database);
 		$repository_filler = new RepositoryFiller($database, $database_cache);
 
+		$revision_url_builder = new RevisionUrlBuilder($this->_repositoryConnector, $repository_url);
+
 		// Create blank revision log.
-		$revision_log = new RevisionLog($repository_url, $this->_repositoryConnector, $io);
+		$revision_log = new RevisionLog($repository_url, $revision_url_builder, $this->_repositoryConnector, $io);
 
 		// Add plugins to revision log.
 		$revision_log->registerPlugin(new SummaryPlugin($database, $repository_filler));

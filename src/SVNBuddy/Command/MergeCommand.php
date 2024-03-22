@@ -16,7 +16,6 @@ use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
-use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
@@ -672,7 +671,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		$revision_log = $this->getRevisionLog($source_url);
 		$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
 
-		$revision_title_mask = $this->getRevisionTitle($source_url);
+		$revision_title_mask = $revision_log->getRevisionURLBuilder()->getMask('fg=white;options=bold,underscore');
+
+		// Added " revision" text, when URL wasn't detected.
+		if ( strpos($revision_title_mask, '://') === false ) {
+			$revision_title_mask .= ' revision';
+		}
 
 		foreach ( $revisions as $index => $revision ) {
 			$command = $this->repositoryConnector->getCommand(
@@ -704,42 +708,6 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 
 		$this->performCommit();
-	}
-
-	/**
-	 * Returns revision title.
-	 *
-	 * @param string $source_url Merge source: url.
-	 *
-	 * @return string
-	 */
-	protected function getRevisionTitle($source_url)
-	{
-		$link_style = 'fg=white;options=bold,underscore';
-
-		try {
-			$arcanist_config = \json_decode(
-				$this->repositoryConnector->getFileContent($source_url . '/.arcconfig', 'HEAD'),
-				true
-			);
-		}
-		catch ( RepositoryCommandException $e ) {
-			// Phabricator integration is not configured.
-			return '<' . $link_style . '>{revision}</> revision';
-		}
-
-		// Phabricator integration is not configured correctly.
-		if ( !\is_array($arcanist_config)
-			|| !isset($arcanist_config['repository.callsign'], $arcanist_config['phabricator.uri'])
-		) {
-			return '<' . $link_style . '>{revision}</> revision';
-		}
-
-		// Phabricator integration is configured properly.
-		$revision_title = $arcanist_config['phabricator.uri'];
-		$revision_title .= 'r' . $arcanist_config['repository.callsign'] . '{revision}';
-
-		return '<' . $link_style . '>' . $revision_title . '</>';
 	}
 
 	/**
