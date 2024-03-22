@@ -150,6 +150,12 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				'Show revisions, whose paths match specified kind, e.g. <comment>dir</comment> or <comment>file</comment>'
 			)
 			->addOption(
+				'author',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Show revisions, made by a given author'
+			)
+			->addOption(
 				'with-full-message',
 				'f',
 				InputOption::VALUE_NONE,
@@ -318,6 +324,15 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			$revisions_by_path = array_intersect(
 				$revisions_by_path,
 				$this->_revisionLog->find('paths', 'kind:' . $kind)
+			);
+		}
+
+		$author = $this->io->getOption('author');
+
+		if ( $author ) {
+			$revisions_by_path = array_intersect(
+				$revisions_by_path,
+				$this->_revisionLog->find('summary', 'author:' . $author)
 			);
 		}
 
