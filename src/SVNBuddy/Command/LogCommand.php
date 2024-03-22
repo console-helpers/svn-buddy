@@ -645,7 +645,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 	{
 		return array(
 			'merges', 'no-merges', 'merged', 'not-merged', 'action',
-			'kind', 'with-full-message', 'with-details', 'with-summary',
+			'kind', 'author', 'with-full-message', 'with-details', 'with-summary',
 			'with-refs', 'with-merge-oracle', 'with-merge-status', 'max-count',
 		);
 	}

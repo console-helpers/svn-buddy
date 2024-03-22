@@ -695,6 +695,7 @@ Runs other command sequentially on every working copy on a path. Almost all othe
 * `--not-merged` - Shows only revisions, that were not merged
 * `--action=ACTION` - Show revisions, whose paths were affected by specified action, e.g. `A`, `M`, `R`, `D`
 * `--kind=KIND` - Show revisions, whose paths match specified kind, e.g. `dir` or `file`
+* `--author=AUTHOR` - Show revisions, made by a given author
 * `-f`, `--with-full-message` - Shows non-truncated commit messages
 * `--with-refs` - Shows revision refs
 * `--with-merge-oracle` - Shows number of paths in the revision, that can cause conflict upon merging
