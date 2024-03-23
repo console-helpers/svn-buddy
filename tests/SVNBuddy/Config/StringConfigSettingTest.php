@@ -12,6 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 
 class StringConfigSettingTest extends AbstractConfigSettingTest
 {
@@ -23,7 +24,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
-			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\StringConfigSetting';
+			$this->className = StringConfigSetting::class;
 		}
 
 		if ( !isset($this->defaultValue) ) {

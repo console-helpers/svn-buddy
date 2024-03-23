@@ -13,6 +13,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use ConsoleHelpers\SVNBuddy\Config\PathsConfigSetting;
 
 class PathsConfigSettingTest extends ArrayConfigSettingTest
 {
@@ -32,7 +33,7 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	 */
 	protected function setupTest()
 	{
-		$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\PathsConfigSetting';
+		$this->className = PathsConfigSetting::class;
 		$this->defaultValue = array('default');
 
 		parent::setupTest();

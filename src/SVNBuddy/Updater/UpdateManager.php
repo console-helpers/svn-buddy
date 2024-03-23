@@ -77,9 +77,9 @@ class UpdateManager
 	 */
 	public function setUpdateChannel($update_channel)
 	{
-		$stability_constant = 'ConsoleHelpers\\SVNBuddy\\Updater\\Stability::' . strtoupper($update_channel);
+		$valid_channels = array(Stability::STABLE, Stability::SNAPSHOT, Stability::PREVIEW);
 
-		if ( !defined($stability_constant) ) {
+		if ( !in_array($update_channel, $valid_channels) ) {
 			throw new \InvalidArgumentException('Update channel "' . $update_channel . '" not found.');
 		}
 

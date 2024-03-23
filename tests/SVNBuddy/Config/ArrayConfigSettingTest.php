@@ -12,6 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 
 class ArrayConfigSettingTest extends AbstractConfigSettingTest
 {
@@ -23,7 +24,7 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
-			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\ArrayConfigSetting';
+			$this->className = ArrayConfigSetting::class;
 		}
 
 		if ( !isset($this->defaultValue) ) {

@@ -24,6 +24,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\ProgressBarOutputToken;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 
 class RevisionLogTest extends TestCase
 {
@@ -57,8 +61,8 @@ class RevisionLogTest extends TestCase
 	 */
 	protected function setupTest()
 	{
-		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
-		$this->io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
+		$this->repositoryConnector = $this->prophesize(Connector::class);
+		$this->io = $this->prophesize(ConsoleIO::class);
 		$this->revisionUrlBuilder = $this->prophesize(RevisionUrlBuilder::class);
 	}
 
@@ -170,7 +174,7 @@ class RevisionLogTest extends TestCase
 	{
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
+		$plugin = $this->prophesize(IPlugin::class);
 		$plugin->getName()->willReturn('bugs')->shouldBeCalled();
 		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$plugin->getRevisionsData(array(1, 2))
@@ -267,7 +271,7 @@ class RevisionLogTest extends TestCase
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk', $io);
 
 		// Add repository collector plugin.
-		$repository_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IRepositoryCollectorPlugin');
+		$repository_collector_plugin = $this->prophesize(IRepositoryCollectorPlugin::class);
 		$repository_collector_plugin->getName()->willReturn('mocked_repo')->shouldBeCalled();
 		$repository_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$repository_collector_plugin->whenDatabaseReady()->shouldBeCalled();
@@ -288,7 +292,7 @@ class RevisionLogTest extends TestCase
 		}
 
 		// Add database collector plugin.
-		$database_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IDatabaseCollectorPlugin');
+		$database_collector_plugin = $this->prophesize(IDatabaseCollectorPlugin::class);
 		$database_collector_plugin->getName()->willReturn('mocked_db')->shouldBeCalled();
 		$database_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$database_collector_plugin->whenDatabaseReady()->shouldBeCalled();
@@ -321,14 +325,14 @@ class RevisionLogTest extends TestCase
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk');
 
 		// Add repository collector plugin.
-		$repository_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IRepositoryCollectorPlugin');
+		$repository_collector_plugin = $this->prophesize(IRepositoryCollectorPlugin::class);
 		$repository_collector_plugin->getName()->willReturn('mocked_repo')->shouldBeCalled();
 		$repository_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$repository_collector_plugin->whenDatabaseReady()->shouldBeCalled();
 		$repository_collector_plugin->getLastRevision()->willReturn(1000)->shouldBeCalled();
 
 		// Add database collector plugin.
-		$database_collector_plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IDatabaseCollectorPlugin');
+		$database_collector_plugin = $this->prophesize(IDatabaseCollectorPlugin::class);
 		$database_collector_plugin->getName()->willReturn('mocked_db')->shouldBeCalled();
 		$database_collector_plugin->setRevisionLog($revision_log)->shouldBeCalled();
 		$database_collector_plugin->whenDatabaseReady()->shouldBeCalled();
@@ -427,7 +431,7 @@ OUTPUT;
 			$result = simplexml_load_string($result);
 		}
 
-		$command = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Command');
+		$command = $this->prophesize(Command::class);
 		$command->run()->willReturn($result)->shouldBeCalled();
 		$command->setCacheDuration('10 years')->shouldBeCalled();
 
@@ -468,7 +472,7 @@ OUTPUT;
 	 */
 	protected function createPluginMock(RevisionLog $revision_log)
 	{
-		$plugin = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\Plugin\\IPlugin');
+		$plugin = $this->prophesize(IPlugin::class);
 		$plugin->getName()->willReturn('mocked')->shouldBeCalled();
 		$plugin->setRevisionLog($revision_log)->shouldBeCalled();
 

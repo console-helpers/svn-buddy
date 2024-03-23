@@ -12,6 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 
 class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 {
@@ -23,7 +24,7 @@ class ChoiceConfigSettingTest extends AbstractConfigSettingTest
 	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
-			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\ChoiceConfigSetting';
+			$this->className = ChoiceConfigSetting::class;
 		}
 
 		if ( !isset($this->defaultValue) ) {

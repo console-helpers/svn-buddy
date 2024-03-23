@@ -17,6 +17,11 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 
 class ConnectorTest extends TestCase
 {
@@ -66,10 +71,10 @@ class ConnectorTest extends TestCase
 	 */
 	protected function setupTest()
 	{
-		$this->_configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
-		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
-		$this->_commandFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\CommandFactory');
-		$this->_revisionListParser = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser');
+		$this->_configEditor = $this->prophesize(ConfigEditor::class);
+		$this->_io = $this->prophesize(ConsoleIO::class);
+		$this->_commandFactory = $this->prophesize(CommandFactory::class);
+		$this->_revisionListParser = $this->prophesize(RevisionListParser::class);
 
 		// To get nice exception back when unexpected command is executed.
 		$this->_commandFactory
@@ -277,7 +282,7 @@ stub command
 Error #555:
 error message
 MESSAGE;
-		$this->expectException('ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException');
+		$this->expectException(RepositoryCommandException::class);
 		$this->expectExceptionMessage($exception_msg);
 
 		$this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
@@ -307,7 +312,7 @@ Error #%d:
 error message
 MESSAGE;
 
-		$this->expectException('ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException');
+		$this->expectException(RepositoryCommandException::class);
 		$this->expectExceptionMessage(sprintf(
 			$exception_msg,
 			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
@@ -856,7 +861,7 @@ MESSAGE;
 	 */
 	private function _expectCommand($sub_command, $param_string, $output, $error_msg = null, $error_code = 0)
 	{
-		$command = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Command');
+		$command = $this->prophesize(Command::class);
 
 		if ( $sub_command === 'upgrade' ) {
 			$run_expectation = $command->runLive()->shouldBeCalled();

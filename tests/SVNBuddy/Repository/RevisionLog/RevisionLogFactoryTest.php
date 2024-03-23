@@ -13,13 +13,18 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
 use Prophecy\Argument;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\MigrationContext;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 
 class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 {
 
 	public function testGetRevisionLog()
 	{
-		$repository_connector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Connector\\Connector');
+		$repository_connector = $this->prophesize(Connector::class);
 
 		$repository_connector->removeCredentials('svn://localhost/projects/project-name/trunk')->willReturnArgument(0)->shouldBeCalled();
 		$repository_connector->getLastRevision('svn://localhost')->willReturn(0)->shouldBeCalled();
@@ -29,11 +34,11 @@ class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 		$repository_connector->getProjectUrl('/projects/project-name/trunk')->willReturn('/projects/project-name')->shouldBeCalled();
 		$repository_connector->getRefByPath('/projects/project-name/trunk')->willReturn('trunk')->shouldBeCalled();
 
-		$database_manager = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager');
+		$database_manager = $this->prophesize(DatabaseManager::class);
 		$database_manager->getDatabase('svn://localhost', null)->willReturn($this->database);
-		$database_manager->runMigrations(Argument::type('ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\MigrationContext'))->shouldBeCalled();
+		$database_manager->runMigrations(Argument::type(MigrationContext::class))->shouldBeCalled();
 
-		$log_message_parser_factory = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory');
+		$log_message_parser_factory = $this->prophesize(LogMessageParserFactory::class);
 
 		$factory = new RevisionLogFactory(
 			$repository_connector->reveal(),
@@ -41,7 +46,7 @@ class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 			$log_message_parser_factory->reveal()
 		);
 		$this->assertInstanceOf(
-			'ConsoleHelpers\\SVNBuddy\\Repository\\RevisionLog\\RevisionLog',
+			RevisionLog::class,
 			$factory->getRevisionLog('svn://localhost/projects/project-name/trunk')
 		);
 	}

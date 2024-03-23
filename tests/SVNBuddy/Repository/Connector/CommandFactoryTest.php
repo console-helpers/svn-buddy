@@ -17,6 +17,11 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use Symfony\Component\Process\Process;
 
 class CommandFactoryTest extends TestCase
 {
@@ -64,10 +69,10 @@ class CommandFactoryTest extends TestCase
 	 */
 	protected function setupTest()
 	{
-		$this->_configEditor = $this->prophesize('ConsoleHelpers\\ConsoleKit\\Config\\ConfigEditor');
-		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
-		$this->_processFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory');
-		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
+		$this->_configEditor = $this->prophesize(ConfigEditor::class);
+		$this->_io = $this->prophesize(ConsoleIO::class);
+		$this->_processFactory = $this->prophesize(IProcessFactory::class);
+		$this->_cacheManager = $this->prophesize(CacheManager::class);
 
 		// To get nice exception back when unexpected command is executed.
 		$this->_processFactory
@@ -155,7 +160,7 @@ class CommandFactoryTest extends TestCase
 	 */
 	private function _expectCommand($command, $output, $error_msg = null, $error_code = 0)
 	{
-		$process = $this->prophesize('Symfony\\Component\\Process\\Process');
+		$process = $this->prophesize(Process::class);
 
 		$expectation = $process
 			->mustRun(strpos($command, 'upgrade') !== false ? Argument::type('callable') : null)
