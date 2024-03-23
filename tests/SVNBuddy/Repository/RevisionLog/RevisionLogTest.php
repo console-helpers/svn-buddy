@@ -247,12 +247,12 @@ class RevisionLogTest extends TestCase
 	{
 		foreach ( $lines as $expected_line ) {
 			$expected_line = preg_replace('#<info>\d+\.\d+ MiB\s+</info>#', '<info>0.0 MiB</info>', $expected_line);
-			$expected_line = preg_replace('/(<)?\s+\d+(\.\d+)? sec(s)?/', '5 min', $expected_line);
+			$expected_line = preg_replace('/(<\s+)?\d+(\.\d+)? sec(s)?/', '5 min', $expected_line);
 
 			$output->write(
 				Argument::that(function ($actual_line) use ($expected_line) {
 					$actual_line = preg_replace('#<info>\d+\.\d+ MiB\s+</info>#', '<info>0.0 MiB</info>', $actual_line);
-					$actual_line = preg_replace('/(<)?\s+\d+(\.\d+)? sec(s)?/', '5 min', $actual_line);
+					$actual_line = preg_replace('/(<\s+)?\d+(\.\d+)? sec(s)?/', '5 min', $actual_line);
 
 					return $actual_line === $expected_line;
 				})
