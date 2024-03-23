@@ -857,8 +857,8 @@ class Connector
 	/**
 	 * Returns file contents at given revision.
 	 *
-	 * @param string  $path_or_url Path or url.
-	 * @param integer $revision    Revision.
+	 * @param string         $path_or_url Path or url.
+	 * @param integer|string $revision    Revision.
 	 *
 	 * @return string
 	 */

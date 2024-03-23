@@ -833,6 +833,14 @@ MESSAGE;
 			'OK',
 			$this->_repositoryConnector->getFileContent('/path/to/working-copy/file.php', 100)
 		);
+
+		$command = $this->_expectCommand('cat', '{/path/to/working-copy/file.php} --revision HEAD', 'OK');
+		$command->setCacheDuration(Connector::SVN_CAT_CACHE_DURATION)->shouldBeCalled();
+
+		$this->assertEquals(
+			'OK',
+			$this->_repositoryConnector->getFileContent('/path/to/working-copy/file.php', 'HEAD')
+		);
 	}
 
 	/**
