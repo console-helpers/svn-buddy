@@ -237,7 +237,7 @@ class RevisionPrinter
 		$table->setHeaders($headers);
 
 		$prev_bugs = null;
-		$last_color = 'yellow';
+		$last_bug_color = 'yellow';
 
 		if ( $this->_aggregateByBug ) {
 			$aggregated_revisions = $this->aggregateRevisionsByBug($revisions, $revision_log);
@@ -271,14 +271,14 @@ class RevisionPrinter
 			$new_bugs = $revisions_bugs[$revision];
 
 			if ( isset($prev_bugs) && $new_bugs !== $prev_bugs ) {
-				$last_color = $last_color === 'yellow' ? 'magenta' : 'yellow';
+				$last_bug_color = $last_bug_color === 'yellow' ? 'magenta' : 'yellow';
 			}
 
 			$row = array(
 				$this->_aggregateByBug ? $aggregated_revisions[$revision] . ' cmts' : $revision,
 				$revision_data['author'],
 				$this->_dateHelper->getAgoTime($revision_data['date']),
-				$this->_outputHelper->formatArray($new_bugs, $bugs_per_row, $last_color),
+				$this->_outputHelper->formatArray($new_bugs, $bugs_per_row, $last_bug_color),
 				$this->_generateLogMessageColumn($with_full_message || $with_details, $revision_data),
 			);
 
