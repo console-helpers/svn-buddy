@@ -34,10 +34,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		parent::setupTest();
 	}
 
-	public function normalizationValueDataProvider($test_name, $value = array('a'), $normalized_value = array('b'))
+	public static function normalizationValueDataProvider($test_name, $value = array('a'), $normalized_value = array('b'))
 	{
-		$value = $this->getSampleValue($value, true);
-		$normalized_value = $this->getSampleValue($normalized_value, true);
+		$value = static::getSampleValue($value, true);
+		$normalized_value = static::getSampleValue($normalized_value, true);
 
 		return array(
 			'empty array' => array(
@@ -75,10 +75,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider($test_name, $wc_value = array('global_value'), $global_value = array('default'))
+	public static function setValueWithInheritanceDataProvider($test_name, $wc_value = array('global_value'), $global_value = array('default'))
 	{
-		$wc_value = $this->getSampleValue($wc_value);
-		$global_value = $this->getSampleValue($global_value);
+		$wc_value = static::getSampleValue($wc_value);
+		$global_value = static::getSampleValue($global_value);
 
 		return array(
 			array($wc_value, $global_value),
@@ -95,10 +95,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		$this->assertSame($user_value, $config_setting->getValue(AbstractConfigSetting::SCOPE_GLOBAL));
 	}
 
-	public function defaultValueIsConvertedToScalarDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
+	public static function defaultValueIsConvertedToScalarDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
 	{
-		$default_value = $this->getSampleValue($default_value, true);
-		$stored_value = $this->getSampleValue($stored_value, true);
+		$default_value = static::getSampleValue($default_value, true);
+		$stored_value = static::getSampleValue($stored_value, true);
 
 		return array(
 			'array into string' => array(array($default_value, $stored_value), array($default_value, $stored_value)),
@@ -106,10 +106,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	public function storageDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
+	public static function storageDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
 	{
-		$default_value = $this->getSampleValue($default_value, true);
-		$stored_value = $this->getSampleValue($stored_value, true);
+		$default_value = static::getSampleValue($default_value, true);
+		$stored_value = static::getSampleValue($stored_value, true);
 
 		return array(
 			'array into string' => array(array($default_value, $stored_value), $default_value . PHP_EOL . $stored_value),
@@ -125,7 +125,7 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 	 *
 	 * @return mixed
 	 */
-	protected function getSampleValue($scope_bit, $as_stored = false)
+	protected static function getSampleValue($scope_bit, $as_stored = false)
 	{
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$ret = array('OK');
@@ -137,7 +137,7 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 			$ret = $scope_bit;
 		}
 
-		return $as_stored ? $this->convertToStorage($ret) : $ret;
+		return $as_stored ? static::convertToStorage($ret) : $ret;
 	}
 
 	/**
@@ -147,7 +147,7 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTest
 	 *
 	 * @return mixed
 	 */
-	protected function convertToStorage($value)
+	protected static function convertToStorage($value)
 	{
 		return implode(PHP_EOL, $value);
 	}

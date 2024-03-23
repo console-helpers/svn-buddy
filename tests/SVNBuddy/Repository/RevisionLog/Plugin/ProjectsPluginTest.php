@@ -200,7 +200,7 @@ class ProjectsPluginTest extends AbstractPluginTestCase
 		));
 	}
 
-	public function processProjectRestoredDataProvider()
+	public static function processProjectRestoredDataProvider()
 	{
 		return array(
 			'added' => array('A'),

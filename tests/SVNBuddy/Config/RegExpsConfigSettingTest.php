@@ -52,7 +52,7 @@ class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 	 *
 	 * @return mixed
 	 */
-	protected function getSampleValue($scope_bit, $as_stored = false)
+	protected static function getSampleValue($scope_bit, $as_stored = false)
 	{
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$ret = array('/OK/');
@@ -68,7 +68,7 @@ class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 			}
 		}
 
-		return $as_stored ? $this->convertToStorage($ret) : $ret;
+		return $as_stored ? static::convertToStorage($ret) : $ret;
 	}
 
 }

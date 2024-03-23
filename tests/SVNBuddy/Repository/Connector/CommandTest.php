@@ -114,7 +114,7 @@ class CommandTest extends TestCase
 		}
 	}
 
-	public function runWithoutCachingDataProvider()
+	public static function runWithoutCachingDataProvider()
 	{
 		return array(
 			'w/o callback, not xml' => array(false, false),
@@ -265,7 +265,7 @@ class CommandTest extends TestCase
 		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 	}
 
-	public function runWithCacheDataProvider()
+	public static function runWithCacheDataProvider()
 	{
 		return array(
 			'duration only, w/o callback, not xml' => array(100, null, null, false, false),
@@ -398,7 +398,7 @@ class CommandTest extends TestCase
 		$this->assertEquals('OK', $actual_result);
 	}
 
-	public function runLiveDataProvider()
+	public static function runLiveDataProvider()
 	{
 		return array(
 			array(Process::OUT, "KE{X}\n{T}"),
@@ -472,7 +472,7 @@ MSG;
 		$this->assertEquals($process_output, $this->_command->run());
 	}
 
-	public function cacheKeyFormingDataProvider()
+	public static function cacheKeyFormingDataProvider()
 	{
 		return array(
 			'no path' => array('svn://domain.tld', 'domain.tld/command'),

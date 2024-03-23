@@ -95,7 +95,7 @@ class CommandFactoryTest extends TestCase
 		$this->assertEquals('OK', $repository_connector->getCommand('', '--version')->run());
 	}
 
-	public function baseCommandBuildingDataProvider()
+	public static function baseCommandBuildingDataProvider()
 	{
 		return array(
 			'no username, no password' => array('', '', 'svn --non-interactive --version'),
@@ -138,7 +138,7 @@ class CommandFactoryTest extends TestCase
 		$this->assertEquals('OK', $this->_commandFactory->getCommand('log', $params)->run());
 	}
 
-	public function commandWithParamsDataProvider()
+	public static function commandWithParamsDataProvider()
 	{
 		return array(
 			'regular param' => array('-r 12', 'svn --non-interactive log -r 12'),

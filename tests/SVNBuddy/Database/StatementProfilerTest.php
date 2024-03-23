@@ -81,7 +81,7 @@ class StatementProfilerTest extends TestCase
 		$this->assertCount($profile_count, $this->statementProfiler->getProfiles());
 	}
 
-	public function profileAddingIgnoredDataProvider()
+	public static function profileAddingIgnoredDataProvider()
 	{
 		return array(
 			'the "prepare" method call' => array('prepare', 'stmt', 0),
@@ -172,7 +172,7 @@ class StatementProfilerTest extends TestCase
 		$this->assertCount(2, $this->statementProfiler->getProfiles());
 	}
 
-	public function ignoredDuplicateStatementsAreRespectedDataProvider()
+	public static function ignoredDuplicateStatementsAreRespectedDataProvider()
 	{
 		return array(
 			'normalized statement' => array('IGNORE ME', array()),

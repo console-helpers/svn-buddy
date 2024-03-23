@@ -377,7 +377,7 @@ class PathsPluginTest extends AbstractPluginTestCase
 		}
 	}
 
-	public function parseProjectPathCollisionDataProvider()
+	public static function parseProjectPathCollisionDataProvider()
 	{
 		return array(
 			'new db' => array(true),
@@ -1121,7 +1121,7 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 	}
 
-	public function parsePathAddedDataProvider()
+	public static function parsePathAddedDataProvider()
 	{
 		return array(
 			'path added initially' => array('svn_log_path_added.xml', '100', '100'),
@@ -1179,7 +1179,7 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 	}
 
-	public function parsePathChangedDataProvider()
+	public static function parsePathChangedDataProvider()
 	{
 		return array(
 			'added' => array('svn_log_path_added.xml', '100'),
@@ -1359,7 +1359,7 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 	}
 
-	public function findFindMissingPathsDataProvider()
+	public static function findFindMissingPathsDataProvider()
 	{
 		return array(
 			'guess sub-match' => array('/projects/project/trunk2/'),
@@ -1424,7 +1424,7 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 	}
 
-	public function findBySubMatchDataProvider()
+	public static function findBySubMatchDataProvider()
 	{
 		return array(
 			'is ref, guess field' => array(true, '/projects/project/tags/stable/'),

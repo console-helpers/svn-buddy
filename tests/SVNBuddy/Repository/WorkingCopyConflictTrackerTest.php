@@ -76,7 +76,7 @@ class WorkingCopyConflictTrackerTest extends TestCase
 		$this->assertEquals($expected_conflicts, $this->workingCopyConflictTracker->getRecordedConflicts($wc_path));
 	}
 
-	public function addDataProvider()
+	public static function addDataProvider()
 	{
 		return array(
 			array(array(), array('new-file.txt'), array('new-file.txt')),
@@ -114,7 +114,7 @@ class WorkingCopyConflictTrackerTest extends TestCase
 		$this->assertEquals($expected_conflicts, $this->workingCopyConflictTracker->getRecordedConflicts($wc_path));
 	}
 
-	public function replaceDataProvider()
+	public static function replaceDataProvider()
 	{
 		return array(
 			array(array(), array('new-file.txt'), array('new-file.txt')),

@@ -41,7 +41,7 @@ class SizeHelperTest extends TestCase
 		$this->assertEquals($formatted_size, $this->sizeHelper->formatSize($raw_size));
 	}
 
-	public function formatSizeDataProvider()
+	public static function formatSizeDataProvider()
 	{
 		return array(
 			array('1099511627776', '1 TB'),

@@ -57,7 +57,7 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 		$this->assertTableEmpty('Paths');
 	}
 
-	public function addProjectDataProvider()
+	public static function addProjectDataProvider()
 	{
 		return array(
 			array('0', null),
@@ -109,7 +109,7 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 		);
 	}
 
-	public function setProjectStatusDataProvider()
+	public static function setProjectStatusDataProvider()
 	{
 		return array(
 			array(0, 1),
@@ -367,7 +367,7 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 		);
 	}
 
-	public function getPathTouchFieldsDataProvider()
+	public static function getPathTouchFieldsDataProvider()
 	{
 		return array(
 			'deleted' => array(

@@ -67,7 +67,7 @@ abstract class AbstractConfigSettingTest extends TestCase
 		}
 	}
 
-	public function scopeDataProvider()
+	public static function scopeDataProvider()
 	{
 		return array(
 			'global scope bit' => array(
@@ -96,7 +96,7 @@ abstract class AbstractConfigSettingTest extends TestCase
 		$this->createConfigSetting($scope);
 	}
 
-	public function incorrectScopeDataProvider()
+	public static function incorrectScopeDataProvider()
 	{
 		return array(
 			'empty scope bit' => array(0),
@@ -148,7 +148,7 @@ abstract class AbstractConfigSettingTest extends TestCase
 			'Default value is returned'
 		);
 
-		$expected = $this->getSampleValue($scope_bit);
+		$expected = static::getSampleValue($scope_bit);
 		$this->configEditor->set($storage_setting_name, $expected);
 
 		$this->assertEquals(
@@ -175,7 +175,7 @@ abstract class AbstractConfigSettingTest extends TestCase
 			'Default value is returned'
 		);
 
-		$expected = $this->getSampleValue($scope_bit);
+		$expected = static::getSampleValue($scope_bit);
 		$this->configEditor->set($storage_setting_name, $expected);
 
 		$this->assertEquals(
@@ -192,11 +192,11 @@ abstract class AbstractConfigSettingTest extends TestCase
 
 		$this->configEditor->set(
 			'global-settings.name',
-			$this->getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL, true)
+			static::getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL, true)
 		);
 
 		$this->assertEquals(
-			$this->getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL),
+			static::getSampleValue(AbstractConfigSetting::SCOPE_GLOBAL),
 			$config_setting->getValue()
 		);
 	}
@@ -237,14 +237,14 @@ abstract class AbstractConfigSettingTest extends TestCase
 
 			$this->configEditor->set(
 				'global-settings.name',
-				$this->convertToStorage($this->defaultValue)
+				static::convertToStorage($this->defaultValue)
 			);
 		}
 
-		$expected_value = $this->getSampleValue($scope_bit);
+		$expected_value = static::getSampleValue($scope_bit);
 		$config_setting->setValue($expected_value);
 
-		$this->assertSame($this->convertToStorage($expected_value), $this->configEditor->get($storage_setting_name));
+		$this->assertSame(static::convertToStorage($expected_value), $this->configEditor->get($storage_setting_name));
 	}
 
 	/**
@@ -259,14 +259,14 @@ abstract class AbstractConfigSettingTest extends TestCase
 
 			$this->configEditor->set(
 				'global-settings.name',
-				$this->convertToStorage($this->defaultValue)
+				static::convertToStorage($this->defaultValue)
 			);
 		}
 
-		$expected_value = $this->getSampleValue($scope_bit);
+		$expected_value = static::getSampleValue($scope_bit);
 		$config_setting->setValue($expected_value, $scope_bit);
 
-		$this->assertSame($this->convertToStorage($expected_value), $this->configEditor->get($storage_setting_name));
+		$this->assertSame(static::convertToStorage($expected_value), $this->configEditor->get($storage_setting_name));
 	}
 
 	public function testGetValueWithoutWorkingCopy()
@@ -282,7 +282,7 @@ abstract class AbstractConfigSettingTest extends TestCase
 		$this->expectException('\LogicException');
 		$this->expectExceptionMessage('Please call setWorkingCopyUrl() prior to calling ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting::setValue() method.');
 
-		$this->createConfigSetting()->setValue($this->getSampleValue(AbstractConfigSetting::SCOPE_WORKING_COPY));
+		$this->createConfigSetting()->setValue(static::getSampleValue(AbstractConfigSetting::SCOPE_WORKING_COPY));
 	}
 
 	/**
@@ -297,9 +297,12 @@ abstract class AbstractConfigSettingTest extends TestCase
 		$this->assertSame($normalized_value, $config_setting->getValue());
 	}
 
-	abstract public function normalizationValueDataProvider($test_name, $value = null, $normalized_value = null);
+	public static function normalizationValueDataProvider($test_name, $value = null, $normalized_value = null)
+	{
+		throw new \RuntimeException('Override me.');
+	}
 
-	public function scopeBitDataProvider()
+	public static function scopeBitDataProvider()
 	{
 		return array(
 			'working copy scope' => array(AbstractConfigSetting::SCOPE_WORKING_COPY, 'path-settings[url].name'),
@@ -312,7 +315,7 @@ abstract class AbstractConfigSettingTest extends TestCase
 	 */
 	public function testSetValueWithInheritanceFromGlobal($wc_value, $global_value)
 	{
-		$this->configEditor->set('global-settings.name', $this->convertToStorage($wc_value));
+		$this->configEditor->set('global-settings.name', static::convertToStorage($wc_value));
 
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_WORKING_COPY, $global_value);
 		$config_setting->setWorkingCopyUrl('url');
@@ -334,7 +337,10 @@ abstract class AbstractConfigSettingTest extends TestCase
 		$this->assertNull($this->configEditor->get('global-settings.name'), 'Inherited value isn\'t stored');
 	}
 
-	abstract public function setValueWithInheritanceDataProvider($test_name, $wc_value = null, $global_value = null);
+	public static function setValueWithInheritanceDataProvider($test_name, $wc_value = null, $global_value = null)
+	{
+		throw new \RuntimeException('Override me.');
+	}
 
 	/**
 	 * @dataProvider storageDataProvider
@@ -347,7 +353,10 @@ abstract class AbstractConfigSettingTest extends TestCase
 		$this->assertSame($stored_value, $this->configEditor->get('global-settings.name'));
 	}
 
-	abstract public function storageDataProvider($test_name, $default_value = null, $stored_value = null);
+	public static function storageDataProvider($test_name, $default_value = null, $stored_value = null)
+	{
+		throw new \RuntimeException('Override me.');
+	}
 
 	/**
 	 * Creates config setting.
@@ -389,8 +398,12 @@ abstract class AbstractConfigSettingTest extends TestCase
 	 * @param boolean $as_stored Return value in storage format.
 	 *
 	 * @return mixed
+	 * @throws \RuntimeException When method wasn't overridden.
 	 */
-	abstract protected function getSampleValue($scope_bit, $as_stored = false);
+	protected static function getSampleValue($scope_bit, $as_stored = false)
+	{
+		throw new \RuntimeException('Override me.');
+	}
 
 	/**
 	 * Converts value to storage format.
@@ -399,7 +412,7 @@ abstract class AbstractConfigSettingTest extends TestCase
 	 *
 	 * @return mixed
 	 */
-	protected function convertToStorage($value)
+	protected static function convertToStorage($value)
 	{
 		return $value;
 	}

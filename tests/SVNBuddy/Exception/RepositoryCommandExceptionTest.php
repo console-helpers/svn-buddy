@@ -28,7 +28,7 @@ class RepositoryCommandExceptionTest extends TestCase
 		$this->assertEquals($exception_message, $exception->getMessage());
 	}
 
-	public function repositoryErrorDataProvider()
+	public static function repositoryErrorDataProvider()
 	{
 		return array(
 			'single-line error' => array(

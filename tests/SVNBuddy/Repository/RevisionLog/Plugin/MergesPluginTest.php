@@ -68,7 +68,7 @@ class MergesPluginTest extends AbstractPluginTestCase
 		));
 	}
 
-	public function parseDataProvider()
+	public static function parseDataProvider()
 	{
 		return array(
 			'verbose' => array('svn_log_merge_non_verbose.xml'),

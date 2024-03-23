@@ -108,7 +108,7 @@ class ConnectorTest extends TestCase
 		$this->_repositoryConnector->withCache($duration, $overwrite)->getCommand('info')->run();
 	}
 
-	public function getCommandWithCachingDataProvider()
+	public static function getCommandWithCachingDataProvider()
 	{
 		return array(
 			'duration - enabled, overwrite - enabled' => array(100, true),
@@ -202,11 +202,11 @@ class ConnectorTest extends TestCase
 	public function svnInfoDataProvider()
 	{
 		return array(
-			'svn1.6_wc_root_with_peg' => array($this->getFixture('svn_info_peg_16.xml'), '/path/to/working-c@py', self::DUMMY_REPO),
-			'svn1.6_wc_root' => array($this->getFixture('svn_info_16.xml'), '/path/to/working-copy', self::DUMMY_REPO),
-			'svn1.7_wc_root' => array($this->getFixture('svn_info_17.xml'), '/path/to/working-copy', self::DUMMY_REPO),
-			'svn1.6_wc_sub_folder' => array($this->getFixture('svn_info_sub_folder_16.xml'), '/path/to/working-copy/sub-folder', self::DUMMY_REPO . '/sub-folder'),
-			'svn1.8_wc_sub_folder' => array($this->getFixture('svn_info_sub_folder_18.xml'), '/path/to/working-copy/sub-folder', self::DUMMY_REPO . '/sub-folder'),
+			'svn1.6_wc_root_with_peg' => array(self::getFixture('svn_info_peg_16.xml'), '/path/to/working-c@py', self::DUMMY_REPO),
+			'svn1.6_wc_root' => array(self::getFixture('svn_info_16.xml'), '/path/to/working-copy', self::DUMMY_REPO),
+			'svn1.7_wc_root' => array(self::getFixture('svn_info_17.xml'), '/path/to/working-copy', self::DUMMY_REPO),
+			'svn1.6_wc_sub_folder' => array(self::getFixture('svn_info_sub_folder_16.xml'), '/path/to/working-copy/sub-folder', self::DUMMY_REPO . '/sub-folder'),
+			'svn1.8_wc_sub_folder' => array(self::getFixture('svn_info_sub_folder_18.xml'), '/path/to/working-copy/sub-folder', self::DUMMY_REPO . '/sub-folder'),
 		);
 	}
 
@@ -218,7 +218,7 @@ class ConnectorTest extends TestCase
 		$command = $this->_expectCommand(
 			'info',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_info_broken.xml')
+			self::getFixture('svn_info_broken.xml')
 		);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
@@ -258,7 +258,7 @@ class ConnectorTest extends TestCase
 		$command = $this->_expectCommand(
 			'info',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_info_16.xml')
+			self::getFixture('svn_info_16.xml')
 		);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
@@ -326,7 +326,7 @@ MESSAGE;
 	 */
 	public function testGetRelativePathAutomaticCachingForUrls($given_repository_url, $used_repository_url)
 	{
-		$raw_command_output = $this->getFixture('svn_info_remote.xml');
+		$raw_command_output = self::getFixture('svn_info_remote.xml');
 
 		$repository_connector = $this->_createRepositoryConnector();
 
@@ -341,7 +341,7 @@ MESSAGE;
 		$path = '/path/to/working-copy';
 		$repository_connector = $this->_createRepositoryConnector();
 
-		$command = $this->_expectCommand('info', '--xml {' . $path . '}', $this->getFixture('svn_info_16.xml'));
+		$command = $this->_expectCommand('info', '--xml {' . $path . '}', self::getFixture('svn_info_16.xml'));
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path));
@@ -354,7 +354,7 @@ MESSAGE;
 	{
 		$repository_connector = $this->_createRepositoryConnector();
 
-		$command = $this->_expectCommand('info', '--xml {' . $used_repository_url . '}', $this->getFixture('svn_info_remote.xml'));
+		$command = $this->_expectCommand('info', '--xml {' . $used_repository_url . '}', self::getFixture('svn_info_remote.xml'));
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($given_repository_url));
@@ -365,7 +365,7 @@ MESSAGE;
 		$path = '/path/to/working-copy';
 		$repository_connector = $this->_createRepositoryConnector();
 
-		$command = $this->_expectCommand('info', '--xml {' . $path . '}', $this->getFixture('svn_info_16.xml'));
+		$command = $this->_expectCommand('info', '--xml {' . $path . '}', self::getFixture('svn_info_16.xml'));
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($path));
@@ -379,7 +379,7 @@ MESSAGE;
 		$this->assertSame($result, $this->_repositoryConnector->isRefRoot($path));
 	}
 
-	public function isRefRootDataProvider()
+	public static function isRefRootDataProvider()
 	{
 		return array(
 			array('/projects/project_a/trunk/', true),
@@ -406,7 +406,7 @@ MESSAGE;
 		$this->assertSame($ref, $this->_repositoryConnector->getRefByPath($path));
 	}
 
-	public function getRefByPathDataProvider()
+	public static function getRefByPathDataProvider()
 	{
 		return array(
 			array('/projects/project_a/trunk/sub-folder/file.tpl', 'trunk'),
@@ -431,14 +431,14 @@ MESSAGE;
 		$command = $this->_expectCommand(
 			'info',
 			'--xml {' . self::DUMMY_REPO . '}',
-			$this->getFixture('svn_info_remote.xml')
+			self::getFixture('svn_info_remote.xml')
 		);
 		$command->setCacheDuration(0)->shouldBeCalled();
 
 		$this->assertEquals(100, $repository_connector->getLastRevision(self::DUMMY_REPO));
 	}
 
-	public function getLastRevisionWithoutAutomaticDataProvider()
+	public static function getLastRevisionWithoutAutomaticDataProvider()
 	{
 		return array(
 			array(''),
@@ -458,7 +458,7 @@ MESSAGE;
 		$command = $this->_expectCommand(
 			'info',
 			'--xml {' . $used_repository_url . '}',
-			$this->getFixture('svn_info_remote.xml')
+			self::getFixture('svn_info_remote.xml')
 		);
 		$command->setCacheDuration('1 minute')->shouldBeCalled();
 
@@ -473,7 +473,7 @@ MESSAGE;
 		$command = $this->_expectCommand(
 			'info',
 			'--xml {' . $path . '}',
-			$this->getFixture('svn_info_16.xml')
+			self::getFixture('svn_info_16.xml')
 		);
 		$command->setCacheDuration(Argument::any())->shouldNotBeCalled();
 
@@ -485,7 +485,7 @@ MESSAGE;
 	 */
 	public function testGetLastRevisionOnRepositoryRoot($fixture)
 	{
-		$raw_command_output = $this->getFixture($fixture);
+		$raw_command_output = self::getFixture($fixture);
 
 		$repository_connector = $this->_createRepositoryConnector('1 minute');
 
@@ -499,7 +499,7 @@ MESSAGE;
 		$this->assertEquals(100, $repository_connector->getLastRevision('svn://repository.com'));
 	}
 
-	public function getLastRevisionOnRepositoryRootDataProvider()
+	public static function getLastRevisionOnRepositoryRootDataProvider()
 	{
 		return array(
 			'svn_1.6' => array('svn_info_repository_root_remote_16.xml'),
@@ -526,7 +526,7 @@ MESSAGE;
 		$this->_repositoryConnector->removeCredentials('/path/to/working-copy');
 	}
 
-	public function svnInfoBasedMethodDataProvider()
+	public static function svnInfoBasedMethodDataProvider()
 	{
 		return array(
 			'repo without username' => array(
@@ -551,7 +551,7 @@ MESSAGE;
 		);
 	}
 
-	public function getProjectUrlDataProvider()
+	public static function getProjectUrlDataProvider()
 	{
 		return array(
 			// Root.
@@ -577,7 +577,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture($fixture)
+			self::getFixture($fixture)
 		);
 
 		$this->assertEquals(
@@ -586,7 +586,7 @@ MESSAGE;
 		);
 	}
 
-	public function getWorkingCopyConflictsDataProvider()
+	public static function getWorkingCopyConflictsDataProvider()
 	{
 		return array(
 			'with conflicts' => array('svn_status_with_conflicts_16.xml', array('.', 'admin', 'admin/index.php')),
@@ -602,7 +602,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture($fixture)
+			self::getFixture($fixture)
 		);
 
 		$this->assertEquals(
@@ -611,7 +611,7 @@ MESSAGE;
 		);
 	}
 
-	public function getWorkingCopyMissingDataProvider()
+	public static function getWorkingCopyMissingDataProvider()
 	{
 		return array(
 			'with conflicts' => array('svn_status_with_missing_16.xml', array('themes', 'admin/README')),
@@ -624,7 +624,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_status_with_changelist_16.xml')
+			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
 		$this->assertSame(
@@ -643,7 +643,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_status_with_changelist_16.xml')
+			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
 		$this->assertSame(
@@ -664,7 +664,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_status_with_changelist_16.xml')
+			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
 		$this->assertSame(
@@ -685,7 +685,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_status_with_changelist_16.xml')
+			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
 		$this->_repositoryConnector->getWorkingCopyStatus('/path/to/working-copy', 'cl missing');
@@ -696,7 +696,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_status_with_props_eq_none18.xml')
+			self::getFixture('svn_status_with_props_eq_none18.xml')
 		);
 
 		$this->assertSame(
@@ -714,7 +714,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture('svn_status_with_copied18.xml')
+			self::getFixture('svn_status_with_copied18.xml')
 		);
 
 		$this->assertSame(
@@ -737,7 +737,7 @@ MESSAGE;
 		$this->_expectCommand(
 			'status',
 			'--xml {/path/to/working-copy}',
-			$this->getFixture($fixture)
+			self::getFixture($fixture)
 		);
 
 		$this->assertEquals(
@@ -746,7 +746,7 @@ MESSAGE;
 		);
 	}
 
-	public function getWorkingCopyChangelistsDataProvider()
+	public static function getWorkingCopyChangelistsDataProvider()
 	{
 		return array(
 			'with changelists' => array('svn_status_with_changelists_16.xml', array('cl one', 'cl two')),
@@ -776,7 +776,7 @@ MESSAGE;
 		);
 	}
 
-	public function testGetMergedRevisionChangesWithoutChangesDataProvider()
+	public static function testGetMergedRevisionChangesWithoutChangesDataProvider()
 	{
 		return array(
 			'Merged revisions' => array(true),
@@ -811,7 +811,7 @@ MESSAGE;
 		);
 	}
 
-	public function testGetMergedRevisionChangesWithChangesDataProvider()
+	public static function testGetMergedRevisionChangesWithChangesDataProvider()
 	{
 		return array(
 			'Merged revisions' => array(
@@ -921,7 +921,7 @@ MESSAGE;
 	 * @return string
 	 * @throws \InvalidArgumentException When fixture wasn't found.
 	 */
-	protected function getFixture($name)
+	protected static function getFixture($name)
 	{
 		$fixture_filename = __DIR__ . '/fixtures/' . $name;
 

@@ -34,10 +34,10 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		parent::setupTest();
 	}
 
-	public function normalizationValueDataProvider($test_name, $value = 'a', $normalized_value = 'b')
+	public static function normalizationValueDataProvider($test_name, $value = 'a', $normalized_value = 'b')
 	{
-		$value = $this->getSampleValue($value, true);
-		$normalized_value = $this->getSampleValue($normalized_value, true);
+		$value = static::getSampleValue($value, true);
+		$normalized_value = static::getSampleValue($normalized_value, true);
 
 		return array(
 			'empty string' => array(
@@ -75,7 +75,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		$config_setting->setValue($value);
 	}
 
-	public function sampleArrayDataProvider()
+	public static function sampleArrayDataProvider()
 	{
 		return array(
 			'empty array' => array(array()),
@@ -83,20 +83,20 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 		);
 	}
 
-	public function setValueWithInheritanceDataProvider($test_name, $wc_value = 'global_value', $global_value = 'default')
+	public static function setValueWithInheritanceDataProvider($test_name, $wc_value = 'global_value', $global_value = 'default')
 	{
-		$wc_value = $this->getSampleValue($wc_value, true);
-		$global_value = $this->getSampleValue($global_value, true);
+		$wc_value = static::getSampleValue($wc_value, true);
+		$global_value = static::getSampleValue($global_value, true);
 
 		return array(
 			array($wc_value, $global_value),
 		);
 	}
 
-	public function storageDataProvider($test_name, $default_value = 'a', $stored_value = 'b')
+	public static function storageDataProvider($test_name, $default_value = 'a', $stored_value = 'b')
 	{
-		$default_value = $this->getSampleValue($default_value, true);
-		$stored_value = $this->getSampleValue($stored_value, true);
+		$default_value = static::getSampleValue($default_value, true);
+		$stored_value = static::getSampleValue($stored_value, true);
 
 		return array(
 			'string' => array($default_value, $default_value),
@@ -111,7 +111,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 	 *
 	 * @return mixed
 	 */
-	protected function getSampleValue($scope_bit, $as_stored = false)
+	protected static function getSampleValue($scope_bit, $as_stored = false)
 	{
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
 			$ret = 'OK';
@@ -123,7 +123,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 			$ret = $scope_bit;
 		}
 
-		return $as_stored ? $this->convertToStorage($ret) : $ret;
+		return $as_stored ? static::convertToStorage($ret) : $ret;
 	}
 
 	/**
@@ -133,7 +133,7 @@ class StringConfigSettingTest extends AbstractConfigSettingTest
 	 *
 	 * @return mixed
 	 */
-	protected function convertToStorage($value)
+	protected static function convertToStorage($value)
 	{
 		return trim($value);
 	}

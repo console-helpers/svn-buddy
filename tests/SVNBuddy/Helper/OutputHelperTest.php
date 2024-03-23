@@ -41,7 +41,7 @@ class OutputHelperTest extends TestCase
 		$this->assertEquals($result, $this->outputHelper->formatArray(array('a', 'b', 'c'), $items_per_row));
 	}
 
-	public function formatArrayWithoutColorDataProvider()
+	public static function formatArrayWithoutColorDataProvider()
 	{
 		return array(
 			array(1, 'a,' . PHP_EOL . 'b,' . PHP_EOL . 'c'),
@@ -58,7 +58,7 @@ class OutputHelperTest extends TestCase
 		$this->assertEquals($result, $this->outputHelper->formatArray(array('a', 'b', 'c'), $items_per_row, 'red'));
 	}
 
-	public function formatArrayWithColorDataProvider()
+	public static function formatArrayWithColorDataProvider()
 	{
 		return array(
 			array(1, '<fg=red>a</>,' . PHP_EOL . '<fg=red>b</>,' . PHP_EOL . '<fg=red>c</>'),
