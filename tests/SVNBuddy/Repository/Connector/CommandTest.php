@@ -18,6 +18,10 @@ use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 
 class CommandTest extends TestCase
 {
@@ -63,10 +67,10 @@ class CommandTest extends TestCase
 	 */
 	protected function setupTest()
 	{
-		$this->_processFactory = $this->prophesize('ConsoleHelpers\SVNBuddy\Process\IProcessFactory');
-		$this->_process = $this->prophesize('Symfony\\Component\\Process\\Process');
-		$this->_io = $this->prophesize('ConsoleHelpers\\ConsoleKit\\ConsoleIO');
-		$this->_cacheManager = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Cache\\CacheManager');
+		$this->_processFactory = $this->prophesize(IProcessFactory::class);
+		$this->_process = $this->prophesize(Process::class);
+		$this->_io = $this->prophesize(ConsoleIO::class);
+		$this->_cacheManager = $this->prophesize(CacheManager::class);
 	}
 
 	/**
@@ -406,8 +410,7 @@ class CommandTest extends TestCase
 	{
 		$this->_command = $this->_createCommand('svn log');
 
-		/** @var ProcessFailedException $exception */
-		$exception = $this->prophesize('Symfony\\Component\\Process\\Exception\\ProcessFailedException');
+		$exception = $this->prophesize(ProcessFailedException::class);
 
 		$this->_process->mustRun(null)->willThrow($exception->reveal())->shouldBeCalled();
 		$this->_process->getErrorOutput()->willReturn('error output')->shouldBeCalled();
@@ -425,7 +428,7 @@ class CommandTest extends TestCase
 		}
 		catch ( \Exception $thrown_exception ) {
 			$this->assertInstanceOf(
-				'ConsoleHelpers\\SVNBuddy\\Exception\\RepositoryCommandException',
+				RepositoryCommandException::class,
 				$thrown_exception,
 				sprintf(
 					'Exception of correct class was thrown' . PHP_EOL . 'Message:' . PHP_EOL . '%s',

@@ -13,13 +13,15 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Process;
 
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use PHPUnit\Framework\TestCase;
+use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
+use Symfony\Component\Process\Process;
 
 class ProcessFactoryTest extends TestCase
 {
 
 	public function testImplementsCorrectInterface()
 	{
-		$this->assertInstanceOf('ConsoleHelpers\\SVNBuddy\\Process\\IProcessFactory', new ProcessFactory());
+		$this->assertInstanceOf(IProcessFactory::class, new ProcessFactory());
 	}
 
 	public function testProcessCanBeCreated()
@@ -28,7 +30,7 @@ class ProcessFactoryTest extends TestCase
 
 		$process = $factory->createProcess('command', 10);
 
-		$this->assertInstanceOf('Symfony\\Component\\Process\\Process', $process);
+		$this->assertInstanceOf(Process::class, $process);
 		$this->assertEquals('command', $process->getCommandLine());
 		$this->assertEquals(10, $process->getIdleTimeout());
 		$this->assertNull($process->getTimeout());

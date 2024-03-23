@@ -13,6 +13,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use ConsoleHelpers\SVNBuddy\Config\RegExpsConfigSetting;
 
 class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 {
@@ -25,7 +26,7 @@ class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 	 */
 	protected function setupTest()
 	{
-		$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\RegExpsConfigSetting';
+		$this->className = RegExpsConfigSetting::class;
 		$this->defaultValue = array('default');
 
 		parent::setupTest();

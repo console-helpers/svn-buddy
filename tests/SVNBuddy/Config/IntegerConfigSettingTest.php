@@ -13,6 +13,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use ConsoleHelpers\SVNBuddy\Config\IntegerConfigSetting;
 
 class IntegerConfigSettingTest extends AbstractConfigSettingTest
 {
@@ -26,7 +27,7 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTest
 	protected function setupTest()
 	{
 		if ( !isset($this->className) ) {
-			$this->className = 'ConsoleHelpers\\SVNBuddy\\Config\\IntegerConfigSetting';
+			$this->className = IntegerConfigSetting::class;
 		}
 
 		if ( !isset($this->defaultValue) ) {

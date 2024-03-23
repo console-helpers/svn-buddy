@@ -15,6 +15,8 @@ use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 
 class BugsPluginTest extends AbstractPluginTestCase
 {
@@ -39,8 +41,8 @@ class BugsPluginTest extends AbstractPluginTestCase
 	 */
 	protected function setupTest()
 	{
-		$this->repositoryConnector = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Connector\Connector');
-		$this->logMessageParserFactory = $this->prophesize('ConsoleHelpers\\SVNBuddy\\Repository\\Parser\\LogMessageParserFactory');
+		$this->repositoryConnector = $this->prophesize(Connector::class);
+		$this->logMessageParserFactory = $this->prophesize(LogMessageParserFactory::class);
 
 		parent::setupTest();
 	}

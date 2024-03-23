@@ -14,6 +14,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\MergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use Prophecy\Prophecy\ObjectProphecy;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 
 class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestCase
 {
@@ -33,15 +34,15 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 	 */
 	protected function setupTest()
 	{
-		$sub_detector1 = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector1 = $this->prophesize(AbstractMergeSourceDetector::class);
 		$sub_detector1->getWeight()->willReturn(2)->shouldBeCalled();
 		$this->detectors[] = $sub_detector1;
 
-		$sub_detector2 = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector2 = $this->prophesize(AbstractMergeSourceDetector::class);
 		$sub_detector2->getWeight()->willReturn(1)->shouldBeCalled();
 		$this->detectors[] = $sub_detector2;
 
-		$sub_detector2 = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector2 = $this->prophesize(AbstractMergeSourceDetector::class);
 		$sub_detector2->getWeight()->willReturn(3)->shouldBeCalled();
 		$this->detectors[] = $sub_detector2;
 	}
@@ -81,7 +82,7 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 		$this->expectException('\InvalidArgumentException');
 		$this->expectExceptionMessage('Another detector with same weight is already added.');
 
-		$sub_detector = $this->prophesize('ConsoleHelpers\\SVNBuddy\\MergeSourceDetector\\AbstractMergeSourceDetector');
+		$sub_detector = $this->prophesize(AbstractMergeSourceDetector::class);
 		$sub_detector->getWeight()->willReturn(1)->shouldBeCalled();
 
 		$detector = $this->createDetector();
