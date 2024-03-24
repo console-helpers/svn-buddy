@@ -52,7 +52,7 @@ class UrlResolverTest extends TestCase
 		$this->assertEquals($resolved_url, $this->urlResolver->resolve($wc_url, $url_to_resolve));
 	}
 
-	public function resolveDataProvider()
+	public static function resolveDataProvider()
 	{
 		return array(
 			// From trunk.

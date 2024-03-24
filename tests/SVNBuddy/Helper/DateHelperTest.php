@@ -41,7 +41,7 @@ class DateHelperTest extends TestCase
 		$this->assertEquals($result, $this->dateHelper->getAgoTime($from_date, $to_date, $max_levels));
 	}
 
-	public function getTimeAgoDataProvider()
+	public static function getTimeAgoDataProvider()
 	{
 		$from_date = mktime(0, 0, 0, 1, 1, 1970);
 

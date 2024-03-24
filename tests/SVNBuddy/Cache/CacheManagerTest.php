@@ -177,7 +177,7 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 		$this->assertCount(0, $this->getCacheFilenames('namespace'));
 	}
 
-	public function removalOfExistingCacheDataProvider()
+	public static function removalOfExistingCacheDataProvider()
 	{
 		return array(
 			'without duration' => array(null),

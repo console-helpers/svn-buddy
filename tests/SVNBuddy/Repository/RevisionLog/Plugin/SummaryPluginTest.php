@@ -66,7 +66,7 @@ class SummaryPluginTest extends AbstractPluginTestCase
 		));
 	}
 
-	public function parseDataProvider()
+	public static function parseDataProvider()
 	{
 		return array(
 			'non-verbose' => array('svn_log_summary_non_verbose.xml'),

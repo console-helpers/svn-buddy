@@ -255,7 +255,7 @@ class RevisionLogTest extends TestCase
 		}
 	}
 
-	public function refreshWithoutCacheWithOutputDataProvider()
+	public static function refreshWithoutCacheWithOutputDataProvider()
 	{
 		return array(
 			'verbose' => array(true),

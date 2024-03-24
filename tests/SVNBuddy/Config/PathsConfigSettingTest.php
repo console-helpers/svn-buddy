@@ -25,7 +25,7 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	 *
 	 * @var string
 	 */
-	protected $tempFolder = '';
+	protected static $tempFolder = '';
 
 	/**
 	 * @before
@@ -43,15 +43,15 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	{
 		$config_setting = $this->createConfigSetting(AbstractConfigSetting::SCOPE_GLOBAL);
 
-		$this->createTempFolder();
+		self::createTempFolder();
 
 		$this->expectException('InvalidArgumentException');
 		$this->expectExceptionMessage(
-			'The "' . $this->tempFolder . '/non-existing-path" path doesn\'t exist or not a directory.'
+			'The "' . self::$tempFolder . '/non-existing-path" path doesn\'t exist or not a directory.'
 		);
 
 		$config_setting->setValue(array(
-			$this->tempFolder . '/non-existing-path',
+			self::$tempFolder . '/non-existing-path',
 		));
 	}
 
@@ -60,9 +60,9 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	 *
 	 * @return void
 	 */
-	protected function createTempFolder()
+	protected static function createTempFolder()
 	{
-		if ( $this->tempFolder ) {
+		if ( self::$tempFolder ) {
 			return;
 		}
 
@@ -70,7 +70,7 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 		unlink($temp_file);
 		mkdir($temp_file);
 
-		$this->tempFolder = $temp_file;
+		self::$tempFolder = $temp_file;
 
 		// Don't use "teardownTest", because it isn't called for "createTempFolder" within data provider methods.
 		register_shutdown_function(function ($temp_file) {
@@ -86,21 +86,21 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 	 *
 	 * @return mixed
 	 */
-	protected function getSampleValue($scope_bit, $as_stored = false)
+	protected static function getSampleValue($scope_bit, $as_stored = false)
 	{
-		$this->createTempFolder();
+		self::createTempFolder();
 
 		if ( $scope_bit === AbstractConfigSetting::SCOPE_WORKING_COPY ) {
-			$ret = array($this->tempFolder . '/OK');
+			$ret = array(self::$tempFolder . '/OK');
 		}
 		elseif ( $scope_bit === AbstractConfigSetting::SCOPE_GLOBAL ) {
-			$ret = array($this->tempFolder . '/G_OK');
+			$ret = array(self::$tempFolder . '/G_OK');
 		}
 		else {
 			$ret = array();
 
 			foreach ( $scope_bit as $index => $path ) {
-				$ret[$index] = $this->tempFolder . '/' . $path;
+				$ret[$index] = self::$tempFolder . '/' . $path;
 			}
 		}
 
@@ -110,7 +110,7 @@ class PathsConfigSettingTest extends ArrayConfigSettingTest
 			}
 		}
 
-		return $as_stored ? $this->convertToStorage($ret) : $ret;
+		return $as_stored ? static::convertToStorage($ret) : $ret;
 	}
 
 }

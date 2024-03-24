@@ -90,7 +90,7 @@ abstract class AbstractMergeTemplateTestCase extends TestCase
 
 	abstract public function testApplyWithMergeChanges($regular_or_reverse);
 
-	public function applyWithMergeChangesDataProvider()
+	public static function applyWithMergeChangesDataProvider()
 	{
 		return array(
 			'merge' => array(true),

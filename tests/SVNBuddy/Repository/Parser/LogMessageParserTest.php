@@ -34,7 +34,7 @@ class LogMessageParserTest extends TestCase
 		$this->assertSame($bugs, $parser->parse($message));
 	}
 
-	public function parseWithoutPreFilterDataProvider()
+	public static function parseWithoutPreFilterDataProvider()
 	{
 		return array(
 			'no issues' => array(
@@ -74,7 +74,7 @@ class LogMessageParserTest extends TestCase
 		$this->assertSame($bugs, $parser->parse($message));
 	}
 
-	public function parseWithPreFilterDataProvider()
+	public static function parseWithPreFilterDataProvider()
 	{
 		return array(
 			'no issues' => array(
@@ -114,7 +114,7 @@ class LogMessageParserTest extends TestCase
 		$this->assertSame($bugs, $parser->parse($message));
 	}
 
-	public function parseMultipleIssueTrackersWithPreFilterDataProvider()
+	public static function parseMultipleIssueTrackersWithPreFilterDataProvider()
 	{
 		return array(
 			'both trackers: no issues' => array(

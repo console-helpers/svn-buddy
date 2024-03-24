@@ -16,7 +16,7 @@ use ConsoleHelpers\SVNBuddy\MergeSourceDetector\ClassicMergeSourceDetector;
 class ClassicMergeSourceDetectorTest extends AbstractMergeSourceDetectorTestCase
 {
 
-	public function repositoryUrlDataProvider()
+	public static function repositoryUrlDataProvider()
 	{
 		return array(
 			'repo root folder' => array('svn://localhost', null),

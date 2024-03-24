@@ -269,7 +269,7 @@ class BugsPluginTest extends AbstractPluginTestCase
 		}
 	}
 
-	public function processDetectsMissingBugRegexpsDataProvider()
+	public static function processDetectsMissingBugRegexpsDataProvider()
 	{
 		return array(
 			'project deleted' => array('0'),

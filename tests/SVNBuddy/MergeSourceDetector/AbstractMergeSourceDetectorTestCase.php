@@ -27,7 +27,7 @@ abstract class AbstractMergeSourceDetectorTestCase extends TestCase
 		$this->assertSame($result, $detector->detect($repository_url));
 	}
 
-	public function repositoryUrlDataProvider()
+	public static function repositoryUrlDataProvider()
 	{
 		return array(
 			array('', ''),
