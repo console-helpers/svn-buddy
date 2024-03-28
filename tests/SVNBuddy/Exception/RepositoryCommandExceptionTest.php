@@ -12,9 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Exception;
 
 
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class RepositoryCommandExceptionTest extends TestCase
+class RepositoryCommandExceptionTest extends AbstractTestCase
 {
 
 	/**

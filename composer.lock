@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04f37a4703a64218a52d209d88a2492a",
+    "content-hash": "66b1ff215e4cc47db939a91a8d8e67b4",
     "packages": [
         {
             "name": "aura/sql",
@@ -962,6 +962,58 @@
                 "source": "https://github.com/aik099/CodingStandard/tree/master"
             },
             "time": "2021-11-07T16:55:51+00:00"
+        },
+        {
+            "name": "console-helpers/prophecy-phpunit",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/console-helpers/prophecy-phpunit.git",
+                "reference": "adc1cfa8dc05f42f9b5269775090ec8efdcbe2aa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/console-helpers/prophecy-phpunit/zipball/adc1cfa8dc05f42f9b5269775090ec8efdcbe2aa",
+                "reference": "adc1cfa8dc05f42f9b5269775090ec8efdcbe2aa",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7 || ^8",
+                "phpspec/prophecy": "^1.3",
+                "phpunit/phpunit": "^5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Prophecy\\PhpUnit\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christophe Coevoet",
+                    "email": "stof@notk.org"
+                }
+            ],
+            "description": "Integrating the Prophecy mocking library in PHPUnit test cases",
+            "homepage": "http://phpspec.net",
+            "keywords": [
+                "phpunit",
+                "prophecy"
+            ],
+            "support": {
+                "source": "https://github.com/console-helpers/prophecy-phpunit/tree/master"
+            },
+            "time": "2024-03-28T08:54:24+00:00"
         },
         {
             "name": "doctrine/instantiator",
@@ -2560,7 +2612,8 @@
     "stability-flags": {
         "console-helpers/console-kit": 20,
         "padraic/phar-updater": 20,
-        "aik099/coding-standard": 20
+        "aik099/coding-standard": 20,
+        "console-helpers/prophecy-phpunit": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

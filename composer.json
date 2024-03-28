@@ -26,7 +26,8 @@
 	"require-dev": {
 		"aik099/coding-standard": "dev-master",
 		"yoast/phpunit-polyfills": "^1.0",
-		"phpspec/prophecy": "^1.10"
+		"phpspec/prophecy": "^1.10",
+		"console-helpers/prophecy-phpunit": "^2.0@dev"
 	},
 	"autoload": {
 		"psr-4": {

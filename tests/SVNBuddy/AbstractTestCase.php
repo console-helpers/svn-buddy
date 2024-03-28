@@ -8,30 +8,15 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace Tests\ConsoleHelpers\SVNBuddy\Command;
+namespace Tests\ConsoleHelpers\SVNBuddy;
 
 
+use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
-class MergeCommandTest extends AbstractCommandTestCase
+
+abstract class AbstractTestCase extends TestCase
 {
 
 	use ProphecyTrait;
-
-	/**
-	 * @before
-	 * @return void
-	 */
-	protected function setupTest()
-	{
-		$this->commandName = 'merge';
-
-		parent::setupTest();
-	}
-
-	public function testExampleTest()
-	{
-		$this->markTestIncomplete('TODO');
-	}
-
 }

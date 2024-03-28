@@ -12,11 +12,11 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class StatementProfilerTest extends TestCase
+class StatementProfilerTest extends AbstractTestCase
 {
 
 	use ExpectException;

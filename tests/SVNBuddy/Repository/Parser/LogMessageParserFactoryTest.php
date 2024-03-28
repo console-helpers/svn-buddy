@@ -12,9 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class LogMessageParserFactoryTest extends TestCase
+class LogMessageParserFactoryTest extends AbstractTestCase
 {
 
 	/**

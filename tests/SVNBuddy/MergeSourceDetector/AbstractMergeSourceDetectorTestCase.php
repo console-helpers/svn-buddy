@@ -12,9 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\MergeSourceDetector;
 
 
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-abstract class AbstractMergeSourceDetectorTestCase extends TestCase
+abstract class AbstractMergeSourceDetectorTestCase extends AbstractTestCase
 {
 
 	/**

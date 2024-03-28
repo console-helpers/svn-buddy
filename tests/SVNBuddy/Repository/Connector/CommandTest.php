@@ -12,7 +12,6 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,8 +21,9 @@ use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class CommandTest extends TestCase
+class CommandTest extends AbstractTestCase
 {
 
 	/**

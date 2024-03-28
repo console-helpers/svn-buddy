@@ -14,11 +14,14 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Command;
 use ConsoleHelpers\SVNBuddy\Application;
 use ConsoleHelpers\SVNBuddy\Command\AbstractCommand;
 use ConsoleHelpers\SVNBuddy\Container;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Console\Tester\CommandTester;
 use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 
 abstract class AbstractCommandTestCase extends WorkingDirectoryAwareTestCase
 {
+
+	use ProphecyTrait;
 
 	/**
 	 * Name of the command.
