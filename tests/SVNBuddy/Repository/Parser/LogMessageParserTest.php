@@ -12,9 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class LogMessageParserTest extends TestCase
+class LogMessageParserTest extends AbstractTestCase
 {
 
 	public function testEmptyRegExp()

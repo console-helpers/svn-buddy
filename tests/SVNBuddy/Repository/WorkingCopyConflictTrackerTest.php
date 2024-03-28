@@ -13,12 +13,12 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository;
 
 use ConsoleHelpers\SVNBuddy\Command\ConflictsCommand;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class WorkingCopyConflictTrackerTest extends TestCase
+class WorkingCopyConflictTrackerTest extends AbstractTestCase
 {
 
 	use ExpectException;

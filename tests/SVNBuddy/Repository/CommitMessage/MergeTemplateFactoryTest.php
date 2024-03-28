@@ -12,10 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class MergeTemplateFactoryTest extends TestCase
+class MergeTemplateFactoryTest extends AbstractTestCase
 {
 
 	use ExpectException;

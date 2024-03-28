@@ -15,9 +15,9 @@ use Aura\Sql\ExtendedPdo;
 use Aura\Sql\ExtendedPdoInterface;
 use ConsoleHelpers\SVNBuddy\Container;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-abstract class AbstractDatabaseAwareTestCase extends TestCase
+abstract class AbstractDatabaseAwareTestCase extends AbstractTestCase
 {
 
 	/**

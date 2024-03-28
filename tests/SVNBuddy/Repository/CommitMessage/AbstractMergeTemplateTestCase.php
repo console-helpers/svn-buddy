@@ -12,10 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-abstract class AbstractMergeTemplateTestCase extends TestCase
+abstract class AbstractMergeTemplateTestCase extends AbstractTestCase
 {
 
 	/**

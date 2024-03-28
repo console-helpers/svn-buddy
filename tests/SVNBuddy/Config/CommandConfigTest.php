@@ -14,11 +14,11 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-class CommandConfigTest extends TestCase
+class CommandConfigTest extends AbstractTestCase
 {
 
 	use ExpectException;

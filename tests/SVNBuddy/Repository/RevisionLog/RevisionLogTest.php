@@ -15,12 +15,12 @@ use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\ProgressBarOutputToken;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
@@ -29,7 +29,7 @@ use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPl
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 
-class RevisionLogTest extends TestCase
+class RevisionLogTest extends AbstractTestCase
 {
 
 	use ExpectException;

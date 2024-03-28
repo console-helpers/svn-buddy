@@ -13,6 +13,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Cache;
 
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\ConsoleKit\WorkingDirectoryAwareTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
@@ -21,6 +22,7 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 {
 
 	use ExpectException;
+	use ProphecyTrait;
 
 	/**
 	 * Cache manager.

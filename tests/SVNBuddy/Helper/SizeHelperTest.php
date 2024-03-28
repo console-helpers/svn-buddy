@@ -12,9 +12,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Helper;
 
 
 use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-class SizeHelperTest extends TestCase
+class SizeHelperTest extends AbstractTestCase
 {
 
 	/**

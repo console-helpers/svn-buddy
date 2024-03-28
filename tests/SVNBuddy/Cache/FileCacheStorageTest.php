@@ -12,10 +12,13 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Cache;
 
 
 use ConsoleHelpers\SVNBuddy\Cache\FileCacheStorage;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertionRenames;
 
-class FileCacheStorageTest extends TestCase
+class FileCacheStorageTest extends AbstractTestCase
 {
+
+	use AssertionRenames;
 
 	/**
 	 * Cache.
@@ -44,7 +47,7 @@ class FileCacheStorageTest extends TestCase
 
 	public function testNoCacheFileByDefault()
 	{
-		$this->assertFileNotExists($this->cacheFile);
+		$this->assertFileDoesNotExist($this->cacheFile);
 	}
 
 	public function testMissingCacheFile()
@@ -82,14 +85,14 @@ class FileCacheStorageTest extends TestCase
 	public function testNothingToInvalidate()
 	{
 		$this->cache->invalidate();
-		$this->assertFileNotExists($this->cacheFile);
+		$this->assertFileDoesNotExist($this->cacheFile);
 	}
 
 	public function testSomethingToInvalidate()
 	{
 		$this->cache->set(array('key' => 'value'));
 		$this->cache->invalidate();
-		$this->assertFileNotExists($this->cacheFile);
+		$this->assertFileDoesNotExist($this->cacheFile);
 	}
 
 	/**

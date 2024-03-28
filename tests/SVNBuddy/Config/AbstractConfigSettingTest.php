@@ -13,10 +13,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use PHPUnit\Framework\TestCase;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
-abstract class AbstractConfigSettingTest extends TestCase
+abstract class AbstractConfigSettingTest extends AbstractTestCase
 {
 
 	use ExpectException;
