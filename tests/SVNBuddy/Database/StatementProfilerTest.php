@@ -13,6 +13,8 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
 class StatementProfilerTest extends AbstractTestCase
@@ -186,7 +188,7 @@ class StatementProfilerTest extends AbstractTestCase
 			->writeln(array(
 				'',
 				'<debug>[db, 5s]: IGNORE ME "bb"</debug>',
-				'<debug>[db origin]: ' . __FILE__ . ':197</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':199</debug>',
 			))
 			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
@@ -214,7 +216,7 @@ class StatementProfilerTest extends AbstractTestCase
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
 		// The PHP7 threats multi-line statement position differently in traces.
-		$expect_line = PHP_VERSION_ID < 70000 ? 234 : 233;
+		$expect_line = PHP_VERSION_ID < 70000 ? 236 : 235;
 
 		$io
 			->writeln(array(
@@ -245,6 +247,23 @@ class StatementProfilerTest extends AbstractTestCase
 		$this->statementProfiler->setActive(true);
 		$this->statementProfiler->addProfile(5, 'perform', 'bb', array('cc' => 'dd'));
 		$this->assertCount(1, $this->statementProfiler->getProfiles());
+	}
+
+	public function testGetLogger()
+	{
+		$this->assertInstanceOf(LoggerInterface::class, $this->statementProfiler->getLogger());
+	}
+
+	public function testLogLevel()
+	{
+		$this->statementProfiler->setLogLevel(LogLevel::ERROR);
+		$this->assertEquals(LogLevel::ERROR, $this->statementProfiler->getLogLevel());
+	}
+
+	public function testLogFormat()
+	{
+		$this->statementProfiler->setLogFormat('test');
+		$this->assertEquals('test', $this->statementProfiler->getLogFormat());
 	}
 
 }

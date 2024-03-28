@@ -11,8 +11,11 @@
 namespace ConsoleHelpers\SVNBuddy\Database;
 
 
-use Aura\Sql\ProfilerInterface;
+use Aura\Sql\Profiler\ProfilerInterface;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use Psr\Log\NullLogger;
 
 class StatementProfiler implements ProfilerInterface
 {
@@ -23,6 +26,29 @@ class StatementProfiler implements ProfilerInterface
 	 * @var boolean
 	 */
 	protected $active = false;
+
+	/**
+	 * Log profile data through this interface.
+	 *
+	 * @var LoggerInterface
+	 */
+	protected $logger;
+
+	/**
+	 * The log level for all messages.
+	 *
+	 * @var string
+	 * @see setLogLevel()
+	 */
+	protected $logLevel = LogLevel::DEBUG;
+
+	/**
+	 * Sets the format for the log message, with placeholders.
+	 *
+	 * @var string
+	 * @see setLogFormat()
+	 */
+	protected $logFormat = '{function} ({duration} seconds): {statement} {backtrace}';
 
 	/**
 	 * Retained profiles.
@@ -71,6 +97,7 @@ class StatementProfiler implements ProfilerInterface
 	 */
 	public function __construct()
 	{
+		$this->logger = new NullLogger();
 		$this->_backtraceOptions = defined('DEBUG_BACKTRACE_IGNORE_ARGS') ? DEBUG_BACKTRACE_IGNORE_ARGS : 0;
 	}
 
@@ -279,6 +306,62 @@ class StatementProfiler implements ProfilerInterface
 	public function resetProfiles()
 	{
 		$this->profiles = array();
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getLogger()
+	{
+		return $this->logger;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getLogLevel()
+	{
+		return $this->logLevel;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function setLogLevel($logLevel)
+	{
+		$this->logLevel = $logLevel;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getLogFormat()
+	{
+		return $this->logFormat;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function setLogFormat($logFormat)
+	{
+		$this->logFormat = $logFormat;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function start($function)
+	{
+
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function finish($statement = null, array $values = [])
+	{
+
 	}
 
 }

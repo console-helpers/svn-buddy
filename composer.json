@@ -13,7 +13,7 @@
 		"php": "^5.6|>=7.0.8",
 		"symfony/process": "^3.4",
 		"console-helpers/console-kit": "^0.1@dev",
-		"aura/sql": "^2.5",
+		"aura/sql": "^3.0 || ^4.0 || ^5.0",
 		"padraic/phar-updater": "dev-use-curl",
 		"padraic/humbug_get_contents": "^1.0",
 		"console-helpers/db-migration": "^0.1.0",
