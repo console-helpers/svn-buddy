@@ -15,12 +15,9 @@ use Aura\Sql\ExtendedPdoInterface;
 use ConsoleHelpers\SVNBuddy\Container;
 use ConsoleHelpers\DatabaseMigration\MigrationContext;
 use Tests\ConsoleHelpers\SVNBuddy\Database\AbstractDatabaseAwareTestCase as BaseAbstractDatabaseAwareTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 abstract class AbstractDatabaseAwareTestCase extends BaseAbstractDatabaseAwareTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Creates database for testing with correct db structure.

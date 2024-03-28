@@ -16,7 +16,6 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
@@ -25,8 +24,6 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 
 class ConnectorTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	const DUMMY_REPO = 'svn://repository.com/path/to/project';
 

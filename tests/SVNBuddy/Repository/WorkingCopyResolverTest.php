@@ -14,12 +14,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class WorkingCopyResolverTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Repository connector.

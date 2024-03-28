@@ -12,13 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use ConsoleHelpers\SVNBuddy\Config\RegExpsConfigSetting;
 
 class RegExpsConfigSettingTest extends ArrayConfigSettingTest
 {
-
-	use ExpectException;
 
 	/**
 	 * @before

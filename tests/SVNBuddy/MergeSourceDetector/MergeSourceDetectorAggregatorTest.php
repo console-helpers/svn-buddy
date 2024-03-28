@@ -13,13 +13,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\MergeSourceDetector;
 
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use Prophecy\Prophecy\ObjectProphecy;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 
 class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Detectors.

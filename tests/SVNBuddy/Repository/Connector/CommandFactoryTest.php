@@ -16,7 +16,6 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
@@ -25,8 +24,6 @@ use Symfony\Component\Process\Process;
 
 class CommandFactoryTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Config editor.

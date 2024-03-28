@@ -12,13 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use ConsoleHelpers\SVNBuddy\Config\IntegerConfigSetting;
 
 class IntegerConfigSettingTest extends AbstractConfigSettingTest
 {
-
-	use ExpectException;
 
 	/**
 	 * @before

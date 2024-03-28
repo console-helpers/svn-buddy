@@ -16,12 +16,9 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class RevisionUrlBuilderTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Repository connector.

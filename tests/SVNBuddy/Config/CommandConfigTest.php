@@ -16,12 +16,9 @@ use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class CommandConfigTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Config editor.

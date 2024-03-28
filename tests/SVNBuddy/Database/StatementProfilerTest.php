@@ -14,12 +14,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Database;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use Prophecy\Argument;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class StatementProfilerTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Statement profiler.
@@ -189,7 +186,7 @@ class StatementProfilerTest extends AbstractTestCase
 			->writeln(array(
 				'',
 				'<debug>[db, 5s]: IGNORE ME "bb"</debug>',
-				'<debug>[db origin]: ' . __FILE__ . ':200</debug>',
+				'<debug>[db origin]: ' . __FILE__ . ':197</debug>',
 			))
 			->shouldBeCalled();
 		$this->statementProfiler->setIO($io->reveal());
@@ -217,7 +214,7 @@ class StatementProfilerTest extends AbstractTestCase
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
 		// The PHP7 threats multi-line statement position differently in traces.
-		$expect_line = PHP_VERSION_ID < 70000 ? 237 : 236;
+		$expect_line = PHP_VERSION_ID < 70000 ? 234 : 233;
 
 		$io
 			->writeln(array(

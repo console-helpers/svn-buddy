@@ -23,7 +23,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\ProgressBarOutputToken;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
@@ -31,8 +30,6 @@ use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 
 class RevisionLogTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Repository connector.
