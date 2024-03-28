@@ -11,8 +11,6 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
-use Aura\Sql\Iterator\ColIterator;
-
 class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 {
 
@@ -101,7 +99,7 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 
 		$sql = 'SELECT Revision
 				FROM Commits';
-		$all_commits = new ColIterator($this->database->perform($sql));
+		$all_commits = $this->database->yieldCol($sql);
 
 		foreach ( $all_commits as $revision ) {
 			$this->repositoryFiller->addCommitToProject($revision, $project_id);
