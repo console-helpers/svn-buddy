@@ -12,7 +12,6 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
 use Aura\Sql\ExtendedPdoInterface;
-use Aura\Sql\Iterator\AllIterator;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RepositoryFiller;
@@ -337,10 +336,10 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 				FROM CommitProjects cp
 				JOIN Commits c ON c.Revision = cp.Revision
 				WHERE cp.Revision BETWEEN :from_revision AND :to_revision';
-		$commits = new AllIterator($this->database->perform($sql, array(
+		$commits = $this->database->yieldAll($sql, array(
 			'from_revision' => $from_revision,
 			'to_revision' => $to_revision,
-		)));
+		));
 
 		$ret = array();
 		$processed_revisions = array();
