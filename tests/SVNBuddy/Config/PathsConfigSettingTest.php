@@ -12,13 +12,10 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 
 
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 use ConsoleHelpers\SVNBuddy\Config\PathsConfigSetting;
 
 class PathsConfigSettingTest extends ArrayConfigSettingTest
 {
-
-	use ExpectException;
 
 	/**
 	 * Temp folder.

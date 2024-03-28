@@ -13,12 +13,9 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Parser;
 
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use Yoast\PHPUnitPolyfills\Polyfills\ExpectException;
 
 class RevisionListParserTest extends AbstractTestCase
 {
-
-	use ExpectException;
 
 	/**
 	 * Repository connector.
