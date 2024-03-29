@@ -14,7 +14,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
 
-class StringConfigSettingTest extends AbstractConfigSettingTest
+class StringConfigSettingTest extends AbstractConfigSettingTestCase
 {
 
 	/**

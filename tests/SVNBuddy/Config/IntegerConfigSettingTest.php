@@ -14,7 +14,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Config;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\IntegerConfigSetting;
 
-class IntegerConfigSettingTest extends AbstractConfigSettingTest
+class IntegerConfigSettingTest extends AbstractConfigSettingTestCase
 {
 
 	/**

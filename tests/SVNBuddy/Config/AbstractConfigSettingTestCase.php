@@ -15,7 +15,7 @@ use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
-abstract class AbstractConfigSettingTest extends AbstractTestCase
+abstract class AbstractConfigSettingTestCase extends AbstractTestCase
 {
 
 	/**
