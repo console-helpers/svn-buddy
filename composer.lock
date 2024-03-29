@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b5a721a50bd37f8bd2e364a9d58905ad",
+    "content-hash": "4727bbd666c5458f8c5a46c53cba3d2f",
     "packages": [
         {
             "name": "aura/sql",
@@ -145,24 +145,25 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "b3f684f594c39774ecebc526611cfab6da0f1126"
+                "reference": "0a14c54d5e142abc97322f66d83c318da47949f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/b3f684f594c39774ecebc526611cfab6da0f1126",
-                "reference": "b3f684f594c39774ecebc526611cfab6da0f1126",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/0a14c54d5e142abc97322f66d83c318da47949f6",
+                "reference": "0a14c54d5e142abc97322f66d83c318da47949f6",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.6.0",
                 "pimple/pimple": "^2.0|^3.0",
                 "stecman/symfony-console-completion": "^0.11.0",
-                "symfony/console": "^3.4"
+                "symfony/console": "^3.4 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "require-dev": {
                 "aik099/coding-standard": "dev-master",
+                "console-helpers/prophecy-phpunit": "^2.0@dev",
                 "phpspec/prophecy": "^1.10",
-                "yoast/phpunit-polyfills": "^1.0"
+                "yoast/phpunit-polyfills": "^2.0"
             },
             "default-branch": true,
             "type": "library",
@@ -190,9 +191,9 @@
             "description": "Toolkit for creating command line applications using Symfony Console component",
             "support": {
                 "issues": "https://github.com/console-helpers/console-kit/issues",
-                "source": "https://github.com/console-helpers/console-kit/tree/v0.2.0"
+                "source": "https://github.com/console-helpers/console-kit/tree/v0.3.0"
             },
-            "time": "2023-08-17T15:19:09+00:00"
+            "time": "2024-03-29T10:26:32+00:00"
         },
         {
             "name": "console-helpers/db-migration",

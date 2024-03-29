@@ -39,7 +39,7 @@ use ConsoleHelpers\SVNBuddy\Updater\Updater;
 class ContainerTest extends BaseContainerTest
 {
 
-	public function instanceDataProvider()
+	public static function instanceDataProvider()
 	{
 		$instance_data = parent::instanceDataProvider();
 
