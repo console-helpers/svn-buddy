@@ -48,11 +48,11 @@ class CommandFactory
 	private $_cacheManager;
 
 	/**
-	 * Path to an svn command.
+	 * Path to a svn command.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	private $_svnCommand = 'svn';
+	private $_svnCommand = array('svn');
 
 	/**
 	 * Creates command factory.
@@ -86,28 +86,30 @@ class CommandFactory
 		$username = $this->_configEditor->get('repository-connector.username');
 		$password = $this->_configEditor->get('repository-connector.password');
 
-		$this->_svnCommand .= ' --non-interactive';
+		$this->_svnCommand[] = '--non-interactive';
 
 		if ( $username ) {
-			$this->_svnCommand .= ' --username ' . $username;
+			$this->_svnCommand[] = '--username';
+			$this->_svnCommand[] = $username;
 		}
 
 		if ( $password ) {
-			$this->_svnCommand .= ' --password ' . $password;
+			$this->_svnCommand[] = '--password';
+			$this->_svnCommand[] = $password;
 		}
 	}
 
 	/**
 	 * Builds a command.
 	 *
-	 * @param string      $sub_command  Sub command.
-	 * @param string|null $param_string Parameter string.
+	 * @param string $sub_command Sub command.
+	 * @param array  $arguments   Arguments.
 	 *
 	 * @return Command
 	 */
-	public function getCommand($sub_command, $param_string = null)
+	public function getCommand($sub_command, array $arguments = array())
 	{
-		$command_line = $this->buildCommand($sub_command, $param_string);
+		$command_line = $this->buildCommand($sub_command, $arguments);
 
 		return new Command(
 			$command_line,
@@ -120,13 +122,13 @@ class CommandFactory
 	/**
 	 * Builds command from given arguments.
 	 *
-	 * @param string $sub_command  Command.
-	 * @param string $param_string Parameter string.
+	 * @param string $sub_command Command.
+	 * @param array  $arguments   Arguments.
 	 *
-	 * @return string
+	 * @return array
 	 * @throws \InvalidArgumentException When command contains spaces.
 	 */
-	protected function buildCommand($sub_command, $param_string = null)
+	protected function buildCommand($sub_command, array $arguments = array())
 	{
 		if ( strpos($sub_command, ' ') !== false ) {
 			throw new \InvalidArgumentException('The "' . $sub_command . '" sub-command contains spaces.');
@@ -135,20 +137,12 @@ class CommandFactory
 		$command_line = $this->_svnCommand;
 
 		if ( !empty($sub_command) ) {
-			$command_line .= ' ' . $sub_command;
+			$command_line[] = $sub_command;
 		}
 
-		if ( !empty($param_string) ) {
-			$command_line .= ' ' . $param_string;
+		if ( !empty($arguments) ) {
+			$command_line = array_merge($command_line, $arguments);
 		}
-
-		$command_line = preg_replace_callback(
-			'/\{([^\}]*)\}/',
-			function (array $matches) {
-				return escapeshellarg($matches[1]);
-			},
-			$command_line
-		);
 
 		return $command_line;
 	}

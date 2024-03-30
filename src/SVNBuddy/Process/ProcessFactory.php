@@ -13,7 +13,6 @@ namespace ConsoleHelpers\SVNBuddy\Process;
 
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
-use Symfony\Component\Process\ProcessBuilder;
 
 class ProcessFactory implements IProcessFactory
 {
@@ -21,16 +20,14 @@ class ProcessFactory implements IProcessFactory
 	/**
 	 * Creates new Symfony process with given arguments.
 	 *
-	 * @param string       $commandline  The command line to run.
+	 * @param array        $command_line The command line to run.
 	 * @param integer|null $idle_timeout Idle timeout.
 	 *
 	 * @return Process
 	 */
-	public function createProcess(
-		$commandline,
-		$idle_timeout = null
-	) {
-		$process = new Process($commandline);
+	public function createProcess(array $command_line, $idle_timeout = null)
+	{
+		$process = new Process($command_line);
 		$process->setTimeout(null);
 		$process->setIdleTimeout($idle_timeout);
 
@@ -51,13 +48,15 @@ class ProcessFactory implements IProcessFactory
 		$php_executable_finder = new PhpExecutableFinder();
 		$php_executable = $php_executable_finder->find();
 
+		// @codeCoverageIgnoreStart
 		if ( !$php_executable ) {
 			throw new \RuntimeException('The PHP executable cannot be found.');
 		}
+		// @codeCoverageIgnoreEnd
 
 		array_unshift($arguments, $php_executable, $_SERVER['argv'][0], $command);
 
-		return ProcessBuilder::create($arguments)->getProcess();
+		return new Process($arguments);
 	}
 
 }

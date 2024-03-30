@@ -204,10 +204,12 @@ class RevisionLog
 		while ( $range_start <= $to_revision ) {
 			$range_end = min($range_start + 199, $to_revision);
 
-			$command = $this->_repositoryConnector->getCommand(
-				'log',
-				sprintf($log_command_arguments, $range_start, $range_end, $this->_repositoryRootUrl)
+			$command_arguments = str_replace(
+				array('{revision_range}', '{repository_url}'),
+				array($range_start . ':' . $range_end, $this->_repositoryRootUrl),
+				$log_command_arguments
 			);
+			$command = $this->_repositoryConnector->getCommand('log', $command_arguments);
 			$command->setCacheDuration('10 years');
 			$svn_log = $command->run();
 
@@ -254,23 +256,23 @@ class RevisionLog
 	/**
 	 * Returns arguments for "log" command.
 	 *
-	 * @return string
+	 * @return array
 	 */
 	private function _getLogCommandArguments()
 	{
 		$query_flags = $this->_getRevisionQueryFlags();
 
-		$ret = '-r %d:%d --xml';
+		$ret = array('-r', '{revision_range}', '--xml');
 
 		if ( in_array(self::FLAG_VERBOSE, $query_flags) ) {
-			$ret .= ' --verbose';
+			$ret[] = '--verbose';
 		}
 
 		if ( in_array(self::FLAG_MERGE_HISTORY, $query_flags) ) {
-			$ret .= ' --use-merge-history';
+			$ret[] = '--use-merge-history';
 		}
 
-		$ret .= ' {%s}';
+		$ret[] = '{repository_url}';
 
 		return $ret;
 	}

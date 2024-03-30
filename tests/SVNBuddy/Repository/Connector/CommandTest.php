@@ -79,11 +79,11 @@ class CommandTest extends AbstractTestCase
 	public function testRunWithoutCaching($use_callback, $is_xml)
 	{
 		if ( $is_xml ) {
-			$command_line = 'svn log --xml';
+			$command_line = array('svn', 'log', '--xml');
 			$process_output = '<log><logentry/></log>';
 		}
 		else {
-			$command_line = 'svn log';
+			$command_line = array('svn', 'log');
 			$process_output = 'OK';
 		}
 
@@ -130,11 +130,11 @@ class CommandTest extends AbstractTestCase
 	public function testRunWithMissingCache($duration, $invalidator, $overwrite, $use_callback, $is_xml)
 	{
 		if ( $is_xml ) {
-			$command_line = 'svn log --xml';
+			$command_line = array('svn', 'log', '--xml');
 			$process_output = '<log><logentry/></log>';
 		}
 		else {
-			$command_line = 'svn log';
+			$command_line = array('svn', 'log');
 			$process_output = 'OK';
 		}
 
@@ -145,18 +145,20 @@ class CommandTest extends AbstractTestCase
 
 		$this->configureProcess($callback, $process_output, true);
 
+		$command_string = implode(' ', $command_line);
+
 		if ( $overwrite === true ) {
-			$this->_cacheManager->deleteCache('misc/command:' . $command_line, $duration)->shouldBeCalled();
+			$this->_cacheManager->deleteCache('misc/command:' . $command_string, $duration)->shouldBeCalled();
 		}
 		else {
 			$this->_cacheManager
-				->getCache('misc/command:' . $command_line, $invalidator, $duration)
+				->getCache('misc/command:' . $command_string, $invalidator, $duration)
 				->willReturn(null)
 				->shouldBeCalled();
 		}
 
 		$this->_cacheManager
-			->setCache('misc/command:' . $command_line, $process_output, $invalidator, $duration)
+			->setCache('misc/command:' . $command_string, $process_output, $invalidator, $duration)
 			->shouldBeCalled();
 
 		if ( isset($duration) ) {
@@ -184,11 +186,11 @@ class CommandTest extends AbstractTestCase
 	public function testRunWithExistingCache($duration, $invalidator, $overwrite, $use_callback, $is_xml)
 	{
 		if ( $is_xml ) {
-			$command_line = 'svn log --xml';
+			$command_line = array('svn', 'log', '--xml');
 			$process_output = '<log><logentry/></log>';
 		}
 		else {
-			$command_line = 'svn log';
+			$command_line = array('svn', 'log');
 			$process_output = 'OK';
 		}
 
@@ -199,20 +201,21 @@ class CommandTest extends AbstractTestCase
 
 		$this->configureProcess($callback, $process_output, $overwrite === true);
 
+		$command_string = implode(' ', $command_line);
+
 		if ( $overwrite === true ) {
-			$this->_cacheManager->deleteCache('misc/command:' . $command_line, $duration)->shouldBeCalled();
+			$this->_cacheManager->deleteCache('misc/command:' . $command_string, $duration)->shouldBeCalled();
 			$this->_cacheManager
-				->setCache('misc/command:' . $command_line, $process_output, $invalidator, $duration)
+				->setCache('misc/command:' . $command_string, $process_output, $invalidator, $duration)
 				->shouldBeCalled();
 		}
 		else {
 			$this->_cacheManager
-				->getCache('misc/command:' . $command_line, $invalidator, $duration)
+				->getCache('misc/command:' . $command_string, $invalidator, $duration)
 				->willReturn($process_output)
 				->shouldBeCalled();
 			$this->_cacheManager->setCache(Argument::any())->shouldNotBeCalled();
 		}
-
 
 		if ( isset($duration) ) {
 			$this->_command->setCacheDuration($duration);
@@ -336,7 +339,7 @@ class CommandTest extends AbstractTestCase
 
 	public function testVerboseOutput()
 	{
-		$this->_command = $this->_createCommand('svn log');
+		$this->_command = $this->_createCommand(array('svn', 'log'));
 
 		$this->_process->mustRun(null)->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
@@ -358,7 +361,7 @@ class CommandTest extends AbstractTestCase
 
 	public function testDebugOutput()
 	{
-		$this->_command = $this->_createCommand('svn log');
+		$this->_command = $this->_createCommand(array('svn', 'log'));
 
 		$this->_process->mustRun(null)->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
@@ -379,7 +382,7 @@ class CommandTest extends AbstractTestCase
 	 */
 	public function testRunLive($output_type, $expected_output)
 	{
-		$this->_command = $this->_createCommand('svn log');
+		$this->_command = $this->_createCommand(array('svn', 'log'));
 
 		$this->_process
 			->mustRun(Argument::type('callable'))
@@ -408,7 +411,7 @@ class CommandTest extends AbstractTestCase
 
 	public function testRunError()
 	{
-		$this->_command = $this->_createCommand('svn log');
+		$this->_command = $this->_createCommand(array('svn', 'log'));
 
 		$exception = $this->prophesize(ProcessFailedException::class);
 
@@ -454,7 +457,7 @@ MSG;
 	 */
 	public function testCacheKeyForming($repository_url, $cache_namespace)
 	{
-		$command_line = 'svn log ' . escapeshellarg($repository_url) . ' ' . escapeshellarg($repository_url);
+		$command_line = array('svn', 'log', $repository_url, $repository_url);
 		$process_output = 'OK';
 
 		$this->_command = $this->_createCommand($command_line, false);
@@ -462,7 +465,7 @@ MSG;
 		$this->_process->mustRun(null)->shouldNotBeCalled();
 
 		$this->_cacheManager
-			->getCache($cache_namespace . ':' . $command_line, null, '1 minute')
+			->getCache($cache_namespace . ':' . implode(' ', $command_line), null, '1 minute')
 			->willReturn($process_output)
 			->shouldBeCalled();
 		$this->_cacheManager->setCache(Argument::any())->shouldNotBeCalled();
@@ -502,12 +505,12 @@ MSG;
 	/**
 	 * Creates command.
 	 *
-	 * @param string  $command_line Command line.
+	 * @param array   $command_line Command line.
 	 * @param boolean $use_process  Use process.
 	 *
 	 * @return Command
 	 */
-	private function _createCommand($command_line, $use_process = true)
+	private function _createCommand(array $command_line, $use_process = true)
 	{
 		if ( $use_process ) {
 			$this->_processFactory->createProcess($command_line, 1200)->willReturn($this->_process)->shouldBeCalled();

@@ -87,17 +87,18 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 			'Updating working copy to <info>' . $show_revision . '</info> revision ' . $show_externals . ' ... '
 		);
 
-		$param_string = '{' . $wc_path . '}';
+		$arguments = array($wc_path);
 
 		if ( $revision ) {
-			$param_string .= ' --revision ' . $revision;
+			$arguments[] = '--revision';
+			$arguments[] = $revision;
 		}
 
 		if ( $ignore_externals ) {
-			$param_string .= ' --ignore-externals';
+			$arguments[] = '--ignore-externals';
 		}
 
-		$command = $this->repositoryConnector->getCommand('update', $param_string);
+		$command = $this->repositoryConnector->getCommand('update', $arguments);
 		$command->runLive(array(
 			$wc_path => '.',
 		));

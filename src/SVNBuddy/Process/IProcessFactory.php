@@ -19,15 +19,12 @@ interface IProcessFactory
 	/**
 	 * Creates new Symfony process with given arguments.
 	 *
-	 * @param string       $commandline  The command line to run.
+	 * @param array        $command_line The command line to run.
 	 * @param integer|null $idle_timeout Idle timeout.
 	 *
 	 * @return Process
 	 */
-	public function createProcess(
-		$commandline,
-		$idle_timeout = null
-	);
+	public function createProcess(array $command_line, $idle_timeout = null);
 
 	/**
 	 * Creates new Symfony PHP process with given arguments.

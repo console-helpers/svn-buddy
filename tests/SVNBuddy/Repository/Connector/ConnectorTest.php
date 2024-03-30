@@ -92,7 +92,7 @@ class ConnectorTest extends AbstractTestCase
 	 */
 	public function testGetCommandWithCaching($duration, $overwrite)
 	{
-		$command = $this->_expectCommand('info', null, 'OK');
+		$command = $this->_expectCommand('info', array(), 'OK');
 
 		if ( $duration !== null ) {
 			$command->setCacheDuration($duration)->shouldBeCalled();
@@ -120,7 +120,7 @@ class ConnectorTest extends AbstractTestCase
 
 	public function testGetProperty()
 	{
-		$this->_expectCommand('propget', 'prop-name {the/path}', 'OK');
+		$this->_expectCommand('propget', array('prop-name', 'the/path'), 'OK');
 
 		$this->assertEquals(
 			'OK',
@@ -130,7 +130,7 @@ class ConnectorTest extends AbstractTestCase
 
 	public function testGetPropertyWithRevision()
 	{
-		$this->_expectCommand('propget', 'prop-name {the/path} --revision 5', 'OK');
+		$this->_expectCommand('propget', array('prop-name', 'the/path', '--revision', 5), 'OK');
 
 		$this->assertEquals(
 			'OK',
@@ -140,7 +140,7 @@ class ConnectorTest extends AbstractTestCase
 
 	public function testGetNonExistingPropertyOnSubversion18()
 	{
-		$this->_expectCommand('propget', 'prop-name {the/path} --revision 5', '');
+		$this->_expectCommand('propget', array('prop-name', 'the/path', '--revision', 5), '');
 
 		$this->assertSame(
 			'',
@@ -152,7 +152,7 @@ class ConnectorTest extends AbstractTestCase
 	{
 		$this->_expectCommand(
 			'propget',
-			'prop-name {the/path} --revision 5',
+			array('prop-name', 'the/path', '--revision', 5),
 			null,
 			'A problem occurred; see other errors for details',
 			RepositoryCommandException::SVN_ERR_BASE
@@ -182,14 +182,14 @@ class ConnectorTest extends AbstractTestCase
 	{
 		if ( strpos($path, '@') !== false ) {
 			$sub_command = 'info';
-			$param_string = '--xml {' . $path . '@}';
+			$arguments = array('--xml', $path . '@');
 		}
 		else {
 			$sub_command = 'info';
-			$param_string = '--xml {' . $path . '}';
+			$arguments = array('--xml', $path);
 		}
 
-		$command = $this->_expectCommand($sub_command, $param_string, $raw_command_output);
+		$command = $this->_expectCommand($sub_command, $arguments, $raw_command_output);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl($path);
@@ -214,7 +214,7 @@ class ConnectorTest extends AbstractTestCase
 
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_info_broken.xml')
 		);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
@@ -237,14 +237,14 @@ class ConnectorTest extends AbstractTestCase
 
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			'',
 			'error message',
 			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
 		);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
-		$this->_expectCommand('upgrade', '{/path/to/working-copy}', 'OK');
+		$this->_expectCommand('upgrade', array('/path/to/working-copy'), 'OK');
 
 		$actual = $this->_repositoryConnector->getWorkingCopyUrl('/path/to/working-copy');
 		$this->assertEquals(self::DUMMY_REPO, $actual);
@@ -254,7 +254,7 @@ class ConnectorTest extends AbstractTestCase
 	{
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_info_16.xml')
 		);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
@@ -266,7 +266,7 @@ class ConnectorTest extends AbstractTestCase
 	{
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			'',
 			'error message',
 			555
@@ -295,7 +295,7 @@ MESSAGE;
 
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			'',
 			'error message',
 			RepositoryCommandException::SVN_ERR_WC_UPGRADE_REQUIRED
@@ -327,7 +327,7 @@ MESSAGE;
 
 		$repository_connector = $this->_createRepositoryConnector();
 
-		$command = $this->_expectCommand('info', '--xml {' . $used_repository_url . '}', $raw_command_output);
+		$command = $this->_expectCommand('info', array('--xml', $used_repository_url), $raw_command_output);
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($given_repository_url));
@@ -338,7 +338,7 @@ MESSAGE;
 		$path = '/path/to/working-copy';
 		$repository_connector = $this->_createRepositoryConnector();
 
-		$command = $this->_expectCommand('info', '--xml {' . $path . '}', self::getFixture('svn_info_16.xml'));
+		$command = $this->_expectCommand('info', array('--xml', $path), self::getFixture('svn_info_16.xml'));
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('/path/to/project', $repository_connector->getRelativePath($path));
@@ -351,7 +351,7 @@ MESSAGE;
 	{
 		$repository_connector = $this->_createRepositoryConnector();
 
-		$command = $this->_expectCommand('info', '--xml {' . $used_repository_url . '}', self::getFixture('svn_info_remote.xml'));
+		$command = $this->_expectCommand('info', array('--xml', $used_repository_url), self::getFixture('svn_info_remote.xml'));
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($given_repository_url));
@@ -362,7 +362,7 @@ MESSAGE;
 		$path = '/path/to/working-copy';
 		$repository_connector = $this->_createRepositoryConnector();
 
-		$command = $this->_expectCommand('info', '--xml {' . $path . '}', self::getFixture('svn_info_16.xml'));
+		$command = $this->_expectCommand('info', array('--xml', $path), self::getFixture('svn_info_16.xml'));
 		$command->setCacheDuration('1 year')->shouldBeCalled();
 
 		$this->assertEquals('svn://repository.com', $repository_connector->getRootUrl($path));
@@ -427,7 +427,7 @@ MESSAGE;
 
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {' . self::DUMMY_REPO . '}',
+			array('--xml', self::DUMMY_REPO),
 			self::getFixture('svn_info_remote.xml')
 		);
 		$command->setCacheDuration(0)->shouldBeCalled();
@@ -454,7 +454,7 @@ MESSAGE;
 
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {' . $used_repository_url . '}',
+			array('--xml', $used_repository_url),
 			self::getFixture('svn_info_remote.xml')
 		);
 		$command->setCacheDuration('1 minute')->shouldBeCalled();
@@ -469,7 +469,7 @@ MESSAGE;
 
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {' . $path . '}',
+			array('--xml', $path),
 			self::getFixture('svn_info_16.xml')
 		);
 		$command->setCacheDuration(Argument::any())->shouldNotBeCalled();
@@ -488,7 +488,7 @@ MESSAGE;
 
 		$command = $this->_expectCommand(
 			'info',
-			'--xml {svn://repository.com}',
+			array('--xml', 'svn://repository.com'),
 			$raw_command_output
 		);
 		$command->setCacheDuration('1 minute')->shouldBeCalled();
@@ -573,7 +573,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture($fixture)
 		);
 
@@ -598,7 +598,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture($fixture)
 		);
 
@@ -620,7 +620,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -639,7 +639,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -660,7 +660,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -681,7 +681,7 @@ MESSAGE;
 
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_status_with_changelist_16.xml')
 		);
 
@@ -692,7 +692,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_status_with_props_eq_none18.xml')
 		);
 
@@ -710,7 +710,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture('svn_status_with_copied18.xml')
 		);
 
@@ -733,7 +733,7 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'status',
-			'--xml {/path/to/working-copy}',
+			array('--xml', '/path/to/working-copy'),
 			self::getFixture($fixture)
 		);
 
@@ -759,12 +759,12 @@ MESSAGE;
 		$merge_info = '/projects/project-name/trunk:10,15' . PHP_EOL;
 		$this->_expectCommand(
 			'propget',
-			'svn:mergeinfo {/path/to/working-copy} --revision BASE',
+			array('svn:mergeinfo', '/path/to/working-copy', '--revision', 'BASE'),
 			$merge_info
 		);
 		$this->_expectCommand(
 			'propget',
-			'svn:mergeinfo {/path/to/working-copy}',
+			array('svn:mergeinfo', '/path/to/working-copy'),
 			$merge_info
 		);
 
@@ -788,12 +788,12 @@ MESSAGE;
 	{
 		$this->_expectCommand(
 			'propget',
-			'svn:mergeinfo {/path/to/working-copy} --revision BASE',
+			array('svn:mergeinfo', '/path/to/working-copy', '--revision', 'BASE'),
 			$base_merged
 		);
 		$this->_expectCommand(
 			'propget',
-			'svn:mergeinfo {/path/to/working-copy}',
+			array('svn:mergeinfo', '/path/to/working-copy'),
 			$wc_merged
 		);
 
@@ -828,7 +828,7 @@ MESSAGE;
 
 	public function testGetFileContent()
 	{
-		$command = $this->_expectCommand('cat', '{/path/to/working-copy/file.php} --revision 100', 'OK');
+		$command = $this->_expectCommand('cat', array('/path/to/working-copy/file.php', '--revision', 100), 'OK');
 		$command->setCacheDuration(Connector::SVN_CAT_CACHE_DURATION)->shouldBeCalled();
 
 		$this->assertEquals(
@@ -836,7 +836,7 @@ MESSAGE;
 			$this->_repositoryConnector->getFileContent('/path/to/working-copy/file.php', 100)
 		);
 
-		$command = $this->_expectCommand('cat', '{/path/to/working-copy/file.php} --revision HEAD', 'OK');
+		$command = $this->_expectCommand('cat', array('/path/to/working-copy/file.php', '--revision', 'HEAD'), 'OK');
 		$command->setCacheDuration(Connector::SVN_CAT_CACHE_DURATION)->shouldBeCalled();
 
 		$this->assertEquals(
@@ -848,15 +848,15 @@ MESSAGE;
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string      $sub_command  Sub command.
-	 * @param string|null $param_string Parameter string.
-	 * @param string      $output       Output.
-	 * @param string|null $error_msg    Error msg.
-	 * @param integer     $error_code   Error code.
+	 * @param string      $sub_command Sub command.
+	 * @param array       $arguments   Arguments.
+	 * @param string      $output      Output.
+	 * @param string|null $error_msg   Error msg.
+	 * @param integer     $error_code  Error code.
 	 *
 	 * @return ObjectProphecy
 	 */
-	private function _expectCommand($sub_command, $param_string, $output, $error_msg = null, $error_code = 0)
+	private function _expectCommand($sub_command, array $arguments, $output, $error_msg = null, $error_code = 0)
 	{
 		$command = $this->prophesize(Command::class);
 
@@ -873,7 +873,7 @@ MESSAGE;
 			);
 		}
 		else {
-			if ( strpos($param_string, '--xml') !== false ) {
+			if ( in_array('--xml', $arguments) ) {
 				$output = simplexml_load_string($output);
 			}
 
@@ -881,7 +881,7 @@ MESSAGE;
 		}
 
 		$this->_commandFactory
-			->getCommand($sub_command, $param_string)
+			->getCommand($sub_command, $arguments)
 			->willReturn($command->reveal())
 			->shouldBeCalled();
 

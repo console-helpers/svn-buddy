@@ -554,11 +554,11 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	{
 		$command = $this->repositoryConnector->getCommand(
 			'mergeinfo',
-			sprintf(
-				'--show-revs %s {%s} {%s}',
+			array(
+				'--show-revs',
 				$this->isReverseMerge() ? 'merged' : 'eligible',
 				$source_url,
-				$wc_path
+				$wc_path,
 			)
 		);
 
@@ -657,17 +657,6 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$revision_count += $used_revision_count;
 		}
 
-		$param_string_beginning = '-c ';
-		$param_string_ending = '{' . $source_url . '} {' . $wc_path . '}';
-
-		if ( $this->isReverseMerge() ) {
-			$param_string_beginning .= '-';
-		}
-
-		if ( $this->io->getOption('record-only') ) {
-			$param_string_ending = '--record-only ' . $param_string_ending;
-		}
-
 		$revision_log = $this->getRevisionLog($source_url);
 		$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
 
@@ -678,11 +667,11 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$revision_title_mask .= ' revision';
 		}
 
+		$merge_command_arguments = $this->getMergeCommandArguments($source_url, $wc_path);
+
 		foreach ( $revisions as $index => $revision ) {
-			$command = $this->repositoryConnector->getCommand(
-				'merge',
-				$param_string_beginning . $revision . ' ' . $param_string_ending
-			);
+			$command_arguments = str_replace('{revision}', $revision, $merge_command_arguments);
+			$command = $this->repositoryConnector->getCommand('merge', $command_arguments);
 
 			$progress_bar = $this->createMergeProgressBar($used_revision_count + $index + 1, $revision_count);
 
@@ -708,6 +697,31 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 
 		$this->performCommit();
+	}
+
+	/**
+	 * Returns merge command arguments.
+	 *
+	 * @param string $source_url Merge source: url.
+	 * @param string $wc_path    Merge target: working copy path.
+	 *
+	 * @return array
+	 */
+	protected function getMergeCommandArguments($source_url, $wc_path)
+	{
+		$ret = array(
+			'-c',
+			$this->isReverseMerge() ? '-{revision}' : '{revision}',
+		);
+
+		if ( $this->io->getOption('record-only') ) {
+			$ret[] = '--record-only';
+		}
+
+		$ret[] = $source_url;
+		$ret[] = $wc_path;
+
+		return $ret;
 	}
 
 	/**

@@ -116,14 +116,14 @@ class Connector
 	/**
 	 * Builds a command.
 	 *
-	 * @param string      $sub_command  Sub command.
-	 * @param string|null $param_string Parameter string.
+	 * @param string $sub_command Sub command.
+	 * @param array  $arguments   Arguments.
 	 *
 	 * @return Command
 	 */
-	public function getCommand($sub_command, $param_string = null)
+	public function getCommand($sub_command, array $arguments = array())
 	{
-		$command = $this->_commandFactory->getCommand($sub_command, $param_string);
+		$command = $this->_commandFactory->getCommand($sub_command, $arguments);
 
 		if ( isset($this->_nextCommandCacheDuration) ) {
 			$command->setCacheDuration($this->_nextCommandCacheDuration);
@@ -166,17 +166,18 @@ class Connector
 	 */
 	public function getProperty($name, $path_or_url, $revision = null)
 	{
-		$param_string = $name . ' {' . $path_or_url . '}';
+		$arguments = array($name, $path_or_url);
 
 		if ( isset($revision) ) {
-			$param_string .= ' --revision ' . $revision;
+			$arguments[] = '--revision';
+			$arguments[] = $revision;
 		}
 
 		// The "null" for non-existing properties is never returned, because output is converted to string.
 		$property_value = '';
 
 		try {
-			$property_value = $this->getCommand('propget', $param_string)->run();
+			$property_value = $this->getCommand('propget', $arguments)->run();
 		}
 		catch ( RepositoryCommandException $e ) {
 			// Preserve SVN 1.8- behavior, where reading value of non-existing property returned an empty string.
@@ -279,7 +280,7 @@ class Connector
 				$this->_io->writeln(array('', '<error>' . end($message) . '</error>', ''));
 
 				if ( $this->_io->askConfirmation('Run "svn upgrade"', false) ) {
-					$this->getCommand('upgrade', '{' . $wc_path . '}')->runLive();
+					$this->getCommand('upgrade', array($wc_path))->runLive();
 
 					return $this->getWorkingCopyUrl($wc_path);
 				}
@@ -384,7 +385,7 @@ class Connector
 		// TODO: When wc path (not url) is given, then credentials can be present in "svn info" result anyway.
 		$svn_info = $this
 			->withCache($cache_duration)
-			->getCommand('info', '--xml {' . $path_or_url_escaped . '}')
+			->getCommand('info', array('--xml', $path_or_url_escaped))
 			->run();
 
 		// When getting remote "svn info", then path is last folder only.
@@ -416,7 +417,9 @@ class Connector
 			throw new \InvalidArgumentException('The repository URL "' . $url . '" is invalid.');
 		}
 
-		$log = $this->withCache('1 year')->getCommand('log', ' -r 1:HEAD --limit 1 --xml {' . $url . '}')->run();
+		$log = $this->withCache('1 year')
+			->getCommand('log', array('-r', '1:HEAD', '--limit', 1, '--xml', $url))
+			->run();
 
 		return (int)$log->logentry['revision'];
 	}
@@ -565,7 +568,7 @@ class Connector
 	) {
 		$all_paths = array();
 
-		$status = $this->getCommand('status', '--xml {' . $wc_path . '}')->run();
+		$status = $this->getCommand('status', array('--xml', $wc_path))->run();
 
 		if ( !strlen($changelist) ) {
 			// Accept all entries from "target" and "changelist" nodes.
@@ -712,7 +715,7 @@ class Connector
 	public function getWorkingCopyChangelists($wc_path)
 	{
 		$ret = array();
-		$status = $this->getCommand('status', '--xml {' . $wc_path . '}')->run();
+		$status = $this->getCommand('status', array('--xml', $wc_path))->run();
 
 		foreach ( $status->changelist as $changelist ) {
 			$ret[] = (string)$changelist['name'];
@@ -733,7 +736,7 @@ class Connector
 	public function getWorkingCopyRevisions($wc_path)
 	{
 		$revisions = array();
-		$status = $this->getCommand('status', '--xml --verbose {' . $wc_path . '}')->run();
+		$status = $this->getCommand('status', array('--xml', '--verbose', $wc_path))->run();
 
 		foreach ( $status->target as $target ) {
 			if ( (string)$target['path'] !== $wc_path ) {
@@ -866,7 +869,7 @@ class Connector
 	{
 		return $this
 			->withCache(self::SVN_CAT_CACHE_DURATION)
-			->getCommand('cat', '{' . $path_or_url . '} --revision ' . $revision)
+			->getCommand('cat', array($path_or_url, '--revision', $revision))
 			->run();
 	}
 

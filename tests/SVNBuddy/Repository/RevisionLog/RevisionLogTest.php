@@ -406,7 +406,14 @@ OUTPUT;
 
 		$this->expectRepositoryCommand(
 			'log',
-			'-r ' . $from_revision . ':' . $to_revision . ' --xml --verbose --use-merge-history {svn://localhost}',
+			array(
+				'-r',
+				$from_revision . ':' . $to_revision,
+				'--xml',
+				'--verbose',
+				'--use-merge-history',
+				'svn://localhost',
+			),
 			$svn_log_output
 		);
 
@@ -417,14 +424,14 @@ OUTPUT;
 	 * Creates repository command expectation.
 	 *
 	 * @param string $command_name Command name.
-	 * @param string $param_string Param string.
+	 * @param array  $arguments    Arguments.
 	 * @param mixed  $result       Result.
 	 *
 	 * @return void
 	 */
-	protected function expectRepositoryCommand($command_name, $param_string, $result)
+	protected function expectRepositoryCommand($command_name, array $arguments, $result)
 	{
-		if ( strpos($param_string, '--xml') !== false ) {
+		if ( in_array('--xml', $arguments) ) {
 			$result = simplexml_load_string($result);
 		}
 
@@ -432,7 +439,7 @@ OUTPUT;
 		$command->run()->willReturn($result)->shouldBeCalled();
 		$command->setCacheDuration('10 years')->shouldBeCalled();
 
-		$this->repositoryConnector->getCommand($command_name, $param_string)->willReturn($command)->shouldBeCalled();
+		$this->repositoryConnector->getCommand($command_name, $arguments)->willReturn($command)->shouldBeCalled();
 	}
 
 	/**

@@ -73,7 +73,7 @@ class RevertCommand extends AbstractCommand implements IAggregatorAwareCommand
 		$this->io->writeln('Reverting local changes in working copy ... ');
 		$command = $this->repositoryConnector->getCommand(
 			'revert',
-			'--depth infinity {' . $wc_path . '}'
+			array('--depth', 'infinity', $wc_path)
 		);
 		$command->runLive(array(
 			$wc_path => '.',

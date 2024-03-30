@@ -57,7 +57,7 @@ class Application extends BaseApplication
 
 		/** @var Connector $repository_connector */
 		$repository_connector = $this->dic['repository_connector'];
-		$client_version = $repository_connector->getCommand('', '--version --quiet')->run();
+		$client_version = $repository_connector->getCommand('', array('--version', '--quiet'))->run();
 
 		return $version . ' (SVN <comment>v' . trim($client_version) . '</comment>)';
 	}
