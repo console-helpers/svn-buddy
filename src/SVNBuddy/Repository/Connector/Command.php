@@ -32,7 +32,7 @@ class Command
 	/**
 	 * Command line.
 	 *
-	 * @var string
+	 * @var array
 	 */
 	private $_commandLine;
 
@@ -74,13 +74,13 @@ class Command
 	/**
 	 * Creates a command instance.
 	 *
-	 * @param string          $command_line    Command line.
+	 * @param array           $command_line    Command line.
 	 * @param ConsoleIO       $io              Console IO.
 	 * @param CacheManager    $cache_manager   Cache manager.
 	 * @param IProcessFactory $process_factory Process factory.
 	 */
 	public function __construct(
-		$command_line,
+		array $command_line,
 		ConsoleIO $io,
 		CacheManager $cache_manager,
 		IProcessFactory $process_factory
@@ -166,7 +166,7 @@ class Command
 			}
 		}
 
-		if ( strpos($this->_commandLine, '--xml') !== false ) {
+		if ( in_array('--xml', $this->_commandLine) ) {
 			return simplexml_load_string($output);
 		}
 
@@ -181,11 +181,13 @@ class Command
 	private function _getCacheKey()
 	{
 		if ( $this->_cacheInvalidator || $this->_cacheDuration ) {
-			if ( preg_match(Connector::URL_REGEXP, $this->_commandLine, $regs) ) {
-				return $regs[2] . $regs[3] . $regs[4] . '/command:' . $this->_commandLine;
+			$command_string = (string)$this;
+
+			if ( preg_match(Connector::URL_REGEXP, $command_string, $regs) ) {
+				return $regs[2] . $regs[3] . $regs[4] . '/command:' . $command_string;
 			}
 
-			return 'misc/command:' . $this->_commandLine;
+			return 'misc/command:' . $command_string;
 		}
 
 		return '';
@@ -202,6 +204,7 @@ class Command
 	private function _doRun($callback = null)
 	{
 		$process = $this->_processFactory->createProcess($this->_commandLine, 1200);
+		$command_string = (string)$this;
 
 		try {
 			$start = microtime(true);
@@ -210,7 +213,7 @@ class Command
 			if ( $this->_io->isVerbose() ) {
 				$runtime = sprintf('%01.2f', microtime(true) - $start);
 				$this->_io->writeln(
-					array('', '<debug>[svn, ' . round($runtime, 2) . 's]: ' . $this->_commandLine . '</debug>')
+					array('', '<debug>[svn, ' . round($runtime, 2) . 's]: ' . $command_string . '</debug>')
 				);
 			}
 
@@ -224,7 +227,7 @@ class Command
 		}
 		catch ( ProcessFailedException $e ) {
 			throw new RepositoryCommandException(
-				$this->_commandLine,
+				$command_string,
 				$process->getErrorOutput()
 			);
 		}
@@ -274,6 +277,16 @@ class Command
 
 			$io->write($buffer);
 		};
+	}
+
+	/**
+	 * Returns a string representation of a command.
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		return implode(' ', $this->_commandLine);
 	}
 
 }

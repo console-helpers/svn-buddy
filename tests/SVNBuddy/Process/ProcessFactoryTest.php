@@ -19,21 +19,45 @@ use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 class ProcessFactoryTest extends AbstractTestCase
 {
 
-	public function testImplementsCorrectInterface()
+	/**
+	 * Process factory
+	 *
+	 * @var ProcessFactory
+	 */
+	protected $processFactory;
+
+	/**
+	 * @before
+	 */
+	protected function setUpTest()
 	{
-		$this->assertInstanceOf(IProcessFactory::class, new ProcessFactory());
+		$this->processFactory = new ProcessFactory();
 	}
 
-	public function testProcessCanBeCreated()
+	public function testImplementsCorrectInterface()
 	{
-		$factory = new ProcessFactory();
+		$this->assertInstanceOf(IProcessFactory::class, $this->processFactory);
+	}
 
-		$process = $factory->createProcess('command', 10);
+	public function testCreateProcess()
+	{
+		$process = $this->processFactory->createProcess(array('command', 'arg with space', 'arg-without-space'), 10);
 
 		$this->assertInstanceOf(Process::class, $process);
-		$this->assertEquals('command', $process->getCommandLine());
+		$this->assertEquals("'command' 'arg with space' 'arg-without-space'", $process->getCommandLine());
 		$this->assertEquals(10, $process->getIdleTimeout());
 		$this->assertNull($process->getTimeout());
+	}
+
+	public function testCreateCommandProcess()
+	{
+		$process = $this->processFactory->createCommandProcess('command', array('arg with space', 'arg-without-space'));
+
+		$this->assertInstanceOf(Process::class, $process);
+		$this->assertStringMatchesFormat(
+			"'%sphp%s' '%s' 'command' 'arg with space' 'arg-without-space'",
+			$process->getCommandLine()
+		);
 	}
 
 }

@@ -175,23 +175,22 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 		$tmp_file = tempnam(sys_get_temp_dir(), 'commit_message_');
 		file_put_contents($tmp_file, $edited_commit_message);
 
-		$arguments = array(
-			'-F {' . $tmp_file . '}',
-		);
+		$arguments = array('-F', $tmp_file);
 
 		if ( strlen($changelist) ) {
-			$arguments[] = '--depth empty';
+			$arguments[] = '--depth';
+			$arguments[] = 'empty';
 
 			// Relative path used to make command line shorter.
 			foreach ( array_keys($this->repositoryConnector->getWorkingCopyStatus($wc_path, $changelist)) as $path ) {
-				$arguments[] = '{' . $path . '}';
+				$arguments[] = $path;
 			}
 		}
 		else {
-			$arguments[] = '{' . $wc_path . '}';
+			$arguments[] = $wc_path;
 		}
 
-		$this->repositoryConnector->getCommand('commit', implode(' ', $arguments))->runLive();
+		$this->repositoryConnector->getCommand('commit', $arguments)->runLive();
 		$this->_workingCopyConflictTracker->erase($wc_path);
 		unlink($tmp_file);
 

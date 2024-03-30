@@ -46,7 +46,7 @@ class CleanupCommand extends AbstractCommand implements IAggregatorAwareCommand
 		$wc_path = $this->getWorkingCopyPath();
 
 		$this->io->writeln('Cleaning up working copy ... ');
-		$command = $this->repositoryConnector->getCommand('cleanup', '{' . $wc_path . '}');
+		$command = $this->repositoryConnector->getCommand('cleanup', array($wc_path));
 		$command->runLive(array(
 			$wc_path => '.',
 		));

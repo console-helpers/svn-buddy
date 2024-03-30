@@ -75,7 +75,7 @@ class CommandFactoryTest extends AbstractTestCase
 		$this->_processFactory
 			->createProcess(Argument::any(), 1200)
 			->will(function (array $args) {
-				throw new \LogicException('The createProcess("' . $args[0] . '", 1200) call wasn\'t expected.');
+				throw new \LogicException('The createProcess("' . implode(' ', $args[0]) . '", 1200) call wasn\'t expected.');
 			});
 
 		$this->_commandFactory = $this->_createCommandFactory('', '');
@@ -84,37 +84,37 @@ class CommandFactoryTest extends AbstractTestCase
 	/**
 	 * @dataProvider baseCommandBuildingDataProvider
 	 */
-	public function testBaseCommandBuilding($username, $password, $expected_command)
+	public function testBaseCommandBuilding($username, $password, array $expected_command)
 	{
 		$repository_connector = $this->_createCommandFactory($username, $password);
 
 		$this->_expectCommand($expected_command, 'OK');
-		$this->assertEquals('OK', $repository_connector->getCommand('', '--version')->run());
+		$this->assertEquals('OK', $repository_connector->getCommand('', array('--version'))->run());
 	}
 
 	public static function baseCommandBuildingDataProvider()
 	{
 		return array(
-			'no username, no password' => array('', '', 'svn --non-interactive --version'),
-			'username, no password' => array('user', '', 'svn --non-interactive --username user --version'),
-			'no username, password' => array('', 'pass', 'svn --non-interactive --password pass --version'),
+			'no username, no password' => array('', '', array('svn', '--non-interactive', '--version')),
+			'username, no password' => array('user', '', array('svn', '--non-interactive', '--username', 'user', '--version')),
+			'no username, password' => array('', 'pass', array('svn', '--non-interactive', '--password', 'pass', '--version')),
 			'username, password' => array(
 				'user',
 				'pass',
-				'svn --non-interactive --username user --password pass --version',
+				array('svn', '--non-interactive', '--username', 'user', '--password', 'pass', '--version'),
 			),
 		);
 	}
 
 	public function testCommandWithoutSubCommand()
 	{
-		$this->_expectCommand('svn --non-interactive --version', 'OK');
-		$this->assertEquals('OK', $this->_commandFactory->getCommand('', '--version')->run());
+		$this->_expectCommand(array('svn', '--non-interactive', '--version'), 'OK');
+		$this->assertEquals('OK', $this->_commandFactory->getCommand('', array('--version'))->run());
 	}
 
 	public function testCommandWithoutParams()
 	{
-		$this->_expectCommand('svn --non-interactive log', 'OK');
+		$this->_expectCommand(array('svn', '--non-interactive', 'log'), 'OK');
 		$this->assertEquals('OK', $this->_commandFactory->getCommand('log')->run());
 	}
 
@@ -138,11 +138,11 @@ class CommandFactoryTest extends AbstractTestCase
 	public static function commandWithParamsDataProvider()
 	{
 		return array(
-			'regular param' => array('-r 12', 'svn --non-interactive log -r 12'),
-			'path param' => array('{path/to/folder}', "svn --non-interactive log 'path/to/folder'"),
+			'regular param' => array(array('-r', 12), array('svn', '--non-interactive', 'log', '-r', 12)),
+			'path param' => array(array('path/to/folder'), array('svn', '--non-interactive', 'log', 'path/to/folder')),
 			'regular and path param' => array(
-				'-r 12 {path/to/folder}',
-				"svn --non-interactive log -r 12 'path/to/folder'",
+				array('-r', 12, 'path/to/folder'),
+				array('svn', '--non-interactive', 'log', '-r', 12, 'path/to/folder'),
 			),
 		);
 	}
@@ -150,22 +150,22 @@ class CommandFactoryTest extends AbstractTestCase
 	/**
 	 * Sets expectation for specific command.
 	 *
-	 * @param string      $command    Command.
+	 * @param array       $command    Command.
 	 * @param string      $output     Output.
 	 * @param string|null $error_msg  Error msg.
 	 * @param integer     $error_code Error code.
 	 */
-	private function _expectCommand($command, $output, $error_msg = null, $error_code = 0)
+	private function _expectCommand(array $command, $output, $error_msg = null, $error_code = 0)
 	{
 		$process = $this->prophesize(Process::class);
 
 		$expectation = $process
-			->mustRun(strpos($command, 'upgrade') !== false ? Argument::type('callable') : null)
+			->mustRun(in_array('upgrade', $command) ? Argument::type('callable') : null)
 			->shouldBeCalled();
 
 		if ( isset($error_code) && isset($error_msg) ) {
 			$expectation->willThrow(
-				new RepositoryCommandException($command, 'svn: E' . $error_code . ': ' . $error_msg)
+				new RepositoryCommandException(implode(' ', $command), 'svn: E' . $error_code . ': ' . $error_msg)
 			);
 		}
 		else {
