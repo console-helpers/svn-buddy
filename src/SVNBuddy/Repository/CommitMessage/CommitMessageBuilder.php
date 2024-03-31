@@ -46,7 +46,7 @@ class CommitMessageBuilder
 	{
 		$commit_message_parts = array();
 
-		if ( strlen($changelist) ) {
+		if ( !empty($changelist) ) {
 			$commit_message_parts[] = trim($changelist);
 		}
 

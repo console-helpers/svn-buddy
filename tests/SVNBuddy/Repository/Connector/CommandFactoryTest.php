@@ -169,7 +169,7 @@ class CommandFactoryTest extends AbstractTestCase
 			);
 		}
 		else {
-			$expectation->willReturn(null);
+			$expectation->willReturn($process);
 			$process->getOutput()->willReturn($output)->shouldBeCalled();
 		}
 

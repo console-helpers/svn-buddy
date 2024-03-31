@@ -49,7 +49,7 @@ abstract class AbstractPluginTestCase extends AbstractDatabaseAwareTestCase
 	{
 		parent::setupTest();
 
-		if ( strpos($this->getName(false), 'testProcess') === 0 ) {
+		if ( strpos($this->getTestName(), 'testProcess') === 0 ) {
 			$this->database->setProfiler($this->createStatementProfiler());
 		}
 

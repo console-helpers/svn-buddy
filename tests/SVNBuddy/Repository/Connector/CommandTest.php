@@ -98,6 +98,8 @@ class CommandTest extends AbstractTestCase
 				if ( is_callable($args[0]) ) {
 					call_user_func($args[0], Process::OUT, $process_output);
 				}
+
+				return $this;
 			})
 			->shouldBeCalled();
 
@@ -259,6 +261,8 @@ class CommandTest extends AbstractTestCase
 				if ( is_callable($args[0]) ) {
 					call_user_func($args[0], Process::OUT, $process_output);
 				}
+
+				return $this;
 			})
 			->shouldBeCalled();
 
@@ -387,7 +391,9 @@ class CommandTest extends AbstractTestCase
 		$this->_process
 			->mustRun(Argument::type('callable'))
 			->will(function (array $args) use ($output_type) {
-				return call_user_func($args[0], $output_type, "TEX\nT");
+				call_user_func($args[0], $output_type, "TEX\nT");
+
+				return $this;
 			})
 			->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();

@@ -31,6 +31,10 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 	 */
 	protected function setupTest()
 	{
+		if ( $this->getTestName() === 'testDetect' ) {
+			$this->markTestSkipped('Cross-detector matching tests done separately');
+		}
+
 		$sub_detector1 = $this->prophesize(AbstractMergeSourceDetector::class);
 		$sub_detector1->getWeight()->willReturn(2)->shouldBeCalled();
 		$this->detectors[] = $sub_detector1;
@@ -42,14 +46,6 @@ class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestC
 		$sub_detector2 = $this->prophesize(AbstractMergeSourceDetector::class);
 		$sub_detector2->getWeight()->willReturn(3)->shouldBeCalled();
 		$this->detectors[] = $sub_detector2;
-	}
-
-	/**
-	 * @dataProvider repositoryUrlDataProvider
-	 */
-	public function testDetect($repository_url, $result)
-	{
-		$this->markTestSkipped('Cross-detector matching tests done separately');
 	}
 
 	public function testNoMatchFound()
