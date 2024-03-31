@@ -34,10 +34,10 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTestCase
 		parent::setupTest();
 	}
 
-	public static function normalizationValueDataProvider($test_name, $value = 1, $normalized_value = 0)
+	public static function normalizationValueDataProvider()
 	{
-		$value = static::getSampleValue($value, true);
-		$normalized_value = static::getSampleValue($normalized_value, true);
+		$value = static::getSampleValue(1, true);
+		$normalized_value = static::getSampleValue(0, true);
 
 		return array(
 			'integer' => array(
@@ -91,20 +91,20 @@ class IntegerConfigSettingTest extends AbstractConfigSettingTestCase
 		);
 	}
 
-	public static function setValueWithInheritanceDataProvider($test_name, $wc_value = 2, $global_value = 1)
+	public static function setValueWithInheritanceDataProvider()
 	{
-		$wc_value = static::getSampleValue($wc_value, true);
-		$global_value = static::getSampleValue($global_value, true);
+		$wc_value = static::getSampleValue(2, true);
+		$global_value = static::getSampleValue(1, true);
 
 		return array(
 			array($wc_value, $global_value),
 		);
 	}
 
-	public static function storageDataProvider($test_name, $default_value = 1, $stored_value = 1)
+	public static function storageDataProvider()
 	{
-		$default_value = static::getSampleValue($default_value, true);
-		$stored_value = static::getSampleValue($stored_value, true);
+		$default_value = static::getSampleValue(1, true);
+		$stored_value = static::getSampleValue(1, true);
 
 		return array(
 			'integer' => array($default_value, $default_value),

@@ -294,7 +294,7 @@ abstract class AbstractConfigSettingTestCase extends AbstractTestCase
 		$this->assertSame($normalized_value, $config_setting->getValue());
 	}
 
-	public static function normalizationValueDataProvider($test_name, $value = null, $normalized_value = null)
+	public static function normalizationValueDataProvider()
 	{
 		throw new \RuntimeException('Override me.');
 	}
@@ -334,7 +334,7 @@ abstract class AbstractConfigSettingTestCase extends AbstractTestCase
 		$this->assertNull($this->configEditor->get('global-settings.name'), 'Inherited value isn\'t stored');
 	}
 
-	public static function setValueWithInheritanceDataProvider($test_name, $wc_value = null, $global_value = null)
+	public static function setValueWithInheritanceDataProvider()
 	{
 		throw new \RuntimeException('Override me.');
 	}
@@ -350,7 +350,7 @@ abstract class AbstractConfigSettingTestCase extends AbstractTestCase
 		$this->assertSame($stored_value, $this->configEditor->get('global-settings.name'));
 	}
 
-	public static function storageDataProvider($test_name, $default_value = null, $stored_value = null)
+	public static function storageDataProvider()
 	{
 		throw new \RuntimeException('Override me.');
 	}
