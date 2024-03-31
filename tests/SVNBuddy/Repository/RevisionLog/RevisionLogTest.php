@@ -204,7 +204,8 @@ class RevisionLogTest extends AbstractTestCase
 		$output->getFormatter()->willReturn($output_formatter->reveal());
 
 		// Create progress bar for repository (can't mock, because it's a final class).
-		$repository_progress_bar = new ProgressBar($output->reveal(), 3);
+		$repository_progress_bar = $this->createProgressBar($output->reveal(), 3);
+
 		$this->expectProgressBarOutput(
 			$output,
 			array(
@@ -217,7 +218,8 @@ class RevisionLogTest extends AbstractTestCase
 		$this->io->createProgressBar(3)->willReturn($repository_progress_bar)->shouldBeCalled();
 
 		// Create progress bar for database (can't mock, because it's a final class).
-		$database_progress_bar = new ProgressBar($output->reveal());
+		$database_progress_bar = $this->createProgressBar($output->reveal(), 0);
+
 		$this->expectProgressBarOutput(
 			$output,
 			array(
@@ -235,6 +237,26 @@ class RevisionLogTest extends AbstractTestCase
 		}
 
 		$this->testRefreshWithoutCacheWithoutOutput($this->io->reveal(), $database_progress_bar, $is_verbose);
+	}
+
+	/**
+	 * Creates a progress bar.
+	 *
+	 * @param OutputInterface $output Output.
+	 * @param integer         $max    Maximum steps (0 if unknown).
+	 *
+	 * @return ProgressBar
+	 */
+	protected function createProgressBar(OutputInterface $output, $max)
+	{
+		// Create progress bar for repository (can't mock, because it's a final class).
+		if ( method_exists(ProgressBar::class, 'minSecondsBetweenRedraws') ) {
+			// Symfony 4+.
+			return new ProgressBar($output, $max, 0);
+		}
+
+		// Symfony 3+.
+		return new ProgressBar($output, $max);
 	}
 
 	/**
