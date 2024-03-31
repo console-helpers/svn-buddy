@@ -215,8 +215,18 @@ class StatementProfilerTest extends AbstractTestCase
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
-		// The PHP7 threats multi-line statement position differently in traces.
-		$expect_line = PHP_VERSION_ID < 70000 ? 236 : 235;
+		if ( PHP_VERSION_ID >= 80200 ) {
+			// Adjust for PHP 8.2+ multi-line statement handling in traces.
+			$expect_line = 241;
+		}
+		elseif ( PHP_VERSION_ID >= 70000 ) {
+			// Adjust for PHP 7.0+ multi-line statement handling in traces.
+			$expect_line = 245;
+		}
+		else {
+			// Adjust for PHP 5.0+ multi-line statement handling in traces.
+			$expect_line = 246;
+		}
 
 		$io
 			->writeln(array(
@@ -228,12 +238,12 @@ class StatementProfilerTest extends AbstractTestCase
 		$this->statementProfiler->setIO($io->reveal());
 
 		$this->statementProfiler->setActive(true);
-		$this->statementProfiler->addProfile(
+		$this->statementProfiler->addProfile( // 241
 			5,
 			'perform',
 			'SELECT :pa :param',
-			array('pa' => 'PA', 'param' => array('PAR', 'AM'))
-		);
+			array('pa' => 'PA', 'param' => array('PAR', 'AM')) // 245
+		); // 246
 		$this->assertCount(1, $this->statementProfiler->getProfiles());
 	}
 

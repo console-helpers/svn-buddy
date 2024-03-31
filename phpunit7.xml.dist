@@ -3,7 +3,6 @@
 	colors="true"
 	beStrictAboutTestsThatDoNotTestAnything="true"
 	beStrictAboutOutputDuringTests="true"
-	displayDetailsOnTestsThatTriggerDeprecations="true"
 	verbose="true">
 
 	<testsuites>

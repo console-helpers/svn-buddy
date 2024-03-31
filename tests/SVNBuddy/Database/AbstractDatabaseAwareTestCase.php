@@ -72,7 +72,8 @@ abstract class AbstractDatabaseAwareTestCase extends AbstractTestCase
 	 */
 	protected function assertTableContent($table_name, array $expected_content)
 	{
-		$this->assertSame(
+		// Can't use "assertSame", because on PHP 8+ the PDO casts the data (e.g. '1' becomes 1).
+		$this->assertEquals(
 			$expected_content,
 			$this->_dumpTable($table_name),
 			'Table "' . $table_name . '" content isn\'t correct.'

@@ -570,7 +570,7 @@ class Connector
 
 		$status = $this->getCommand('status', array('--xml', $wc_path))->run();
 
-		if ( !strlen($changelist) ) {
+		if ( empty($changelist) ) {
 			// Accept all entries from "target" and "changelist" nodes.
 			foreach ( $status->children() as $entries ) {
 				$child_name = $entries->getName();

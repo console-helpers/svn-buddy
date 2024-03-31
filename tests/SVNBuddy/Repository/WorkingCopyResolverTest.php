@@ -55,7 +55,7 @@ class WorkingCopyResolverTest extends AbstractTestCase
 	 */
 	protected function teardownTest()
 	{
-		if ( strlen($this->tempFolder) && file_exists($this->tempFolder) ) {
+		if ( !empty($this->tempFolder) && file_exists($this->tempFolder) ) {
 			rmdir($this->tempFolder);
 		}
 	}
