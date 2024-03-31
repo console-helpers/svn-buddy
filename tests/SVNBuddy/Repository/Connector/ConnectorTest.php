@@ -196,7 +196,7 @@ class ConnectorTest extends AbstractTestCase
 		$this->assertEquals($url, $actual);
 	}
 
-	public function svnInfoDataProvider()
+	public static function svnInfoDataProvider()
 	{
 		return array(
 			'svn1.6_wc_root_with_peg' => array(self::getFixture('svn_info_peg_16.xml'), '/path/to/working-c@py', self::DUMMY_REPO),

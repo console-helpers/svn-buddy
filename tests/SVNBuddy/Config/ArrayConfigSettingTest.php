@@ -34,10 +34,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTestCase
 		parent::setupTest();
 	}
 
-	public static function normalizationValueDataProvider($test_name, $value = array('a'), $normalized_value = array('b'))
+	public static function normalizationValueDataProvider()
 	{
-		$value = static::getSampleValue($value, true);
-		$normalized_value = static::getSampleValue($normalized_value, true);
+		$value = static::getSampleValue(array('a'), true);
+		$normalized_value = static::getSampleValue(array('b'), true);
 
 		return array(
 			'empty array' => array(
@@ -75,10 +75,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTestCase
 		);
 	}
 
-	public static function setValueWithInheritanceDataProvider($test_name, $wc_value = array('global_value'), $global_value = array('default'))
+	public static function setValueWithInheritanceDataProvider()
 	{
-		$wc_value = static::getSampleValue($wc_value);
-		$global_value = static::getSampleValue($global_value);
+		$wc_value = static::getSampleValue(array('global_value'));
+		$global_value = static::getSampleValue(array('default'));
 
 		return array(
 			array($wc_value, $global_value),
@@ -95,10 +95,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTestCase
 		$this->assertSame($user_value, $config_setting->getValue(AbstractConfigSetting::SCOPE_GLOBAL));
 	}
 
-	public static function defaultValueIsConvertedToScalarDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
+	public static function defaultValueIsConvertedToScalarDataProvider()
 	{
-		$default_value = static::getSampleValue($default_value, true);
-		$stored_value = static::getSampleValue($stored_value, true);
+		$default_value = static::getSampleValue(array('a'), true);
+		$stored_value = static::getSampleValue(array('b'), true);
 
 		return array(
 			'array into string' => array(array($default_value, $stored_value), array($default_value, $stored_value)),
@@ -106,10 +106,10 @@ class ArrayConfigSettingTest extends AbstractConfigSettingTestCase
 		);
 	}
 
-	public static function storageDataProvider($test_name, $default_value = array('a'), $stored_value = array('b'))
+	public static function storageDataProvider()
 	{
-		$default_value = static::getSampleValue($default_value, true);
-		$stored_value = static::getSampleValue($stored_value, true);
+		$default_value = static::getSampleValue(array('a'), true);
+		$stored_value = static::getSampleValue(array('b'), true);
 
 		return array(
 			'array into string' => array(array($default_value, $stored_value), $default_value . PHP_EOL . $stored_value),
