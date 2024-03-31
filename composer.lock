@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4727bbd666c5458f8c5a46c53cba3d2f",
+    "content-hash": "4a862cac74b25fe50e4f31d46a7d5c66",
     "packages": [
         {
             "name": "aura/sql",
@@ -141,7 +141,7 @@
         },
         {
             "name": "console-helpers/console-kit",
-            "version": "dev-master",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
@@ -165,7 +165,6 @@
                 "phpspec/prophecy": "^1.10",
                 "yoast/phpunit-polyfills": "^2.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
