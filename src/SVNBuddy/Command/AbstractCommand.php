@@ -12,6 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 
 use ConsoleHelpers\ConsoleKit\Command\AbstractCommand as BaseCommand;
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
@@ -168,6 +169,22 @@ abstract class AbstractCommand extends BaseCommand
 		$this->workingDirectory = $container['working_directory'];
 		$this->_commandConfig = $container['command_config'];
 		$this->_updateManager = $container['update_manager'];
+	}
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @throws CommandException When command exception is caught.
+	 */
+	public function run(InputInterface $input, OutputInterface $output)
+	{
+		try {
+			return parent::run($input, $output);
+		}
+		catch ( CommandException $e ) {
+			$this->io->notify();
+			throw $e;
+		}
 	}
 
 	/**

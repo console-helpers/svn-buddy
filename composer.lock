@@ -141,16 +141,16 @@
         },
         {
             "name": "console-helpers/console-kit",
-            "version": "v0.3.0",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "0a14c54d5e142abc97322f66d83c318da47949f6"
+                "reference": "00af576e385c4de2250b953d7c80ee34d204466b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/0a14c54d5e142abc97322f66d83c318da47949f6",
-                "reference": "0a14c54d5e142abc97322f66d83c318da47949f6",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/00af576e385c4de2250b953d7c80ee34d204466b",
+                "reference": "00af576e385c4de2250b953d7c80ee34d204466b",
                 "shasum": ""
             },
             "require": {
@@ -190,9 +190,9 @@
             "description": "Toolkit for creating command line applications using Symfony Console component",
             "support": {
                 "issues": "https://github.com/console-helpers/console-kit/issues",
-                "source": "https://github.com/console-helpers/console-kit/tree/v0.3.0"
+                "source": "https://github.com/console-helpers/console-kit/tree/v0.3.1"
             },
-            "time": "2024-03-29T10:26:32+00:00"
+            "time": "2024-04-10T16:07:44+00:00"
         },
         {
             "name": "console-helpers/db-migration",
@@ -2545,16 +2545,16 @@
         },
         {
             "name": "yoast/phpunit-polyfills",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "c758753e8f9dac251fed396a73c8305af3f17922"
+                "reference": "4a088f125c970d6d6ea52c927f96fe39b330d0f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/c758753e8f9dac251fed396a73c8305af3f17922",
-                "reference": "c758753e8f9dac251fed396a73c8305af3f17922",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/4a088f125c970d6d6ea52c927f96fe39b330d0f1",
+                "reference": "4a088f125c970d6d6ea52c927f96fe39b330d0f1",
                 "shasum": ""
             },
             "require": {
@@ -2562,7 +2562,9 @@
                 "phpunit/phpunit": "^5.7.21 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0"
             },
             "require-dev": {
-                "yoast/yoastcs": "^2.3.0"
+                "php-parallel-lint/php-console-highlighter": "^1.0.0",
+                "php-parallel-lint/php-parallel-lint": "^1.4.0",
+                "yoast/yoastcs": "^3.1.0"
             },
             "type": "library",
             "extra": {
@@ -2599,9 +2601,10 @@
             ],
             "support": {
                 "issues": "https://github.com/Yoast/PHPUnit-Polyfills/issues",
+                "security": "https://github.com/Yoast/PHPUnit-Polyfills/security/policy",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2023-06-06T20:28:24+00:00"
+            "time": "2024-04-05T16:36:44+00:00"
         }
     ],
     "aliases": [],
