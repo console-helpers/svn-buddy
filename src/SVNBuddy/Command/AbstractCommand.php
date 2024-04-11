@@ -31,6 +31,13 @@ abstract class AbstractCommand extends BaseCommand
 {
 
 	/**
+	 * Command depth.
+	 *
+	 * @var integer
+	 */
+	private static $_commandDepth = 0;
+
+	/**
 	 * Raw path.
 	 *
 	 * @var string
@@ -178,12 +185,19 @@ abstract class AbstractCommand extends BaseCommand
 	 */
 	public function run(InputInterface $input, OutputInterface $output)
 	{
+		self::$_commandDepth++;
+
 		try {
 			return parent::run($input, $output);
 		}
 		catch ( CommandException $e ) {
-			$this->io->notify();
+			if ( self::$_commandDepth === 1 ) {
+				$this->io->notify();
+			}
+
 			throw $e;
+		} finally {
+			self::$_commandDepth--;
 		}
 	}
 
