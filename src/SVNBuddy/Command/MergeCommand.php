@@ -284,7 +284,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			if ( $revisions ) {
 				$revisions = array_intersect($revisions, $this->_usableRevisions);
 
-				if ( !$revisions ) {
+				if ( !$revisions && !$this->performCommit() ) {
 					throw new CommandException(\sprintf(
 						'Requested revisions are %s',
 						$this->isReverseMerge() ? 'not yet merged' : 'already merged'
@@ -834,7 +834,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	/**
 	 * Performs commit unless user doesn't want it.
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	protected function performCommit()
 	{
@@ -851,6 +851,8 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$this->io->writeln(array('', 'Commencing automatic commit after merge ...'));
 			$this->runOtherCommand('commit');
 		}
+
+		return $auto_commit;
 	}
 
 	/**
