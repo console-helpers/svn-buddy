@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ...
 
 ### Fixed
-...
+- The non-merged revision table was shown after a successful auto-commit, when merge conflict was resolved.
 
 ## [0.7.0] - 2024-04-12
 ### Added
