@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+## [0.7.0] - 2024-04-12
+### Added
 - Added `-a` shortcut for the `--aggregate` option of the `merge` and `commit` commands.
 - Show merged revision commit message during merge process, that is done by the `merge` command.
 - Added `--exclude-bugs` and `--exclude-revisions` options to the `merge` command for better versatility.
@@ -275,7 +285,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release.
 - Adding `aggregate`, `cleanup`, `commit`, `log`, `merge` and `revert` commands.
 
-[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.6.1...HEAD
+[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/console-helpers/svn-buddy/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/console-helpers/svn-buddy/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/console-helpers/svn-buddy/compare/v0.5.2...v0.6.0
 [0.5.2]: https://github.com/console-helpers/svn-buddy/compare/v0.5.1...v0.5.2
