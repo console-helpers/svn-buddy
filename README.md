@@ -110,7 +110,6 @@ The working copy revision row is highlighted in bold in revision list to ease id
 * `--with-refs` -  Shows revision refs
 * `--with-merge-oracle` - Shows number of paths in the revision, that can cause conflict upon merging
 * `--with-merge-status` - Shows merge revisions affecting this revision
-* `--with-revision-url` - Shows revision URL
 * `--max-count=MAX-COUNT` - Limit the number of revisions to output
 * `-a`, `--aggregate` - Aggregate displayed revisions by bugs
 
@@ -701,7 +700,6 @@ Runs other command sequentially on every working copy on a path. Almost all othe
 * `--with-refs` - Shows revision refs
 * `--with-merge-oracle` - Shows number of paths in the revision, that can cause conflict upon merging
 * `--with-merge-status` - Shows merge revisions affecting this revision
-* `--with-revision-url` - Shows revision URL
 * `--max-count=MAX-COUNT` - Limit the number of revisions to output
 * `--ignore-externals` - Ignore externals definitions
 * `--refresh-bug-tracking` - Refreshes value of "bugtraq:logregex" SVN property of the project

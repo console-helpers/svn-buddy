@@ -192,12 +192,6 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 				'Shows merge revisions affecting this revision'
 			)
 			->addOption(
-				'with-revision-url',
-				null,
-				InputOption::VALUE_NONE,
-				'Shows revision URL'
-			)
-			->addOption(
 				'max-count',
 				null,
 				InputOption::VALUE_REQUIRED,
@@ -602,7 +596,6 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 			'with-refs' => RevisionPrinter::COLUMN_REFS,
 			'with-merge-oracle' => RevisionPrinter::COLUMN_MERGE_ORACLE,
 			'with-merge-status' => RevisionPrinter::COLUMN_MERGE_STATUS,
-			'with-revision-url' => RevisionPrinter::COLUMN_REVISION_URL,
 		);
 
 		foreach ( $column_mapping as $option_name => $column ) {
@@ -653,8 +646,7 @@ class LogCommand extends AbstractCommand implements IAggregatorAwareCommand, ICo
 		return array(
 			'merges', 'no-merges', 'merged', 'not-merged', 'action',
 			'kind', 'author', 'with-full-message', 'with-details', 'with-summary',
-			'with-refs', 'with-merge-oracle', 'with-merge-status', 'with-revision-url',
-			'max-count',
+			'with-refs', 'with-merge-oracle', 'with-merge-status', 'max-count',
 		);
 	}
 

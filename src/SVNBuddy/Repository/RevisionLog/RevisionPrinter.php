@@ -33,8 +33,6 @@ class RevisionPrinter
 
 	const COLUMN_MERGE_STATUS = 6;
 
-	const COLUMN_REVISION_URL = 7;
-
 	/**
 	 * Date helper.
 	 *
@@ -218,22 +216,6 @@ class RevisionPrinter
 			$headers[] = 'Merged Via';
 		}
 
-		// Add "Revision URL" header.
-		$with_revision_url = in_array(self::COLUMN_REVISION_URL, $this->_columns);
-
-		if ( $with_revision_url ) {
-			$revision_url_mask = $revision_log->getRevisionURLBuilder()->getMask();
-
-			if ( strpos($revision_url_mask, '://') !== false ) {
-				// Add column only, when it will contain a URL.
-				$headers[] = 'Revision URL';
-			}
-			else {
-				// Don't add the column, when it won't contain a URL.
-				$with_revision_url = false;
-			}
-		}
-
 		$table->setHeaders($headers);
 
 		$prev_bugs = null;
@@ -261,6 +243,13 @@ class RevisionPrinter
 				'refs',
 				call_user_func_array('array_merge', $revisions_merged_via)
 			);
+		}
+
+		$revision_url_mask = $revision_log->getRevisionURLBuilder()->getMask();
+
+		// Use mask only, when it contains an URL.
+		if ( strpos($revision_url_mask, '://') === false ) {
+			$revision_url_mask = '';
 		}
 
 		$first_revision = reset($revisions);
@@ -311,11 +300,6 @@ class RevisionPrinter
 				$row[] = $this->_generateMergedViaColumn($revisions_merged_via[$revision], $revisions_merged_via_refs);
 			}
 
-			// Add "Revision URL" header.
-			if ( $with_revision_url ) {
-				$row[] = \str_replace('{revision}', $revision, $revision_url_mask);
-			}
-
 			if ( $revision === $this->_currentRevision ) {
 				foreach ( $row as $index => $cell ) {
 					$row[$index] = $this->applyStyle($cell, 'fg=white;options=bold');
@@ -334,7 +318,8 @@ class RevisionPrinter
 					$revisions_refs,
 					$revision_paths,
 					$merge_conflict_prediction,
-					$project_path
+					$project_path,
+					$revision_url_mask
 				);
 
 				$table->addRow(new TableSeparator());
@@ -558,6 +543,7 @@ class RevisionPrinter
 	 * @param array   $revision_paths            Revision paths.
 	 * @param array   $merge_conflict_prediction Merge conflict prediction.
 	 * @param string  $project_path              Project path.
+	 * @param string  $revision_url_mask         Revision URL mask.
 	 *
 	 * @return string
 	 */
@@ -566,9 +552,17 @@ class RevisionPrinter
 		array $revisions_refs,
 		array $revision_paths,
 		array $merge_conflict_prediction,
-		$project_path
+		$project_path,
+		$revision_url_mask
 	) {
-		$details = '<fg=white;options=bold>Changed Paths:</>';
+		$details = '';
+
+		if ( $revision_url_mask ) {
+			$details .= '<fg=white;options=bold>Revision URL:</>' . PHP_EOL;
+			$details .= str_replace('{revision}', $revision, $revision_url_mask) . PHP_EOL . PHP_EOL;
+		}
+
+		$details .= '<fg=white;options=bold>Changed Paths:</>';
 		$path_cut_off_regexp = $this->getPathCutOffRegExp($project_path, $revisions_refs[$revision]);
 
 		foreach ( $revision_paths as $path_data ) {
