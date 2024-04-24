@@ -18,7 +18,7 @@ use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Process\Process;
 
 class PharCreateCommand extends AbstractCommand
 {
@@ -227,11 +227,10 @@ class PharCreateCommand extends AbstractCommand
 	 */
 	private function _shellCommand($command, array $arguments = array(), $working_directory = null)
 	{
-		$final_arguments = array_merge(array($command), $arguments);
+		$final_arguments = $arguments;
+		array_unshift($final_arguments, $command);
 
-		$process = ProcessBuilder::create($final_arguments)
-			->setWorkingDirectory($working_directory)
-			->getProcess();
+		$process = new Process($final_arguments, $working_directory);
 
 		return $process->mustRun()->getOutput();
 	}
