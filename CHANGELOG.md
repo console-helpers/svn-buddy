@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
-...
+- The `commit` command now highlights the line with a commited revision number.
 
 ### Changed
 ...
