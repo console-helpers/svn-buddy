@@ -24,8 +24,15 @@ class Updater extends BaseUpdater
 	 */
 	protected function newVersionAvailable()
 	{
+		$old_version = $this->strategy->getCurrentLocalVersion($this);
+
+		// Cloned Git repository is considered the latest version.
+		if ( $old_version === '@git-version@' ) {
+			return false;
+		}
+
+		$this->oldVersion = $old_version;
 		$this->newVersion = $this->strategy->getCurrentRemoteVersion($this);
-		$this->oldVersion = $this->strategy->getCurrentLocalVersion($this);
 
 		list ($new_stability, $new_version) = $this->parseStability($this->newVersion);
 		list ($old_stability, $old_version) = $this->parseStability($this->oldVersion);
