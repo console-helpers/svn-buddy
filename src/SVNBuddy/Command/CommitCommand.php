@@ -191,7 +191,7 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 		}
 
 		$this->repositoryConnector->getCommand('commit', $arguments)->runLive(array(
-			'/^(Committed revision [\d]+\.)$/' => '<fg=white;options=bold>$1</>',
+			'/(Committed revision [\d]+\.)/' => '<fg=white;options=bold>$1</>',
 		));
 		$this->_workingCopyConflictTracker->erase($wc_path);
 		unlink($tmp_file);
