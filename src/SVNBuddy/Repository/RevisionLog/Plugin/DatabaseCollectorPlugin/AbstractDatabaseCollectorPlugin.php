@@ -8,9 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
+namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\AbstractPlugin;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 abstract class AbstractDatabaseCollectorPlugin extends AbstractPlugin implements IDatabaseCollectorPlugin

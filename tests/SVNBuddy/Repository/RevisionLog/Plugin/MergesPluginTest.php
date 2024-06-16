@@ -12,7 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\MergesPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\MergesPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 
 class MergesPluginTest extends AbstractPluginTestCase

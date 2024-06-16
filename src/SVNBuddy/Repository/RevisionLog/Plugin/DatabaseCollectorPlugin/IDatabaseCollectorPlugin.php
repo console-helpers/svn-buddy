@@ -8,9 +8,10 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
+namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 interface IDatabaseCollectorPlugin extends IPlugin

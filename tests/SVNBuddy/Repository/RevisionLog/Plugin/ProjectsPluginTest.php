@@ -11,8 +11,8 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\ProjectsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\ProjectsPlugin;
 
 class ProjectsPluginTest extends AbstractPluginTestCase
 {

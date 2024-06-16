@@ -15,7 +15,7 @@ use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\PathCollisionDetector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\PathsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\PathsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;

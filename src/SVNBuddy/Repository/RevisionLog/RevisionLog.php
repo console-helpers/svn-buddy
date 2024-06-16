@@ -13,9 +13,9 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\IDatabaseCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\IRepositoryCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 
 class RevisionLog
@@ -435,7 +435,7 @@ class RevisionLog
 	protected function getRepositoryCollectorPlugins()
 	{
 		return $this->getPluginsByInterface(
-			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin'
+			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\IRepositoryCollectorPlugin'
 		);
 	}
 
@@ -447,7 +447,7 @@ class RevisionLog
 	protected function getDatabaseCollectorPlugins()
 	{
 		return $this->getPluginsByInterface(
-			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin'
+			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\IDatabaseCollectorPlugin'
 		);
 	}
 

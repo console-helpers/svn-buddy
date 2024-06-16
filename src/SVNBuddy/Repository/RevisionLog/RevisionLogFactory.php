@@ -16,12 +16,12 @@ use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\MergesPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\PathsPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\ProjectsPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RefsPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\SummaryPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\BugsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\ProjectsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\RefsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\MergesPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\PathsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\SummaryPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 
 class RevisionLogFactory

@@ -8,7 +8,7 @@
  * @link      https://github.com/console-helpers/svn-buddy
  */
 
-namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
+namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin;
 
 
 class SummaryPlugin extends AbstractRepositoryCollectorPlugin

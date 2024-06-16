@@ -11,8 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\ProjectsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\BugsPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\ProjectsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;

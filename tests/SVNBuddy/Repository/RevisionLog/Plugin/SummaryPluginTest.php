@@ -12,7 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\SummaryPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\SummaryPlugin;
 
 class SummaryPluginTest extends AbstractPluginTestCase
 {

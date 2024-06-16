@@ -11,8 +11,8 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\RefsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RefsPlugin;
 use Prophecy\Prophecy\ObjectProphecy;
 
 class RefsPluginTest extends AbstractPluginTestCase
