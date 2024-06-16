@@ -11,12 +11,12 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 
 class BugsPluginTest extends AbstractPluginTestCase
 {

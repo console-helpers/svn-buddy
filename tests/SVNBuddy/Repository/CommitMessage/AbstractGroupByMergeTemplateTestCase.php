@@ -11,9 +11,6 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\CommitMessage;
 
 
-use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\AbstractMergeTemplate;
-use Prophecy\Prophecy\ObjectProphecy;
-
 abstract class AbstractGroupByMergeTemplateTestCase extends AbstractMergeTemplateTestCase
 {
 

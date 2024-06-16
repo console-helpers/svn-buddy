@@ -12,8 +12,8 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use Aura\Sql\ExtendedPdoInterface;
-use ConsoleHelpers\SVNBuddy\Container;
 use ConsoleHelpers\DatabaseMigration\MigrationContext;
+use ConsoleHelpers\SVNBuddy\Container;
 use Tests\ConsoleHelpers\SVNBuddy\Database\AbstractDatabaseAwareTestCase as BaseAbstractDatabaseAwareTestCase;
 
 abstract class AbstractDatabaseAwareTestCase extends BaseAbstractDatabaseAwareTestCase

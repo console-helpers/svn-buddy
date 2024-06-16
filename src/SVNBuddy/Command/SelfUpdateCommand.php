@@ -11,13 +11,11 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
-use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use ConsoleHelpers\SVNBuddy\Updater\Stability;
 use ConsoleHelpers\SVNBuddy\Updater\UpdateManager;
 use ConsoleHelpers\SVNBuddy\Updater\Updater;
-use ConsoleHelpers\SVNBuddy\Updater\VersionUpdateStrategy;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;

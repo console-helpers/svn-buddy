@@ -11,11 +11,11 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\ArrayConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\StringConfigSetting;
-use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;

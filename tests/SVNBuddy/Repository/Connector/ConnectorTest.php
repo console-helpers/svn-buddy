@@ -11,16 +11,16 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
-use ConsoleHelpers\ConsoleKit\ConsoleIO;
-use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
-use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
-use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 
 class ConnectorTest extends AbstractTestCase
 {

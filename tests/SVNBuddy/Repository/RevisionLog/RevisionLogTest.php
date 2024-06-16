@@ -12,7 +12,11 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 use Prophecy\Argument;
@@ -23,10 +27,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\ProgressBarOutputToken;
 use Tests\ConsoleHelpers\SVNBuddy\ProphecyToken\SimpleXMLElementToken;
-use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IRepositoryCollectorPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IDatabaseCollectorPlugin;
-use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 
 class RevisionLogTest extends AbstractTestCase
 {

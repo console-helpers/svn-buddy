@@ -14,7 +14,6 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\BugsPlugin;
@@ -23,6 +22,7 @@ use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\PathsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\ProjectsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RefsPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\SummaryPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
 
 class RevisionLogFactory
 {

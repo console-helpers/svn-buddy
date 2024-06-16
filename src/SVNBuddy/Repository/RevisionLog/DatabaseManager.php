@@ -14,8 +14,8 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use Aura\Sql\ExtendedPdo;
 use Aura\Sql\ExtendedPdoInterface;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
-use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\DatabaseMigration\MigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 

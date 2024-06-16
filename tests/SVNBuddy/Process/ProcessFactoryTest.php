@@ -11,8 +11,8 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Process;
 
 
-use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
+use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
 use Symfony\Component\Process\Process;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 

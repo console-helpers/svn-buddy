@@ -11,10 +11,10 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
+use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\IntegerConfigSetting;
 use ConsoleHelpers\SVNBuddy\Config\RegExpsConfigSetting;
-use ConsoleHelpers\ConsoleKit\Exception\CommandException;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter;

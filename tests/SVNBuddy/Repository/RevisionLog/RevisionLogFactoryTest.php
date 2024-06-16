@@ -11,13 +11,13 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
-use Prophecy\Argument;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\DatabaseManager;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\MigrationContext;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use Prophecy\Argument;
 
 class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 {

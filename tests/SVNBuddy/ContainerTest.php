@@ -11,30 +11,30 @@
 namespace Tests\ConsoleHelpers\SVNBuddy;
 
 
-use ConsoleHelpers\SVNBuddy\Container;
-use Tests\ConsoleHelpers\ConsoleKit\ContainerTest as BaseContainerTest;
-use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
-use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
-use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
-use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
-use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
-use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
-use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
+use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
+use ConsoleHelpers\SVNBuddy\Container;
+use ConsoleHelpers\SVNBuddy\Database\StatementProfiler;
+use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
+use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
+use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
+use ConsoleHelpers\SVNBuddy\InteractiveEditor;
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
+use ConsoleHelpers\SVNBuddy\Process\ProcessFactory;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
+use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
-use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\CommitMessageBuilder;
-use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\UrlResolver;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLogFactory;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionPrinter;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
-use ConsoleHelpers\SVNBuddy\Repository\CommitMessage\MergeTemplateFactory;
-use ConsoleHelpers\SVNBuddy\Config\CommandConfig;
-use ConsoleHelpers\SVNBuddy\Helper\DateHelper;
-use ConsoleHelpers\SVNBuddy\Helper\SizeHelper;
-use ConsoleHelpers\SVNBuddy\Helper\OutputHelper;
-use ConsoleHelpers\SVNBuddy\InteractiveEditor;
+use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyResolver;
 use ConsoleHelpers\SVNBuddy\Updater\Updater;
+use Tests\ConsoleHelpers\ConsoleKit\ContainerTest as BaseContainerTest;
 
 class ContainerTest extends BaseContainerTest
 {

@@ -11,8 +11,8 @@
 namespace ConsoleHelpers\SVNBuddy\Command\Dev;
 
 
-use ConsoleHelpers\SVNBuddy\Command\AbstractCommand;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
+use ConsoleHelpers\SVNBuddy\Command\AbstractCommand;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

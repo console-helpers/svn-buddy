@@ -11,16 +11,16 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
+use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
+use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
-use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
-use ConsoleHelpers\ConsoleKit\ConsoleIO;
-use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
-use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use Symfony\Component\Process\Process;
+use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
 class CommandFactoryTest extends AbstractTestCase
 {

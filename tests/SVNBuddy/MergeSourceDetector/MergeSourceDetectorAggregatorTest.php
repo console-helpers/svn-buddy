@@ -11,9 +11,9 @@
 namespace Tests\ConsoleHelpers\SVNBuddy\MergeSourceDetector;
 
 
+use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 use ConsoleHelpers\SVNBuddy\MergeSourceDetector\MergeSourceDetectorAggregator;
 use Prophecy\Prophecy\ObjectProphecy;
-use ConsoleHelpers\SVNBuddy\MergeSourceDetector\AbstractMergeSourceDetector;
 
 class MergeSourceDetectorAggregatorTest extends AbstractMergeSourceDetectorTestCase
 {

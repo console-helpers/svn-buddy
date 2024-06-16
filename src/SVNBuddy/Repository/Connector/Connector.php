@@ -11,11 +11,9 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\Connector;
 
 
-use ConsoleHelpers\ConsoleKit\ConsoleIO;
-use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
+use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
-use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 
 /**

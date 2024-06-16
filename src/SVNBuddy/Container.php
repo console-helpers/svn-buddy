@@ -12,10 +12,10 @@ namespace ConsoleHelpers\SVNBuddy;
 
 
 use ConsoleHelpers\ConsoleKit\Config\ConfigEditor;
-use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\DatabaseMigration\MigrationManager;
 use ConsoleHelpers\DatabaseMigration\PhpMigrationRunner;
 use ConsoleHelpers\DatabaseMigration\SqlMigrationRunner;
+use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Command\ChangelogCommand;
 use ConsoleHelpers\SVNBuddy\Command\CleanupCommand;
 use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
