@@ -760,6 +760,29 @@ Displays project meta information in following format:
 ![project meta information](docs/images/SvnBuddy_ProjectCommand_ShowMetaOption.png)
 
 
+### The "reparse" command
+
+CReparses given revision.
+
+#### Arguments
+
+* `path` - Working copy path [default: "`.`"]
+
+
+#### Options
+
+* `-r`, `--revision=REVISION` - Reparse specified revision
+
+
+#### Examples
+
+```
+svn-buddy.phar reparse --revision 12345
+```
+
+Re-reads and reparses 12345 revision information.
+
+
 ### The "self-update" command
 
 Updates application to most recent version. Following update channels are available:

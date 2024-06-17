@@ -242,6 +242,16 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 	}
 
 	/**
+	 * @inheritDoc
+	 *
+	 * @throws \RuntimeException When attempting to remove plugin collected data.
+	 */
+	protected function remove($revision)
+	{
+		throw new \RuntimeException('Not supported.');
+	}
+
+	/**
 	 * Sorts paths to move parent folders above their sub-folders.
 	 *
 	 * @param \SimpleXMLElement $paths Paths.

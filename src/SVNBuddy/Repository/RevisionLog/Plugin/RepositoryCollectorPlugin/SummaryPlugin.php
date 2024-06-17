@@ -11,10 +11,17 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin;
 
 
-class SummaryPlugin extends AbstractRepositoryCollectorPlugin
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IOverwriteAwarePlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\TOverwriteAwarePlugin;
+
+class SummaryPlugin extends AbstractRepositoryCollectorPlugin implements IOverwriteAwarePlugin
 {
 
+	use TOverwriteAwarePlugin;
+
 	const STATISTIC_COMMIT_ADDED = 'commit_added';
+
+	const STATISTIC_COMMIT_REMOVED = 'commit_removed';
 
 	/**
 	 * Returns plugin name.
@@ -34,7 +41,7 @@ class SummaryPlugin extends AbstractRepositoryCollectorPlugin
 	public function defineStatisticTypes()
 	{
 		return array(
-			self::STATISTIC_COMMIT_ADDED,
+			self::STATISTIC_COMMIT_ADDED, self::STATISTIC_COMMIT_REMOVED,
 		);
 	}
 
@@ -56,6 +63,15 @@ class SummaryPlugin extends AbstractRepositoryCollectorPlugin
 		);
 
 		$this->recordStatistic(self::STATISTIC_COMMIT_ADDED);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function remove($revision)
+	{
+		$this->repositoryFiller->removeCommit($revision);
+		$this->recordStatistic(self::STATISTIC_COMMIT_REMOVED);
 	}
 
 	/**

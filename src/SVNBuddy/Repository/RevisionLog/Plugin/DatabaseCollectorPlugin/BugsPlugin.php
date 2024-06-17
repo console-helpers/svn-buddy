@@ -14,12 +14,18 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollecto
 use Aura\Sql\ExtendedPdoInterface;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParserFactory;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IOverwriteAwarePlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\TOverwriteAwarePlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RepositoryFiller;
 
-class BugsPlugin extends AbstractDatabaseCollectorPlugin
+class BugsPlugin extends AbstractDatabaseCollectorPlugin implements IOverwriteAwarePlugin
 {
 
+	use TOverwriteAwarePlugin;
+
 	const STATISTIC_BUG_ADDED_TO_COMMIT = 'bug_added_to_commit';
+
+	const STATISTIC_BUG_REMOVED_FROM_COMMIT = 'bug_removed_from_commit';
 
 	/**
 	 * Repository url.
@@ -83,7 +89,7 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 	public function defineStatisticTypes()
 	{
 		return array(
-			self::STATISTIC_BUG_ADDED_TO_COMMIT,
+			self::STATISTIC_BUG_ADDED_TO_COMMIT, self::STATISTIC_BUG_REMOVED_FROM_COMMIT,
 		);
 	}
 
@@ -101,9 +107,32 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin
 
 		$last_revision = $this->getLastRevision();
 
-		if ( $to_revision > $last_revision ) {
+		if ( $this->isOverwriteMode() ) {
+			$this->remove($from_revision, $to_revision);
+			$this->detectBugs($from_revision, $to_revision);
+		}
+		elseif ( $to_revision > $last_revision ) {
 			$this->detectBugs($last_revision + 1, $to_revision);
+		}
+
+		if ( $to_revision > $last_revision ) {
 			$this->setLastRevision($to_revision);
+		}
+	}
+
+	/**
+	 * Removes changes plugin made based on a given revision.
+	 *
+	 * @param integer $from_revision From revision.
+	 * @param integer $to_revision   To revision.
+	 *
+	 * @return void
+	 */
+	protected function remove($from_revision, $to_revision)
+	{
+		for ( $revision = $from_revision; $revision <= $to_revision; $revision++ ) {
+			$bug_count = $this->repositoryFiller->removeBugsFromCommit($revision);
+			$this->recordStatistic(self::STATISTIC_BUG_REMOVED_FROM_COMMIT, $bug_count);
 		}
 	}
 

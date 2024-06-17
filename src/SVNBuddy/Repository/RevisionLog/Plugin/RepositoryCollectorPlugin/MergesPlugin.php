@@ -11,12 +11,18 @@
 namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin;
 
 
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IOverwriteAwarePlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\TOverwriteAwarePlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 
-class MergesPlugin extends AbstractRepositoryCollectorPlugin
+class MergesPlugin extends AbstractRepositoryCollectorPlugin implements IOverwriteAwarePlugin
 {
 
+	use TOverwriteAwarePlugin;
+
 	const STATISTIC_MERGE_ADDED = 'merge_added';
+
+	const STATISTIC_MERGE_DELETED = 'merge_deleted';
 
 	/**
 	 * Returns plugin name.
@@ -46,7 +52,7 @@ class MergesPlugin extends AbstractRepositoryCollectorPlugin
 	public function defineStatisticTypes()
 	{
 		return array(
-			self::STATISTIC_MERGE_ADDED,
+			self::STATISTIC_MERGE_ADDED, self::STATISTIC_MERGE_DELETED,
 		);
 	}
 
@@ -68,6 +74,15 @@ class MergesPlugin extends AbstractRepositoryCollectorPlugin
 
 		$this->repositoryFiller->addMergeCommit($revision, $merged_revisions);
 		$this->recordStatistic(self::STATISTIC_MERGE_ADDED, count($merged_revisions));
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function remove($revision)
+	{
+		$merged_revisions_count = $this->repositoryFiller->removeMergeCommit($revision);
+		$this->recordStatistic(self::STATISTIC_MERGE_DELETED, $merged_revisions_count);
 	}
 
 	/**

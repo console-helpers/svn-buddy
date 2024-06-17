@@ -152,6 +152,26 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 		);
 	}
 
+	public function testRemoveCommit()
+	{
+		$this->repositoryFiller->addCommit(100, 'user-a', 123, 'msg1');
+		$this->repositoryFiller->addCommit(101, 'user-b', 124, 'msg2');
+
+		$this->repositoryFiller->removeCommit(100);
+
+		$this->assertTableContent(
+			'Commits',
+			array(
+				array(
+					'Revision' => '101',
+					'Author' => 'user-b',
+					'Date' => '124',
+					'Message' => 'msg2',
+				),
+			)
+		);
+	}
+
 	public function testAddCommitToProject()
 	{
 		$project_id = $this->repositoryFiller->addProject('/path/to/project/');
@@ -505,6 +525,30 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 		);
 	}
 
+	public function testRemoveBugsFromCommit()
+	{
+		$this->repositoryFiller->addCommit(100, 'user', 123, 'msg');
+		$this->repositoryFiller->addBugsToCommit(array('AA', 'BB'), 100);
+		$this->repositoryFiller->addCommit(101, 'user', 123, 'msg');
+		$this->repositoryFiller->addBugsToCommit(array('BB', 'CC'), 101);
+
+		$this->repositoryFiller->removeBugsFromCommit(100);
+
+		$this->assertTableContent(
+			'CommitBugs',
+			array(
+				array(
+					'Revision' => '101',
+					'Bug' => 'BB',
+				),
+				array(
+					'Revision' => '101',
+					'Bug' => 'CC',
+				),
+			)
+		);
+	}
+
 	public function testAddMergeCommit()
 	{
 		$this->repositoryFiller->addCommit(100, 'user', 123, 'msg');
@@ -522,6 +566,35 @@ class RepositoryFillerTest extends AbstractDatabaseAwareTestCase
 				array(
 					'MergeRevision' => '300',
 					'MergedRevision' => '200',
+				),
+			)
+		);
+	}
+
+	public function testRemoveMergeCommit()
+	{
+		$this->repositoryFiller->addCommit(100, 'user', 123, 'msg');
+		$this->repositoryFiller->addCommit(200, 'user', 123, 'msg');
+		$this->repositoryFiller->addCommit(300, 'user', 123, 'msg');
+		$this->repositoryFiller->addMergeCommit(300, array(100, 200));
+
+		$this->repositoryFiller->addCommit(101, 'user', 123, 'msg');
+		$this->repositoryFiller->addCommit(201, 'user', 123, 'msg');
+		$this->repositoryFiller->addCommit(301, 'user', 123, 'msg');
+		$this->repositoryFiller->addMergeCommit(301, array(101, 201));
+
+		$this->repositoryFiller->removeMergeCommit(300);
+
+		$this->assertTableContent(
+			'Merges',
+			array(
+				array(
+					'MergeRevision' => '301',
+					'MergedRevision' => '101',
+				),
+				array(
+					'MergeRevision' => '301',
+					'MergedRevision' => '201',
 				),
 			)
 		);

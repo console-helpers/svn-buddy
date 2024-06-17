@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - The `commit` command now highlights the line with a commited revision number.
+- Added `reparse` command for reparsing data of a given revision (e.g. when it's log message was changed in repository).
 
 ### Changed
 ...
