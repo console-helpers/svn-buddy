@@ -58,6 +58,7 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->assertLastRevision(100);
 
 		$this->assertTableEmpty('CommitBugs');
+		$this->assertStatistics(array());
 	}
 
 	public function testProcessEmptyProject()
@@ -83,6 +84,7 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->plugin->process(0, 100);
 
 		$this->assertTableEmpty('CommitBugs');
+		$this->assertStatistics(array());
 		$this->assertTableContent(
 			'Projects',
 			array(
@@ -120,6 +122,7 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->plugin->process(0, 100);
 
 		$this->assertTableEmpty('CommitBugs');
+		$this->assertStatistics(array());
 		$this->assertTableContent(
 			'Projects',
 			array(
@@ -167,6 +170,7 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->plugin->process(0, 200);
 
 		$this->assertTableEmpty('CommitBugs');
+		$this->assertStatistics(array());
 		$this->assertTableContent(
 			'Projects',
 			array(
@@ -214,6 +218,7 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->plugin->process(0, 200);
 
 		$this->assertTableEmpty('CommitBugs');
+		$this->assertStatistics(array());
 		$this->assertTableContent(
 			'Projects',
 			array(
@@ -296,6 +301,7 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->plugin->process(0, 100);
 
 		$this->assertTableEmpty('CommitBugs');
+		$this->assertStatistics(array());
 	}
 
 	public function testProcessCommitWithTwoProjects()
@@ -336,6 +342,9 @@ class BugsPluginTest extends AbstractPluginTestCase
 				),
 			)
 		);
+		$this->assertStatistics(array(
+			BugsPlugin::STATISTIC_BUG_ADDED_TO_COMMIT => 2,
+		));
 	}
 
 	public function testProcessCommitFromProjectWithoutBugTracking()
@@ -375,6 +384,9 @@ class BugsPluginTest extends AbstractPluginTestCase
 				),
 			)
 		);
+		$this->assertStatistics(array(
+			BugsPlugin::STATISTIC_BUG_ADDED_TO_COMMIT => 2,
+		));
 	}
 
 	public function testProcessMultipleCommitsSameBug()
@@ -414,6 +426,9 @@ class BugsPluginTest extends AbstractPluginTestCase
 				),
 			)
 		);
+		$this->assertStatistics(array(
+			BugsPlugin::STATISTIC_BUG_ADDED_TO_COMMIT => 2,
+		));
 	}
 
 	public function testFindNoMatch()
