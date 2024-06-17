@@ -68,6 +68,40 @@ class MergesPluginTest extends AbstractPluginTestCase
 		));
 	}
 
+	/**
+	 * @dataProvider parseDataProvider
+	 */
+	public function testParseWithOverwriteMode($fixture_file)
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 123, 'msg')
+			->addMergedCommits(array(10, 20, 30));
+		$this->commitBuilder->build();
+		$this->setLastRevision(100);
+
+		$this->plugin->setOverwriteMode(true);
+		$this->plugin->parse($this->getFixture($fixture_file));
+
+		$this->assertTableContent(
+			'Merges',
+			array(
+				array(
+					'MergeRevision' => '100',
+					'MergedRevision' => '50',
+				),
+				array(
+					'MergeRevision' => '100',
+					'MergedRevision' => '60',
+				),
+			)
+		);
+
+		$this->assertStatistics(array(
+			MergesPlugin::STATISTIC_MERGE_DELETED => 3,
+			MergesPlugin::STATISTIC_MERGE_ADDED => 2,
+		));
+	}
+
 	public static function parseDataProvider()
 	{
 		return array(

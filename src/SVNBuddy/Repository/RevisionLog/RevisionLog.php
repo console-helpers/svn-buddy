@@ -14,6 +14,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\IDatabaseCollectorPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IOverwriteAwarePlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\IRepositoryCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionUrlBuilder;
@@ -142,6 +143,24 @@ class RevisionLog
 	}
 
 	/**
+	 * Reparses a revision.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return void
+	 * @throws \LogicException When no plugins are registered.
+	 */
+	public function reparse($revision)
+	{
+		if ( !$this->_plugins ) {
+			throw new \LogicException('Please register at least one revision log plugin.');
+		}
+
+		$this->_databaseReady();
+		$this->_queryRevisionData($revision, $revision, true);
+	}
+
+	/**
 	 * Reports to each plugin, that database is ready for usage.
 	 *
 	 * @return void
@@ -180,26 +199,53 @@ class RevisionLog
 	 *
 	 * @param integer $from_revision From revision.
 	 * @param integer $to_revision   To revision.
+	 * @param boolean $overwrite     Overwrite.
 	 *
 	 * @return void
 	 */
-	private function _queryRevisionData($from_revision, $to_revision)
+	private function _queryRevisionData($from_revision, $to_revision, $overwrite = false)
 	{
-		$range_start = $from_revision;
+		$this->_useRepositoryCollectorPlugins($from_revision, $to_revision, $overwrite);
+		$this->_useDatabaseCollectorPlugins($from_revision, $to_revision, $overwrite);
 
+		if ( isset($this->_io) && $this->_io->isVerbose() ) {
+			$this->_displayPluginActivityStatistics();
+		}
+	}
+
+	/**
+	 * Use repository collector plugins.
+	 *
+	 * @param integer $from_revision From revision.
+	 * @param integer $to_revision   To revision.
+	 * @param boolean $overwrite     Overwrite.
+	 *
+	 * @return void
+	 */
+	private function _useRepositoryCollectorPlugins($from_revision, $to_revision, $overwrite = false)
+	{
 		// The "io" isn't set during autocomplete.
 		if ( isset($this->_io) ) {
 			// Create progress bar for repository plugins, where data amount is known upfront.
 			$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 200) + 1);
-			$progress_bar->setMessage(' * Reading missing revisions:');
+			$progress_bar->setMessage(
+				$overwrite ? '* Reparsing revisions:' : ' * Reading missing revisions:'
+			);
 			$progress_bar->setFormat(
 				'%message% %current%/%max% [%bar%] <info>%percent:3s%%</info> %elapsed:6s%/%estimated:-6s% <info>%memory:-10s%</info>'
 			);
 			$progress_bar->start();
 		}
 
-		$log_command_arguments = $this->_getLogCommandArguments();
-		$is_verbose = isset($this->_io) && $this->_io->isVerbose();
+		$plugins = $this->getRepositoryCollectorPlugins($overwrite);
+
+		if ( $overwrite ) {
+			$this->setPluginsOverwriteMode($plugins, true);
+		}
+
+		$range_start = $from_revision;
+		$cache_duration = $overwrite ? null : '10 years';
+		$log_command_arguments = $this->_getLogCommandArguments($plugins);
 
 		while ( $range_start <= $to_revision ) {
 			$range_end = min($range_start + 199, $to_revision);
@@ -210,10 +256,10 @@ class RevisionLog
 				$log_command_arguments
 			);
 			$command = $this->_repositoryConnector->getCommand('log', $command_arguments);
-			$command->setCacheDuration('10 years');
+			$command->setCacheDuration($cache_duration);
 			$svn_log = $command->run();
 
-			$this->_parseLog($svn_log);
+			$this->_parseLog($svn_log, $plugins);
 
 			$range_start = $range_end + 1;
 
@@ -222,45 +268,74 @@ class RevisionLog
 			}
 		}
 
+		// Remove progress bar of repository plugins.
 		if ( isset($progress_bar) ) {
-			// Remove progress bar of repository plugins.
 			$progress_bar->clear();
 			unset($progress_bar);
+		}
 
+		if ( $overwrite ) {
+			$this->setPluginsOverwriteMode($plugins, false);
+		}
+	}
+
+	/**
+	 * Use database collector plugins.
+	 *
+	 * @param integer $from_revision From revision.
+	 * @param integer $to_revision   To revision.
+	 * @param boolean $overwrite     Overwrite.
+	 *
+	 * @return void
+	 */
+	private function _useDatabaseCollectorPlugins($from_revision, $to_revision, $overwrite = false)
+	{
+		$plugins = $this->getDatabaseCollectorPlugins($overwrite);
+
+		if ( $overwrite ) {
+			$this->setPluginsOverwriteMode($plugins, true);
+		}
+
+		// The "io" isn't set during autocomplete.
+		if ( isset($this->_io) ) {
 			// Create progress bar for database plugins, where data amount isn't known upfront.
 			$progress_bar = $this->_io->createProgressBar();
-			$progress_bar->setMessage(' * Reading missing revisions:');
+			$progress_bar->setMessage(
+				$overwrite ? '* Reparsing revisions:' : ' * Reading missing revisions:'
+			);
 			$progress_bar->setFormat('%message% %current% [%bar%] %elapsed:6s% <info>%memory:-10s%</info>');
 			$progress_bar->start();
 
-			foreach ( $this->getDatabaseCollectorPlugins() as $plugin ) {
+			foreach ( $plugins as $plugin ) {
 				$plugin->process($from_revision, $to_revision, $progress_bar);
 			}
 		}
 		else {
-			foreach ( $this->getDatabaseCollectorPlugins() as $plugin ) {
+			foreach ( $plugins as $plugin ) {
 				$plugin->process($from_revision, $to_revision);
 			}
+		}
+
+		if ( $overwrite ) {
+			$this->setPluginsOverwriteMode($plugins, false);
 		}
 
 		if ( isset($progress_bar) ) {
 			$progress_bar->finish();
 			$this->_io->writeln('');
 		}
-
-		if ( $is_verbose ) {
-			$this->_displayPluginActivityStatistics();
-		}
 	}
 
 	/**
 	 * Returns arguments for "log" command.
 	 *
+	 * @param IRepositoryCollectorPlugin[] $plugins Plugins.
+	 *
 	 * @return array
 	 */
-	private function _getLogCommandArguments()
+	private function _getLogCommandArguments(array $plugins)
 	{
-		$query_flags = $this->_getRevisionQueryFlags();
+		$query_flags = $this->_getRevisionQueryFlags($plugins);
 
 		$ret = array('-r', '{revision_range}', '--xml');
 
@@ -280,13 +355,15 @@ class RevisionLog
 	/**
 	 * Returns revision query flags.
 	 *
+	 * @param IRepositoryCollectorPlugin[] $plugins Plugins.
+	 *
 	 * @return array
 	 */
-	private function _getRevisionQueryFlags()
+	private function _getRevisionQueryFlags(array $plugins)
 	{
 		$ret = array();
 
-		foreach ( $this->getRepositoryCollectorPlugins() as $plugin ) {
+		foreach ( $plugins as $plugin ) {
 			$ret = array_merge($ret, $plugin->getRevisionQueryFlags());
 		}
 
@@ -296,13 +373,14 @@ class RevisionLog
 	/**
 	 * Parses output of "svn log" command.
 	 *
-	 * @param \SimpleXMLElement $log Log.
+	 * @param \SimpleXMLElement            $log     Log.
+	 * @param IRepositoryCollectorPlugin[] $plugins Plugins.
 	 *
 	 * @return void
 	 */
-	private function _parseLog(\SimpleXMLElement $log)
+	private function _parseLog(\SimpleXMLElement $log, array $plugins)
 	{
-		foreach ( $this->getRepositoryCollectorPlugins() as $plugin ) {
+		foreach ( $plugins as $plugin ) {
 			$plugin->parse($log);
 		}
 	}
@@ -430,45 +508,77 @@ class RevisionLog
 	/**
 	 * Returns repository collector plugins.
 	 *
+	 * @param boolean $overwrite_mode Overwrite mode.
+	 *
 	 * @return IRepositoryCollectorPlugin[]
 	 */
-	protected function getRepositoryCollectorPlugins()
+	protected function getRepositoryCollectorPlugins($overwrite_mode)
 	{
-		return $this->getPluginsByInterface(
-			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollectorPlugin\IRepositoryCollectorPlugin'
-		);
+		$plugins = $this->getPluginsByInterface(IRepositoryCollectorPlugin::class);
+
+		if ( !$overwrite_mode ) {
+			return $plugins;
+		}
+
+		return $this->getPluginsByInterface(IOverwriteAwarePlugin::class, $plugins);
 	}
 
 	/**
 	 * Returns database collector plugins.
 	 *
+	 * @param boolean $overwrite_mode Overwrite mode.
+	 *
 	 * @return IDatabaseCollectorPlugin[]
 	 */
-	protected function getDatabaseCollectorPlugins()
+	protected function getDatabaseCollectorPlugins($overwrite_mode)
 	{
-		return $this->getPluginsByInterface(
-			'ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\IDatabaseCollectorPlugin'
-		);
+		$plugins = $this->getPluginsByInterface(IDatabaseCollectorPlugin::class);
+
+		if ( !$overwrite_mode ) {
+			return $plugins;
+		}
+
+		return $this->getPluginsByInterface(IOverwriteAwarePlugin::class, $plugins);
 	}
 
 	/**
 	 * Returns plugin list filtered by interface.
 	 *
-	 * @param string $interface Interface name.
+	 * @param string    $interface Interface name.
+	 * @param IPlugin[] $plugins   Plugins.
 	 *
 	 * @return IPlugin[]
 	 */
-	protected function getPluginsByInterface($interface)
+	protected function getPluginsByInterface($interface, array $plugins = array())
 	{
+		if ( !$plugins ) {
+			$plugins = $this->_plugins;
+		}
+
 		$ret = array();
 
-		foreach ( $this->_plugins as $plugin ) {
+		foreach ( $plugins as $plugin ) {
 			if ( $plugin instanceof $interface ) {
 				$ret[] = $plugin;
 			}
 		}
 
 		return $ret;
+	}
+
+	/**
+	 * Sets overwrite mode.
+	 *
+	 * @param IOverwriteAwarePlugin[] $plugins        Plugins.
+	 * @param boolean                 $overwrite_mode Overwrite mode.
+	 *
+	 * @return void
+	 */
+	protected function setPluginsOverwriteMode(array $plugins, $overwrite_mode)
+	{
+		foreach ( $plugins as $plugin ) {
+			$plugin->setOverwriteMode($overwrite_mode);
+		}
 	}
 
 	/**

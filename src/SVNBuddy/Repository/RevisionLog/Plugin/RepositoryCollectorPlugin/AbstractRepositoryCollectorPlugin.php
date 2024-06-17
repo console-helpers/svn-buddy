@@ -12,6 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\RepositoryCollec
 
 
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\AbstractPlugin;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IOverwriteAwarePlugin;
 
 abstract class AbstractRepositoryCollectorPlugin extends AbstractPlugin implements IRepositoryCollectorPlugin
 {
@@ -30,16 +31,31 @@ abstract class AbstractRepositoryCollectorPlugin extends AbstractPlugin implemen
 		$last_processed_revision = null;
 		$last_revision = $this->getLastRevision();
 
-		foreach ( $log->logentry as $log_entry ) {
-			$revision = (int)$log_entry['revision'];
+		if ( $this instanceof IOverwriteAwarePlugin && $this->isOverwriteMode() ) {
+			foreach ( $log->logentry as $log_entry ) {
+				$revision = (int)$log_entry['revision'];
 
-			// Don't handle same revision twice.
-			if ( $revision <= $last_revision ) {
-				continue;
+				$this->remove($revision);
+				$this->doParse($revision, $log_entry);
+
+				// When revision appeared only after overwrite parsing process.
+				if ( $revision > $last_revision ) {
+					$last_processed_revision = $revision;
+				}
 			}
+		}
+		else {
+			foreach ( $log->logentry as $log_entry ) {
+				$revision = (int)$log_entry['revision'];
 
-			$this->doParse($revision, $log_entry);
-			$last_processed_revision = $revision;
+				// Don't handle same revision twice.
+				if ( $revision <= $last_revision ) {
+					continue;
+				}
+
+				$this->doParse($revision, $log_entry);
+				$last_processed_revision = $revision;
+			}
 		}
 
 		if ( isset($last_processed_revision) ) {
@@ -60,6 +76,15 @@ abstract class AbstractRepositoryCollectorPlugin extends AbstractPlugin implemen
 	 * @return void
 	 */
 	abstract protected function doParse($revision, \SimpleXMLElement $log_entry);
+
+	/**
+	 * Removes changes plugin made based on a given revision.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return void
+	 */
+	abstract protected function remove($revision);
 
 	/**
 	 * Returns revision query flags.

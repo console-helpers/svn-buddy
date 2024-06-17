@@ -66,6 +66,37 @@ class SummaryPluginTest extends AbstractPluginTestCase
 		));
 	}
 
+	/**
+	 * @dataProvider parseDataProvider
+	 */
+	public function testParseWithOverwriteMode($fixture_file)
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user-a', 123, 'msg-a');
+		$this->commitBuilder->build();
+		$this->setLastRevision(100);
+
+		$this->plugin->setOverwriteMode(true);
+		$this->plugin->parse($this->getFixture($fixture_file));
+
+		$this->assertTableContent(
+			'Commits',
+			array(
+				array(
+					'Revision' => '100',
+					'Author' => 'user',
+					'Date' => '1461350740',
+					'Message' => 'message',
+				),
+			)
+		);
+
+		$this->assertStatistics(array(
+			SummaryPlugin::STATISTIC_COMMIT_REMOVED => 1,
+			SummaryPlugin::STATISTIC_COMMIT_ADDED => 1,
+		));
+	}
+
 	public static function parseDataProvider()
 	{
 		return array(

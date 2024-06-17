@@ -27,6 +27,7 @@ use ConsoleHelpers\SVNBuddy\Command\Dev\PharCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
 use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
 use ConsoleHelpers\SVNBuddy\Command\ProjectCommand;
+use ConsoleHelpers\SVNBuddy\Command\ReparseCommand;
 use ConsoleHelpers\SVNBuddy\Command\RevertCommand;
 use ConsoleHelpers\SVNBuddy\Command\SearchCommand;
 use ConsoleHelpers\SVNBuddy\Command\SelfUpdateCommand;
@@ -283,6 +284,9 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandL
 		};
 		$this->commandFactories['revert'] = function () {
 			return new RevertCommand();
+		};
+		$this->commandFactories['reparse'] = function () {
+			return new ReparseCommand();
 		};
 		$this->commandFactories['log'] = function () {
 			return new LogCommand();

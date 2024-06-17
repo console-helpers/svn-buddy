@@ -389,6 +389,79 @@ class BugsPluginTest extends AbstractPluginTestCase
 		));
 	}
 
+	/**
+	 * @dataProvider overwriteModeDataProvider
+	 */
+	public function testOverwriteMode($overwrite_mode, array $commit_bugs_table_contents, array $statistics)
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, 'message1')
+			->addBugs(array('BUG1', 'BUG2', 'BUG3'))
+			->addPath('A', '/path/to/project-one/', '', '/path/to/project-one/')
+			->addPath('A', '/path/to/project-one/trunk/', 'trunk', '/path/to/project-one/');
+		$this->commitBuilder->build();
+
+		// Assuming that project id would be "1".
+		$this->filler->setProjectBugRegexp(1, 'OK');
+
+		if ( $overwrite_mode ) {
+			$log_message_parser = $this->prophesize('ConsoleHelpers\SVNBuddy\Repository\Parser\LogMessageParser');
+			$log_message_parser->parse('message1')->willReturn(array('BUG4', 'BUG5'))->shouldBeCalled();
+			$this->logMessageParserFactory->getLogMessageParser('OK')->willReturn($log_message_parser);
+		}
+
+		$this->setLastRevision(200);
+		$this->plugin->setOverwriteMode($overwrite_mode);
+		$this->plugin->process(100, 100);
+
+		$this->assertTableContent('CommitBugs', $commit_bugs_table_contents);
+		$this->assertStatistics($statistics);
+	}
+
+	public static function overwriteModeDataProvider()
+	{
+		return array(
+			'no overwrite' => array(
+				false,
+				array(
+					array(
+						'Revision' => '100',
+						'Bug' => 'BUG1',
+					),
+					array(
+						'Revision' => '100',
+						'Bug' => 'BUG2',
+					),
+					array(
+						'Revision' => '100',
+						'Bug' => 'BUG3',
+					),
+				),
+				array(),
+			),
+			'overwrite' => array(
+				true,
+				array(
+					array(
+						'Revision' => '100',
+						'Bug' => 'BUG4',
+					),
+					array(
+						'Revision' => '100',
+						'Bug' => 'BUG5',
+					),
+				),
+				array(
+					BugsPlugin::STATISTIC_BUG_REMOVED_FROM_COMMIT => 3,
+					BugsPlugin::STATISTIC_BUG_ADDED_TO_COMMIT => 2,
+				),
+			),
+		);
+		$this->assertStatistics(array(
+			BugsPlugin::STATISTIC_BUG_ADDED_TO_COMMIT => 2,
+		));
+	}
+
 	public function testProcessMultipleCommitsSameBug()
 	{
 		$this->commitBuilder

@@ -12,6 +12,7 @@ namespace Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin;
 
 
 use ConsoleHelpers\SVNBuddy\Database\DatabaseCache;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IOverwriteAwarePlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RepositoryFiller;
 use Tests\ConsoleHelpers\SVNBuddy\Repository\RevisionLog\AbstractDatabaseAwareTestCase;
@@ -58,6 +59,19 @@ abstract class AbstractPluginTestCase extends AbstractDatabaseAwareTestCase
 		$this->commitBuilder = new CommitBuilder($this->filler, $database_cache);
 
 		$this->plugin = $this->createPlugin();
+	}
+
+	public function testSetOverwriteMode()
+	{
+		if ( !($this->plugin instanceof IOverwriteAwarePlugin) ) {
+			$this->markTestSkipped(
+				'The "' . $this->plugin->getName() . '" plugin doesn\'t support an overwrite mode.'
+			);
+		}
+
+		$this->assertFalse($this->plugin->isOverwriteMode());
+		$this->plugin->setOverwriteMode(true);
+		$this->assertTrue($this->plugin->isOverwriteMode());
 	}
 
 	public function testGetLastRevisionEmpty()

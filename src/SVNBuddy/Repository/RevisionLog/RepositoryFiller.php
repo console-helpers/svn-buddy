@@ -136,6 +136,22 @@ class RepositoryFiller
 	}
 
 	/**
+	 * Removes commit.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return void
+	 */
+	public function removeCommit($revision)
+	{
+		$sql = 'DELETE FROM Commits
+				WHERE Revision = :revision';
+		$this->database->perform($sql, array(
+			'revision' => $revision,
+		));
+	}
+
+	/**
 	 * Adds commit to project.
 	 *
 	 * @param integer $revision   Revision.
@@ -363,6 +379,21 @@ class RepositoryFiller
 	}
 
 	/**
+	 * Removes commit with bugs.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return integer
+	 */
+	public function removeBugsFromCommit($revision)
+	{
+		$sql = 'DELETE FROM CommitBugs
+				WHERE Revision = :revision';
+
+		return $this->database->fetchAffected($sql, array('revision' => $revision));
+	}
+
+	/**
 	 * Adds merge commit.
 	 *
 	 * @param integer $revision         Revision.
@@ -380,6 +411,23 @@ class RepositoryFiller
 				'merged_revision' => $merged_revision,
 			));
 		}
+	}
+
+	/**
+	 * Removes merge commit.
+	 *
+	 * @param integer $revision Revision.
+	 *
+	 * @return integer
+	 */
+	public function removeMergeCommit($revision)
+	{
+		$sql = 'DELETE FROM Merges
+				WHERE MergeRevision = :merge_revision';
+
+		return $this->database->fetchAffected($sql, array(
+			'merge_revision' => $revision,
+		));
 	}
 
 	/**
