@@ -27,7 +27,8 @@ class Updater extends BaseUpdater
 		$old_version = $this->strategy->getCurrentLocalVersion($this);
 
 		// Cloned Git repository is considered the latest version.
-		if ( $old_version === '@git-version@' ) {
+		if ( trim($old_version, '@') === 'git-version' ) {
+			// Have git version placeholder in obscure form to avoid Box replacing it.
 			return false;
 		}
 
