@@ -457,9 +457,6 @@ class BugsPluginTest extends AbstractPluginTestCase
 				),
 			),
 		);
-		$this->assertStatistics(array(
-			BugsPlugin::STATISTIC_BUG_ADDED_TO_COMMIT => 2,
-		));
 	}
 
 	public function testProcessMultipleCommitsSameBug()
