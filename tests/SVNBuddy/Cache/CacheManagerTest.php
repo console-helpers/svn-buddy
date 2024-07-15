@@ -138,10 +138,14 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
-		// For "getCache" call.
-		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss\)</debug>$#');
+		// For the 1st "getCache" call.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss \#1\)</debug>$#');
 
 		$cache_manager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal(), $io->reveal());
+		$this->assertNull($cache_manager->getCache('namespace:name'));
+
+		// For the 2nd "getCache" call.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss \#2\)</debug>$#');
 		$this->assertNull($cache_manager->getCache('namespace:name'));
 	}
 
@@ -151,13 +155,18 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
 		// For "setCache" call.
-		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss\)</debug>$#');
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss \#1\)</debug>$#');
 
-		// For "getCache" call.
-		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(hit: .*\)</debug>$#');
+		// For the 1st "getCache" call.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(hit \#1: .*\)</debug>$#');
 
 		$cache_manager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal(), $io->reveal());
 		$cache_manager->setCache('namespace:name', 'OK');
+		$this->assertEquals('OK', $cache_manager->getCache('namespace:name'));
+
+		// For the 2nd "getCache" call.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(hit \#2: .*\)</debug>$#');
+
 		$this->assertEquals('OK', $cache_manager->getCache('namespace:name'));
 	}
 

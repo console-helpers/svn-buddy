@@ -39,6 +39,13 @@ class CacheManager
 	private $_sizeHelper;
 
 	/**
+	 * Statistics.
+	 *
+	 * @var array
+	 */
+	private $_statistics = array();
+
+	/**
 	 * Create cache manager.
 	 *
 	 * @param string     $working_directory Working directory.
@@ -169,11 +176,24 @@ class CacheManager
 		if ( isset($this->_io) && $this->_io->isVerbose() ) {
 			$message = $cache_filename;
 
+			if ( !array_key_exists($cache_filename, $this->_statistics) ) {
+				$this->_statistics[$cache_filename] = array('hits' => 0, 'misses' => 0);
+			}
+
 			if ( file_exists($cache_filename) ) {
-				$message .= ' (hit: ' . $this->_sizeHelper->formatSize(filesize($cache_filename)) . ')';
+				$this->_statistics[$cache_filename]['hits']++;
+				$message .= sprintf(
+					' (hit #%d: %s)',
+					$this->_statistics[$cache_filename]['hits'],
+					$this->_sizeHelper->formatSize(filesize($cache_filename))
+				);
 			}
 			else {
-				$message .= ' (miss)';
+				$this->_statistics[$cache_filename]['misses']++;
+				$message .= sprintf(
+					' (miss #%d)',
+					$this->_statistics[$cache_filename]['misses']
+				);
 			}
 
 			$this->_io->writeln(array(
