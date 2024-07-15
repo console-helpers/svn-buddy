@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `reparse` command for reparsing data of a given revision (e.g. when it's log message was changed in repository).
 - The SVN command cache effectiveness (how often particular cache key is being used) is now displayed in the verbose output mode.
 - Display non-executed SVN command (results pulled from the cache) in the verbose mode.
+- Display non-executed SVN command (results pulled from the cache) results in the debug mode.
 
 ### Changed
 ...

@@ -158,6 +158,10 @@ class Command
 					$this->_io->writeln('<debug>[svn, cached]: ' . $this . '</debug>');
 				}
 
+				if ( $this->_io->isDebug() ) {
+					$this->_io->writeln($output, OutputInterface::OUTPUT_RAW);
+				}
+
 				if ( is_callable($callback) ) {
 					call_user_func($callback, Process::OUT, $output);
 				}
