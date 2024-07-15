@@ -153,8 +153,14 @@ class Command
 				$output = $this->_cacheManager->getCache($cache_key, $this->_cacheInvalidator, $this->_cacheDuration);
 			}
 
-			if ( isset($output) && is_callable($callback) ) {
-				call_user_func($callback, Process::OUT, $output);
+			if ( isset($output) ) {
+				if ( $this->_io->isVerbose() ) {
+					$this->_io->writeln('<debug>[svn, cached]: ' . $this . '</debug>');
+				}
+
+				if ( is_callable($callback) ) {
+					call_user_func($callback, Process::OUT, $output);
+				}
 			}
 		}
 
