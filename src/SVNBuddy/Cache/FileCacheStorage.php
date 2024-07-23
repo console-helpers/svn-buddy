@@ -43,6 +43,28 @@ class FileCacheStorage implements ICacheStorage
 	}
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getUniqueId()
+	{
+		return $this->_file;
+	}
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @throws \RuntimeException When cache file doesn't exist.
+	 */
+	public function getSize()
+	{
+		if ( !file_exists($this->_file) ) {
+			throw new \RuntimeException('File "' . $this->_file . '" does not exist.');
+		}
+
+		return filesize($this->_file);
+	}
+
+	/**
 	 * Gets information from cache.
 	 *
 	 * @return array|null

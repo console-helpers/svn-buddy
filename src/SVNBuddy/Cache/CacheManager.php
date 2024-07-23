@@ -99,17 +99,99 @@ class CacheManager
 
 		if ( !is_array($cache) || $cache['invalidator'] !== $invalidator ) {
 			$storage->invalidate();
+			$this->registerMiss($storage, is_array($cache) ? 'invalidated' : 'absent');
 
 			return null;
 		}
 
 		if ( $cache['expiration'] && $cache['expiration'] < time() ) {
 			$storage->invalidate();
+			$this->registerMiss($storage, 'expired');
 
 			return null;
 		}
 
+		$this->registerHit($storage);
+
 		return $cache['data'];
+	}
+
+	/**
+	 * Registers hit.
+	 *
+	 * @param ICacheStorage $storage Storage.
+	 *
+	 * @return void
+	 */
+	protected function registerHit(ICacheStorage $storage)
+	{
+		if ( !isset($this->_io) || !$this->_io->isVerbose() ) {
+			return;
+		}
+
+		$unique_id = $storage->getUniqueId();
+		$message = $unique_id;
+
+		$this->initStatistics($storage);
+
+		$this->_statistics[$unique_id]['hits']++;
+		$message .= sprintf(
+			' (hit #%d: %s)',
+			$this->_statistics[$unique_id]['hits'],
+			$this->_sizeHelper->formatSize($storage->getSize())
+		);
+
+		$this->_io->writeln(array(
+			'',
+			'<debug>[cache]: ' . $message . '</debug>',
+		));
+	}
+
+	/**
+	 * Registers miss.
+	 *
+	 * @param ICacheStorage $storage Storage.
+	 * @param string        $reason  Reason.
+	 *
+	 * @return void
+	 */
+	protected function registerMiss(ICacheStorage $storage, $reason)
+	{
+		if ( !isset($this->_io) || !$this->_io->isVerbose() ) {
+			return;
+		}
+
+		$unique_id = $storage->getUniqueId();
+		$message = $unique_id;
+
+		$this->initStatistics($storage);
+
+		$this->_statistics[$unique_id]['misses']++;
+		$message .= sprintf(
+			' (miss:' . $reason . ' #%d)',
+			$this->_statistics[$unique_id]['misses']
+		);
+
+		$this->_io->writeln(array(
+			'',
+			'<debug>[cache]: ' . $message . '</debug>',
+		));
+	}
+
+	/**
+	 * Initializes statistics.
+	 *
+	 * @param ICacheStorage $storage Storage.
+	 *
+	 * @return void
+	 */
+	protected function initStatistics(ICacheStorage $storage)
+	{
+		$unique_id = $storage->getUniqueId();
+
+		if ( !array_key_exists($unique_id, $this->_statistics) ) {
+			$this->_statistics[$unique_id] = array('hits' => 0, 'misses' => 0);
+		}
 	}
 
 	/**
@@ -171,38 +253,9 @@ class CacheManager
 			'D' . (isset($duration) ? $duration : 'INF'),
 		);
 
-		$cache_filename = $this->_workingDirectory . DIRECTORY_SEPARATOR . implode('_', $filename_parts) . '.cache';
-
-		if ( isset($this->_io) && $this->_io->isVerbose() ) {
-			$message = $cache_filename;
-
-			if ( !array_key_exists($cache_filename, $this->_statistics) ) {
-				$this->_statistics[$cache_filename] = array('hits' => 0, 'misses' => 0);
-			}
-
-			if ( file_exists($cache_filename) ) {
-				$this->_statistics[$cache_filename]['hits']++;
-				$message .= sprintf(
-					' (hit #%d: %s)',
-					$this->_statistics[$cache_filename]['hits'],
-					$this->_sizeHelper->formatSize(filesize($cache_filename))
-				);
-			}
-			else {
-				$this->_statistics[$cache_filename]['misses']++;
-				$message .= sprintf(
-					' (miss #%d)',
-					$this->_statistics[$cache_filename]['misses']
-				);
-			}
-
-			$this->_io->writeln(array(
-				'',
-				'<debug>[cache]: ' . $message . '</debug>',
-			));
-		}
-
-		return new FileCacheStorage($cache_filename);
+		return new FileCacheStorage(
+			$this->_workingDirectory . DIRECTORY_SEPARATOR . implode('_', $filename_parts) . '.cache'
+		);
 	}
 
 }

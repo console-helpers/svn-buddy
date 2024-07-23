@@ -15,6 +15,20 @@ interface ICacheStorage
 {
 
 	/**
+	 * Returns unique id of the cache storage.
+	 *
+	 * @return string
+	 */
+	public function getUniqueId();
+
+	/**
+	 * Returns cache size.
+	 *
+	 * @return integer
+	 */
+	public function getSize();
+
+	/**
 	 * Gets information from cache.
 	 *
 	 * @return array|null
