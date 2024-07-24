@@ -74,7 +74,7 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 	/**
 	 * @medium
 	 */
-	public function testSetWithDuration()
+	public function testSetWithExpiration()
 	{
 		$this->cacheManager->setCache('namespace:name_int', 'value_int', null, 1);
 		$this->assertEquals('value_int', $this->cacheManager->getCache('namespace:name_int', null, 1));
@@ -138,24 +138,32 @@ class CacheManagerTest extends WorkingDirectoryAwareTestCase
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
 
-		// For the 1st "getCache" call.
-		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss \#1\)</debug>$#');
-
 		$cache_manager = new CacheManager($this->getWorkingDirectory(), $this->sizeHelper->reveal(), $io->reveal());
-		$this->assertNull($cache_manager->getCache('namespace:name'));
 
-		// For the 2nd "getCache" call.
-		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss \#2\)</debug>$#');
-		$this->assertNull($cache_manager->getCache('namespace:name'));
+		// First miss on persistent cache.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss:absent \#1\)</debug>$#');
+		$this->assertNull($cache_manager->getCache('namespace:name1'), 'First miss on persistent cache.');
+
+		// Second miss on persistent cache.
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss:absent \#2\)</debug>$#');
+		$this->assertNull($cache_manager->getCache('namespace:name1'), 'Second miss on persistent cache.');
+
+		// Miss on expired cache.
+		$cache_manager->setCache('namespace:name2', 'value1', null, 1);
+		sleep(2);
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss:expired \#1\)</debug>$#');
+		$this->assertNull($cache_manager->getCache('namespace:name2', null, 1), 'Miss on expired cache.');
+
+		// Miss on invalidated cache.
+		$cache_manager->setCache('namespace:name3', 'value1', 'invalidator1');
+		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss:invalidated \#1\)</debug>$#');
+		$this->assertNull($cache_manager->getCache('namespace:name3', 'invalidator2'), 'Miss on invalidated cache.');
 	}
 
 	public function testVerboseCacheHit()
 	{
 		$io = $this->prophesize('ConsoleHelpers\ConsoleKit\ConsoleIO');
 		$io->isVerbose()->willReturn(true)->shouldBeCalled();
-
-		// For "setCache" call.
-		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(miss \#1\)</debug>$#');
 
 		// For the 1st "getCache" call.
 		$this->expectVerboseOutput($io, '#^<debug>\[cache\]: .*/\.svn-buddy/namespace_.*\.cache \(hit \#1: .*\)</debug>$#');
