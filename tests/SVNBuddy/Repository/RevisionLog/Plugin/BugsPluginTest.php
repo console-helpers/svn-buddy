@@ -145,7 +145,8 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->repositoryConnector->isRefRoot('/path/to/project/branches/branch-name/')->willReturn(true)->shouldBeCalled();
 		$this->repositoryConnector->isRefRoot(Argument::any())->willReturn(false)->shouldBeCalled();
 
-		$this->repositoryConnector->withCache('1 year', false)->willReturn($this->repositoryConnector);
+		$this->repositoryConnector->withCacheDuration('1 year')->willReturn($this->repositoryConnector);
+		$this->repositoryConnector->withCacheOverwrite(false)->willReturn($this->repositoryConnector);
 
 		$this->setBugRegexpExpectation($project_deleted, 'OK');
 
@@ -193,7 +194,8 @@ class BugsPluginTest extends AbstractPluginTestCase
 		$this->repositoryConnector->isRefRoot('/path/to/project/branches/branch-name/')->willReturn(true)->shouldBeCalled();
 		$this->repositoryConnector->isRefRoot(Argument::any())->willReturn(false)->shouldBeCalled();
 
-		$this->repositoryConnector->withCache('1 year', false)->willReturn($this->repositoryConnector)->shouldBeCalled();
+		$this->repositoryConnector->withCacheDuration('1 year')->willReturn($this->repositoryConnector)->shouldBeCalled();
+		$this->repositoryConnector->withCacheOverwrite(false)->willReturn($this->repositoryConnector)->shouldBeCalled();
 
 		$this->setBugRegexpExpectation($project_deleted, 'FIRST_EXPRESSION');
 
@@ -233,7 +235,8 @@ class BugsPluginTest extends AbstractPluginTestCase
 
 		$this->setBugRegexpExpectation($project_deleted, 'SECOND_EXPRESSION');
 
-		$this->repositoryConnector->withCache('1 year', true)->willReturn($this->repositoryConnector)->shouldBeCalled();
+		$this->repositoryConnector->withCacheDuration('1 year')->willReturn($this->repositoryConnector)->shouldBeCalled();
+		$this->repositoryConnector->withCacheOverwrite(true)->willReturn($this->repositoryConnector)->shouldBeCalled();
 
 		$this->plugin->refreshBugRegExp('/path/to/project/');
 

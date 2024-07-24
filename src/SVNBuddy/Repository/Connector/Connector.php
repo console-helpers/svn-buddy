@@ -137,16 +137,28 @@ class Connector
 	}
 
 	/**
-	 * Sets cache configuration for next created command.
+	 * Sets cache duration for next created command.
 	 *
-	 * @param mixed        $cache_duration  Cache duration.
-	 * @param boolean|null $cache_overwrite Cache overwrite.
+	 * @param mixed $cache_duration Cache duration.
 	 *
 	 * @return self
 	 */
-	public function withCache($cache_duration, $cache_overwrite = null)
+	public function withCacheDuration($cache_duration)
 	{
 		$this->_nextCommandCacheDuration = $cache_duration;
+
+		return $this;
+	}
+
+	/**
+	 * Sets cache overwrite flag for next created command.
+	 *
+	 * @param boolean $cache_overwrite Cache overwrite.
+	 *
+	 * @return self
+	 */
+	public function withCacheOverwrite($cache_overwrite)
+	{
 		$this->_nextCommandCacheOverwrite = $cache_overwrite;
 
 		return $this;
@@ -382,7 +394,7 @@ class Connector
 
 		// TODO: When wc path (not url) is given, then credentials can be present in "svn info" result anyway.
 		$svn_info = $this
-			->withCache($cache_duration)
+			->withCacheDuration($cache_duration)
 			->getCommand('info', array('--xml', $path_or_url_escaped))
 			->run();
 
@@ -415,7 +427,7 @@ class Connector
 			throw new \InvalidArgumentException('The repository URL "' . $url . '" is invalid.');
 		}
 
-		$log = $this->withCache('1 year')
+		$log = $this->withCacheDuration('1 year')
 			->getCommand('log', array('-r', '1:HEAD', '--limit', 1, '--xml', $url))
 			->run();
 
@@ -866,7 +878,7 @@ class Connector
 	public function getFileContent($path_or_url, $revision)
 	{
 		return $this
-			->withCache(self::SVN_CAT_CACHE_DURATION)
+			->withCacheDuration(self::SVN_CAT_CACHE_DURATION)
 			->getCommand('cat', array($path_or_url, '--revision', $revision))
 			->run();
 	}

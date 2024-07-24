@@ -88,9 +88,9 @@ class ConnectorTest extends AbstractTestCase
 	}
 
 	/**
-	 * @dataProvider getCommandWithCachingDataProvider
+	 * @dataProvider getCommandWithCacheDurationDataProvider
 	 */
-	public function testGetCommandWithCaching($duration, $overwrite)
+	public function testGetCommandWithCacheDuration($duration)
 	{
 		$command = $this->_expectCommand('info', array(), 'OK');
 
@@ -98,23 +98,36 @@ class ConnectorTest extends AbstractTestCase
 			$command->setCacheDuration($duration)->shouldBeCalled();
 		}
 
+		$this->_repositoryConnector->withCacheDuration($duration)->getCommand('info')->run();
+	}
+
+	public static function getCommandWithCacheDurationDataProvider()
+	{
+		return array(
+			'enabled' => array(100),
+			'disabled' => array(null),
+		);
+	}
+
+	/**
+	 * @dataProvider getCommandWithCacheOverwriteDataProvider
+	 */
+	public function testGetCommandWithCacheOverwrite($overwrite)
+	{
+		$command = $this->_expectCommand('info', array(), 'OK');
+
 		if ( $overwrite !== null ) {
 			$command->setCacheOverwrite($overwrite)->shouldBeCalled();
 		}
 
-		$this->_repositoryConnector->withCache($duration, $overwrite)->getCommand('info')->run();
+		$this->_repositoryConnector->withCacheOverwrite($overwrite)->getCommand('info')->run();
 	}
 
-	public static function getCommandWithCachingDataProvider()
+	public static function getCommandWithCacheOverwriteDataProvider()
 	{
 		return array(
-			'duration - enabled, overwrite - enabled' => array(100, true),
-			'duration - enabled, overwrite - disabled 1' => array(100, false),
-			'duration - enabled, overwrite - disabled 2' => array(100, null),
-
-			'duration - disabled, overwrite - enabled' => array(null, true),
-			'duration - disabled, overwrite - disabled 1' => array(null, false),
-			'duration - disabled, overwrite - disabled 2' => array(null, null),
+			'enabled' => array(true),
+			'disabled' => array(false),
 		);
 	}
 

@@ -186,7 +186,8 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin implements IOverwriteAw
 
 		foreach ( $ref_paths as $ref_path ) {
 			$logregex = $this->_repositoryConnector
-				->withCache('1 year', $cache_overwrite)
+				->withCacheDuration('1 year')
+				->withCacheOverwrite($cache_overwrite)
 				->getProperty(
 					'bugtraq:logregex',
 					$this->_repositoryUrl . $ref_path . ($project_deleted ? '@' . $revision : '')
