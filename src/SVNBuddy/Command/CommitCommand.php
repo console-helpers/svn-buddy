@@ -196,6 +196,9 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 		$this->_workingCopyConflictTracker->erase($wc_path);
 		unlink($tmp_file);
 
+		// Make committed revision instantly available for merging.
+		$this->getRevisionLog($this->getWorkingCopyUrl())->setForceRefreshFlag(true);
+
 		$this->io->writeln('<info>Done</info>');
 	}
 

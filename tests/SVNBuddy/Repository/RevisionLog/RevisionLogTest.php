@@ -483,6 +483,7 @@ OUTPUT;
 			$repository_url,
 			$this->revisionUrlBuilder->reveal(),
 			$this->repositoryConnector->reveal(),
+			sys_get_temp_dir(), // TODO: Test with fake working directory class.
 			$io
 		);
 

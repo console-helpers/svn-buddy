@@ -169,7 +169,8 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandL
 			return new RevisionLogFactory(
 				$c['repository_connector'],
 				$c['db_manager'],
-				$c['log_message_parser_factory']
+				$c['log_message_parser_factory'],
+				$c['working_directory']
 			);
 		};
 

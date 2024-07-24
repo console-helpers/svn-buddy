@@ -43,7 +43,8 @@ class RevisionLogFactoryTest extends AbstractDatabaseAwareTestCase
 		$factory = new RevisionLogFactory(
 			$repository_connector->reveal(),
 			$database_manager->reveal(),
-			$log_message_parser_factory->reveal()
+			$log_message_parser_factory->reveal(),
+			sys_get_temp_dir() // TODO: Test with fake working directory class.
 		);
 		$this->assertInstanceOf(
 			RevisionLog::class,

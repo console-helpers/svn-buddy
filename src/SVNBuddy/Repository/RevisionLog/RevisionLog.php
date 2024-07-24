@@ -76,17 +76,26 @@ class RevisionLog
 	private $_revisionUrlBuilder;
 
 	/**
+	 * Force refresh flag filename.
+	 *
+	 * @var string
+	 */
+	private $_forceRefreshFlagFilename;
+
+	/**
 	 * Create revision log.
 	 *
 	 * @param string             $repository_url       Repository url.
 	 * @param RevisionUrlBuilder $revision_url_builder Revision URL builder.
 	 * @param Connector          $repository_connector Repository connector.
+	 * @param string             $working_directory    Working directory.
 	 * @param ConsoleIO          $io                   Console IO.
 	 */
 	public function __construct(
 		$repository_url,
 		RevisionUrlBuilder $revision_url_builder,
 		Connector $repository_connector,
+		$working_directory,
 		ConsoleIO $io = null
 	) {
 		$this->_io = $io;
@@ -98,6 +107,7 @@ class RevisionLog
 		$this->_projectPath = $repository_connector->getProjectUrl($relative_path) . '/';
 		$this->_refName = $repository_connector->getRefByPath($relative_path);
 		$this->_revisionUrlBuilder = $revision_url_builder;
+		$this->_forceRefreshFlagFilename = $working_directory . '/' . md5($this->_repositoryRootUrl) . '.force-refresh';
 	}
 
 	/**
@@ -134,12 +144,45 @@ class RevisionLog
 		else {
 			// Import all data for new commits only.
 			$from_revision = $this->_getAggregateRevision('min');
+
+			if ( $this->getForceRefreshFlag() ) {
+				$this->_repositoryConnector->withCacheOverwrite(true);
+				$this->setForceRefreshFlag(false);
+			}
+
 			$to_revision = $this->_repositoryConnector->getLastRevision($this->_repositoryRootUrl);
 		}
 
 		if ( $to_revision > $from_revision ) {
 			$this->_queryRevisionData($from_revision, $to_revision);
 		}
+	}
+
+	/**
+	 * Sets force refresh flag.
+	 *
+	 * @param boolean $flag Flag.
+	 *
+	 * @return void
+	 */
+	public function setForceRefreshFlag($flag)
+	{
+		if ( $flag ) {
+			touch($this->_forceRefreshFlagFilename);
+		}
+		else {
+			unlink($this->_forceRefreshFlagFilename);
+		}
+	}
+
+	/**
+	 * Gets force refresh flag.
+	 *
+	 * @return boolean
+	 */
+	protected function getForceRefreshFlag()
+	{
+		return file_exists($this->_forceRefreshFlagFilename);
 	}
 
 	/**

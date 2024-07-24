@@ -49,6 +49,13 @@ class RevisionLogFactory
 	private $_logMessageParserFactory;
 
 	/**
+	 * Working directory.
+	 *
+	 * @var string
+	 */
+	private $_workingDirectory;
+
+	/**
 	 * Revision logs by url
 	 *
 	 * @var RevisionLog[]
@@ -61,15 +68,18 @@ class RevisionLogFactory
 	 * @param Connector               $repository_connector       Repository connector.
 	 * @param DatabaseManager         $database_manager           Database manager.
 	 * @param LogMessageParserFactory $log_message_parser_factory Log message parser factory.
+	 * @param string                  $working_directory          Working directory.
 	 */
 	public function __construct(
 		Connector $repository_connector,
 		DatabaseManager $database_manager,
-		LogMessageParserFactory $log_message_parser_factory
+		LogMessageParserFactory $log_message_parser_factory,
+		$working_directory
 	) {
 		$this->_repositoryConnector = $repository_connector;
 		$this->_databaseManager = $database_manager;
 		$this->_logMessageParserFactory = $log_message_parser_factory;
+		$this->_workingDirectory = $working_directory;
 	}
 
 	/**
@@ -112,7 +122,13 @@ class RevisionLogFactory
 		$revision_url_builder = new RevisionUrlBuilder($this->_repositoryConnector, $repository_url);
 
 		// Create blank revision log.
-		$revision_log = new RevisionLog($repository_url, $revision_url_builder, $this->_repositoryConnector, $io);
+		$revision_log = new RevisionLog(
+			$repository_url,
+			$revision_url_builder,
+			$this->_repositoryConnector,
+			$this->_workingDirectory,
+			$io
+		);
 
 		// Add plugins to revision log.
 		$revision_log->registerPlugin(new SummaryPlugin($database, $repository_filler));
