@@ -19,6 +19,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The cache delete/set commands were displayed as "cache hit"/"cache miss" operations during verbose output.
 - When there was a cache miss, then explain why (absent, invalidated, expired) during verbose output.
 - Queue SVN-Buddy new repository commit discovery, after a new commit in SVN-Buddy was made.
+- The `log` and `merge` commands no longer fails with large (>999) revision lists on SQLite <= 3.32.0. 
 
 ## [0.7.0] - 2024-04-12
 ### Added

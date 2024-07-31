@@ -75,6 +75,39 @@ abstract class AbstractPlugin implements IPlugin
 	}
 
 	/**
+	 * Returns raw information about revisions.
+	 *
+	 * @param string  $sql                  SQL.
+	 * @param string  $revisions_param_name Revisions param name.
+	 * @param array   $revisions            Revisions.
+	 * @param boolean $assoc                Use first column as returned array key.
+	 *
+	 * @return array
+	 */
+	protected function getRawRevisionsData($sql, $revisions_param_name, array $revisions, $assoc = false)
+	{
+		// Several queries on a smaller revision set appear to be much faster, then one query for all revisions.
+		$revisions_data = array();
+
+		if ( $assoc ) {
+			foreach ( array_chunk($revisions, 500) as $revisions_chunk ) {
+				$revisions_data += $this->database->fetchAssoc($sql, array($revisions_param_name => $revisions_chunk));
+			}
+
+			return $revisions_data;
+		}
+
+		foreach ( array_chunk($revisions, 500) as $revisions_chunk ) {
+			$revisions_data = array_merge(
+				$revisions_data,
+				$this->database->fetchAll($sql, array($revisions_param_name => $revisions_chunk))
+			);
+		}
+
+		return $revisions_data;
+	}
+
+	/**
 	 * Hook, that is called before "RevisionLog::refresh" method call.
 	 *
 	 * @return void

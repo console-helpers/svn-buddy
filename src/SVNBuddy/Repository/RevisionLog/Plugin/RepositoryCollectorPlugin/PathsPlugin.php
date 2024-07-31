@@ -928,7 +928,7 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 				JOIN Paths p1 ON p1.Id = cp.PathId
 				LEFT JOIN Paths p2 ON p2.Id = cp.CopyPathId
 				WHERE cp.Revision IN (:revision_ids)';
-		$revisions_data = $this->database->fetchAll($sql, array('revision_ids' => $revisions));
+		$revisions_data = $this->getRawRevisionsData($sql, 'revision_ids', $revisions);
 
 		foreach ( $revisions_data as $revision_data ) {
 			$revision = $revision_data['Revision'];

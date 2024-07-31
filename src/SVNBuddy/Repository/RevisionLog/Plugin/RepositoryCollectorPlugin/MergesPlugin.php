@@ -165,7 +165,7 @@ class MergesPlugin extends AbstractRepositoryCollectorPlugin implements IOverwri
 		$sql = 'SELECT MergeRevision, MergedRevision
 				FROM Merges
 				WHERE MergedRevision IN (:merged_revisions)';
-		$revisions_data = $this->database->fetchAll($sql, array('merged_revisions' => $revisions));
+		$revisions_data = $this->getRawRevisionsData($sql, 'merged_revisions', $revisions);
 
 		foreach ( $revisions_data as $revision_data ) {
 			$merge_revision = $revision_data['MergeRevision'];

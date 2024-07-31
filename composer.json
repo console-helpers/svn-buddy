@@ -21,6 +21,7 @@
 		"ext-zlib": "*",
 		"ext-json": "*",
 		"ext-pdo": "*",
+		"ext-sqlite3": "*",
 		"fiasco/symfony-console-style-markdown": "^1.2"
 	},
 	"require-dev": {

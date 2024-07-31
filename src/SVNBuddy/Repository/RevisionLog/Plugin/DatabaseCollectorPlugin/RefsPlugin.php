@@ -151,7 +151,7 @@ class RefsPlugin extends AbstractDatabaseCollectorPlugin
 				FROM CommitRefs cr
 				JOIN ProjectRefs pr ON pr.Id = cr.RefId
 				WHERE cr.Revision IN (:revisions)';
-		$revisions_data = $this->database->fetchAll($sql, array('revisions' => $revisions));
+		$revisions_data = $this->getRawRevisionsData($sql, 'revisions', $revisions);
 
 		foreach ( $revisions_data as $revision_data ) {
 			$revision = $revision_data['Revision'];

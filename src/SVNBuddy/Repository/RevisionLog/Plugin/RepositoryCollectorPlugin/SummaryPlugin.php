@@ -138,7 +138,7 @@ class SummaryPlugin extends AbstractRepositoryCollectorPlugin implements IOverwr
 		$sql = 'SELECT Revision, Author AS author, Date AS date, Message AS msg
 				FROM Commits
 				WHERE Revision IN (:revision_ids)';
-		$results = $this->database->fetchAssoc($sql, array('revision_ids' => $revisions));
+		$results = $this->getRawRevisionsData($sql, 'revision_ids', $revisions, true);
 
 		foreach ( array_keys($results) as $revision ) {
 			unset($results[$revision]['Revision']);

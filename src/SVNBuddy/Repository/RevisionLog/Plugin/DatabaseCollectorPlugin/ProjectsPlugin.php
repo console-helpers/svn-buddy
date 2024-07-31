@@ -161,7 +161,7 @@ class ProjectsPlugin extends AbstractDatabaseCollectorPlugin
 		$sql = 'SELECT Revision, ProjectId
 				FROM CommitProjects
 				WHERE Revision IN (:revisions)';
-		$revisions_data = $this->database->fetchAll($sql, array('revisions' => $revisions));
+		$revisions_data = $this->getRawRevisionsData($sql, 'revisions', $revisions);
 
 		foreach ( $revisions_data as $revision_data ) {
 			$revision = $revision_data['Revision'];
