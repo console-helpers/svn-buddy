@@ -345,7 +345,7 @@ class CommandTest extends AbstractTestCase
 	{
 		$this->_command = $this->_createCommand(array('svn', 'log'));
 
-		$this->_process->mustRun(null)->shouldBeCalled();
+		$this->_process->mustRun(null)->willReturn($this->_process)->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(true)->shouldBeCalled();
@@ -367,7 +367,7 @@ class CommandTest extends AbstractTestCase
 	{
 		$this->_command = $this->_createCommand(array('svn', 'log'));
 
-		$this->_process->mustRun(null)->shouldBeCalled();
+		$this->_process->mustRun(null)->willReturn($this->_process)->shouldBeCalled();
 		$this->_process->getOutput()->willReturn('OK')->shouldBeCalled();
 
 		$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
