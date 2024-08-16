@@ -9,6 +9,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The SVN command cache effectiveness (how often particular cache key is being used) is now displayed in the verbose output mode.
 - Display non-executed SVN command (results pulled from the cache) in the verbose mode.
 - Display non-executed SVN command (results pulled from the cache) results in the debug mode.
+- Added the `deploy` command, that will execute, specified in the config, local/remote commands.
+- Added `--deploy` option to the `commit` command, that will perform a remote deployment after a successful commit (#131).
+- Added `--deploy` option to the `update` command, that will perform a local deployment after a successful update.
 
 ### Changed
 ...
