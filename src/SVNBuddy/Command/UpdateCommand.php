@@ -67,6 +67,12 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 				null,
 				InputOption::VALUE_NONE,
 				'Ignore externals definitions'
+			)
+			->addOption(
+				'deploy',
+				'd',
+				InputOption::VALUE_NONE,
+				'Perform local deployment after a successful update'
 			);
 
 		parent::configure();
@@ -108,6 +114,10 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 		}
 
 		$this->io->writeln('<info>Done</info>');
+
+		if ( $this->io->getOption('deploy') ) {
+			$this->runOtherCommand('deploy', array('--local' => true));
+		}
 	}
 
 	/**

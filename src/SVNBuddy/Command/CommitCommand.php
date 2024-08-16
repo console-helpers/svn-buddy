@@ -88,6 +88,12 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 				null,
 				InputOption::VALUE_REQUIRED,
 				'Use alternative merge template for this commit'
+			)
+			->addOption(
+				'deploy',
+				'd',
+				InputOption::VALUE_NONE,
+				'Perform remote deployment after a successful commit'
 			);
 
 		parent::configure();
@@ -149,6 +155,11 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 		$compact_working_copy_status = $this->repositoryConnector->getCompactWorkingCopyStatus($wc_path, $changelist);
 
 		if ( !$compact_working_copy_status ) {
+			// Deploy instead of failing.
+			if ( $this->deploy() ) {
+				return;
+			}
+
 			throw new CommandException('Nothing to commit.');
 		}
 
@@ -200,6 +211,24 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 		$this->getRevisionLog($this->getWorkingCopyUrl())->setForceRefreshFlag(true);
 
 		$this->io->writeln('<info>Done</info>');
+
+		$this->deploy();
+	}
+
+	/**
+	 * Performs a deploy.
+	 *
+	 * @return boolean
+	 */
+	protected function deploy()
+	{
+		if ( !$this->io->getOption('deploy') ) {
+			return false;
+		}
+
+		$this->runOtherCommand('deploy', array('--remote' => true));
+
+		return true;
 	}
 
 	/**

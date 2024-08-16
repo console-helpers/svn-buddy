@@ -22,6 +22,7 @@ use ConsoleHelpers\SVNBuddy\Command\CommitCommand;
 use ConsoleHelpers\SVNBuddy\Command\CompletionCommand;
 use ConsoleHelpers\SVNBuddy\Command\ConfigCommand;
 use ConsoleHelpers\SVNBuddy\Command\ConflictsCommand;
+use ConsoleHelpers\SVNBuddy\Command\DeployCommand;
 use ConsoleHelpers\SVNBuddy\Command\Dev\MigrationCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\Dev\PharCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
@@ -330,6 +331,9 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandL
 		};
 		$this->commandFactories['changelog'] = function () {
 			return new ChangelogCommand();
+		};
+		$this->commandFactories['deploy'] = function () {
+			return new DeployCommand();
 		};
 
 		if ( strpos(__DIR__, 'phar://') === false ) {

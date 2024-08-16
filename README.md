@@ -452,6 +452,7 @@ The command sends changes from your working copy to the repository.
 
 * `--cl` - Operate only on members of selected changelist
 * `--merge-template=MERGE-TEMPLATE` Use alternative merge template for this commit
+* `-d`, `--deploy` - Perform remote deployment after a successful commit
 
 #### Configuration settings
 
@@ -515,6 +516,13 @@ svn-buddy.phar commit --merge-template summary
 
 Same as above, but will use `summary` merge template instead of merge template configured for this working copy.
 
+```
+svn-buddy.phar commit --deploy
+```
+
+Perform a remote deployment after commit was performed or there is nothing to commit.
+
+
 ### The "cleanup" command
 
 Recursively clean up the working copy, removing locks, resuming unfinished operations, etc.
@@ -555,6 +563,7 @@ Bring changes from the repository into the working copy.
 
 * `-r`, `--revision=REVISION` - Update working copy to specified revision, e.g. `NUMBER`, `{DATE}`, `HEAD`, `BASE`, `COMMITTED`, `PREV`
 * `--ignore-externals` - Ignore externals definitions
+* `-d`, `--deploy` - Perform local deployment after a successful update
 
 #### Examples
 
@@ -576,6 +585,12 @@ svn-buddy.phar update --ignore-externals
 ```
 
 Updates a working copy, but doesn't checkout externals.
+
+```
+svn-buddy.phar update --deploy
+```
+
+Perform a local deployment after update was performed or there is nothing to update.
 
 ### The "conflicts" (alias "cf") command
 
@@ -852,6 +867,39 @@ Displays changes included in the current SVN-Buddy release.
 ```
 svn-buddy.phar changelog
 ```
+
+### The "deploy" command
+
+This command deploys changes to remote/local server.
+
+#### Arguments
+
+* `path` - Working copy path [default: "`.`"]
+
+#### Options
+
+* `-r`, `--remote` - Performs remote deployment
+* `-l`, `--local` - Performs local deployment
+
+#### Configuration settings
+
+* `deploy.remote-commands` - commands to be executed during the remote deployment (one command per line)
+* `deploy.local-commands` - commands to be executed during the local deployment (one command per line)
+
+#### Examples
+
+```
+svn-buddy.phar deploy --remote
+```
+
+Will perform remote deployment.
+
+```
+svn-buddy.phar deploy --local
+```
+
+Will perform local deployment.
+
 
 ### The "help" command
 
