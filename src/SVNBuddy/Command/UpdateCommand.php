@@ -11,14 +11,19 @@
 namespace ConsoleHelpers\SVNBuddy\Command;
 
 
+use ConsoleHelpers\SVNBuddy\Config\AbstractConfigSetting;
+use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
+use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
+class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand, IConfigAwareCommand
 {
+
+	const SETTING_UPDATE_AUTO_DEPLOY = 'update.auto-deploy';
 
 	/**
 	 * Working copy conflict tracker.
@@ -69,13 +74,32 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 				'Ignore externals definitions'
 			)
 			->addOption(
-				'deploy',
-				'd',
-				InputOption::VALUE_NONE,
-				'Perform local deployment after a successful update'
+				'auto-deploy',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Automatically perform local deployment on successful update, e.g. <comment>yes</comment> or <comment>no</comment>'
 			);
 
 		parent::configure();
+	}
+
+	/**
+	 * Return possible values for the named option
+	 *
+	 * @param string            $optionName Option name.
+	 * @param CompletionContext $context    Completion context.
+	 *
+	 * @return array
+	 */
+	public function completeOptionValues($optionName, CompletionContext $context)
+	{
+		$ret = parent::completeOptionValues($optionName, $context);
+
+		if ( $optionName === 'auto-deploy' ) {
+			return array('yes', 'no');
+		}
+
+		return $ret;
 	}
 
 	/**
@@ -115,9 +139,30 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 
 		$this->io->writeln('<info>Done</info>');
 
-		if ( $this->io->getOption('deploy') ) {
-			$this->runOtherCommand('deploy', array('--local' => true));
+		$this->deploy();
+	}
+
+	/**
+	 * Performs a deploy.
+	 *
+	 * @return void
+	 */
+	protected function deploy()
+	{
+		$auto_deploy = $this->io->getOption('auto-deploy');
+
+		if ( $auto_deploy !== null ) {
+			$auto_deploy = $auto_deploy === 'yes';
 		}
+		else {
+			$auto_deploy = (boolean)$this->getSetting(self::SETTING_UPDATE_AUTO_DEPLOY);
+		}
+
+		if ( !$auto_deploy ) {
+			return;
+		}
+
+		$this->runOtherCommand('deploy', array('--local' => true));
 	}
 
 	/**
@@ -128,6 +173,22 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand
 	public function getAggregatedOptions()
 	{
 		return array('ignore-externals');
+	}
+
+	/**
+	 * Returns list of config settings.
+	 *
+	 * @return AbstractConfigSetting[]
+	 */
+	public function getConfigSettings()
+	{
+		return array(
+			new ChoiceConfigSetting(
+				self::SETTING_UPDATE_AUTO_DEPLOY,
+				array(1 => 'Yes', 0 => 'No'),
+				1
+			),
+		);
 	}
 
 }

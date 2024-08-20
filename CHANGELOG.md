@@ -10,8 +10,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Display non-executed SVN command (results pulled from the cache) in the verbose mode.
 - Display non-executed SVN command (results pulled from the cache) results in the debug mode.
 - Added the `deploy` command, that will execute, specified in the config, local/remote commands.
-- Added `--deploy` option to the `commit` command, that will perform a remote deployment after a successful commit (#131).
-- Added `--deploy` option to the `update` command, that will perform a local deployment after a successful update.
+- Added `commit.auto-deploy` config setting (enabled by default), that allows to tell if a remote deployment should happen after successful commit (#131).
+- Added `--auto-deploy` option to `commit` command to allow overriding behavior imposed by `commit.auto-deploy` config setting.
+- Added `update.auto-deploy` config setting (enabled by default), that allows to tell if a local deployment should happen after successful update.
+- Added `--auto-deploy` option to `update` command to allow overriding behavior imposed by `update.auto-deploy` config setting.
 
 ### Changed
 - The `config` command groups configuration settings by a command.

@@ -452,7 +452,7 @@ The command sends changes from your working copy to the repository.
 
 * `--cl` - Operate only on members of selected changelist
 * `--merge-template=MERGE-TEMPLATE` Use alternative merge template for this commit
-* `-d`, `--deploy` - Perform remote deployment after a successful commit
+* `--auto-deploy=AUTO-DEPLOY` - Automatically perform remote deployment on successful commit, e.g. `yes` or `no`
 
 #### Configuration settings
 
@@ -563,7 +563,7 @@ Bring changes from the repository into the working copy.
 
 * `-r`, `--revision=REVISION` - Update working copy to specified revision, e.g. `NUMBER`, `{DATE}`, `HEAD`, `BASE`, `COMMITTED`, `PREV`
 * `--ignore-externals` - Ignore externals definitions
-* `-d`, `--deploy` - Perform local deployment after a successful update
+* `--auto-deploy=AUTO-DEPLOY` - Automatically perform local deployment on successful update, e.g. `yes` or `no`
 
 #### Examples
 
