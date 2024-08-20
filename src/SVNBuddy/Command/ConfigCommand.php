@@ -18,6 +18,7 @@ use ConsoleHelpers\SVNBuddy\Config\ChoiceConfigSetting;
 use ConsoleHelpers\SVNBuddy\InteractiveEditor;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -275,15 +276,25 @@ class ConfigCommand extends AbstractCommand implements IAggregatorAwareCommand
 
 		$value_filter = $this->getValueFilter();
 
+		$prev_heading = null;
+
 		foreach ( $this->getConfigSettingsByScope($this->getScopeFilter()) as $name => $config_setting ) {
 			if ( isset($setting_name) && $name !== $setting_name ) {
 				continue;
+			}
+
+			list($new_heading,) = explode('.', $name);
+
+			if ( $prev_heading !== null && $new_heading !== $prev_heading ) {
+				$table->addRow(new TableSeparator());
 			}
 
 			$table->addRow(array(
 				$name,
 				var_export($config_setting->getValue($value_filter), true),
 			));
+
+			$prev_heading = $new_heading;
 		}
 
 		$table->render();
