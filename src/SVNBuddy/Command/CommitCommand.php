@@ -30,6 +30,8 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 
 	const SETTING_COMMIT_MERGE_TEMPLATE = 'commit.merge-template';
 
+	const SETTING_COMMIT_AUTO_DEPLOY = 'commit.auto-deploy';
+
 	const STOP_LINE = '--This line, and those below, will be ignored--';
 
 	/**
@@ -90,10 +92,10 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 				'Use alternative merge template for this commit'
 			)
 			->addOption(
-				'deploy',
-				'd',
-				InputOption::VALUE_NONE,
-				'Perform remote deployment after a successful commit'
+				'auto-deploy',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Automatically perform remote deployment on successful commit, e.g. <comment>yes</comment> or <comment>no</comment>'
 			);
 
 		parent::configure();
@@ -113,6 +115,10 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 
 		if ( $optionName === 'merge-template' ) {
 			return $this->getMergeTemplateNames();
+		}
+
+		if ( $optionName === 'auto-deploy' ) {
+			return array('yes', 'no');
 		}
 
 		return $ret;
@@ -222,13 +228,22 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 	 */
 	protected function deploy()
 	{
-		if ( !$this->io->getOption('deploy') ) {
-			return false;
+		$auto_deploy = $this->io->getOption('auto-deploy');
+
+		if ( $auto_deploy !== null ) {
+			$auto_deploy = $auto_deploy === 'yes';
+		}
+		else {
+			$auto_deploy = (boolean)$this->getSetting(self::SETTING_COMMIT_AUTO_DEPLOY);
 		}
 
-		$this->runOtherCommand('deploy', array('--remote' => true));
+		if ( $auto_deploy ) {
+			$this->runOtherCommand('deploy', array('--remote' => true));
 
-		return true;
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -310,6 +325,11 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 				self::SETTING_COMMIT_MERGE_TEMPLATE,
 				$merge_template_names,
 				reset($merge_template_names)
+			),
+			new ChoiceConfigSetting(
+				self::SETTING_COMMIT_AUTO_DEPLOY,
+				array(1 => 'Yes', 0 => 'No'),
+				1
 			),
 		);
 	}
