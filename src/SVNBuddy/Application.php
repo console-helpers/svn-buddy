@@ -15,7 +15,10 @@ use ConsoleHelpers\ConsoleKit\Application as BaseApplication;
 use ConsoleHelpers\ConsoleKit\Container as BaseContainer;
 use ConsoleHelpers\SVNBuddy\Command\AggregateCommand;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Application extends BaseApplication
 {
@@ -42,6 +45,21 @@ class Application extends BaseApplication
 		ini_set('memory_limit', -1);
 
 		putenv('LC_CTYPE=en_US.UTF-8'); // For SVN.
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function doRunCommand(Command $command, InputInterface $input, OutputInterface $output)
+	{
+		try {
+			return parent::doRunCommand($command, $input, $output);
+		}
+		catch ( \Exception $e ) {
+			$this->dic['io']->notify();
+
+			throw $e;
+		}
 	}
 
 	/**
