@@ -46,7 +46,7 @@ Feel free to add `--global` option to any of examples below to operate on global
 svn-buddy.phar config
 ```
 
-Shows values of all settings in current working copy:
+Shows values of all settings in current working copy grouped by a command:
 
 ![all working copy settings](docs/images/SvnBuddy_ConfigCommand_ShowAllSettings.png)
 

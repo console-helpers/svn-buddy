@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--deploy` option to the `update` command, that will perform a local deployment after a successful update.
 
 ### Changed
-...
+- The `config` command groups configuration settings by a command.
 
 ### Fixed
 - The non-merged revision table was shown after a successful auto-commit, when merge conflict was resolved.
