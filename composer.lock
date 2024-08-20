@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "77ea90de0fd41bc8af352e7afdb7b6f5",
+    "content-hash": "e74dc7fd1cd519162f0c26bdd2b4f967",
     "packages": [
         {
             "name": "aura/sql",
@@ -141,16 +141,16 @@
         },
         {
             "name": "console-helpers/console-kit",
-            "version": "v0.3.1",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/console-kit.git",
-                "reference": "00af576e385c4de2250b953d7c80ee34d204466b"
+                "reference": "03b8981e7b9dfacf099b739a8cd92dfee8640a94"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/00af576e385c4de2250b953d7c80ee34d204466b",
-                "reference": "00af576e385c4de2250b953d7c80ee34d204466b",
+                "url": "https://api.github.com/repos/console-helpers/console-kit/zipball/03b8981e7b9dfacf099b739a8cd92dfee8640a94",
+                "reference": "03b8981e7b9dfacf099b739a8cd92dfee8640a94",
                 "shasum": ""
             },
             "require": {
@@ -161,7 +161,7 @@
             },
             "require-dev": {
                 "aik099/coding-standard": "dev-master",
-                "console-helpers/prophecy-phpunit": "^2.0@dev",
+                "console-helpers/prophecy-phpunit": "^3.0",
                 "phpspec/prophecy": "^1.10",
                 "yoast/phpunit-polyfills": "^2.0"
             },
@@ -190,9 +190,9 @@
             "description": "Toolkit for creating command line applications using Symfony Console component",
             "support": {
                 "issues": "https://github.com/console-helpers/console-kit/issues",
-                "source": "https://github.com/console-helpers/console-kit/tree/v0.3.1"
+                "source": "https://github.com/console-helpers/console-kit/tree/v0.4.0"
             },
-            "time": "2024-04-10T16:07:44+00:00"
+            "time": "2024-08-20T09:53:12+00:00"
         },
         {
             "name": "console-helpers/db-migration",

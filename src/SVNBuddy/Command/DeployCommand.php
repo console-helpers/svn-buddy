@@ -79,7 +79,11 @@ class DeployCommand extends AbstractCommand implements IConfigAwareCommand
 		$suffix = $is_remote ? 'remote' : 'local';
 
 		if ( !$deploy_commands ) {
-			throw new CommandException('The ' . $suffix . ' deployment commands are not specified.');
+			if ( $this->getApplication()->isTopmostCommand($this) ) {
+				throw new CommandException('The ' . $suffix . ' deployment commands are not specified.');
+			}
+
+			return;
 		}
 
 		$this->io->writeln('<info>Performing a ' . $suffix . ' deploy...</info>');
