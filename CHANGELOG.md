@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - The `config` command groups configuration settings by a command.
+- The `changelog` command will show actually used app version instead of `Unreleased` word, when used version isn't mentioned in a changelog. 
 
 ### Fixed
 - The non-merged revision table was shown after a successful auto-commit, when merge conflict was resolved.

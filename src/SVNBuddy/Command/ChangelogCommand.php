@@ -35,6 +35,17 @@ final class ChangelogCommand extends AbstractCommand
 		$root_path = \dirname(__DIR__) . '/../..';
 		$raw_changelog = \file_get_contents($root_path . '/CHANGELOG.md');
 
+		$app_version = $this->getApplication()->getVersion();
+
+		// Reassign all unreleased changes to current unstable version.
+		if ( strpos($raw_changelog, $app_version) === false ) {
+			$raw_changelog = str_replace(
+				'[Unreleased]',
+				'[' . $app_version . ']',
+				$raw_changelog
+			);
+		}
+
 		$markdown_renderer = Renderer::createFromMarkdown($raw_changelog);
 
 		$this->io->writeln((string)$markdown_renderer);
