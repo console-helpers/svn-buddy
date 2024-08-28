@@ -306,6 +306,7 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 * `-s`, `--with-summary` - Shows number of added/changed/removed paths in the revision
 * `--update-revision=UPDATE-REVISION` - Update working copy to given revision before performing a merge
 * `--auto-commit=AUTO-COMMIT` - Automatically perform commit on successful merge, e.g. `yes` or `no`
+* `--auto-deploy=AUTO-DEPLOY` - Automatically perform remote deployment on successful merge commit, e.g. `yes` or `no`
 * `--record-only` - Mark revisions as merged without actually merging them
 * `--reverse` - Rollback previously merged revisions
 * `-a`, `--aggregate` - Aggregate displayed revisions by bugs

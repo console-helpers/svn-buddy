@@ -178,6 +178,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				'Automatically perform commit on successful merge, e.g. <comment>yes</comment> or <comment>no</comment>'
 			)
 			->addOption(
+				'auto-deploy',
+				null,
+				InputOption::VALUE_REQUIRED,
+				'Automatically perform remote deployment on successful merge commit, e.g. <comment>yes</comment> or <comment>no</comment>'
+			)
+			->addOption(
 				'record-only',
 				null,
 				InputOption::VALUE_NONE,
@@ -225,7 +231,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			return $this->getAllRefs();
 		}
 
-		if ( $optionName === 'auto-commit' ) {
+		if ( $optionName === 'auto-commit' || $optionName === 'auto-deploy' ) {
 			return array('yes', 'no');
 		}
 
@@ -853,8 +859,17 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		}
 
 		if ( $auto_commit ) {
+			$auto_deploy = $this->io->getOption('auto-deploy');
+
+			if ( $auto_deploy !== null ) {
+				$commit_arguments = array('--auto-deploy' => $auto_deploy);
+			}
+			else {
+				$commit_arguments = array();
+			}
+
 			$this->io->writeln(array('', 'Commencing automatic commit after merge ...'));
-			$this->runOtherCommand('commit');
+			$this->runOtherCommand('commit', $commit_arguments);
 		}
 
 		return $auto_commit;
