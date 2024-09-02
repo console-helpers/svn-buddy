@@ -238,7 +238,13 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 		}
 
 		if ( $auto_deploy ) {
-			$this->runOtherCommand('deploy', array('--remote' => true));
+			$this->runOtherCommand(
+				'deploy',
+				array(
+					'path' => $this->io->getArgument('path'),
+					'--remote' => true,
+				)
+			);
 
 			return true;
 		}

@@ -162,7 +162,13 @@ class UpdateCommand extends AbstractCommand implements IAggregatorAwareCommand, 
 			return;
 		}
 
-		$this->runOtherCommand('deploy', array('--local' => true));
+		$this->runOtherCommand(
+			'deploy',
+			array(
+				'path' => $this->io->getArgument('path'),
+				'--local' => true,
+			)
+		);
 	}
 
 	/**
