@@ -213,7 +213,7 @@ class Command
 	 */
 	private function _doRun($callback = null)
 	{
-		$process = $this->_processFactory->createProcess($this->_commandLine, 1200);
+		$process = $this->_processFactory->createProcess($this->_commandLine, 180); // Idle timeout: 3 minutes.
 		$command_string = (string)$this;
 
 		try {
