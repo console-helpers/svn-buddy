@@ -1326,6 +1326,85 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 	}
 
+	public function testParsePathRemovalPropagated()
+	{
+		$this->repositoryConnector->getRefByPath(Argument::any())->willReturn(false)->shouldBeCalled();
+
+		$this->plugin->parse($this->getFixture('svn_log_path_deleted_propagate.xml'));
+
+		$this->assertTableContent(
+			'Paths',
+			array(
+				array(
+					'Id' => '1',
+					'Path' => '/path/',
+					'PathNestingLevel' => '1',
+					'PathHash' => '1753053843',
+					'RefName' => '',
+					'ProjectPath' => '',
+					'RevisionAdded' => '50',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '200',
+				),
+				array(
+					'Id' => '2',
+					'Path' => '/path/folder_a/',
+					'PathNestingLevel' => '2',
+					'PathHash' => '2557174829',
+					'RefName' => '',
+					'ProjectPath' => '',
+					'RevisionAdded' => '60',
+					'RevisionDeleted' => '200',
+					'RevisionLastSeen' => '100',
+				),
+				array(
+					'Id' => '3',
+					'Path' => '/path/folder_a/file_a.txt',
+					'PathNestingLevel' => '2',
+					'PathHash' => '2179111923',
+					'RefName' => '',
+					'ProjectPath' => '',
+					'RevisionAdded' => '60',
+					'RevisionDeleted' => '100',
+					'RevisionLastSeen' => '60',
+				),
+				array(
+					'Id' => '4',
+					'Path' => '/path/folder_a/sub_folder_a/',
+					'PathNestingLevel' => '3',
+					'PathHash' => '1400457329',
+					'RefName' => '',
+					'ProjectPath' => '',
+					'RevisionAdded' => '60',
+					'RevisionDeleted' => '200',
+					'RevisionLastSeen' => '70',
+				),
+				array(
+					'Id' => '5',
+					'Path' => '/path/folder_b/',
+					'PathNestingLevel' => '2',
+					'PathHash' => '3007723502',
+					'RefName' => '',
+					'ProjectPath' => '',
+					'RevisionAdded' => '60',
+					'RevisionDeleted' => null,
+					'RevisionLastSeen' => '60',
+				),
+				array(
+					'Id' => '6',
+					'Path' => '/path/folder_a/sub_folder_a/sub_file_a.txt',
+					'PathNestingLevel' => '3',
+					'PathHash' => '2415052021',
+					'RefName' => '',
+					'ProjectPath' => '',
+					'RevisionAdded' => '70',
+					'RevisionDeleted' => '200',
+					'RevisionLastSeen' => '70',
+				),
+			)
+		);
+	}
+
 	public function testFindNoMatch()
 	{
 		$this->commitBuilder
