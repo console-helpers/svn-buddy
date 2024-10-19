@@ -28,6 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Queue SVN-Buddy new repository commit discovery, after a new commit in SVN-Buddy was made.
 - The `log` and `merge` commands no longer fails with large (>999) revision lists on SQLite <= 3.32.0. 
 - The deletion of project wasn't deleting its refs (branches/tags) resulting them to reported as existing.
+- The attempt to detect a "bugtraq:logregex" of a deleted project failed.
 
 ## [0.7.0] - 2024-04-12
 ### Added

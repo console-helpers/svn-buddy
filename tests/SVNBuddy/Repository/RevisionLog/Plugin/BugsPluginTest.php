@@ -162,6 +162,12 @@ class BugsPluginTest extends AbstractPluginTestCase
 			->addPath('A', '/path/to/project/branches/branch-name/', '', '/path/to/project/')
 			->addPath('A', '/path/to/project/branches/branch-name/file.txt', '', '/path/to/project/');
 
+		if ( $project_deleted ) {
+			$this->commitBuilder
+				->addCommit(300, 'user', 0, 'message')
+				->addPath('D', '/path/to/project/', '', '/path/to/project/');
+		}
+
 		$this->commitBuilder->build();
 
 		// Assuming that project id would be "1".
@@ -210,6 +216,12 @@ class BugsPluginTest extends AbstractPluginTestCase
 			->addPath('A', '/path/to/project/branches/', '', '/path/to/project/')
 			->addPath('A', '/path/to/project/branches/branch-name/', '', '/path/to/project/')
 			->addPath('A', '/path/to/project/branches/branch-name/file.txt', '', '/path/to/project/');
+
+		if ( $project_deleted ) {
+			$this->commitBuilder
+				->addCommit(300, 'user', 0, 'message')
+				->addPath('D', '/path/to/project/', '', '/path/to/project/');
+		}
 
 		$this->commitBuilder->build();
 
@@ -280,8 +292,8 @@ class BugsPluginTest extends AbstractPluginTestCase
 	public static function processDetectsMissingBugRegexpsDataProvider()
 	{
 		return array(
-			'project deleted' => array('0'),
-			'project not deleted' => array('1'),
+			'project alive' => array('0'),
+			'project deleted' => array('1'),
 		);
 	}
 

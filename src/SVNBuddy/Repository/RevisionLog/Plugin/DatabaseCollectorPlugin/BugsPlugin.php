@@ -178,7 +178,7 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin implements IOverwriteAw
 	 */
 	protected function detectProjectBugTraqRegEx($project_path, $revision, $project_deleted, $cache_overwrite = false)
 	{
-		$ref_paths = $this->getLastChangedRefPaths($project_path);
+		$ref_paths = $this->getLastChangedRefPaths($project_path, $revision, $project_deleted);
 
 		if ( !$ref_paths ) {
 			return '';
@@ -204,19 +204,29 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin implements IOverwriteAw
 	/**
 	 * Returns given project refs, where last changed are on top.
 	 *
-	 * @param string $project_path Path.
+	 * @param string  $project_path    Path.
+	 * @param integer $revision        Revision.
+	 * @param boolean $project_deleted Project is deleted.
 	 *
 	 * @return array
 	 */
-	protected function getLastChangedRefPaths($project_path)
+	protected function getLastChangedRefPaths($project_path, $revision, $project_deleted)
 	{
 		$own_nesting_level = substr_count($project_path, '/') - 1;
 
 		$where_clause = array(
 			'Path LIKE :parent_path',
 			'PathNestingLevel BETWEEN :from_level AND :to_level',
-			'RevisionDeleted IS NULL',
 		);
+
+		if ( $project_deleted ) {
+			// For deleted project scan paths, that existed at project removal time.
+			$where_clause[] = 'RevisionDeleted > ' . $revision;
+		}
+		else {
+			// For active project scan paths, that are not deleted.
+			$where_clause[] = 'RevisionDeleted IS NULL';
+		}
 
 		$sql = 'SELECT Path, RevisionLastSeen
 				FROM Paths
@@ -234,9 +244,9 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin implements IOverwriteAw
 
 		$filtered_paths = array();
 
-		foreach ( $paths as $path => $revision ) {
+		foreach ( $paths as $path => $last_seen_revision ) {
 			if ( $this->isRef($path) ) {
-				$filtered_paths[$path] = $revision;
+				$filtered_paths[$path] = $last_seen_revision;
 			}
 		}
 
