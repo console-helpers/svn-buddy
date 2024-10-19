@@ -301,7 +301,7 @@ class RepositoryFiller
 				$this->databaseCache->setIntoCache('Paths', $update_path_hash . '/' . __METHOD__, $fields_hash);
 				$to_update[$update_path_hash] = $fields_hash;
 			}
-		};
+		}
 
 		return $to_update;
 	}
