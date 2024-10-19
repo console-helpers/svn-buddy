@@ -239,6 +239,14 @@ class RepositoryFiller
 			throw new \InvalidArgumentException('The "$fields_hash" variable can\'t be empty.');
 		}
 
+		// This is $revision, where $path was deleted.
+		if ( array_key_exists('RevisionDeleted', $fields_hash)
+			&& $fields_hash['RevisionDeleted'] !== null
+			&& substr($path, -1) === '/'
+		) {
+			$this->propagateRevisionDeleted($path, $fields_hash['RevisionDeleted']);
+		}
+
 		$path_hash = $this->getPathChecksum($path);
 		$to_update = $this->propagateRevisionLastSeen($path, $revision);
 		$to_update[$path_hash] = $fields_hash;
@@ -255,7 +263,7 @@ class RepositoryFiller
 	}
 
 	/**
-	 * Propagates revision last seen.
+	 * Propagates revision last seen upwards in path hierarchy.
 	 *
 	 * @param string $path     Path.
 	 * @param string $revision Revision.
@@ -304,6 +312,22 @@ class RepositoryFiller
 		}
 
 		return $to_update;
+	}
+
+	/**
+	 * Propagates revision deleted downwards in path hierarchy.
+	 *
+	 * @param string $path     Path.
+	 * @param string $revision Revision.
+	 *
+	 * @return void
+	 */
+	protected function propagateRevisionDeleted($path, $revision)
+	{
+		$sql = 'UPDATE Paths
+				SET RevisionDeleted = :revision
+				WHERE Path LIKE :path AND RevisionDeleted IS NULL';
+		$this->database->perform($sql, array('revision' => $revision, 'path' => $path . '%'));
 	}
 
 	/**
