@@ -488,9 +488,35 @@ class Connector
 		$changelist = null,
 		array $except_statuses = array(self::STATUS_UNVERSIONED, self::STATUS_EXTERNAL)
 	) {
-		$ret = array();
+		$file_count = $directory_count = 0;
+		$working_copy_status = $this->getWorkingCopyStatus($wc_path, $changelist, $except_statuses);
 
-		foreach ( $this->getWorkingCopyStatus($wc_path, $changelist, $except_statuses) as $path => $status ) {
+		if ( !$working_copy_status ) {
+			return '';
+		}
+
+		foreach ( array_keys($working_copy_status) as $path ) {
+			if ( is_dir($wc_path . '/' . $path) ) {
+				$directory_count++;
+			}
+			else {
+				$file_count++;
+			}
+		}
+
+		$totals_line = array();
+
+		if ( $directory_count > 0 ) {
+			$totals_line[] = $directory_count . ' ' . ($directory_count > 1 ? 'directories' : 'directory');
+		}
+
+		if ( $file_count ) {
+			$totals_line[] = $file_count . ' ' . ($file_count > 1 ? 'files' : 'file');
+		}
+
+		$ret = array(implode(' and ', $totals_line), '');
+
+		foreach ( $working_copy_status as $path => $status ) {
 			$line = $this->getShortItemStatus($status['item']); // Path status.
 			$line .= $this->getShortPropertiesStatus($status['props']); // Properties status.
 			$line .= ' '; // Locked status.

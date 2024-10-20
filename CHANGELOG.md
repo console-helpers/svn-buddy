@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `--auto-deploy` option to `commit` command to allow overriding behavior imposed by `commit.auto-deploy` config setting.
 - Added `update.auto-deploy` config setting (enabled by default), that allows to tell if a local deployment should happen after successful update.
 - Added `--auto-deploy` option to `update` command to allow overriding behavior imposed by `update.auto-deploy` config setting.
+- Display change totals (affected directory/file count) in commit dialog. 
 
 ### Changed
 - The `config` command groups configuration settings by a command.
