@@ -284,7 +284,7 @@ class RevisionLogTest extends AbstractTestCase
 
 	public function testRefreshWithoutCacheWithoutOutput(ConsoleIO $io = null, ProgressBar $database_progress_bar = null, $is_verbose = false)
 	{
-		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(400)->shouldBeCalled();
+		$this->repositoryConnector->getLastRevision('svn://localhost')->willReturn(1000)->shouldBeCalled();
 
 		// Create revision log (part 1).
 		$revision_log = $this->createRevisionLog('svn://localhost/projects/project-name/trunk', $io);
@@ -300,9 +300,9 @@ class RevisionLogTest extends AbstractTestCase
 			->willReturn(array(RevisionLog::FLAG_MERGE_HISTORY, RevisionLog::FLAG_VERBOSE))
 			->shouldBeCalled();
 
-		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(0, 199)))->shouldBeCalled();
-		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(200, 399)))->shouldBeCalled();
-		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(400, 400)))->shouldBeCalled();
+		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(0, 499)))->shouldBeCalled();
+		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(500, 999)))->shouldBeCalled();
+		$repository_collector_plugin->parse(new SimpleXMLElementToken($this->expectSvnLogQuery(1000, 1000)))->shouldBeCalled();
 
 		if ( $is_verbose ) {
 			$repository_collector_plugin->getStatistics()->willReturn(array('rp1' => 10, 'rp2' => 20))->shouldBeCalled();
@@ -317,7 +317,7 @@ class RevisionLogTest extends AbstractTestCase
 		$database_collector_plugin->whenDatabaseReady()->shouldBeCalled();
 		$database_collector_plugin->getLastRevision()->willReturn(0)->shouldBeCalled();
 		$database_collector_plugin
-			->process(0, 400, $database_progress_bar)
+			->process(0, 1000, $database_progress_bar)
 			->will(function (array $args) {
 				if ( isset($args[2]) ) {
 					$args[2]->advance();

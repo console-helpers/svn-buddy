@@ -20,7 +20,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `config` command groups configuration settings by a command.
 - The `changelog` command will show actually used app version instead of `Unreleased` word, when used version isn't mentioned in a changelog. 
 - The executed SVN command idle timeout changed from 20 minutes to 3 minutes.
-- The `commit` command remove empty lines of merged commits, when building grouped merge commit message. 
+- The `commit` command remove empty lines of merged commits, when building grouped merge commit message.
+- Increased repository scanning speed from 200 to 500 revisions per run.
 
 ### Fixed
 - The non-merged revision table was shown after a successful auto-commit, when merge conflict was resolved.

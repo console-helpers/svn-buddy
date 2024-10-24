@@ -267,10 +267,12 @@ class RevisionLog
 	 */
 	private function _useRepositoryCollectorPlugins($from_revision, $to_revision, $overwrite = false)
 	{
+		$batch_size = 500; // Revision count to query in one go.
+
 		// The "io" isn't set during autocomplete.
 		if ( isset($this->_io) ) {
 			// Create progress bar for repository plugins, where data amount is known upfront.
-			$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / 200) + 1);
+			$progress_bar = $this->_io->createProgressBar(ceil(($to_revision - $from_revision) / $batch_size) + 1);
 			$progress_bar->setMessage(
 				$overwrite ? '* Reparsing revisions:' : ' * Reading missing revisions:'
 			);
@@ -291,7 +293,7 @@ class RevisionLog
 		$log_command_arguments = $this->_getLogCommandArguments($plugins);
 
 		while ( $range_start <= $to_revision ) {
-			$range_end = min($range_start + 199, $to_revision);
+			$range_end = min($range_start + ($batch_size - 1), $to_revision);
 
 			$command_arguments = str_replace(
 				array('{revision_range}', '{repository_url}'),
