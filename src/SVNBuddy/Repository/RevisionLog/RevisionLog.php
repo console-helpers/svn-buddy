@@ -188,19 +188,20 @@ class RevisionLog
 	/**
 	 * Reparses a revision.
 	 *
-	 * @param integer $revision Revision.
+	 * @param integer $from_revision From revision.
+	 * @param integer $to_revision   To revision.
 	 *
 	 * @return void
 	 * @throws \LogicException When no plugins are registered.
 	 */
-	public function reparse($revision)
+	public function reparse($from_revision, $to_revision)
 	{
 		if ( !$this->_plugins ) {
 			throw new \LogicException('Please register at least one revision log plugin.');
 		}
 
 		$this->_databaseReady();
-		$this->_queryRevisionData($revision, $revision, true);
+		$this->_queryRevisionData($from_revision, $to_revision, true);
 	}
 
 	/**

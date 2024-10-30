@@ -107,4 +107,12 @@ class RevisionListParserTest extends AbstractTestCase
 		$this->assertEquals($expected, $actual);
 	}
 
+	public function testCollapsing()
+	{
+		$expected = array('10-12', 15, '17-19', 25);
+		$actual = $this->_revisionListParser->collapseRanges(array(18, 10, 11, 15, 17, 12, 19, 25));
+
+		$this->assertEquals($expected, $actual);
+	}
+
 }

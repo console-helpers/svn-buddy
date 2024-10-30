@@ -12,6 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Command;
 
 
 use ConsoleHelpers\ConsoleKit\Exception\CommandException;
+use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\RevisionLog;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,6 +30,13 @@ class ReparseCommand extends AbstractCommand
 	private $_revisionLog;
 
 	/**
+	 * Revision list parser.
+	 *
+	 * @var RevisionListParser
+	 */
+	private $_revisionListParser;
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected function configure()
@@ -43,13 +51,27 @@ class ReparseCommand extends AbstractCommand
 				'.'
 			)
 			->addOption(
-				'revision',
+				'revisions',
 				'r',
 				InputOption::VALUE_REQUIRED,
-				'Reparse specified revision'
+				'List of revision(-s) and/or revision range(-s) to reparse, e.g. <comment>53324</comment>, <comment>1224-4433</comment> or <comment>all</comment>'
 			);
 
 		parent::configure();
+	}
+
+	/**
+	 * Prepare dependencies.
+	 *
+	 * @return void
+	 */
+	protected function prepareDependencies()
+	{
+		parent::prepareDependencies();
+
+		$container = $this->getContainer();
+
+		$this->_revisionListParser = $container['revision_list_parser'];
 	}
 
 	/**
@@ -69,13 +91,24 @@ class ReparseCommand extends AbstractCommand
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$revision = $this->io->getOption('revision');
+		$revisions = $this->io->getOption('revisions');
 
-		if ( !$revision ) {
-			throw new CommandException('The "revision" option is mandatory.');
+		if ( !$revisions ) {
+			throw new CommandException('The "revisions" option is mandatory.');
 		}
 
-		$this->_revisionLog->reparse($revision);
+		// FIXME: Not checking, that given revisions belong to a working copy.
+		$revisions = $this->_revisionListParser->expandRanges($this->getList($revisions));
+
+		foreach ( $this->_revisionListParser->collapseRanges($revisions) as $revision_range ) {
+			if ( strpos($revision_range, '-') === false ) {
+				$this->_revisionLog->reparse($revision_range, $revision_range);
+			}
+			else {
+				list($from_revision, $to_revision) = explode('-', $revision_range, 2);
+				$this->_revisionLog->reparse($from_revision, $to_revision);
+			}
+		}
 	}
 
 }

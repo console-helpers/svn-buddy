@@ -56,4 +56,44 @@ class RevisionListParser
 		return array_keys($ret);
 	}
 
+	/**
+	 * Collapses ranges.
+	 *
+	 * @param array  $revisions       Revisions.
+	 * @param string $range_separator Range separator.
+	 *
+	 * @return array
+	 */
+	public function collapseRanges(array $revisions, $range_separator = '-')
+	{
+		sort($revisions, SORT_NUMERIC);
+		$revisions = array_map('intval', $revisions);
+
+		$ret = array();
+		$range_start = $range_end = null;
+
+		foreach ( $revisions as $revision ) {
+			// New range detected.
+			if ( $range_start === null ) {
+				$range_start = $range_end = $revision;
+				continue;
+			}
+
+			// Expanding existing range.
+			if ( $range_end + 1 === $revision ) {
+				$range_end = $revision;
+				continue;
+			}
+
+			$ret[] = $range_start === $range_end ? $range_start : $range_start . $range_separator . $range_end;
+			$range_start = $range_end = $revision;
+		}
+
+		if ( $range_start !== null && $range_end !== null ) {
+			$ret[] = $range_start === $range_end ? $range_start : $range_start . $range_separator . $range_end;
+		}
+
+		return $ret;
+	}
+
 }
