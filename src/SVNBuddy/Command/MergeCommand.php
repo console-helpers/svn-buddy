@@ -563,6 +563,8 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 	 */
 	protected function calculateUsableRevisions($source_url, $wc_path)
 	{
+		$source_url = $this->repositoryConnector->removeCredentials($source_url);
+
 		$command = $this->repositoryConnector->getCommand(
 			'mergeinfo',
 			array(
