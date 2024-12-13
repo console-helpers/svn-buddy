@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e74dc7fd1cd519162f0c26bdd2b4f967",
+    "content-hash": "1ab25121e3fe422b51a5bd95bdf67ea2",
     "packages": [
         {
             "name": "aura/sql",
@@ -65,16 +65,16 @@
         },
         {
             "name": "composer/ca-bundle",
-            "version": "1.4.3",
+            "version": "1.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/ca-bundle.git",
-                "reference": "031d14d579d2fa090b8049586325faf746abd1ca"
+                "reference": "3e039dc3212d43e9f0fd315e7e212f82f7af5026"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/031d14d579d2fa090b8049586325faf746abd1ca",
-                "reference": "031d14d579d2fa090b8049586325faf746abd1ca",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/3e039dc3212d43e9f0fd315e7e212f82f7af5026",
+                "reference": "3e039dc3212d43e9f0fd315e7e212f82f7af5026",
                 "shasum": ""
             },
             "require": {
@@ -121,7 +121,7 @@
             "support": {
                 "irc": "irc://irc.freenode.org/composer",
                 "issues": "https://github.com/composer/ca-bundle/issues",
-                "source": "https://github.com/composer/ca-bundle/tree/1.4.3"
+                "source": "https://github.com/composer/ca-bundle/tree/1.4.5"
             },
             "funding": [
                 {
@@ -137,7 +137,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-08T15:22:14+00:00"
+            "time": "2024-11-27T15:35:19+00:00"
         },
         {
             "name": "console-helpers/console-kit",
@@ -196,24 +196,27 @@
         },
         {
             "name": "console-helpers/db-migration",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/console-helpers/db-migration.git",
-                "reference": "cde8df8975bb9bb8ed641ce1558d3b070c764dac"
+                "reference": "48d4680c8ec81d4a701821689dd842bb37a3ec5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/console-helpers/db-migration/zipball/cde8df8975bb9bb8ed641ce1558d3b070c764dac",
-                "reference": "cde8df8975bb9bb8ed641ce1558d3b070c764dac",
+                "url": "https://api.github.com/repos/console-helpers/db-migration/zipball/48d4680c8ec81d4a701821689dd842bb37a3ec5f",
+                "reference": "48d4680c8ec81d4a701821689dd842bb37a3ec5f",
                 "shasum": ""
             },
             "require": {
-                "aura/sql": "^2.5 | ^3.0",
-                "php": ">=5.3.7"
+                "aura/sql": "^2.5 || ^3.0 || ^4.0 || ^5.0",
+                "php": ">=5.6"
             },
             "require-dev": {
-                "aik099/coding-standard": "dev-master"
+                "aik099/coding-standard": "dev-master",
+                "console-helpers/prophecy-phpunit": "^3.0",
+                "phpspec/prophecy": "^1.10",
+                "yoast/phpunit-polyfills": "^2.0"
             },
             "type": "library",
             "extra": {
@@ -244,9 +247,9 @@
             ],
             "support": {
                 "issues": "https://github.com/console-helpers/db-migration/issues",
-                "source": "https://github.com/console-helpers/db-migration/tree/v0.1.1"
+                "source": "https://github.com/console-helpers/db-migration/tree/v0.2.0"
             },
-            "time": "2020-12-21T10:18:04+00:00"
+            "time": "2024-12-13T22:11:54+00:00"
         },
         {
             "name": "fiasco/symfony-console-style-markdown",
@@ -793,12 +796,12 @@
             },
             "type": "library",
             "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                },
                 "branch-alias": {
                     "dev-main": "1.19-dev"
-                },
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
                 }
             },
             "autoload": {
@@ -2361,12 +2364,12 @@
             },
             "type": "library",
             "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                },
                 "branch-alias": {
                     "dev-main": "1.19-dev"
-                },
-                "thanks": {
-                    "name": "symfony/polyfill",
-                    "url": "https://github.com/symfony/polyfill"
                 }
             },
             "autoload": {
@@ -2544,16 +2547,16 @@
         },
         {
             "name": "yoast/phpunit-polyfills",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Yoast/PHPUnit-Polyfills.git",
-                "reference": "4a088f125c970d6d6ea52c927f96fe39b330d0f1"
+                "reference": "562f449a2ec8ab92fe7b30d94da9622c7b1345fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/4a088f125c970d6d6ea52c927f96fe39b330d0f1",
-                "reference": "4a088f125c970d6d6ea52c927f96fe39b330d0f1",
+                "url": "https://api.github.com/repos/Yoast/PHPUnit-Polyfills/zipball/562f449a2ec8ab92fe7b30d94da9622c7b1345fe",
+                "reference": "562f449a2ec8ab92fe7b30d94da9622c7b1345fe",
                 "shasum": ""
             },
             "require": {
@@ -2568,7 +2571,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "2.x-dev"
+                    "dev-main": "3.x-dev"
                 }
             },
             "autoload": {
@@ -2603,7 +2606,7 @@
                 "security": "https://github.com/Yoast/PHPUnit-Polyfills/security/policy",
                 "source": "https://github.com/Yoast/PHPUnit-Polyfills"
             },
-            "time": "2024-04-05T16:36:44+00:00"
+            "time": "2024-09-06T22:38:28+00:00"
         }
     ],
     "aliases": [],
