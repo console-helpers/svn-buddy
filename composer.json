@@ -31,6 +31,9 @@
 		"console-helpers/prophecy-phpunit": "^3.0"
 	},
 	"autoload": {
+		"files": [
+			"svn-buddy_autoloader.php"
+		],
 		"psr-4": {
 			"ConsoleHelpers\\SVNBuddy\\": "src/SVNBuddy/"
 		}

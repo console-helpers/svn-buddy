@@ -20,6 +20,8 @@ use Psr\Log\NullLogger;
 class StatementProfiler implements ProfilerInterface
 {
 
+	use TStatementProfiler;
+
 	/**
 	 * Is the profiler active?
 	 *
@@ -124,28 +126,6 @@ class StatementProfiler implements ProfilerInterface
 	public function ignoreDuplicateStatement($statement)
 	{
 		$this->ignoredDuplicateStatements[] = $this->normalizeStatement($statement);
-	}
-
-	/**
-	 * Turns the profiler on and off.
-	 *
-	 * @param boolean $active True to turn on, false to turn off.
-	 *
-	 * @return void
-	 */
-	public function setActive($active)
-	{
-		$this->active = (bool)$active;
-	}
-
-	/**
-	 * Is the profiler active?
-	 *
-	 * @return boolean
-	 */
-	public function isActive()
-	{
-		return (bool)$this->active;
 	}
 
 	/**
@@ -306,62 +286,6 @@ class StatementProfiler implements ProfilerInterface
 	public function resetProfiles()
 	{
 		$this->profiles = array();
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getLogger()
-	{
-		return $this->logger;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getLogLevel()
-	{
-		return $this->logLevel;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setLogLevel($logLevel)
-	{
-		$this->logLevel = $logLevel;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getLogFormat()
-	{
-		return $this->logFormat;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setLogFormat($logFormat)
-	{
-		$this->logFormat = $logFormat;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function start($function)
-	{
-
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function finish($statement = null, array $values = [])
-	{
-
 	}
 
 }
