@@ -4,7 +4,8 @@
     "directories": ["migrations", "src", "bin"],
     "files": [
         "LICENSE",
-		"CHANGELOG.md"
+		"CHANGELOG.md",
+		"svn-buddy_autoloader.php"
     ],
     "finder": [
         {
