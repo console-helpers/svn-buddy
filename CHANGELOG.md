@@ -4,6 +4,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+...
+
+### Changed
+...
+
+### Fixed
+...
+
+## [0.8.0] - 2024-12-18
+### Added
 - The `commit` command now highlights the line with a commited revision number.
 - Added `reparse` command for reparsing data of a given revision (e.g. when it's log message was changed in repository).
 - The SVN command cache effectiveness (how often particular cache key is being used) is now displayed in the verbose output mode.
@@ -306,7 +316,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release.
 - Adding `aggregate`, `cleanup`, `commit`, `log`, `merge` and `revert` commands.
 
-[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/console-helpers/svn-buddy/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/console-helpers/svn-buddy/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/console-helpers/svn-buddy/compare/v0.6.1...v0.7.0
 [0.6.1]: https://github.com/console-helpers/svn-buddy/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/console-helpers/svn-buddy/compare/v0.5.2...v0.6.0
