@@ -16,6 +16,7 @@ use ConsoleHelpers\ConsoleKit\ConsoleIO;
 use ConsoleHelpers\SVNBuddy\Cache\CacheManager;
 use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\CommandFactory;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -73,9 +74,13 @@ class CommandFactoryTest extends AbstractTestCase
 
 		// To get nice exception back when unexpected command is executed.
 		$this->_processFactory
-			->createProcess(Argument::any(), 180)
+			->createProcess(Argument::any(), Command::IDLE_TIMEOUT)
 			->will(function (array $args) {
-				throw new \LogicException('The createProcess("' . implode(' ', $args[0]) . '", 180) call wasn\'t expected.');
+				throw new \LogicException(sprintf(
+					'The createProcess("%s", %s) call wasn\'t expected.',
+					implode(' ', $args[0]),
+					Command::IDLE_TIMEOUT
+				));
 			});
 
 		$this->_commandFactory = $this->_createCommandFactory('', '');
@@ -176,7 +181,7 @@ class CommandFactoryTest extends AbstractTestCase
 		$this->_io->isVerbose()->willReturn(false);
 		$this->_io->isDebug()->willReturn(false);
 
-		$this->_processFactory->createProcess($command, 180)->willReturn($process)->shouldBeCalled();
+		$this->_processFactory->createProcess($command, Command::IDLE_TIMEOUT)->willReturn($process)->shouldBeCalled();
 	}
 
 	/**

@@ -22,6 +22,8 @@ use Symfony\Component\Process\Process;
 class Command
 {
 
+	const IDLE_TIMEOUT = 180; // 3 minutes.
+
 	/**
 	 * Process factory.
 	 *
@@ -213,7 +215,7 @@ class Command
 	 */
 	private function _doRun($callback = null)
 	{
-		$process = $this->_processFactory->createProcess($this->_commandLine, 180); // Idle timeout: 3 minutes.
+		$process = $this->_processFactory->createProcess($this->_commandLine, self::IDLE_TIMEOUT);
 		$command_string = (string)$this;
 
 		try {

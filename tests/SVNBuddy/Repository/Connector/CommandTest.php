@@ -531,7 +531,9 @@ MSG;
 	private function _createCommand(array $command_line, $use_process = true)
 	{
 		if ( $use_process ) {
-			$this->_processFactory->createProcess($command_line, 180)->willReturn($this->_process)->shouldBeCalled();
+			$this->_processFactory->createProcess($command_line, Command::IDLE_TIMEOUT)
+				->willReturn($this->_process)
+				->shouldBeCalled();
 		}
 
 		return new Command(
