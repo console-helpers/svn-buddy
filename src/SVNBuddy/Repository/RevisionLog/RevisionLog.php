@@ -302,7 +302,7 @@ class RevisionLog
 				$log_command_arguments
 			);
 			$command = $this->_repositoryConnector->getCommand('log', $command_arguments);
-			$command->setCacheDuration($cache_duration);
+			$command->setCacheDuration($cache_duration)->setIdleTimeoutRecovery(true);
 			$svn_log = $command->run();
 
 			$this->_parseLog($svn_log, $plugins);

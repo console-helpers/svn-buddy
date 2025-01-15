@@ -20,6 +20,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 use Tests\ConsoleHelpers\SVNBuddy\AbstractTestCase;
 
@@ -123,6 +124,65 @@ class CommandTest extends AbstractTestCase
 			'w/o callback, is xml' => array(false, true),
 			'w callback, not xml' => array(true, false),
 			'w callback, is xml' => array(true, true),
+		);
+	}
+
+	/**
+	 * @dataProvider runWithIdleTimeoutRecoveryDataProvider
+	 */
+	public function testRunWithIdleTimeoutRecovery($use_recovery, $timeout_type)
+	{
+		$command_line = array('svn', 'log', '--xml');
+		$process_output = '<log><logentry/></log>';
+
+		$this->_command = $this->_createCommand($command_line);
+
+		if ( $use_recovery ) {
+			$this->_command->setIdleTimeoutRecovery(true);
+		}
+
+		$this->_process->getCommandLine()
+			->willReturn(implode(' ', $command_line))
+			->shouldBeCalled();
+
+		if ( $timeout_type === ProcessTimedOutException::TYPE_IDLE ) {
+			$this->_process->getIdleTimeout()->willReturn(123)->shouldBeCalled();
+		}
+		else {
+			$this->_process->getTimeout()->willReturn(123)->shouldBeCalled();
+		}
+
+		$process_timed_out_exception = new ProcessTimedOutException(
+			$this->_process->reveal(),
+			$timeout_type
+		);
+
+		$this->_process->mustRun(null)
+			->willThrow($process_timed_out_exception)
+			->shouldBeCalled();
+
+		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
+
+		if ( $use_recovery ) {
+			$this->_process->getOutput()->willReturn($process_output)->shouldBeCalled();
+			$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
+			$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
+		}
+		else {
+			$this->expectException(get_class($process_timed_out_exception));
+			$this->expectExceptionMessage($process_timed_out_exception->getMessage());
+		}
+
+		$this->assertCommandOutput(null, true, $process_output);
+	}
+
+	public static function runWithIdleTimeoutRecoveryDataProvider()
+	{
+		return array(
+			'with recovery+idle timeout' => array(true, ProcessTimedOutException::TYPE_IDLE),
+			'with recovery+general timeout' => array(true, ProcessTimedOutException::TYPE_IDLE),
+			'without recovery+idle timeout' => array(false, ProcessTimedOutException::TYPE_GENERAL),
+			'without recovery+general timeout' => array(false, ProcessTimedOutException::TYPE_GENERAL),
 		);
 	}
 

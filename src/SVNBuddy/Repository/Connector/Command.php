@@ -17,12 +17,13 @@ use ConsoleHelpers\SVNBuddy\Exception\RepositoryCommandException;
 use ConsoleHelpers\SVNBuddy\Process\IProcessFactory;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
 class Command
 {
 
-	const IDLE_TIMEOUT = 180; // 3 minutes.
+	const IDLE_TIMEOUT = 60; // 1 minute.
 
 	/**
 	 * Process factory.
@@ -72,6 +73,13 @@ class Command
 	 * @var boolean
 	 */
 	private $_cacheOverwrite = false;
+
+	/**
+	 * Indicates whether idle timeout recovery is enabled.
+	 *
+	 * @var boolean
+	 */
+	private $_idleTimeoutRecovery = false;
 
 	/**
 	 * Creates a command instance.
@@ -131,6 +139,20 @@ class Command
 	public function setCacheOverwrite($cache_overwrite)
 	{
 		$this->_cacheOverwrite = $cache_overwrite;
+
+		return $this;
+	}
+
+	/**
+	 * Set idle timeout recovery.
+	 *
+	 * @param boolean $idle_timeout_recovery Idle timeout recovery.
+	 *
+	 * @return self
+	 */
+	public function setIdleTimeoutRecovery($idle_timeout_recovery)
+	{
+		$this->_idleTimeoutRecovery = $idle_timeout_recovery;
 
 		return $this;
 	}
@@ -212,6 +234,7 @@ class Command
 	 *
 	 * @return string
 	 * @throws RepositoryCommandException When command execution failed.
+	 * @throws ProcessTimedOutException When process timed-out with general timeout type.
 	 */
 	private function _doRun($callback = null)
 	{
@@ -236,13 +259,15 @@ class Command
 				$process->mustRun($callback);
 			}
 
-			$output = (string)$process->getOutput();
-
-			if ( $this->_io->isDebug() ) {
-				$this->_io->writeln($output, OutputInterface::OUTPUT_RAW);
+			return $this->getProcessOutput($process);
+		}
+		catch ( ProcessTimedOutException $e ) {
+			// This happens for "svn log --use-merge-history ..." command when we've got all the output already.
+			if ( $this->_idleTimeoutRecovery && $e->isIdleTimeout() ) {
+				return $this->getProcessOutput($process);
 			}
 
-			return $output;
+			throw $e;
 		}
 		catch ( ProcessFailedException $e ) {
 			throw new RepositoryCommandException(
@@ -250,6 +275,24 @@ class Command
 				$process->getErrorOutput()
 			);
 		}
+	}
+
+	/**
+	 * Returns process output.
+	 *
+	 * @param Process $process Process.
+	 *
+	 * @return string
+	 */
+	protected function getProcessOutput(Process $process)
+	{
+		$output = (string)$process->getOutput();
+
+		if ( $this->_io->isDebug() ) {
+			$this->_io->writeln($output, OutputInterface::OUTPUT_RAW);
+		}
+
+		return $output;
 	}
 
 	/**

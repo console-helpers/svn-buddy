@@ -459,7 +459,8 @@ OUTPUT;
 
 		$command = $this->prophesize(Command::class);
 		$command->run()->willReturn($result)->shouldBeCalled();
-		$command->setCacheDuration('10 years')->shouldBeCalled();
+		$command->setCacheDuration('10 years')->willReturn($command)->shouldBeCalled();
+		$command->setIdleTimeoutRecovery(true)->willReturn($command)->shouldBeCalled();
 
 		$this->repositoryConnector->getCommand($command_name, $arguments)->willReturn($command)->shouldBeCalled();
 	}
