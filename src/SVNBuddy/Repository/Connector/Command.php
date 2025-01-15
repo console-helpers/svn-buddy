@@ -217,14 +217,21 @@ class Command
 		$command_string = (string)$this;
 
 		try {
-			$start = microtime(true);
-			$process->mustRun($callback);
-
 			if ( $this->_io->isVerbose() ) {
+				$this->_io->writeln('');
+				$this->_io->write('<debug>[svn, ' . date('H:i:s') . '... ]: ' . $command_string . '</debug>');
+
+				$start = microtime(true);
+				$process->mustRun($callback);
+
 				$runtime = sprintf('%01.2f', microtime(true) - $start);
-				$this->_io->writeln(
-					array('', '<debug>[svn, ' . round($runtime, 2) . 's]: ' . $command_string . '</debug>')
+				$this->_io->write(
+					"\033[2K\r" . '<debug>[svn, ' . round($runtime, 2) . 's]: ' . $command_string . '</debug>'
 				);
+				$this->_io->writeln('');
+			}
+			else {
+				$process->mustRun($callback);
 			}
 
 			$output = (string)$process->getOutput();

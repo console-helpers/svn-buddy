@@ -352,12 +352,24 @@ class CommandTest extends AbstractTestCase
 		$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
-		$this->_io->writeln(Argument::that(function ($messages) {
-			if ( count($messages) !== 2 || $messages[0] !== '' ) {
+		$this->_io->writeln('')->shouldBeCalled();
+
+		$this->_io->write(Argument::that(function ($message) {
+			if ( strpos($message, '[svn, ') === false ) {
 				return false;
 			}
 
-			return preg_replace('/\[svn, [\d.]+s\]/', '[svn, 0s]', $messages[1]) === '<debug>[svn, 0s]: svn log</debug>';
+			// Before command runs.
+			if ( preg_match('/^<debug>\[svn, \d+:\d+:\d+... \]: svn log<\/debug>$/', $message) ) {
+				return true;
+			}
+
+			// After command runs.
+			if ( preg_match('/^' . "\033[2K\r" . '<debug>\[svn, [\d.]+s\]: svn log<\/debug>$/', $message) ) {
+				return true;
+			}
+
+			return false;
 		}))->shouldBeCalled();
 
 		$this->_command->run();
@@ -425,7 +437,7 @@ class CommandTest extends AbstractTestCase
 		$this->_process->getErrorOutput()->willReturn('error output')->shouldBeCalled();
 
 		$this->_process->getOutput()->shouldNotBeCalled();
-		$this->_io->isVerbose()->shouldNotBeCalled();
+		$this->_io->isVerbose()->shouldBecalled();
 		$this->_io->isDebug()->shouldNotBeCalled();
 
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
