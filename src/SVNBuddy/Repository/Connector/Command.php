@@ -264,7 +264,8 @@ class Command
 		catch ( ProcessTimedOutException $e ) {
 			// This happens for "svn log --use-merge-history ..." command when we've got all the output already.
 			if ( $this->_idleTimeoutRecovery && $e->isIdleTimeout() ) {
-				return $this->getProcessOutput($process);
+				// TODO: Find a way to avoid hardcoding "</log>".
+				return $this->getProcessOutput($process) . '</log>';
 			}
 
 			throw $e;

@@ -133,7 +133,6 @@ class CommandTest extends AbstractTestCase
 	public function testRunWithIdleTimeoutRecovery($use_recovery, $timeout_type)
 	{
 		$command_line = array('svn', 'log', '--xml');
-		$process_output = '<log><logentry/></log>';
 
 		$this->_command = $this->_createCommand($command_line);
 
@@ -164,7 +163,7 @@ class CommandTest extends AbstractTestCase
 		$this->_cacheManager->getCache(Argument::any())->shouldNotBeCalled();
 
 		if ( $use_recovery ) {
-			$this->_process->getOutput()->willReturn($process_output)->shouldBeCalled();
+			$this->_process->getOutput()->willReturn('<log><logentry/>')->shouldBeCalled();
 			$this->_io->isVerbose()->willReturn(false)->shouldBeCalled();
 			$this->_io->isDebug()->willReturn(false)->shouldBeCalled();
 		}
@@ -173,7 +172,7 @@ class CommandTest extends AbstractTestCase
 			$this->expectExceptionMessage($process_timed_out_exception->getMessage());
 		}
 
-		$this->assertCommandOutput(null, true, $process_output);
+		$this->assertCommandOutput(null, true, '<log><logentry/></log>');
 	}
 
 	public static function runWithIdleTimeoutRecoveryDataProvider()
