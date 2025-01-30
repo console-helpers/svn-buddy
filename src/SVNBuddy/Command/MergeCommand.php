@@ -863,11 +863,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		if ( $auto_commit ) {
 			$auto_deploy = $this->io->getOption('auto-deploy');
 
+			$commit_arguments = array(
+				'path' => $this->io->getArgument('path'),
+			);
+
 			if ( $auto_deploy !== null ) {
-				$commit_arguments = array('--auto-deploy' => $auto_deploy);
-			}
-			else {
-				$commit_arguments = array();
+				$commit_arguments['--auto-deploy'] = $auto_deploy;
 			}
 
 			$this->io->writeln(array('', 'Commencing automatic commit after merge ...'));
