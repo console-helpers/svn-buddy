@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Handle cases, when `svn log ... --use-merge-history ...` command timeout-out.
 - The `merge` command wasn't doing auto-commit, when alternative working directly was specified.
+- The `current revision` highlighting style is now correctly applied to the `Bug-ID` column in the `log` command results. 
 
 ## [0.8.0] - 2024-12-18
 ### Added

@@ -272,11 +272,18 @@ class RevisionPrinter
 				$last_bug_color = $last_bug_color === 'yellow' ? 'magenta' : 'yellow';
 			}
 
+			if ( $revision === $this->_currentRevision ) {
+				$bugs_cell = $this->_outputHelper->formatArray($new_bugs, $bugs_per_row);
+			}
+			else {
+				$bugs_cell = $this->_outputHelper->formatArray($new_bugs, $bugs_per_row, $last_bug_color);
+			}
+
 			$row = array(
 				$this->_aggregateByBug ? $aggregated_revisions[$revision] . ' cmts' : $revision,
 				$revision_data['author'],
 				$this->_dateHelper->getAgoTime($revision_data['date']),
-				$this->_outputHelper->formatArray($new_bugs, $bugs_per_row, $last_bug_color),
+				$bugs_cell,
 				$this->_generateLogMessageColumn($with_full_message || $with_details, $revision_data),
 			);
 
