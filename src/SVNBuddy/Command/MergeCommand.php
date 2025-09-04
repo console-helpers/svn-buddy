@@ -673,7 +673,14 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 		$revision_log = $this->getRevisionLog($source_url);
 		$revisions_data = $revision_log->getRevisionsData('summary', $revisions);
 
-		$revision_title_mask = $revision_log->getRevisionURLBuilder()->getMask('fg=white;options=bold,underscore');
+		if ( strpos($this->accentStyle, 'options') !== false ) {
+			$title_accent_style = $this->accentStyle . ',underscore';
+		}
+		else {
+			$title_accent_style = $this->accentStyle . ';options=underscore';
+		}
+
+		$revision_title_mask = $revision_log->getRevisionURLBuilder()->getMask($title_accent_style);
 
 		// Added " revision" text, when URL wasn't detected.
 		if ( strpos($revision_title_mask, '://') === false ) {
@@ -689,7 +696,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$progress_bar = $this->createMergeProgressBar($used_revision_count + $index + 1, $revision_count);
 
 			// 1. Add revision link with a progress bar.
-			$merge_heading = PHP_EOL . '<fg=white;options=bold>';
+			$merge_heading = PHP_EOL . '<' . $this->accentStyle . '>';
 			$merge_heading .= '--- $1 ' . \str_replace('{revision}', $revision, $revision_title_mask);
 			$merge_heading .= " into '$2' " . $progress_bar . ':</>';
 
@@ -698,7 +705,7 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 			$commit_message = wordwrap($commit_message, 68); // FIXME: Not UTF-8 safe solution.
 			$merge_heading .= PHP_EOL . $commit_message;
 			$merge_heading .= PHP_EOL;
-			$merge_heading .= PHP_EOL . '<fg=white;options=bold>Changed Paths:</>';
+			$merge_heading .= PHP_EOL . '<' . $this->accentStyle . '>Changed Paths:</>';
 
 			$command->runLive(array(
 				$wc_path => '.',

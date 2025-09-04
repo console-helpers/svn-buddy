@@ -93,7 +93,15 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandL
 			'repository-connector.password' => '',
 			'repository-connector.last-revision-cache-duration' => '10 minutes',
 			'update-channel' => 'stable',
+			'theme' => 'dark',
 		);
+
+		$this['dark_theme'] = function ($c) {
+			/** @var ConfigEditor $config_editor */
+			$config_editor = $c['config_editor'];
+
+			return $config_editor->get('theme', $c['config_defaults']['theme']) === 'dark';
+		};
 
 		$this->extend('output', function ($output) {
 			/** @var OutputInterface $output */
@@ -184,7 +192,7 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandL
 		};
 
 		$this['revision_printer'] = function ($c) {
-			return new RevisionPrinter($c['date_helper'], $c['output_helper']);
+			return new RevisionPrinter($c['date_helper'], $c['output_helper'], $c['dark_theme']);
 		};
 
 		$this['command_factory'] = function ($c) {

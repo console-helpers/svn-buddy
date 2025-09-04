@@ -48,6 +48,13 @@ class RevisionPrinter
 	private $_outputHelper;
 
 	/**
+	 * Accent style.
+	 *
+	 * @var string
+	 */
+	private $_accentStyle;
+
+	/**
 	 * Columns.
 	 *
 	 * @var array
@@ -87,11 +94,13 @@ class RevisionPrinter
 	 *
 	 * @param DateHelper   $date_helper   Date helper.
 	 * @param OutputHelper $output_helper Output helper.
+	 * @param boolean      $is_dark_theme Is dark theme.
 	 */
-	public function __construct(DateHelper $date_helper, OutputHelper $output_helper)
+	public function __construct(DateHelper $date_helper, OutputHelper $output_helper, $is_dark_theme)
 	{
 		$this->_dateHelper = $date_helper;
 		$this->_outputHelper = $output_helper;
+		$this->_accentStyle = $is_dark_theme ? 'fg=white;options=bold' : 'fg=cyan';
 
 		$this->_resetState();
 	}
@@ -302,7 +311,7 @@ class RevisionPrinter
 
 			if ( $revision === $this->_currentRevision ) {
 				foreach ( $row as $index => $cell ) {
-					$row[$index] = $this->applyStyle($cell, 'fg=white;options=bold');
+					$row[$index] = $this->applyStyle($cell, $this->_accentStyle);
 				}
 			}
 
@@ -558,11 +567,11 @@ class RevisionPrinter
 		$details = '';
 
 		if ( $revision_url_mask ) {
-			$details .= '<fg=white;options=bold>Revision URL:</>' . PHP_EOL;
+			$details .= '<' . $this->_accentStyle . '>Revision URL:</>' . PHP_EOL;
 			$details .= str_replace('{revision}', $revision, $revision_url_mask) . PHP_EOL . PHP_EOL;
 		}
 
-		$details .= '<fg=white;options=bold>Changed Paths:</>';
+		$details .= '<' . $this->_accentStyle . '>Changed Paths:</>';
 		$path_cut_off_regexp = $this->getPathCutOffRegExp($project_path, $revisions_refs[$revision]);
 
 		foreach ( $revision_paths as $path_data ) {

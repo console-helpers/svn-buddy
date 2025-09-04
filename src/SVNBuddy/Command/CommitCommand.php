@@ -183,7 +183,7 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 			$edited_commit_message = trim(substr($edited_commit_message, 0, $stop_line_pos));
 		}
 
-		$this->io->writeln(array('<fg=white;options=bold>Commit message:</>', $edited_commit_message, ''));
+		$this->io->writeln(array('<' . $this->accentStyle . '>Commit message:</>', $edited_commit_message, ''));
 
 		if ( !$this->io->askConfirmation('Run "svn commit"', false) ) {
 			throw new CommandException('Commit aborted by user.');
@@ -208,7 +208,7 @@ class CommitCommand extends AbstractCommand implements IConfigAwareCommand
 		}
 
 		$this->repositoryConnector->getCommand('commit', $arguments)->runLive(array(
-			'/(Committed revision [\d]+\.)/' => '<fg=white;options=bold>$1</>',
+			'/(Committed revision [\d]+\.)/' => '<' . $this->accentStyle . '>$1</>',
 		));
 		$this->_workingCopyConflictTracker->erase($wc_path);
 		unlink($tmp_file);

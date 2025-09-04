@@ -59,6 +59,13 @@ abstract class AbstractCommand extends BaseCommand
 	protected $workingDirectory = null;
 
 	/**
+	 * Accent style.
+	 *
+	 * @var string
+	 */
+	protected $accentStyle;
+
+	/**
 	 * Working copy resolver.
 	 *
 	 * @var WorkingCopyResolver
@@ -169,6 +176,8 @@ abstract class AbstractCommand extends BaseCommand
 		$this->workingDirectory = $container['working_directory'];
 		$this->_commandConfig = $container['command_config'];
 		$this->_updateManager = $container['update_manager'];
+
+		$this->accentStyle = $container['dark_theme'] ? 'fg=white;options=bold' : 'fg=cyan';
 	}
 
 	/**
