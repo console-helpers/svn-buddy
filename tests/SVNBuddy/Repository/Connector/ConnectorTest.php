@@ -765,7 +765,7 @@ MESSAGE;
 	}
 
 	/**
-	 * @dataProvider testGetMergedRevisionChangesWithoutChangesDataProvider
+	 * @dataProvider getMergedRevisionChangesWithoutChangesDataProvider
 	 */
 	public function testGetMergedRevisionChangesWithoutChanges($regular_or_reverse)
 	{
@@ -786,7 +786,7 @@ MESSAGE;
 		);
 	}
 
-	public static function testGetMergedRevisionChangesWithoutChangesDataProvider()
+	public static function getMergedRevisionChangesWithoutChangesDataProvider()
 	{
 		return array(
 			'Merged revisions' => array(true),
@@ -795,7 +795,7 @@ MESSAGE;
 	}
 
 	/**
-	 * @dataProvider testGetMergedRevisionChangesWithChangesDataProvider
+	 * @dataProvider getMergedRevisionChangesWithChangesDataProvider
 	 */
 	public function testGetMergedRevisionChangesWithChanges($regular_or_reverse, $base_merged, $wc_merged)
 	{
@@ -821,7 +821,7 @@ MESSAGE;
 		);
 	}
 
-	public static function testGetMergedRevisionChangesWithChangesDataProvider()
+	public static function getMergedRevisionChangesWithChangesDataProvider()
 	{
 		return array(
 			'Merged revisions' => array(
