@@ -52,6 +52,7 @@ class ContainerTest extends BaseContainerTest
 					'repository-connector.password' => '',
 					'repository-connector.last-revision-cache-duration' => '10 minutes',
 					'update-channel' => 'stable',
+					'theme' => 'dark',
 				),
 				'config_defaults',
 			),
