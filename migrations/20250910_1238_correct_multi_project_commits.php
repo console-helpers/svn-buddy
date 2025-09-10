@@ -1,8 +1,13 @@
 <?php
 
-use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\MigrationContext;
+use ConsoleHelpers\DatabaseMigration\MigrationContext;
+use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\MigrationContext as SvnBuddyMigrationContext;
 
 return function (MigrationContext $context) {
+	if ( !$context instanceof SvnBuddyMigrationContext ) {
+		return;
+	}
+
 	$db = $context->getDatabase();
 
 	// Get commits, that belong to multiple projects.
