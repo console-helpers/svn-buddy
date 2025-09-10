@@ -12,6 +12,7 @@ namespace ConsoleHelpers\SVNBuddy\Repository\RevisionLog;
 
 
 use ConsoleHelpers\ConsoleKit\ConsoleIO;
+use ConsoleHelpers\SVNBuddy\Repository\Connector\Command;
 use ConsoleHelpers\SVNBuddy\Repository\Connector\Connector;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\DatabaseCollectorPlugin\IDatabaseCollectorPlugin;
 use ConsoleHelpers\SVNBuddy\Repository\RevisionLog\Plugin\IOverwriteAwarePlugin;
@@ -297,11 +298,11 @@ class RevisionLog
 			$range_end = min($range_start + ($batch_size - 1), $to_revision);
 
 			$command_arguments = str_replace(
-				array('{revision_range}', '{repository_url}'),
-				array($range_start . ':' . $range_end, $this->_repositoryRootUrl),
+				'{revision_range}',
+				$range_start . ':' . $range_end,
 				$log_command_arguments
 			);
-			$command = $this->_repositoryConnector->getCommand('log', $command_arguments);
+			$command = $this->getCommand('log', $command_arguments);
 			$command->setCacheDuration($cache_duration)->setIdleTimeoutRecovery(true);
 			$svn_log = $command->run();
 
@@ -323,6 +324,21 @@ class RevisionLog
 		if ( $overwrite ) {
 			$this->setPluginsOverwriteMode($plugins, false);
 		}
+	}
+
+	/**
+	 * Builds the command.
+	 *
+	 * @param string $name      Command name.
+	 * @param array  $arguments Arguments.
+	 *
+	 * @return Command
+	 */
+	public function getCommand($name, array $arguments)
+	{
+		$arguments = str_replace('{repository_url}', $this->_repositoryRootUrl, $arguments);
+
+		return $this->_repositoryConnector->getCommand($name, $arguments);
 	}
 
 	/**

@@ -421,11 +421,21 @@ class BugsPlugin extends AbstractDatabaseCollectorPlugin implements IOverwriteAw
 
 		$project_id = $this->getProject($project_path);
 
-		$sql = 'SELECT DISTINCT cb.Revision
-				FROM CommitBugs cb
-				JOIN CommitProjects cp ON cp.Revision = cb.Revision
-				WHERE cp.ProjectId = :project_id AND cb.Bug IN (:bugs)';
-		$bug_revisions = $this->database->fetchCol($sql, array('project_id' => $project_id, 'bugs' => $criteria));
+		if ( $criteria === array('?') ) {
+			$sql = 'SELECT DISTINCT c.Revision, c.Message
+					FROM Commits c
+					JOIN CommitProjects cp ON cp.Revision = c.Revision
+					LEFT JOIN CommitBugs cb ON cb.Revision = c.Revision
+					WHERE cp.ProjectId = :project_id AND cb.Revision IS NULL';
+			$bug_revisions = $this->database->fetchCol($sql, array('project_id' => $project_id));
+		}
+		else {
+			$sql = 'SELECT DISTINCT cb.Revision
+					FROM CommitBugs cb
+					JOIN CommitProjects cp ON cp.Revision = cb.Revision
+					WHERE cp.ProjectId = :project_id AND cb.Bug IN (:bugs)';
+			$bug_revisions = $this->database->fetchCol($sql, array('project_id' => $project_id, 'bugs' => $criteria));
+		}
 
 		sort($bug_revisions, SORT_NUMERIC);
 

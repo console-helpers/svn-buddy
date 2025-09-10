@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - Added support for Terminal with a light theme. To enable specify `light` as a value of `theme` config setting in `~/.svn-buddy/config.json` file.
+- Added the `?` possible value for the `--bugs` options of the `log` command to show revisions without a bug.
 
 ### Changed
 - Show executed SVN commands in real time (when started; how long was executed) in verbose mode (the `-v` flag).
@@ -13,7 +14,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Handle cases, when `svn log ... --use-merge-history ...` command timeout-out.
 - The `merge` command wasn't doing auto-commit, when alternative working directly was specified.
-- The `current revision` highlighting style is now correctly applied to the `Bug-ID` column in the `log` command results. 
+- The `current revision` highlighting style is now correctly applied to the `Bug-ID` column in the `log` command results.
+- Created a semi-automatic migration script for unlinking commits from projects they don't belong.
 
 ## [0.8.0] - 2024-12-18
 ### Added
