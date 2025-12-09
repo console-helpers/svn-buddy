@@ -902,6 +902,21 @@ svn-buddy.phar deploy --local
 Will perform local deployment.
 
 
+### The "info" command
+
+This command displays information about the current working copy.
+
+#### Arguments
+
+* `path` - Working copy path [default: "`.`"]
+
+#### Examples
+
+```
+svn-buddy.phar info
+```
+
+
 ### The "help" command
 
 Displays help for a command.

@@ -25,6 +25,7 @@ use ConsoleHelpers\SVNBuddy\Command\ConflictsCommand;
 use ConsoleHelpers\SVNBuddy\Command\DeployCommand;
 use ConsoleHelpers\SVNBuddy\Command\Dev\MigrationCreateCommand;
 use ConsoleHelpers\SVNBuddy\Command\Dev\PharCreateCommand;
+use ConsoleHelpers\SVNBuddy\Command\InfoCommand;
 use ConsoleHelpers\SVNBuddy\Command\LogCommand;
 use ConsoleHelpers\SVNBuddy\Command\MergeCommand;
 use ConsoleHelpers\SVNBuddy\Command\ProjectCommand;
@@ -327,6 +328,9 @@ class Container extends \ConsoleHelpers\ConsoleKit\Container implements CommandL
 		};
 		$this->commandFactories['project'] = function () {
 			return new ProjectCommand();
+		};
+		$this->commandFactories['info'] = function () {
+			return new InfoCommand();
 		};
 		$this->commandFactories['_completion'] = function () {
 			return new CompletionCommand();

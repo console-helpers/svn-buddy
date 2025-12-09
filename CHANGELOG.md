@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added support for Terminal with a light theme. To enable specify `light` as a value of `theme` config setting in `~/.svn-buddy/config.json` file.
 - Added the `?` possible value for the `--bugs` options of the `log` command to show revisions without a bug.
+- Added the `info` command.
 
 ### Changed
 - Show executed SVN commands in real time (when started; how long was executed) in verbose mode (the `-v` flag).
