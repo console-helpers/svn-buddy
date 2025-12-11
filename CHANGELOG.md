@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `merge` command wasn't doing auto-commit, when alternative working directly was specified.
 - The `current revision` highlighting style is now correctly applied to the `Bug-ID` column in the `log` command results.
 - Created a semi-automatic migration script for unlinking commits from projects they don't belong.
+- The PHAR generation on PHP 8.x wasn't working, because "padraic/humbug_get_contents" package was missing.
 
 ## [0.8.0] - 2024-12-18
 ### Added
