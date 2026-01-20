@@ -1,6 +1,7 @@
 # SVN-Buddy
 
 [![CI](https://github.com/console-helpers/svn-buddy/workflows/CI/badge.svg)](https://github.com/console-helpers/svn-buddy/actions?query=workflow%3ACI)
+[![Docs](https://github.com/console-helpers/svn-buddy/actions/workflows/docs.yml/badge.svg)](https://github.com/console-helpers/svn-buddy/actions/workflows/docs.yml)
 [![codecov](https://codecov.io/gh/console-helpers/svn-buddy/branch/master/graph/badge.svg)](https://codecov.io/gh/console-helpers/svn-buddy)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/console-helpers/svn-buddy/?branch=master)
 
@@ -16,7 +17,7 @@ The Git users will also feel right at home, because used terminology (commands/o
 
 ## Usage
 
-Moved to ReadTheDocs.
+https://svn-buddy.readthedocs.io/
 
 ## Installation
 
