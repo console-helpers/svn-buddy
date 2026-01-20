@@ -39,7 +39,7 @@ Shows list of recorded conflicts like this:
 
    Conflicts:
     * conflicted/path/one
-    * conflicted/path/tow
+    * conflicted/path/two
 
 
 
@@ -55,7 +55,7 @@ Shows list of recorded conflicts like this:
 
    Conflicts:
     * conflicted/path/one
-    * conflicted/path/tow
+    * conflicted/path/two
 
 
 

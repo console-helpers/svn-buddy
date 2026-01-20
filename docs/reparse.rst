@@ -3,7 +3,7 @@ The "reparse" command
 =====================
 
 
-CReparses given revision.
+Reparses given revision.
 
 Arguments
 ---------
