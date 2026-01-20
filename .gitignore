@@ -3,3 +3,5 @@ phpunit.xml
 box.json
 build
 .phpunit.result.cache
+docs/_build
+docs/conf.py
