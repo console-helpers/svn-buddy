@@ -3,7 +3,10 @@ The "config" (alias "cfg") command
 
 This command allows to change configuration settings, that are used by other commands.
 
-Some of the commands (``merge``, ``log``, ``conflicts`` and ``aggregate``) also use central data store (located in ``~/.svn-buddy/config.json`` file) to store information about a working copy.
+Some of the commands (:doc:`merge </merge_command>`, :doc:`log </log_command>`,
+:doc:`conflicts </conflicts_command>` and :doc:`aggregate </aggregate_command>`) also use
+central data store (located in ``~/.svn-buddy/config.json`` file) to store information about
+a working copy.
 
 * If nothing is stored for a given working copy, then a global default would be used.
 * If global default is missing, then built-in default would be used.
