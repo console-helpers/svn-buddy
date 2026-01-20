@@ -1,27 +1,13 @@
-SVN-Buddy Commands
-==================
+SVN-Buddy Usage
+===============
 
-This documentation covers all available commands in SVN-Buddy.
+Almost each of commands described below accepts `path` argument to specify working copy path.
+This allows to work with several working copies without the need to `cd` to each of them.
 
 .. toctree::
    :maxdepth: 2
    :caption: Available Commands:
+   :glob:
 
-   config_command
-   log_command
-   merge_command
-   commit_command
-   cleanup_command
-   revert_command
-   update_command
-   conflicts_command
-   search_command
-   aggregate_command
-   project_command
-   reparse_command
-   self-update_command
-   list_command
-   changelog_command
-   deploy_command
-   info_command
-   help_command
+   *_command
+
