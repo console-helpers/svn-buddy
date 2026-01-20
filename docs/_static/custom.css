@@ -1,0 +1,39 @@
+/* custom: make content full width */
+.wy-nav-content {
+    max-width: 100%;
+}
+
+/* bugfix: wrap content of table cells */
+.wy-table-responsive table td, .wy-table-responsive table th {
+    white-space: normal;
+}
+
+/* bugfix: make paragraphs in table cells behave as outside of a table */
+.rst-content table.docutils td p:last-child, .rst-content table.field-list td p:last-child, .wy-table td p:last-child {
+     margin-bottom: 24px; /* is 0 by default */
+}
+
+.rst-content table.docutils td>p, .rst-content table.docutils th>p {
+    margin-bottom: 24px !important;
+}
+
+/* ensure, that by restoring paragraph bottom margin above we don't break admonition/seealso bottom margins */
+.rst-content .admonition p:last-child, .rst-content .seealso p:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* remove bottom margin from admonitions and paragraphs */
+.rst-content table.docutils td > *:last-child, .rst-content table.docutils th > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* honor margin of lists/admonitions, when placed next to a floated image */
+div.float-fixer {
+    overflow: auto;
+}
+
+div.float-fixer:after {
+    content: "";
+    display: table;
+    clear: both;
+}
