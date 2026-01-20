@@ -58,51 +58,39 @@ By default ref (e.g. ``trunk``) to display revisions for is detected from curren
 
 All ``--with-...`` options can be combined together to create more complex views.
 
-
 .. code-block:: bash
 
    svn-buddy.phar log
 
-
 Displays all revisions without filtering:
 
-
-.. image:: images/SvnBuddy_LogCommand.png
+.. image:: /images/SvnBuddy_LogCommand.png
    :alt: default log view
-
 
 * the number of displayed revisions is always limited to value of ``log.limit`` configuration setting
 * the total number revisions is also displayed (when relevant) to indicate how much more revisions aren't shown
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --max-count 5
 
-
 Displays all revisions without filtering, but limited by ``--max-count`` option value.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --revisions 10,7,34-36,3
 
-
 Displays ``3``, ``7``, ``10``, ``34``, ``35`` and ``36`` revisions. Any combination of revision(-s)/revision range(-s) can be used.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --bugs JRA-10,6443
 
-
 Displays revisions associated with ``JRA-10`` and ``6443`` bugs.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --refs branches/5.2.x,releases/5.2.1
-
 
 Displays revisions retrieved from ``branches/5.2.x`` and ``releases/5.2.1`` refs. The valid refs formats are:
 
@@ -111,137 +99,101 @@ Displays revisions retrieved from ``branches/5.2.x`` and ``releases/5.2.1`` refs
 * ``tags/tag-name``
 * ``releases/release-name``
 
-
 .. code-block:: bash
 
    svn-buddy.phar log --refs all
 
-
 Displays revisions retrieved from all refs in a project.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --action D
 
-
 Displays revisions, where at least one path (directory or file) was deleted.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --kind dir
 
-
 Displays revisions, where at least one affected path was a directory.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --action D --kind dir
 
-
 Displays revisions, where at least one affected path was a directory at least one path (directory or file) was deleted, but this isn't guaranteed to be the same path.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --merges
 
-
 Displays only merge revisions.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --no-merges
 
-
 Displays all, but merge revisions.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --merged
 
-
 Displays only merged revisions.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --not-merged
 
-
 Displays all, but merged revisions.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --merged-by 12,15-17
 
-
 * Displays revisions merged by ``12``, ``15``, ``16`` and ``17`` revisions.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --with-full-message
 
-
 The log message won't be truncated in displayed revision list.
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --with-details
 
-
 Displays detailed information about revisions:
 
-
-.. image:: images/SvnBuddy_LogCommand_WithDetails.png
+.. image:: /images/SvnBuddy_LogCommand_WithDetails.png
    :alt: detailed log view
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --with-summary
 
-
 Compact alternative to ``--with-details`` option where only totals about made changes in revisions are shown in separate column:
 
-
-.. image:: images/SvnBuddy_LogCommand_WithSummary.png
+.. image:: /images/SvnBuddy_LogCommand_WithSummary.png
    :alt: summary log view
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --with-refs
 
-
 Displays refs, affected by each revision:
 
-
-.. image:: images/SvnBuddy_LogCommand_WithRefs.png
+.. image:: /images/SvnBuddy_LogCommand_WithRefs.png
    :alt: refs log view
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --with-merge-oracle
 
-
 Shows how much paths in each revision can (but not necessarily will) cause conflicts when will be merged:
 
-
-.. image:: images/SvnBuddy_LogCommand_WithMergeOracle.png
+.. image:: /images/SvnBuddy_LogCommand_WithMergeOracle.png
    :alt: merge oracle log view
-
 
 The ``log.merge-conflict-regexps`` configuration setting needs to be specified before Merge Oracle can be used. This can be done using following commands:
 
@@ -252,27 +204,20 @@ Once Interactive Editor opens enter regular expression (one per line) used to ma
 
 In above image there are 2 revisions and each of them contain 1 path (detected using configuration setting defined above) that might result in a conflict.
 
-
 .. code-block:: bash
 
    svn-buddy.phar log --with-merge-oracle --with-details
 
-
 Displays changed paths in each revision, but also highlights potentially conflicting paths (from merge oracle) with red:
 
-
-.. image:: images/SvnBuddy_LogCommand_WithMergeOracle_WithDetails.png
+.. image:: /images/SvnBuddy_LogCommand_WithMergeOracle_WithDetails.png
    :alt: merge oracle & details log view
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar log --with-merge-status
 
-
 For each displayed revision also displays revision responsible for merging it (with merge revision ref):
 
-
-.. image:: images/SvnBuddy_LogCommand_WithMergeStatus.png
+.. image:: /images/SvnBuddy_LogCommand_WithMergeStatus.png
    :alt: merge status log view

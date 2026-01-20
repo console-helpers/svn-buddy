@@ -22,30 +22,22 @@ Examples
 
    svn-buddy.phar update
 
-
 Updates a working copy.
-
 
 .. code-block:: bash
 
    svn-buddy.phar update --revision 55
 
-
 Updates a working copy to 55th revision.
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar update --ignore-externals
 
-
 Updates a working copy, but doesn't checkout externals.
-
 
 .. code-block:: bash
 
    svn-buddy.phar update --deploy
-
 
 Perform a local deployment after update was performed or there is nothing to update.

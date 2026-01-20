@@ -25,25 +25,19 @@ Examples
 
    svn-buddy.phar conflicts
 
-
 Shows list of recorded conflicts like this:
-
 
 .. code-block:: bash
 
    Conflicts:
     * conflicted/path/one
     * conflicted/path/two
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar conflicts --mode show
 
-
 Shows list of recorded conflicts like this:
-
 
 .. code-block:: bash
 
@@ -51,27 +45,20 @@ Shows list of recorded conflicts like this:
     * conflicted/path/one
     * conflicted/path/two
 
-
-
 .. code-block:: bash
 
    svn-buddy.phar conflicts --mode add
 
-
 Adds current conflicted paths (e.g. after merge or update) to the list of recorded paths.
-
 
 .. code-block:: bash
 
    svn-buddy.phar conflicts --mode replace
 
-
 Replaced list of recorded paths with current conflicted paths (e.g. after merge or update).
-
 
 .. code-block:: bash
 
    svn-buddy.phar conflicts --mode erase
-
 
 Forgets all recorded conflicted paths.

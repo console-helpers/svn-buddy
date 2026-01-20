@@ -46,11 +46,9 @@ The ``--source-url`` option can be used with any of below examples to merge from
 * relative url: ``^/path/to/project/branches/branch-name``
 * ref: ``branches/branch-name`` or ``tags/tag-name`` or ``trunk``
 
-
 .. code-block:: bash
 
    svn-buddy.phar merge
-
 
 The above command does following:
 
@@ -68,16 +66,12 @@ The above command does following:
    * status of previous merge operation
    * list of unmerged revisions
 
-
-.. image:: images/SvnBuddy_MergeCommand.png
+.. image:: /images/SvnBuddy_MergeCommand.png
    :alt: merge status
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --revisions 5,3,77-79
-
 
 Does all of above and attempts to merge specified revisions into a working copy. As the merge progresses the output of ``svn merge`` command is shown back to user in real-time (no buffering).
 
@@ -88,10 +82,8 @@ Revisions are merged one by one, because:
 
 The specified revisions to be merged are automatically sorted chronologically.
 
-
-.. image:: images/SvnBuddy_MergeCommand_Revisions.png
+.. image:: /images/SvnBuddy_MergeCommand_Revisions.png
    :alt: merge revisions
-
 
 Only 2 outcomes from above command execution are possible:
 
@@ -110,19 +102,15 @@ After the merge conflict was solved the same merge command can be re-run without
 
 Can't be used together with ``--bugs`` option.
 
-
 .. code-block:: bash
 
    svn-buddy.phar merge --revisions all
 
-
 Will merge all non-merged revisions.
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --bugs JRA-4343,3453
-
 
 Will merge all revisions, that are associated with ``JRA-4343`` and ``3453`` bugs. This would be a major time saver in cases, when:
 
@@ -131,67 +119,50 @@ Will merge all revisions, that are associated with ``JRA-4343`` and ``3453`` bug
 
 Can't be used together with ``--revisions`` option.
 
-
 .. code-block:: bash
 
    svn-buddy.phar merge --auto-commit yes
 
-
 Will automatically run ``svn-buddy.phar commit`` command on successful merge. Overrides value from ``merge.auto-commit`` config setting.
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --auto-commit no
 
-
 Don't automatically run ``svn-buddy.phar commit`` command, when merge was successful. Overrides value from ``merge.auto-commit`` config setting.
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --with-full-message
 
-
 Thanks to ``log`` command being used behind the scenes to display non-merged revisions it's possible to forward ``--with-full-message`` option to it to see non-truncated log message for each revision.
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --with-details
 
-
 Thanks to ``log`` command being used behind the scenes to display non-merged revisions it's possible to forward ``--with-details`` option to it to see paths affected by each non-merged revision.
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --with-summary
 
-
 Thanks to ``log`` command being used behind the scenes to display non-merged revisions it's possible to forward ``--with-summary`` option to it to see totals for paths affected by each non-merged revision.
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --update-revision 55
 
-
 Will update working copy to the 55th revision before starting merge. Can be used to replay older merges for analytical purposes.
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --bugs JRA-123 --record-only
 
-
 Will mark revisions, associated with ``JRA-123`` bug as merged (no files will be changed).
-
 
 .. code-block:: bash
 
    svn-buddy.phar merge --revisions 55 --record-only
-
 
 Will mark 55th revision as merged (no files will be changed).

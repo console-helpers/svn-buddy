@@ -27,13 +27,10 @@ Examples
 
    svn-buddy.phar deploy --remote
 
-
 Will perform remote deployment.
-
 
 .. code-block:: bash
 
    svn-buddy.phar deploy --local
-
 
 Will perform local deployment.

@@ -22,17 +22,13 @@ Examples
 
    svn-buddy.phar project --refresh-bug-tracking
 
-
 Pulls ``bugtraq:logregex`` SVN property from recently modified trunk/branch/tag and stores into project configuration.
-
 
 .. code-block:: bash
 
    svn-buddy.phar project --show-meta
 
-
 Displays project meta information in following format:
 
-
-.. image:: images/SvnBuddy_ProjectCommand_ShowMetaOption.png
+.. image:: /images/SvnBuddy_ProjectCommand_ShowMetaOption.png
    :alt: project meta information

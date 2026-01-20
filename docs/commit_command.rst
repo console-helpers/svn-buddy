@@ -27,7 +27,6 @@ Examples
 
    svn-buddy.phar commit
 
-
 The command workflow is following:
 
 1. abort automatically, when
@@ -49,7 +48,6 @@ The command workflow is following:
 
 The auto-generated commit message looks like this (with ``group_by_revision`` merge template):
 
-
 .. code-block:: bash
 
    Changelist Name
@@ -61,10 +59,9 @@ The auto-generated commit message looks like this (with ``group_by_revision`` me
    * r22796:  message line 1
    message line 2
    message line 3
-   
+
    Conflicts:
      * path/to/conflicted-file
-
 
 Description:
 
@@ -73,29 +70,23 @@ Description:
 * ``22758`` and ``22796`` are merged revisions
 * ``message line ...`` are lines from commit message of merged revisions
 
-
 .. code-block:: bash
 
    svn-buddy.phar commit --cl
-
 
 Same as above, but will also:
 
 * ask user to select changelist
 * put changelist name in commit message
 
-
 .. code-block:: bash
 
    svn-buddy.phar commit --merge-template summary
 
-
 Same as above, but will use ``summary`` merge template instead of merge template configured for this working copy.
-
 
 .. code-block:: bash
 
    svn-buddy.phar commit --deploy
-
 
 Perform a remote deployment after commit was performed or there is nothing to commit.

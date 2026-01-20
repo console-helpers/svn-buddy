@@ -29,44 +29,32 @@ Examples
 
 Feel free to add ``--global`` option to any of examples below to operate on global settings instead of working copy ones.
 
-
 .. code-block:: bash
 
    svn-buddy.phar config
 
-
 Shows values of all settings in current working copy grouped by a command:
 
-
-.. image:: images/SvnBuddy_ConfigCommand_ShowAllSettings.png
+.. image:: /images/SvnBuddy_ConfigCommand_ShowAllSettings.png
    :alt: all working copy settings
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar config --show merge.source-url
 
-
 Shows value of a ``merge.source-url`` setting:
 
-
-.. image:: images/SvnBuddy_ConfigCommand_ShowSingleSetting.png
+.. image:: /images/SvnBuddy_ConfigCommand_ShowSingleSetting.png
    :alt: single working copy setting
-
-
 
 .. code-block:: bash
 
    svn-buddy.phar config --edit merge.source-url
 
-
 Change value of a ``merge.source-url`` setting using interactive editor.
-
 
 .. code-block:: bash
 
    svn-buddy.phar config --delete merge.source-url
-
 
 Delete a ``merge.source-url`` setting.

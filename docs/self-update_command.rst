@@ -24,37 +24,28 @@ Examples
 
    svn-buddy.phar self-update
 
-
 Updates to most recent version on current update channel. By default update would happen from ``stable`` channel.
-
 
 .. code-block:: bash
 
    svn-buddy.phar self-update --rollback
 
-
 In case if update was done previously allows to undo the update.
-
 
 .. code-block:: bash
 
    svn-buddy.phar self-update --stable
 
-
 Change current update channel to ``stable`` and immediately performs the update.
-
 
 .. code-block:: bash
 
    svn-buddy.phar self-update --snapshot
 
-
 Change current update channel to ``snapshot`` and immediately performs the update.
-
 
 .. code-block:: bash
 
    svn-buddy.phar self-update --preview
-
 
 Change current update channel to ``preview`` and immediately performs the update.

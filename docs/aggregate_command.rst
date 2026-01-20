@@ -49,21 +49,16 @@ Examples
 
    svn-buddy.phar aggregate --ignore-add some-path
 
-
 Adds ``some-path`` path (can be relative or absolute) to ignored path list.
-
 
 .. code-block:: bash
 
    svn-buddy.phar aggregate --ignore-remove some-path
 
-
 Removes ``some-path`` path (can be relative or absolute) from ignored path list.
-
 
 .. code-block:: bash
 
    svn-buddy.phar aggregate --ignore-show
-
 
 Shows list of ignored paths.

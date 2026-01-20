@@ -22,5 +22,4 @@ Examples
 
    svn-buddy.phar reparse --revision 12345
 
-
 Re-reads and reparses 12345 revision information.

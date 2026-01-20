@@ -21,21 +21,16 @@ Examples
 
    svn-buddy.phar search folder/path.php "on testMethod("
 
-
 Finds where ``testMethod`` method was last seen in the ``folder/path.php`` file in the working copy.
-
 
 .. code-block:: bash
 
    svn-buddy.phar search folder/path.php "on testMethod(" --match-type last
 
-
 Finds where ``testMethod`` method was last seen in the ``folder/path.php`` file in the working copy.
-
 
 .. code-block:: bash
 
    svn-buddy.phar search folder/path.php "on testMethod(" --match-type first
-
 
 Finds where ``testMethod`` method was first added in the ``folder/path.php`` file in the working copy.
