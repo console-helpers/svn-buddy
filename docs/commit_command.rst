@@ -1,4 +1,3 @@
-
 The "commit" (alias "ci") command
 =================================
 
@@ -13,7 +12,7 @@ Options
 -------
 
 * ``--cl`` - Operate only on members of selected changelist
-* ``--merge-template=MERGE-TEMPLATE`` Use alternative merge template for this commit
+* ``--merge-template=MERGE-TEMPLATE`` - Use alternative merge template for this commit
 * ``--auto-deploy=AUTO-DEPLOY`` - Automatically perform remote deployment on successful commit, e.g. ``yes`` or ``no``
 
 Configuration settings
