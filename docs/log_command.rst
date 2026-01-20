@@ -276,5 +276,3 @@ For each displayed revision also displays revision responsible for merging it (w
 
 .. image:: images/SvnBuddy_LogCommand_WithMergeStatus.png
    :alt: merge status log view
-
-

@@ -9,4 +9,3 @@ Examples
 .. code-block:: bash
 
    svn-buddy.phar changelog
-

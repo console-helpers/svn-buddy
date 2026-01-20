@@ -10,4 +10,3 @@ Examples
 
    svn-buddy.phar
    svn-buddy.phar list
-

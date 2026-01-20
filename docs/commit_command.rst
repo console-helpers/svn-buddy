@@ -99,4 +99,3 @@ Same as above, but will use ``summary`` merge template instead of merge template
 
 
 Perform a remote deployment after commit was performed or there is nothing to commit.
-

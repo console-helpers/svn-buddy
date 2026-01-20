@@ -36,4 +36,3 @@ Displays project meta information in following format:
 
 .. image:: images/SvnBuddy_ProjectCommand_ShowMetaOption.png
    :alt: project meta information
-

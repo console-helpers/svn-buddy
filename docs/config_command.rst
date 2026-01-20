@@ -70,4 +70,3 @@ Change value of a ``merge.source-url`` setting using interactive editor.
 
 
 Delete a ``merge.source-url`` setting.
-

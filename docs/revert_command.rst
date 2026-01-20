@@ -14,4 +14,3 @@ Examples
 .. code-block:: bash
 
    svn-buddy.phar revert
-
