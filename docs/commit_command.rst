@@ -2,18 +2,15 @@
 The "commit" (alias "ci") command
 =================================
 
-
 The command sends changes from your working copy to the repository.
 
 Arguments
 ---------
 
-
-* ``path`` - Working copy path [default: "``.``"]
+* ``path`` - Working copy path [default: ``.``]
 
 Options
 -------
-
 
 * ``--cl`` - Operate only on members of selected changelist
 * ``--merge-template=MERGE-TEMPLATE`` Use alternative merge template for this commit
@@ -22,13 +19,10 @@ Options
 Configuration settings
 ----------------------
 
-
 * ``commit.merge-template`` - log message template for merge commits (defaults to ``group_by_revision``)
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 

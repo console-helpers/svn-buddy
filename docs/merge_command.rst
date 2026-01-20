@@ -1,7 +1,6 @@
 The "merge" command
 ===================
 
-
 This command merges changes from another project or ref within same project into a working copy.
 
 The merges performed outside of SVN-Buddy are detected automatically (thanks to ``svn mergeinfo`` being used internally).
@@ -9,12 +8,10 @@ The merges performed outside of SVN-Buddy are detected automatically (thanks to 
 Arguments
 ---------
 
-
-* ``path`` - Working copy path [default: "``.``"]
+* ``path`` - Working copy path [default: ``.``]
 
 Options
 -------
-
 
 * ``--source-url=SOURCE-URL`` - Merge source url (absolute or relative) or ref name, e.g. ``branches/branch-name``
 * ``-r``, ``--revisions=REVISIONS`` - List of revision(-s) and/or revision range(-s) to merge, e.g. ``53324``, ``1224-4433`` or ``all``
@@ -37,13 +34,11 @@ Options
 Configuration settings
 ----------------------
 
-
 * ``merge.source-url`` - the default url to merge changes from
 * ``merge.auto-commit`` - whatever to automatically perform a commit on successful merge (used, when ``--auto-commit`` option not specified)
 
 Examples
 --------
-
 
 The ``--source-url`` option can be used with any of below examples to merge from that url instead of guessing it. The source url can be specified using:
 

@@ -1,27 +1,22 @@
 The "project" command
 =====================
 
-
 Changes and displays project configuration.
 
 Arguments
 ---------
 
-
-* ``path`` - Working copy path [default: "``.``"]
+* ``path`` - Working copy path [default: ``.``]
 
 
 Options
 -------
-
 
 * ``--refresh-bug-tracking`` - Refreshes value of "bugtraq:logregex" SVN property of the project
 * ``--show-meta`` - Shows meta information of a project
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 

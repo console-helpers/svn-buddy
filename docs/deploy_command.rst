@@ -1,18 +1,15 @@
 The "deploy" command
 ====================
 
-
 This command deploys changes to remote/local server.
 
 Arguments
 ---------
 
-
-* ``path`` - Working copy path [default: "``.``"]
+* ``path`` - Working copy path [default: ``.``]
 
 Options
 -------
-
 
 * ``-r``, ``--remote`` - Performs remote deployment
 * ``-l``, ``--local`` - Performs local deployment
@@ -20,14 +17,11 @@ Options
 Configuration settings
 ----------------------
 
-
 * ``deploy.remote-commands`` - commands to be executed during the remote deployment (one command per line)
 * ``deploy.local-commands`` - commands to be executed during the local deployment (one command per line)
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 

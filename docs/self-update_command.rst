@@ -1,7 +1,6 @@
 The "self-update" command
 =========================
 
-
 Updates application to most recent version. Following update channels are available:
 
 * ``stable`` (default) - new version available eventually
@@ -13,7 +12,6 @@ Special options exist (see examples below) to switch between update channels.
 Options
 -------
 
-
 * ``-r``, ``--rollback`` - Revert to an older version of the application
 * ``--stable`` - Force an update to the stable channel
 * ``--snapshot`` - Force an update to the snapshot channel
@@ -21,8 +19,6 @@ Options
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 

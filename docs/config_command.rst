@@ -1,7 +1,6 @@
 The "config" (alias "cfg") command
 ==================================
 
-
 This command allows to change configuration settings, that are used by other commands.
 
 Some of the commands (``merge``, ``log``, ``conflicts`` and ``aggregate``) also use central data store (located in ``~/.svn-buddy/config.json`` file) to store information about a working copy.
@@ -15,7 +14,7 @@ The association between setting values and a working copy is done using working 
 Arguments
 ---------
 
- * ``path`` - Working copy path [default: "``.``"]
+ * ``path`` - Working copy path [default: ``.``]
 
 Options
 -------
@@ -27,7 +26,6 @@ Options
 
 Examples
 --------
-
 
 Feel free to add ``--global`` option to any of examples below to operate on global settings instead of working copy ones.
 

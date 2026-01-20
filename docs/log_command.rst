@@ -1,7 +1,6 @@
 The "log" command
 =================
 
-
 This command shows the log messages for a set of revisions.
 
 What makes this command really shine (compared to ``svn log`` command) is:
@@ -20,12 +19,10 @@ The working copy revision row is highlighted in bold in revision list to ease id
 Arguments
 ---------
 
-
-* ``path`` - Working copy path or URL [default: "``.``"]
+* ``path`` - Working copy path or URL [default: ``.``]
 
 Options
 -------
-
 
 * ``-r``, ``--revisions=REVISIONS`` - List of revision(-s) and/or revision range(-s), e.g. ``53324``, ``1224-4433``
 * ``-b``, ``--bugs=BUGS`` - List of bug(-s), e.g. ``JRA-1234``, ``43644``
@@ -50,14 +47,12 @@ Options
 Configuration settings
 ----------------------
 
-
 * ``log.limit`` - maximal number of displayed revisions (defaults to ``10``)
 * ``log.message-limit`` - maximal width (in symbols) of ``Log Message`` column (defaults to ``68``)
 * ``log.merge-conflict-regexps`` - list of regular expressions for path matching inside revisions ( used to predict merge conflicts, when ``--with-merge-oracle`` option is used)
 
 Examples
 --------
-
 
 By default ref (e.g. ``trunk``) to display revisions for is detected from current working copy. To avoid need to keep different working copies around add ``--refs X`` (e.g. ``--refs branches/branch-name``) to display revisions from specified ref(-s) of a project.
 

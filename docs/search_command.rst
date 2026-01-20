@@ -1,12 +1,10 @@
 The "search" command
 ====================
 
-
 Searches for a revision, where text was added to a file or removed from it.
 
 Arguments
 ---------
-
 
 * ``path`` -  File path
 * ``keywords`` - Search keyword
@@ -14,13 +12,10 @@ Arguments
 Options
 -------
 
-
-* ``-t``, ``--match-type=MATCH-TYPE`` - Match type, e.g. ``first`` or ``last`` [default: "``last``"]
+* ``-t``, ``--match-type=MATCH-TYPE`` - Match type, e.g. ``first`` or ``last`` [default: ``last``]
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 

@@ -1,18 +1,15 @@
 The "update" (alias "up") command
 =================================
 
-
 Bring changes from the repository into the working copy.
 
 Arguments
 ---------
 
-
-* ``path`` - Working copy path [default: "``.``"]
+* ``path`` - Working copy path [default: ``.``]
 
 Options
 -------
-
 
 * ``-r``, ``--revision=REVISION`` - Update working copy to specified revision, e.g. ``NUMBER``, ``{DATE}``, ``HEAD``, ``BASE``, ``COMMITTED``, ``PREV``
 * ``--ignore-externals`` - Ignore externals definitions
@@ -20,8 +17,6 @@ Options
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 

@@ -1,31 +1,25 @@
 The "conflicts" (alias "cf") command
 ====================================
 
-
 Manages recorded conflicts in a working copy.
 
 Arguments
 ---------
 
-
-* ``path`` - Working copy path [default: "``.``"]
+* ``path`` - Working copy path [default: ``.``]
 
 Options
 -------
 
-
-* ``-m``, ``--mode=MODE`` - Operation mode, e.g. ``show``, ``add``, ``replace``, ``erase`` [default: "``show``"]
+* ``-m``, ``--mode=MODE`` - Operation mode, e.g. ``show``, ``add``, ``replace``, ``erase`` [default: ``show``]
 
 Configuration settings
 ----------------------
-
 
 * ``conflicts.recorded-conflicts`` - list of conflicted paths (maintained automatically)
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 

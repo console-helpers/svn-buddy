@@ -1,19 +1,15 @@
 The "cleanup" command
 =====================
 
-
 Recursively clean up the working copy, removing locks, resuming unfinished operations, etc.
 
 Arguments
 ---------
 
-
-* ``path`` - Working copy path [default: "``.``"]
+* ``path`` - Working copy path [default: ``.``]
 
 Examples
 --------
-
-
 
 .. code-block:: bash
 
