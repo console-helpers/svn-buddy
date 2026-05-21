@@ -12,7 +12,7 @@ Arguments
 Options
 -------
 
-* ``-r``, ``--revision=REVISION`` - Reparse specified revision
+* ``-r``, ``--revisions=REVISIONS`` - List of revision(-s) and/or revision range(-s) to reparse, e.g. ``53324``, ``1224-4433`` or ``all``
 
 
 Examples
@@ -20,6 +20,6 @@ Examples
 
 .. code-block:: bash
 
-   svn-buddy.phar reparse --revision 12345
+   svn-buddy.phar reparse --revisions 12345
 
 Re-reads and reparses 12345 revision information.

@@ -19,6 +19,7 @@ Configuration settings
 ----------------------
 
 * ``commit.merge-template`` - log message template for merge commits (defaults to ``group_by_revision``)
+* ``commit.auto-deploy`` - whether to automatically perform remote deployment on successful commit (used, when ``--auto-deploy`` option is not specified)
 
 Examples
 --------
@@ -87,6 +88,6 @@ Same as above, but will use ``summary`` merge template instead of merge template
 
 .. code-block:: bash
 
-   svn-buddy.phar commit --deploy
+   svn-buddy.phar commit --auto-deploy yes
 
 Perform a remote deployment after commit was performed or there is nothing to commit.

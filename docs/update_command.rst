@@ -15,6 +15,11 @@ Options
 * ``--ignore-externals`` - Ignore externals definitions
 * ``--auto-deploy=AUTO-DEPLOY`` - Automatically perform local deployment on successful update, e.g. ``yes`` or ``no``
 
+Configuration settings
+----------------------
+
+* ``update.auto-deploy`` - whether to automatically perform local deployment on successful update (used, when ``--auto-deploy`` option is not specified)
+
 Examples
 --------
 
@@ -38,6 +43,6 @@ Updates a working copy, but doesn't checkout externals.
 
 .. code-block:: bash
 
-   svn-buddy.phar update --deploy
+   svn-buddy.phar update --auto-deploy yes
 
 Perform a local deployment after update was performed or there is nothing to update.

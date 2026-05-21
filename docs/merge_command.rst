@@ -35,6 +35,7 @@ Configuration settings
 ----------------------
 
 * ``merge.source-url`` - the default url to merge changes from
+* ``merge.recent-conflicts`` - (internal) list of recently conflicted paths from the last merge attempt
 * ``merge.auto-commit`` - whatever to automatically perform a commit on successful merge (used, when ``--auto-commit`` option not specified)
 
 Examples

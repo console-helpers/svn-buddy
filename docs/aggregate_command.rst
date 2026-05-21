@@ -15,6 +15,7 @@ Own options
 * ``--ignore-add=IGNORE-ADD`` - Adds path to ignored directory list
 * ``--ignore-remove=IGNORE-REMOVE`` - Removes path to ignored directory list
 * ``--ignore-show`` - Show ignored directory list
+* ``--recursive`` - Perform deep scan for working copies
 
 Aggregated command options
 --------------------------
