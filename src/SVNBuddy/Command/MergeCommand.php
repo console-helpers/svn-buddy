@@ -23,6 +23,7 @@ use ConsoleHelpers\SVNBuddy\Repository\Parser\RevisionListParser;
 use ConsoleHelpers\SVNBuddy\Repository\WorkingCopyConflictTracker;
 use Stecman\Component\Symfony\Console\BashCompletion\CompletionContext;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -794,14 +795,26 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 
 		if ( $largest_suggested_revision ) {
 			$table->setHeaders(array(
-				'Path',
-				'Associated Revisions (before ' . $largest_suggested_revision . ')',
+				array(
+					new TableCell('Path', array('rowspan' => 2)), // Spanning doesn't work in symfony/console v3.4.47.
+					new TableCell('Associated (before ' . $largest_suggested_revision . ')', array('colspan' => 2)),
+				),
+				array(
+					new TableCell('Revisions'),
+					new TableCell('Bugs'),
+				),
 			));
 		}
 		else {
 			$table->setHeaders(array(
-				'Path',
-				'Associated Revisions',
+				array(
+					new TableCell('Path', array('rowspan' => 2)), // Spanning doesn't work in symfony/console v3.4.47.
+					new TableCell('Associated', array('colspan' => 2)),
+				),
+				array(
+					new TableCell('Revisions'),
+					new TableCell('Bugs'),
+				),
 			));
 		}
 
@@ -819,9 +832,12 @@ class MergeCommand extends AbstractCommand implements IAggregatorAwareCommand, I
 				$path_revisions = $this->limitRevisions($path_revisions, $largest_suggested_revision);
 			}
 
+			$path_bugs = $revision_log->getBugsFromRevisions($path_revisions);
+
 			$table->addRow(array(
 				$conflict_path,
 				$path_revisions ? $output_helper->formatArray($path_revisions, 4) : '-',
+				$path_bugs ? $output_helper->formatArray($path_bugs, 3) : '-',
 			));
 		}
 

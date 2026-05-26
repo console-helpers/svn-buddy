@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Show executed SVN commands in real time (when started; how long was executed) in verbose mode (the `-v` flag).
 - The executed SVN command idle timeout changed from 3 minutes to 1 minute.
+- Show bugs of possible merge revision candidates when merge conflict has occurred.
 
 ### Fixed
 - Handle cases, when `svn log ... --use-merge-history ...` command timeout-out.
