@@ -20,8 +20,6 @@ Own options
 Aggregated command options
 --------------------------
 
-* ``-d``, ``--with-details`` - Shows detailed revision information, e.g. paths affected
-* ``-s``, ``--with-summary`` - Shows number of added/changed/removed paths in the revision
 * ``--merges`` - Show merge revisions only
 * ``--no-merges`` - Hide merge revisions
 * ``--merged`` - Shows only revisions, that were merged at least once
@@ -30,6 +28,8 @@ Aggregated command options
 * ``--kind=KIND`` - Show revisions, whose paths match specified kind, e.g. ``dir`` or ``file``
 * ``--author=AUTHOR`` - Show revisions, made by a given author
 * ``-f``, ``--with-full-message`` - Shows non-truncated commit messages
+* ``-d``, ``--with-details`` - Shows detailed revision information, e.g. paths affected
+* ``-s``, ``--with-summary`` - Shows number of added/changed/removed paths in the revision
 * ``--with-refs`` - Shows revision refs
 * ``--with-merge-oracle`` - Shows number of paths in the revision, that can cause conflict upon merging
 * ``--with-merge-status`` - Shows merge revisions affecting this revision
