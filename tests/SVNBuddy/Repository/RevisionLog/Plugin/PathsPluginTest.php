@@ -1589,6 +1589,22 @@ class PathsPluginTest extends AbstractPluginTestCase
 		$this->assertEmpty($this->plugin->find(array('action:D'), '/path/to/project-a/'));
 	}
 
+	public function testFindByActionOnMultiProjectCommit()
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, '')
+			->addPath('M', '/path/to/project-a/folder/file.php', '', '/path/to/project-a/')
+			->addPath('A', '/path/to/project-b/folder/file2.php', '', '/path/to/project-b/');
+
+		$this->commitBuilder->build();
+
+		/*
+		 * Revision 100 only "M"odified "project-a" own file; the "A"dded action
+		 * belongs to "project-b" file, which shouldn't count when searching "project-a".
+		 */
+		$this->assertEmpty($this->plugin->find(array('action:A'), '/path/to/project-a/'));
+	}
+
 	public function testFindByKind()
 	{
 		$this->commitBuilder
@@ -1611,6 +1627,22 @@ class PathsPluginTest extends AbstractPluginTestCase
 		);
 
 		$this->assertEmpty($this->plugin->find(array('action:dir'), '/path/to/project-a/'));
+	}
+
+	public function testFindByKindOnMultiProjectCommit()
+	{
+		$this->commitBuilder
+			->addCommit(100, 'user', 0, '')
+			->addPath('A', '/path/to/project-a/folder/file.php', '', '/path/to/project-a/')
+			->addPath('A', '/path/to/project-b/folder/subfolder/', '', '/path/to/project-b/');
+
+		$this->commitBuilder->build();
+
+		/*
+		 * Revision 100 only touched a file in "project-a"; the directory
+		 * belongs to "project-b", which shouldn't count when searching "project-a".
+		 */
+		$this->assertEmpty($this->plugin->find(array('kind:dir'), '/path/to/project-a/'));
 	}
 
 	public function testFindUnsupportedField()
