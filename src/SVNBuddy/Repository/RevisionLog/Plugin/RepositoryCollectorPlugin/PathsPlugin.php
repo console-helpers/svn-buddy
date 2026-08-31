@@ -571,7 +571,7 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 					list ($field, $value) = explode(':', $criterion, 2);
 				}
 
-				$tmp_revisions = $this->processFieldCriterion($project_id, $field, $value);
+				$tmp_revisions = $this->processFieldCriterion($project_id, $project_path, $field, $value);
 
 				foreach ( $tmp_revisions as $revision ) {
 					$path_revisions[$revision] = true;
@@ -605,21 +605,22 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 	/**
 	 * Processes search request, when field is specified in criterion.
 	 *
-	 * @param integer $project_id Project ID.
-	 * @param string  $field      Field.
-	 * @param mixed   $value      Value.
+	 * @param integer $project_id   Project ID.
+	 * @param string  $project_path Project path.
+	 * @param string  $field        Field.
+	 * @param mixed   $value        Value.
 	 *
 	 * @return array
 	 * @throws \InvalidArgumentException When non-supported search field is given.
 	 */
-	protected function processFieldCriterion($project_id, $field, $value)
+	protected function processFieldCriterion($project_id, $project_path, $field, $value)
 	{
 		if ( $field === 'action' ) {
-			return $this->findByAction($project_id, $value);
+			return $this->findByAction($project_id, $project_path, $value);
 		}
 
 		if ( $field === 'kind' ) {
-			return $this->findByKind($project_id, $value);
+			return $this->findByKind($project_id, $project_path, $value);
 		}
 
 		if ( $field === 'exact' ) {
@@ -637,19 +638,22 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 	/**
 	 * Finds revisions by action.
 	 *
-	 * @param integer $project_id Project id.
-	 * @param string  $action     Action.
+	 * @param integer $project_id   Project id.
+	 * @param string  $project_path Project path.
+	 * @param string  $action       Action.
 	 *
 	 * @return array
 	 */
-	protected function findByAction($project_id, $action)
+	protected function findByAction($project_id, $project_path, $action)
 	{
 		$sql = 'SELECT DISTINCT cpr.Revision
 				FROM CommitPaths cpa
 				JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
-				WHERE cpr.ProjectId = :project_id AND cpa.Action LIKE :action';
+				JOIN Paths p ON p.Id = cpa.PathId
+				WHERE cpr.ProjectId = :project_id AND p.ProjectPath = :project_path AND cpa.Action LIKE :action';
 		$tmp_revisions = $this->database->fetchCol($sql, array(
 			'project_id' => $project_id,
+			'project_path' => $project_path,
 			'action' => $action,
 		));
 
@@ -659,19 +663,22 @@ class PathsPlugin extends AbstractRepositoryCollectorPlugin
 	/**
 	 * Finds revisions by kind.
 	 *
-	 * @param integer $project_id Project ID.
-	 * @param string  $kind       Kind.
+	 * @param integer $project_id   Project ID.
+	 * @param string  $project_path Project path.
+	 * @param string  $kind         Kind.
 	 *
 	 * @return array
 	 */
-	protected function findByKind($project_id, $kind)
+	protected function findByKind($project_id, $project_path, $kind)
 	{
 		$sql = 'SELECT DISTINCT cpr.Revision
 				FROM CommitPaths cpa
 				JOIN CommitProjects cpr ON cpr.Revision = cpa.Revision
-				WHERE cpr.ProjectId = :project_id AND cpa.Kind LIKE :kind';
+				JOIN Paths p ON p.Id = cpa.PathId
+				WHERE cpr.ProjectId = :project_id AND p.ProjectPath = :project_path AND cpa.Kind LIKE :kind';
 		$tmp_revisions = $this->database->fetchCol($sql, array(
 			'project_id' => $project_id,
+			'project_path' => $project_path,
 			'kind' => $kind,
 		));
 
